@@ -15,6 +15,9 @@ import type { CVData } from "@/types"
 import { ChevronDown, ChevronUp, MoreVertical, Download, GripVertical } from "lucide-react"
 import html2canvas from "html2canvas"
 import jsPDF from "jspdf"
+import CVPreviewAlt from "@/components/cv-preview-alt"
+import { TemplateSelector } from "@/components/template-selector"
+import CVPreviewPro from "@/components/cv-preview-pro"
 
 export default function Home() {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -84,6 +87,9 @@ export default function Home() {
   const [saveFormat, setSaveFormat] = useState<string>("pdf")
   const [showDownloadOptions, setShowDownloadOptions] = useState(false)
   const previewRef = useRef<HTMLDivElement>(null)
+
+  const [showTemplateSelector, setShowTemplateSelector] = useState(true)
+  const [template, setTemplate] = useState<"modern" | "classic" | "pro">("modern")
 
   const updateCVData = (section: string, data: any) => {
     setCvData((prev) => ({
@@ -169,13 +175,32 @@ export default function Home() {
     setSectionOrder(newOrder)
   }
 
+  const handleTemplateSelect = (templateId: string) => {
+    setTemplate(templateId as "modern" | "classic" | "pro")
+    setShowTemplateSelector(false)
+  }
+
   return (
     <main className="flex min-h-screen bg-gray-50">
+      <TemplateSelector
+        open={showTemplateSelector}
+        onOpenChange={setShowTemplateSelector}
+        selectedTemplate={template}
+        onSelectTemplate={handleTemplateSelect}
+      />
       <div className="flex flex-1 overflow-hidden">
         {/* Left Panel - Form */}
         <div className="w-1/2 overflow-y-auto border-r border-gray-200 bg-white">
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-            <h1 className="text-xl font-bold">CV Builder</h1>
+            <div className="flex items-center gap-4">
+              <h1 className="text-xl font-bold">CV Builder</h1>
+              <button
+                onClick={() => setShowTemplateSelector(true)}
+                className="text-sm text-gray-600 hover:text-gray-900"
+              >
+                Change Template
+              </button>
+            </div>
             <div className="relative">
               <button
                 onClick={() => setShowDownloadOptions(!showDownloadOptions)}
@@ -251,7 +276,13 @@ export default function Home() {
         {/* Right Panel - Preview */}
         <div className="w-1/2 overflow-y-auto bg-gray-50 flex justify-center">
           <div ref={previewRef} className="my-8">
-            <CVPreview data={cvData} sectionOrder={sectionOrder} />
+            {template === "modern" ? (
+              <CVPreview data={cvData} sectionOrder={sectionOrder} />
+            ) : template === "classic" ? (
+              <CVPreviewAlt data={cvData} sectionOrder={sectionOrder} />
+            ) : (
+              <CVPreviewPro data={cvData} sectionOrder={sectionOrder} />
+            )}
           </div>
         </div>
       </div>
