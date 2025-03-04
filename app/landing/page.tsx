@@ -4,6 +4,8 @@ import ResumeSlider from "@/components/home/ResumeSlider";
 import StepSlider from "@/components/home/HowDoesItWork/StepSlider";
 import FeaturesSlider from "@/components/home/Features/FeaturesSlider";
 import ReviewsSection from "@/components/home/ReviewsSection";
+import FAQ from "@/components/home/FAQ";
+import Footer from "@/components/home/Footer";
 
 export default function Home() {
   return (
@@ -14,6 +16,8 @@ export default function Home() {
       <StepSlider />
       <FeaturesSlider />
       <ReviewsSection />
+      <FAQ />
+      <Footer />
     </main>
   );
 }
