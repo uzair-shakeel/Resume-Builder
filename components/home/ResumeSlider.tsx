@@ -51,7 +51,7 @@ export default function ResumeSlider() {
 
   return (
     <section className="w-full py-12 md:py-16 bg-gray-50">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 relative">
+      <div className="w-full px-4 md:px-8 relative">
         <div className="relative">
           {/* Navigation Buttons */}
           <button

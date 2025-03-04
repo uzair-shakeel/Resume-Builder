@@ -24,10 +24,8 @@ export default function StepCard({
   const dashOffset = circumference * (1 - progress / 100);
 
   return (
-    <div
-      className={`flex items-start space-x-4 p-4 rounded-lg cursor-pointer transition-all ${
-        isActive ? "bg-white shadow-md" : "bg-transparent hover:bg-gray-50"
-      }`}
+    <button
+      className="flex items-start text-left space-x-4 p-4 cursor-pointer transition-all"
       onClick={onClick}
     >
       <div className="relative flex-shrink-0 w-12 h-12">
@@ -38,7 +36,7 @@ export default function StepCard({
             cy="24"
             r={radius}
             fill="white"
-            stroke="#E5E7EB"
+            stroke="#D1D5DB"
             strokeWidth="1"
           />
 
@@ -48,7 +46,7 @@ export default function StepCard({
             cy="24"
             r={radius}
             fill="none"
-            stroke={isActive ? "#4F46E5" : "#E2E8F0"}
+            stroke={isActive ? "#4F46E5" : "#D1D5DB"}
             strokeWidth="2"
             strokeDasharray={circumference}
             strokeDashoffset={dashOffset}
@@ -65,7 +63,7 @@ export default function StepCard({
             dominantBaseline="central"
             fontSize="14"
             fontWeight="bold"
-            fill={isActive ? "#4F46E5" : "#94A3B8"}
+            fill={isActive ? "#4F46E5" : "#D1D5DB"}
           >
             {number}
           </text>
@@ -82,6 +80,6 @@ export default function StepCard({
         </h3>
         <p className="text-gray-600 text-sm">{description}</p>
       </div>
-    </div>
+    </button>
   );
 }
