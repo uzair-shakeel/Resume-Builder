@@ -5,6 +5,7 @@ import StepSlider from "@/components/home/HowDoesItWork/StepSlider";
 import FeaturesSlider from "@/components/home/Features/FeaturesSlider";
 import ReviewsSection from "@/components/home/ReviewsSection";
 import FAQ from "@/components/home/FAQ";
+import MakeCVOnline from "@/components/home/MakeCVOnline";
 import Footer from "@/components/home/Footer";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
       <FeaturesSlider />
       <ReviewsSection />
       <FAQ />
+      <MakeCVOnline />
       <Footer />
     </main>
   );

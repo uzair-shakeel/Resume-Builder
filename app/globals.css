@@ -91,6 +91,32 @@ body {
   }
 }
 
+@keyframes marquee-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes marquee-down {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-marquee-up {
+  animation: marquee-up 40s linear infinite;
+}
+
+.animate-marquee-down {
+  animation: marquee-down 40s linear infinite;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -99,4 +125,3 @@ body {
     @apply bg-background text-foreground;
   }
 }
-
