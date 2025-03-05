@@ -4,36 +4,73 @@ import { useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const resumeTemplates = [
   {
     id: 1,
     name: "Template Blue",
     image: "/assets/resume1.png",
+    type: "modern",
   },
   {
     id: 2,
     name: "Template Navy",
     image: "/assets/resume2.jpg",
+    type: "classic",
   },
   {
     id: 3,
     name: "Template Teal",
     image: "/assets/resume3.png",
+    type: "pro",
   },
   {
     id: 4,
-    name: "Template Modern",
-    image: "/assets/resume4.png",
+    name: "Sherlock Holmes",
+    image: "/assets/sherlock-resume.jpg",
+    type: "sherlock",
   },
   {
     id: 5,
+    name: "HR Professional",
+    image: "/assets/hr-resume.jpg",
+    type: "hr",
+  },
+  {
+    id: 6,
+    name: "Minimal Pink",
+    image: "/assets/minimal-resume.jpg",
+    type: "minimal",
+  },
+  {
+    id: 7,
+    name: "Medical Teal",
+    image: "/assets/teal-resume.jpg",
+    type: "teal",
+  },
+  {
+    id: 8,
+    name: "Simple Classic",
+    image: "/assets/classic-resume.jpg",
+    type: "simple-classic",
+  },
+  {
+    id: 9,
+    name: "Template Modern",
+    image: "/assets/resume4.png",
+    type: "modern",
+  },
+  {
+    id: 10,
     name: "Template Creative",
     image: "/assets/resume5.svg",
+    type: "classic",
   },
 ];
 
 export default function ResumeSlider() {
+  const router = useRouter();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
     align: "start",
@@ -48,6 +85,10 @@ export default function ResumeSlider() {
   const scrollNext = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
+
+  const handleTemplateSelect = (template: (typeof resumeTemplates)[0]) => {
+    router.push(`/builder?template=${template.type}`);
+  };
 
   return (
     <section className="w-full py-12 md:py-16 bg-gray-50">
@@ -89,8 +130,11 @@ export default function ResumeSlider() {
                         priority
                       />
                       <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <button className="w-full px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-                          Utiliser ce modèle
+                        <button
+                          onClick={() => handleTemplateSelect(template)}
+                          className="w-full px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                        >
+                          Use this template
                         </button>
                       </div>
                     </div>
