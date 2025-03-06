@@ -1,5 +1,5 @@
-import Footer from "@/components/home/Footer";
-import Header from "@/components/home/Header";
+import Footer from "@/components/shared/Footer";
+import Header from "@/components/shared/Header";
 import Image from "next/image";
 
 const templates = [

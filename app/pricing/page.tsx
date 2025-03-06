@@ -3,8 +3,8 @@
 import { Check, ChevronDown } from "lucide-react";
 import * as Select from "@radix-ui/react-select";
 import { cn } from "@/lib/utils";
-import Header from "@/components/home/Header";
-import Footer from "@/components/home/Footer";
+import Header from "@/components/shared/Header";
+import Footer from "@/components/shared/Footer";
 
 const features = [
   "Créez des CV en illimité",

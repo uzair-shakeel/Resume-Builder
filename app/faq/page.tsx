@@ -1,6 +1,6 @@
-import Header from "@/components/home/Header";
-import FAQ from "@/components/FAQ";
-import Footer from "@/components/home/Footer";
+import Header from "@/components/shared/Header";
+import FAQ from "@/components/shared/FAQ";
+import Footer from "@/components/shared/Footer";
 import Link from "next/link";
 
 export default function Home() {
