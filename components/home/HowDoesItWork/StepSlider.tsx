@@ -30,7 +30,7 @@ const steps = [
 
 const STEP_ORDER = [0, 1, 2]; // Explicit step order
 const PROGRESS_INCREMENT = 1; // Speed of progress
-const INTERVAL_DELAY = 40; // Milliseconds between progress updates
+const INTERVAL_DELAY = 100; // Milliseconds between progress updates
 
 export default function StepSlider() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -61,12 +61,12 @@ export default function StepSlider() {
   };
 
   return (
-    <section className="max-w-[1150px] mx-auto px-4 md:px-5 py-20">
-      <h1 className="text-4xl font-bold text-center mb-12">
+    <section className="max-w-[1150px] mx-auto px-[20px] py-20 w-full flex flex-col items-center">
+      <h1 className="text-gray-900 font-medium text-3xl md:text-5xl mb-12">
         Comment ça marche ?
       </h1>
       <div className="flex flex-col space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6">
           {steps.map((step, index) => (
             <StepCard
               key={step.number}
@@ -81,7 +81,7 @@ export default function StepSlider() {
         </div>
 
         {/* Image Preview area */}
-        <div className="lg:block w-full hidden bg-white rounded-lg shadow-md p-6">
+        <div className="relative hidden w-full lg:flex items-center justify-center shadow-md rounded-md">
           <div className="flex justify-center lg:min-h-[555px]">
             {steps.map((step, index) => (
               <div

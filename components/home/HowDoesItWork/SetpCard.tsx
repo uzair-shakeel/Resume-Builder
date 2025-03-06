@@ -17,7 +17,7 @@ export default function StepCard({
   progress,
   onClick,
 }: StepCardProps) {
-  const radius = 20;
+  const radius = 23;
   const circumference = 2 * Math.PI * radius;
 
   // The dashOffset should start at circumference (empty circle) and go to 0 (full circle)
@@ -25,11 +25,16 @@ export default function StepCard({
 
   return (
     <button
-      className="flex items-start text-left space-x-4 p-4 cursor-pointer transition-all"
+      className="group p-4 flex flex-1 flex-col lg:flex-row items-center lg:items-start justify-start text-start rounded focus-visible:ring-4 ring-brand-200 gap-5"
       onClick={onClick}
     >
-      <div className="relative flex-shrink-0 w-12 h-12">
-        <svg width="48" height="48" viewBox="0 0 48 48">
+      <div className="relative border-transparent flex items-center justify-center rounded-full w-12 h-12 min-w-[48px] flex-grow-0">
+        <svg
+          width="48"
+          height="48"
+          viewBox="0 0 48 48"
+          className="absolute start-0 top-0"
+        >
           {/* Background circle */}
           <circle
             cx="24"
@@ -37,7 +42,7 @@ export default function StepCard({
             r={radius}
             fill="white"
             stroke="#D1D5DB"
-            strokeWidth="1"
+            strokeWidth="2"
           />
 
           {/* Blue progress circle */}
@@ -62,23 +67,34 @@ export default function StepCard({
             textAnchor="middle"
             dominantBaseline="central"
             fontSize="14"
-            fontWeight="bold"
-            fill={isActive ? "#4F46E5" : "#D1D5DB"}
+            fontWeight={isActive ? "bold" : ""}
+            fill={isActive ? "#4F46E5" : "#6B7280"}
+            className="can-hover:group-hover:text-gray-700"
           >
             {number}
           </text>
         </svg>
       </div>
 
-      <div className="flex-1">
+      <div className="flex-1 space-y-3">
         <h3
-          className={`font-medium text-lg mb-1 ${
-            isActive ? "text-blue-600" : "text-gray-800"
+          className={`text-xl font-medium text-gray-500 ${
+            isActive
+              ? "lg:text-brand-500"
+              : "can-hover:group-hover:text-gray-700"
           }`}
         >
           {title}
         </h3>
-        <p className="text-gray-600 text-sm">{description}</p>
+        <p
+          className={`text-lg text-gray-500 ${
+            isActive
+              ? "lg:text-gray-700"
+              : "can-hover:group-hover:text-gray-700"
+          }`}
+        >
+          {description}
+        </p>
       </div>
     </button>
   );
