@@ -28,31 +28,31 @@ const resumeTemplates = [
   {
     id: 4,
     name: "Sherlock Holmes",
-    image: "/assets/sherlock-resume.jpg",
+    image: "/assets/resume4.png",
     type: "sherlock",
   },
   {
     id: 5,
     name: "HR Professional",
-    image: "/assets/hr-resume.jpg",
+    image: "/assets/resume5.svg",
     type: "hr",
   },
   {
     id: 6,
     name: "Minimal Pink",
-    image: "/assets/minimal-resume.jpg",
+    image: "/assets/resume1.png",
     type: "minimal",
   },
   {
     id: 7,
     name: "Medical Teal",
-    image: "/assets/teal-resume.jpg",
+    image: "/assets/resume2.jpg",
     type: "teal",
   },
   {
     id: 8,
     name: "Simple Classic",
-    image: "/assets/classic-resume.jpg",
+    image: "/assets/resume3.png",
     type: "simple-classic",
   },
   {
@@ -72,9 +72,8 @@ const resumeTemplates = [
 export default function ResumeSlider() {
   const router = useRouter();
   const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: false,
-    align: "start",
-    slidesToScroll: 1,
+    loop: true,
+    align: "center",
     containScroll: "trimSnaps",
   });
 
@@ -91,57 +90,52 @@ export default function ResumeSlider() {
   };
 
   return (
-    <section className="w-full py-12 md:py-16 bg-gray-50">
-      <div className="w-full px-4 md:px-8 relative">
-        <div className="relative">
-          {/* Navigation Buttons */}
-          <button
-            className="absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 focus:outline-none"
-            onClick={scrollPrev}
-            aria-label="Previous slide"
-          >
-            <ChevronLeft className="w-6 h-6 text-gray-700" />
-          </button>
+    <section className="w-full mt-20 flex flex-col items-center text-center">
+      <div className="w-full relative">
+        {/* Navigation Buttons */}
+        <button
+          className="flex justify-center items-center shadow-md rounded-full opacity-90 p-1.5 md:p-3 bg-gray-800 hover:bg-gray-900 active:bg-gray-700 absolute top-1/2 -translate-y-1/2  left-1 md:left-8 z-10"
+          onClick={scrollPrev}
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="w-6 h-6 text-white" />
+        </button>
 
-          <button
-            className="absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 focus:outline-none"
-            onClick={scrollNext}
-            aria-label="Next slide"
-          >
-            <ChevronRight className="w-6 h-6 text-gray-700" />
-          </button>
+        <button
+          className="flex justify-center items-center shadow-md rounded-full opacity-90 p-1.5 md:p-3 bg-gray-800 hover:bg-gray-900 active:bg-gray-700 absolute top-1/2 -translate-y-1/2 right-1 md:right-8 z-10"
+          onClick={scrollNext}
+          aria-label="Next slide"
+        >
+          <ChevronRight className="w-6 h-6 text-white" />
+        </button>
 
-          {/* Carousel */}
-          <div className="overflow-hidden mx-4" ref={emblaRef}>
-            <div className="flex -ml-4">
-              {resumeTemplates.map((template) => (
-                <div
-                  key={template.id}
-                  className="flex-[0_0_33.33%] min-w-0 pl-4 pr-4 md:pl-6 md:pr-6"
-                >
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden group relative">
-                    <div className="relative aspect-[0.7]">
-                      <Image
-                        src={template.image || "/placeholder.svg"}
-                        alt={`CV template - ${template.name}`}
-                        fill
-                        className="object-contain"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        priority
-                      />
-                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <button
-                          onClick={() => handleTemplateSelect(template)}
-                          className="w-full px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                        >
-                          Use this template
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+        {/* Carousel */}
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="flex items-stretch py-2">
+            {resumeTemplates.map((template) => (
+              <div
+                key={template.id}
+                className="relative flex-none w-[289.8px] h-[408.61px] md:w-[464px] md:h-[654.23px] rounded-md box-border group mr-5"
+              >
+                <Image
+                  src={template.image || "/placeholder.svg"}
+                  alt={`CV template - ${template.name}`}
+                  fill
+                  className="w-full h-full object-cover rounded shadow-outlineDark overflow-hidden group-hover:shadow-outlineDark-lg"
+                  sizes="(min-width: 768px) 768px, 1px"
+                  loading="eager"
+                  priority
+                />
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 py-10 hidden group-hover:block">
+                  <button
+                    onClick={() => handleTemplateSelect(template)}
+                    className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 active:bg-brand-300 text-white border-transparent hover:bg-brand-400 font-medium py-1 ps-3 pe-3 text-base"
+                  >
+                    Utiliser ce modèle
+                  </button>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
