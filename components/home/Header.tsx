@@ -57,7 +57,7 @@ export default function Header() {
             Modèles
           </Link>
           <Link
-            href="/prix"
+            href="/pricing"
             className="text-gray-500 focus-visible:ring-4 ring-[#b0bdff] hover:text-gray-900 rounded lg:text-lg py-1 px-2 lg:py-2 lg:px-4"
           >
             Prix
@@ -144,7 +144,7 @@ export default function Header() {
               Modèles
             </Link>
             <Link
-              href="/prix"
+              href="/pricing"
               className="active:text-[#4a68ff] py-1 focus-visible:ring-4 hover:text-[#173dff] rounded ring-[#b0bdff] inline-flex items-center text-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
