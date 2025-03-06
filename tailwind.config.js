@@ -11,10 +11,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        brand: {
+          50: "#fcfdff",
+          100: "#e3e8ff",
+          200: "#b0bdff",
+          300: "#7d92ff",
+          400: "#4a68ff",
+          500: "#173dff",
+          700: "#001ba6",
+        },
+        background: "#f3f2ef",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -67,5 +76,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
-
+};

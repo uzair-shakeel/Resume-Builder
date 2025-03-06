@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useRef } from "react";
 import Image from "next/image";
 
 // Sample resume templates
@@ -32,7 +31,7 @@ const resumeTemplates = [
 
 export default function ResumeShowcase() {
   return (
-    <div className="relative h-[800px] overflow-hidden flex gap-6 p-6">
+    <div className="relative h-[600px] overflow-hidden flex gap-6 p-6">
       {/* Left column - moves bottom to top */}
       <div className="w-1/2 relative overflow-hidden">
         <div className="animate-marquee-up flex flex-col gap-6">
