@@ -51,7 +51,7 @@ export default function Header() {
 
         <nav className="hidden md:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 space-x-7">
           <Link
-            href="/modeles"
+            href="/modeles-cv"
             className="text-gray-500 focus-visible:ring-4 ring-[#b0bdff] hover:text-gray-900 rounded lg:text-lg py-1 px-2 lg:py-2 lg:px-4"
           >
             Modèles
