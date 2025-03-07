@@ -31,7 +31,7 @@ const resumeTemplates = [
 
 export default function ResumeShowcase() {
   return (
-    <div className="relative h-[600px] overflow-hidden flex gap-6 p-6">
+    <div className="relative h-[520px] overflow-hidden flex gap-6 p-6">
       {/* Left column - moves bottom to top */}
       <div className="w-1/2 relative overflow-hidden">
         <div className="animate-marquee-up flex flex-col gap-6">
@@ -39,14 +39,15 @@ export default function ResumeShowcase() {
           {resumeTemplates.map((template, index) => (
             <div
               key={`left-${index}`}
-              className="rounded-xl overflow-hidden shadow-lg transform transition-transform hover:scale-105"
+              className="overflow-hidden rounded shadow-md"
             >
               <Image
                 src={template.image}
                 alt={`CV ${template.name}`}
-                width={600}
-                height={800}
-                className="w-full h-auto"
+                width={300}
+                height={213}
+                className="w-full h-auto object-contain"
+                loading="lazy"
               />
             </div>
           ))}
@@ -54,14 +55,15 @@ export default function ResumeShowcase() {
           {resumeTemplates.map((template, index) => (
             <div
               key={`left-duplicate-${index}`}
-              className="rounded-xl overflow-hidden shadow-lg transform transition-transform hover:scale-105"
+              className="overflow-hidden rounded shadow-md"
             >
               <Image
                 src={template.image}
                 alt={`CV ${template.name}`}
-                width={600}
-                height={800}
-                className="w-full h-auto"
+                width={300}
+                height={213}
+                className="w-full h-auto object-contain"
+                loading="lazy"
               />
             </div>
           ))}
@@ -75,14 +77,15 @@ export default function ResumeShowcase() {
           {resumeTemplates.map((template, index) => (
             <div
               key={`right-${index}`}
-              className="rounded-xl overflow-hidden shadow-lg transform transition-transform hover:scale-105"
+              className="overflow-hidden rounded shadow-md"
             >
               <Image
                 src={template.image}
                 alt={`CV ${template.name}`}
-                width={600}
-                height={800}
-                className="w-full h-auto"
+                width={300}
+                height={213}
+                className="w-full h-auto object-contain"
+                loading="lazy"
               />
             </div>
           ))}
@@ -90,14 +93,15 @@ export default function ResumeShowcase() {
           {resumeTemplates.map((template, index) => (
             <div
               key={`right-duplicate-${index}`}
-              className="rounded-xl overflow-hidden shadow-lg transform transition-transform hover:scale-105"
+              className="overflow-hidden rounded shadow-md"
             >
               <Image
                 src={template.image}
                 alt={`CV ${template.name}`}
-                width={600}
-                height={800}
-                className="w-full h-auto"
+                width={300}
+                height={213}
+                className="w-full h-auto object-contain"
+                loading="lazy"
               />
             </div>
           ))}
