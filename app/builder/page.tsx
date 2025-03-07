@@ -60,16 +60,27 @@ const fontSizes = [
   { name: "X-Large", value: "1.25" },
 ];
 
+// // Color themes
+// const colorThemes = [
+//   { name: "Blue", value: "#3498db" },
+//   { name: "Red", value: "#e74c3c" },
+//   { name: "Green", value: "#2ecc71" },
+//   { name: "Purple", value: "#9b59b6" },
+//   { name: "Orange", value: "#e67e22" },
+//   { name: "Teal", value: "#2BCBBA" },
+//   { name: "Pink", value: "#fd79a8" },
+//   { name: "Gray", value: "#7f8c8d" },
+// ];
 // Color themes
 const colorThemes = [
-  { name: "Blue", value: "#3498db" },
-  { name: "Red", value: "#e74c3c" },
-  { name: "Green", value: "#2ecc71" },
-  { name: "Purple", value: "#9b59b6" },
-  { name: "Orange", value: "#e67e22" },
-  { name: "Teal", value: "#2BCBBA" },
-  { name: "Pink", value: "#fd79a8" },
-  { name: "Gray", value: "#7f8c8d" },
+  { name: "Blue", value: "#000" },
+  { name: "Red", value: "#000" },
+  { name: "Green", value: "#000" },
+  { name: "Purple", value: "#000" },
+  { name: "Orange", value: "#000" },
+  { name: "Teal", value: "#000" },
+  { name: "Pink", value: "#000" },
+  { name: "Gray", value: "#000" },
 ];
 
 // Template options with images and default colors
