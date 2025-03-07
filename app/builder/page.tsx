@@ -21,6 +21,14 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize,
+  Type,
+  Palette,
+  Layout,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUp,
+  ArrowDown,
+  Ruler,
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -31,6 +39,166 @@ import CVPreviewHR from "@/components/cv-preview-hr";
 import CVPreviewMinimal from "@/components/cv-preview-minimal";
 import CVPreviewTeal from "@/components/cv-preview-teal";
 import CVPreviewClassic from "@/components/cv-preview-classic";
+import Image from "next/image";
+
+// Font families
+const fontFamilies = [
+  { name: "DejaVu Sans", value: "'DejaVu Sans', sans-serif" },
+  { name: "Arial", value: "Arial, sans-serif" },
+  { name: "Times New Roman", value: "'Times New Roman', serif" },
+  { name: "Calibri", value: "Calibri, sans-serif" },
+  { name: "Georgia", value: "Georgia, serif" },
+  { name: "Verdana", value: "Verdana, sans-serif" },
+];
+
+// Font sizes
+const fontSizes = [
+  { name: "Small", value: "0.875" },
+  { name: "Medium", value: "1" },
+  { name: "Large", value: "1.125" },
+  { name: "X-Large", value: "1.25" },
+];
+
+// Color themes
+const colorThemes = [
+  { name: "Blue", value: "#3498db" },
+  { name: "Red", value: "#e74c3c" },
+  { name: "Green", value: "#2ecc71" },
+  { name: "Purple", value: "#9b59b6" },
+  { name: "Orange", value: "#e67e22" },
+  { name: "Teal", value: "#2BCBBA" },
+  { name: "Pink", value: "#fd79a8" },
+  { name: "Gray", value: "#7f8c8d" },
+];
+
+// Template options with images and default colors
+const templateOptions = [
+  {
+    name: "Modern",
+    value: "modern",
+    image: "/assets/resume4.png",
+    defaultColor: "#3498db",
+  },
+  {
+    name: "Classic",
+    value: "classic",
+    image: "/assets/resume2.jpg",
+    defaultColor: "#2c3e50",
+  },
+  {
+    name: "Pro",
+    value: "pro",
+    image: "/assets/resume3.png",
+    defaultColor: "#3498db",
+  },
+  {
+    name: "Sherlock",
+    value: "sherlock",
+    image: "/assets/sherlock-resume.jpg",
+    defaultColor: "#34495e",
+  },
+  {
+    name: "HR",
+    value: "hr",
+    image: "/assets/hr-resume.jpg",
+    defaultColor: "#9b59b6",
+  },
+  {
+    name: "Minimal",
+    value: "minimal",
+    image: "/assets/minimal-resume.jpg",
+    defaultColor: "#fd79a8",
+  },
+  {
+    name: "Teal",
+    value: "teal",
+    image: "/assets/teal-resume.jpg",
+    defaultColor: "#2BCBBA",
+  },
+  {
+    name: "Simple Classic",
+    value: "simple-classic",
+    image: "/assets/classic-resume.jpg",
+    defaultColor: "#3498db",
+  },
+];
+
+// Dummy data for CV preview
+const dummyData: CVData = {
+  personalInfo: {
+    firstName: "Josephine",
+    lastName: "Fournier",
+    title: "Senior Product Designer",
+    email: "josephine.fournier@example.com",
+    phone: "+33 6 12 34 56 78",
+    address: "15 Rue de la Paix",
+    postalCode: "75001",
+    city: "Paris, France",
+    photo: "/placeholder-user.jpg",
+  },
+  profile:
+    "Product designer with over 8 years of experience creating user-centered digital solutions. Specialized in UX/UI design, user research, and design systems. Passionate about creating intuitive and accessible experiences that solve real user problems.",
+  education: [
+    {
+      school: "École Nationale Supérieure des Arts Décoratifs",
+      degree: "Master's Degree in Digital Design",
+      startDate: "2012",
+      endDate: "2014",
+      description:
+        "Specialized in user experience and interface design. Thesis on mobile application accessibility patterns.",
+    },
+    {
+      school: "Université Paris-Sorbonne",
+      degree: "Bachelor's Degree in Graphic Design",
+      startDate: "2009",
+      endDate: "2012",
+      description:
+        "Foundation in visual communication, typography, and design principles.",
+    },
+  ],
+  experience: [
+    {
+      company: "Digitalize Agency",
+      position: "Senior Product Designer",
+      startDate: "2019",
+      endDate: "Present",
+      description:
+        "Lead designer for enterprise SaaS products. Established design system used across multiple products. Conducted user research and usability testing to inform design decisions.",
+    },
+    {
+      company: "CreativeTech",
+      position: "UX/UI Designer",
+      startDate: "2016",
+      endDate: "2019",
+      description:
+        "Designed mobile applications and responsive websites for clients in finance, healthcare, and retail sectors. Collaborated with development teams to ensure design implementation.",
+    },
+    {
+      company: "StartupVision",
+      position: "Junior Designer",
+      startDate: "2014",
+      endDate: "2016",
+      description:
+        "Created visual assets for marketing campaigns. Assisted in redesigning company website and product interfaces.",
+    },
+  ],
+  skills: [
+    { name: "UX Design", level: "5" },
+    { name: "UI Design", level: "5" },
+    { name: "Figma", level: "5" },
+    { name: "Adobe Creative Suite", level: "4" },
+    { name: "Prototyping", level: "4" },
+    { name: "User Research", level: "4" },
+    { name: "Design Systems", level: "5" },
+    { name: "HTML/CSS", level: "3" },
+  ],
+  languages: [
+    { name: "French", level: "Native" },
+    { name: "English", level: "Fluent" },
+    { name: "Spanish", level: "Intermediate" },
+  ],
+  interests: ["Photography", "Hiking", "Modern Art", "Travel"],
+};
 
 export default function Builder() {
   const searchParams = useSearchParams();
@@ -104,6 +272,62 @@ export default function Builder() {
   // Add zoom state
   const [zoomLevel, setZoomLevel] = useState(100);
 
+  // Add styling states
+  const [fontFamily, setFontFamily] = useState(fontFamilies[0].value);
+  const [fontSize, setFontSize] = useState(fontSizes[1].value);
+  const [accentColor, setAccentColor] = useState(
+    templateOptions.find((t) => t.value === initialTemplate)?.defaultColor ||
+      colorThemes[0].value
+  );
+
+  // Add state for template carousel
+  const [showTemplateCarousel, setShowTemplateCarousel] = useState(false);
+  const [activeTemplateIndex, setActiveTemplateIndex] = useState(
+    templateOptions.findIndex((t) => t.value === template) || 0
+  );
+
+  // State to track if we should show dummy data
+  const [showDummyData, setShowDummyData] = useState(true);
+
+  // Add state for page margins
+  const [pageMargins, setPageMargins] = useState({
+    top: 20,
+    right: 20,
+    bottom: 20,
+    left: 20,
+  });
+
+  // Add state for page break controls
+  const [showPageBreakControls, setShowPageBreakControls] = useState(false);
+  const [pageBreakSettings, setPageBreakSettings] = useState({
+    keepHeadingsWithContent: true,
+    avoidOrphanedHeadings: true,
+    minLinesBeforeBreak: 3,
+  });
+
+  // Add state for download progress
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  // Function to toggle between dummy data and user data
+  const toggleDummyData = () => {
+    setShowDummyData((prev) => !prev);
+  };
+
+  // Check if user has entered any data
+  const hasUserData =
+    cvData.personalInfo.firstName !== "" ||
+    cvData.personalInfo.lastName !== "" ||
+    cvData.personalInfo.title !== "" ||
+    cvData.profile !== "" ||
+    cvData.experience.length > 0 ||
+    cvData.education.length > 0 ||
+    cvData.skills.length > 0 ||
+    cvData.languages.length > 0 ||
+    cvData.interests.length > 0;
+
+  // Determine which data to display
+  const displayData = showDummyData && !hasUserData ? dummyData : cvData;
+
   useEffect(() => {
     const templateParam = searchParams.get("template") as
       | "modern"
@@ -116,8 +340,38 @@ export default function Builder() {
       | "simple-classic";
     if (templateParam) {
       setTemplate(templateParam);
+      const index = templateOptions.findIndex((t) => t.value === templateParam);
+      if (index !== -1) {
+        setActiveTemplateIndex(index);
+        // Set the default color for the selected template if no custom color is set
+        if (!localStorage.getItem(`cv-color-${templateParam}`)) {
+          setAccentColor(templateOptions[index].defaultColor);
+        }
+      }
     }
   }, [searchParams]);
+
+  // Save color preference for each template
+  useEffect(() => {
+    // Load saved color for this template if it exists
+    const savedColor = localStorage.getItem(`cv-color-${template}`);
+    if (savedColor) {
+      setAccentColor(savedColor);
+    } else {
+      // Use default color for this template
+      const defaultColor = templateOptions.find(
+        (t) => t.value === template
+      )?.defaultColor;
+      if (defaultColor) {
+        setAccentColor(defaultColor);
+      }
+    }
+  }, [template]);
+
+  // Save color when it changes
+  useEffect(() => {
+    localStorage.setItem(`cv-color-${template}`, accentColor);
+  }, [accentColor, template]);
 
   const updateCVData = (section: string, data: any) => {
     setCvData((prev) => ({
@@ -150,61 +404,82 @@ export default function Builder() {
     if (!previewRef.current) return;
 
     try {
-      const scale = 2; // Increase scale for better quality
-      const canvas = await html2canvas(previewRef.current, {
+      setIsDownloading(true);
+      const element = previewRef.current;
+
+      // Set a higher scale for better quality
+      const scale = 2;
+
+      // A4 dimensions in pixels at 96 DPI
+      const a4Width = 210 * 3.78; // 210mm in pixels
+      const a4Height = 297 * 3.78; // 297mm in pixels
+
+      // Get the computed margins in pixels
+      const marginTop =
+        parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--page-margin-top"
+          )
+        ) * 3.78;
+      const marginRight =
+        parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--page-margin-right"
+          )
+        ) * 3.78;
+      const marginBottom =
+        parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--page-margin-bottom"
+          )
+        ) * 3.78;
+      const marginLeft =
+        parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--page-margin-left"
+          )
+        ) * 3.78;
+
+      // Calculate content area dimensions
+      const contentWidth = a4Width - marginLeft - marginRight;
+      const contentHeight = a4Height - marginTop - marginBottom;
+
+      const canvas = await html2canvas(element, {
         scale: scale,
-        useCORS: true,
-        logging: false,
+        width: a4Width / scale,
+        height: a4Height / scale,
+        windowWidth: a4Width,
+        windowHeight: a4Height,
       });
 
       if (format === "pdf") {
-        const pdf = new jsPDF("p", "mm", "a4");
-        const imgWidth = 210; // A4 width in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        const pageHeight = 297; // A4 height in mm
-        let heightLeft = imgHeight;
-        let position = 0;
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: "a4",
+        });
 
-        pdf.addImage(
-          canvas.toDataURL("image/jpeg", 1.0),
-          "JPEG",
-          0,
-          position,
-          imgWidth,
-          imgHeight,
-          "",
-          "FAST"
-        );
-        heightLeft -= pageHeight;
-
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
-          pdf.addImage(
-            canvas.toDataURL("image/jpeg", 1.0),
-            "JPEG",
-            0,
-            position,
-            imgWidth,
-            imgHeight,
-            "",
-            "FAST"
-          );
-          heightLeft -= pageHeight;
-        }
+        // Add the image to the PDF, positioning it to account for margins
+        pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
 
         pdf.save("cv.pdf");
-      } else {
+      } else if (format === "jpeg") {
         const link = document.createElement("a");
-        link.download = `cv.${format}`;
-        link.href = canvas.toDataURL(`image/${format}`, 1.0);
+        link.download = "cv.jpeg";
+        link.href = canvas.toDataURL("image/jpeg");
+        link.click();
+      } else if (format === "png") {
+        const link = document.createElement("a");
+        link.download = "cv.png";
+        link.href = canvas.toDataURL("image/png");
         link.click();
       }
     } catch (error) {
-      console.error("Error generating download:", error);
+      console.error("Error generating CV:", error);
+    } finally {
+      setIsDownloading(false);
     }
-
-    setShowDownloadOptions(false);
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
@@ -227,6 +502,51 @@ export default function Builder() {
     setSectionOrder(newOrder);
   };
 
+  // Template carousel navigation
+  const prevTemplate = () => {
+    setActiveTemplateIndex((prev) => {
+      const newIndex = prev === 0 ? templateOptions.length - 1 : prev - 1;
+      setTemplate(templateOptions[newIndex].value as any);
+      return newIndex;
+    });
+  };
+
+  const nextTemplate = () => {
+    setActiveTemplateIndex((prev) => {
+      const newIndex = prev === templateOptions.length - 1 ? 0 : prev + 1;
+      setTemplate(templateOptions[newIndex].value as any);
+      return newIndex;
+    });
+  };
+
+  const selectTemplate = (index: number) => {
+    setActiveTemplateIndex(index);
+    setTemplate(templateOptions[index].value as any);
+    setShowTemplateCarousel(false);
+  };
+
+  // Function to handle margin changes
+  const handleMarginChange = (
+    margin: keyof typeof pageMargins,
+    value: number
+  ) => {
+    setPageMargins((prev) => ({
+      ...prev,
+      [margin]: value,
+    }));
+  };
+
+  // Function to handle page break setting changes
+  const handlePageBreakSettingChange = (
+    setting: keyof typeof pageBreakSettings,
+    value: boolean | number
+  ) => {
+    setPageBreakSettings((prev) => ({
+      ...prev,
+      [setting]: value,
+    }));
+  };
+
   return (
     <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
       <div className="flex flex-1 overflow-hidden">
@@ -236,38 +556,52 @@ export default function Builder() {
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-bold">CV Builder</h1>
             </div>
-            <div className="relative">
-              <button
-                onClick={() => setShowDownloadOptions(!showDownloadOptions)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download
-              </button>
-              {showDownloadOptions && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
-                  <div className="py-1">
-                    <button
-                      onClick={() => handleDownload("pdf")}
-                      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                    >
-                      Download as PDF
-                    </button>
-                    <button
-                      onClick={() => handleDownload("jpeg")}
-                      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                    >
-                      Download as JPEG
-                    </button>
-                    <button
-                      onClick={() => handleDownload("png")}
-                      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                    >
-                      Download as PNG
-                    </button>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center mr-2">
+                <input
+                  type="checkbox"
+                  id="showDummy"
+                  checked={showDummyData}
+                  onChange={toggleDummyData}
+                  className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                />
+                <label htmlFor="showDummy" className="text-sm text-gray-600">
+                  Show example data
+                </label>
+              </div>
+              <div className="relative">
+                <button
+                  onClick={() => setShowDownloadOptions(!showDownloadOptions)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download
+                </button>
+                {showDownloadOptions && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
+                    <div className="py-1">
+                      <button
+                        onClick={() => handleDownload("pdf")}
+                        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+                      >
+                        Download as PDF
+                      </button>
+                      <button
+                        onClick={() => handleDownload("jpeg")}
+                        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+                      >
+                        Download as JPEG
+                      </button>
+                      <button
+                        onClick={() => handleDownload("png")}
+                        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+                      >
+                        Download as PNG
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto">
@@ -315,60 +649,514 @@ export default function Builder() {
 
         {/* Right Panel - Preview */}
         <div className="w-1/2 bg-gray-50 flex flex-col">
-          {/* Zoom controls */}
-          <div className="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 p-2 flex justify-center items-center gap-2">
-            <button
-              onClick={zoomOut}
-              className="p-1 rounded-md hover:bg-gray-200"
-              title="Zoom Out"
-            >
-              <ZoomOut className="w-5 h-5 text-gray-700" />
-            </button>
-            <span className="text-sm font-medium">{zoomLevel}%</span>
-            <button
-              onClick={zoomIn}
-              className="p-1 rounded-md hover:bg-gray-200"
-              title="Zoom In"
-            >
-              <ZoomIn className="w-5 h-5 text-gray-700" />
-            </button>
-            <button
-              onClick={resetZoom}
-              className="p-1 rounded-md hover:bg-gray-200 ml-2"
-              title="Fit to Page"
-            >
-              <Maximize className="w-5 h-5 text-gray-700" />
-            </button>
+          {/* Zoom and page controls */}
+          <div className="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 p-2 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={zoomOut}
+                className="p-1 rounded-md hover:bg-gray-200"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-5 h-5 text-gray-700" />
+              </button>
+              <span className="text-sm font-medium">{zoomLevel}%</span>
+              <button
+                onClick={zoomIn}
+                className="p-1 rounded-md hover:bg-gray-200"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-5 h-5 text-gray-700" />
+              </button>
+              <button
+                onClick={resetZoom}
+                className="p-1 rounded-md hover:bg-gray-200 ml-2"
+                title="Fit to Page"
+              >
+                <Maximize className="w-5 h-5 text-gray-700" />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowPageBreakControls(!showPageBreakControls)}
+                className={`flex items-center gap-1 p-1 rounded-md ${
+                  showPageBreakControls
+                    ? "bg-blue-100 text-blue-700"
+                    : "hover:bg-gray-200 text-gray-700"
+                }`}
+                title="Page Layout Settings"
+              >
+                <Ruler className="w-5 h-5" />
+                <span className="text-xs font-medium">Page Layout</span>
+              </button>
+            </div>
           </div>
+
+          {/* Page break controls panel */}
+          {showPageBreakControls && (
+            <div className="bg-white border-b border-gray-200 p-3 shadow-sm">
+              <h3 className="font-medium text-gray-800 mb-2">
+                Page Layout Settings
+              </h3>
+
+              <div className="space-y-4">
+                {/* Margin controls */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">
+                    Page Margins (mm)
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs text-gray-600">Top</label>
+                      <div className="flex items-center">
+                        <button
+                          onClick={() =>
+                            handleMarginChange(
+                              "top",
+                              Math.max(pageMargins.top - 5, 0)
+                            )
+                          }
+                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                        >
+                          <ArrowDown className="w-3 h-3" />
+                        </button>
+                        <input
+                          type="number"
+                          value={pageMargins.top}
+                          onChange={(e) =>
+                            handleMarginChange(
+                              "top",
+                              Math.max(0, parseInt(e.target.value) || 0)
+                            )
+                          }
+                          className="w-12 text-center border-y border-gray-300 py-1 text-xs"
+                        />
+                        <button
+                          onClick={() =>
+                            handleMarginChange("top", pageMargins.top + 5)
+                          }
+                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                        >
+                          <ArrowUp className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs text-gray-600">Right</label>
+                      <div className="flex items-center">
+                        <button
+                          onClick={() =>
+                            handleMarginChange(
+                              "right",
+                              Math.max(pageMargins.right - 5, 0)
+                            )
+                          }
+                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                        >
+                          <ArrowDown className="w-3 h-3" />
+                        </button>
+                        <input
+                          type="number"
+                          value={pageMargins.right}
+                          onChange={(e) =>
+                            handleMarginChange(
+                              "right",
+                              Math.max(0, parseInt(e.target.value) || 0)
+                            )
+                          }
+                          className="w-12 text-center border-y border-gray-300 py-1 text-xs"
+                        />
+                        <button
+                          onClick={() =>
+                            handleMarginChange("right", pageMargins.right + 5)
+                          }
+                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                        >
+                          <ArrowUp className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs text-gray-600">Bottom</label>
+                      <div className="flex items-center">
+                        <button
+                          onClick={() =>
+                            handleMarginChange(
+                              "bottom",
+                              Math.max(pageMargins.bottom - 5, 0)
+                            )
+                          }
+                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                        >
+                          <ArrowDown className="w-3 h-3" />
+                        </button>
+                        <input
+                          type="number"
+                          value={pageMargins.bottom}
+                          onChange={(e) =>
+                            handleMarginChange(
+                              "bottom",
+                              Math.max(0, parseInt(e.target.value) || 0)
+                            )
+                          }
+                          className="w-12 text-center border-y border-gray-300 py-1 text-xs"
+                        />
+                        <button
+                          onClick={() =>
+                            handleMarginChange("bottom", pageMargins.bottom + 5)
+                          }
+                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                        >
+                          <ArrowUp className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs text-gray-600">Left</label>
+                      <div className="flex items-center">
+                        <button
+                          onClick={() =>
+                            handleMarginChange(
+                              "left",
+                              Math.max(pageMargins.left - 5, 0)
+                            )
+                          }
+                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                        >
+                          <ArrowDown className="w-3 h-3" />
+                        </button>
+                        <input
+                          type="number"
+                          value={pageMargins.left}
+                          onChange={(e) =>
+                            handleMarginChange(
+                              "left",
+                              Math.max(0, parseInt(e.target.value) || 0)
+                            )
+                          }
+                          className="w-12 text-center border-y border-gray-300 py-1 text-xs"
+                        />
+                        <button
+                          onClick={() =>
+                            handleMarginChange("left", pageMargins.left + 5)
+                          }
+                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                        >
+                          <ArrowUp className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Page break controls */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">
+                    Page Break Rules
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="keepHeadings"
+                        checked={pageBreakSettings.keepHeadingsWithContent}
+                        onChange={(e) =>
+                          handlePageBreakSettingChange(
+                            "keepHeadingsWithContent",
+                            e.target.checked
+                          )
+                        }
+                        className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                      />
+                      <label
+                        htmlFor="keepHeadings"
+                        className="text-xs text-gray-600"
+                      >
+                        Keep headings with content
+                      </label>
+                    </div>
+
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="avoidOrphans"
+                        checked={pageBreakSettings.avoidOrphanedHeadings}
+                        onChange={(e) =>
+                          handlePageBreakSettingChange(
+                            "avoidOrphanedHeadings",
+                            e.target.checked
+                          )
+                        }
+                        className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                      />
+                      <label
+                        htmlFor="avoidOrphans"
+                        className="text-xs text-gray-600"
+                      >
+                        Avoid orphaned headings at page bottom
+                      </label>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs text-gray-600">
+                        Min lines before break
+                      </label>
+                      <div className="flex items-center">
+                        <button
+                          onClick={() =>
+                            handlePageBreakSettingChange(
+                              "minLinesBeforeBreak",
+                              Math.max(
+                                1,
+                                (pageBreakSettings.minLinesBeforeBreak as number) -
+                                  1
+                              )
+                            )
+                          }
+                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                        >
+                          <ArrowDown className="w-3 h-3" />
+                        </button>
+                        <input
+                          type="number"
+                          value={pageBreakSettings.minLinesBeforeBreak}
+                          onChange={(e) =>
+                            handlePageBreakSettingChange(
+                              "minLinesBeforeBreak",
+                              Math.max(1, parseInt(e.target.value) || 1)
+                            )
+                          }
+                          className="w-12 text-center border-y border-gray-300 py-1 text-xs"
+                        />
+                        <button
+                          onClick={() =>
+                            handlePageBreakSettingChange(
+                              "minLinesBeforeBreak",
+                              (pageBreakSettings.minLinesBeforeBreak as number) +
+                                1
+                            )
+                          }
+                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                        >
+                          <ArrowUp className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Scrollable preview container */}
           <div className="flex-1 overflow-y-auto flex justify-center">
             <div
               ref={previewRef}
               className="my-8 transform-gpu transition-transform duration-200"
-              style={{
-                transform: `scale(${zoomLevel / 100})`,
-                transformOrigin: "top center",
-              }}
+              style={
+                {
+                  transform: `scale(${zoomLevel / 100})`,
+                  transformOrigin: "top center",
+                  fontFamily: fontFamily,
+                  "--accent-color": accentColor,
+                  "--page-margin-top": `${pageMargins.top}mm`,
+                  "--page-margin-right": `${pageMargins.right}mm`,
+                  "--page-margin-bottom": `${pageMargins.bottom}mm`,
+                  "--page-margin-left": `${pageMargins.left}mm`,
+                } as React.CSSProperties
+              }
             >
               {template === "modern" ? (
-                <CVPreview data={cvData} sectionOrder={sectionOrder} />
+                <CVPreview
+                  data={displayData}
+                  sectionOrder={sectionOrder}
+                  pageBreakSettings={pageBreakSettings}
+                />
               ) : template === "classic" ? (
-                <CVPreviewAlt data={cvData} sectionOrder={sectionOrder} />
+                <CVPreviewAlt
+                  data={displayData}
+                  sectionOrder={sectionOrder}
+                  pageBreakSettings={pageBreakSettings}
+                />
               ) : template === "sherlock" ? (
-                <CVPreviewSherlock data={cvData} sectionOrder={sectionOrder} />
+                <CVPreviewSherlock
+                  data={displayData}
+                  sectionOrder={sectionOrder}
+                  pageBreakSettings={pageBreakSettings}
+                />
               ) : template === "hr" ? (
-                <CVPreviewHR data={cvData} sectionOrder={sectionOrder} />
+                <CVPreviewHR
+                  data={displayData}
+                  sectionOrder={sectionOrder}
+                  pageBreakSettings={pageBreakSettings}
+                />
               ) : template === "minimal" ? (
-                <CVPreviewMinimal data={cvData} sectionOrder={sectionOrder} />
+                <CVPreviewMinimal
+                  data={displayData}
+                  sectionOrder={sectionOrder}
+                  pageBreakSettings={pageBreakSettings}
+                />
               ) : template === "teal" ? (
-                <CVPreviewTeal data={cvData} sectionOrder={sectionOrder} />
+                <CVPreviewTeal
+                  data={displayData}
+                  sectionOrder={sectionOrder}
+                  pageBreakSettings={pageBreakSettings}
+                />
               ) : template === "simple-classic" ? (
-                <CVPreviewClassic data={cvData} sectionOrder={sectionOrder} />
+                <CVPreviewClassic
+                  data={displayData}
+                  sectionOrder={sectionOrder}
+                  pageBreakSettings={pageBreakSettings}
+                />
               ) : (
-                <CVPreviewPro data={cvData} sectionOrder={sectionOrder} />
+                <CVPreviewPro
+                  data={displayData}
+                  sectionOrder={sectionOrder}
+                  pageBreakSettings={pageBreakSettings}
+                />
               )}
             </div>
+          </div>
+
+          {/* Edit bar */}
+          <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 p-3 shadow-md">
+            {showTemplateCarousel ? (
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="font-medium text-gray-800">Select Template</h3>
+                  <button
+                    onClick={() => setShowTemplateCarousel(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    Close
+                  </button>
+                </div>
+                <div className="relative">
+                  <button
+                    onClick={prevTemplate}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
+                    aria-label="Previous template"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-gray-700" />
+                  </button>
+
+                  <div className="flex overflow-x-auto py-2 px-8 gap-4 snap-x">
+                    {templateOptions.map((option, index) => (
+                      <div
+                        key={option.value}
+                        className={`flex-none w-32 cursor-pointer transition-all duration-200 ${
+                          index === activeTemplateIndex
+                            ? "ring-2 ring-blue-500 scale-105"
+                            : "hover:scale-105"
+                        }`}
+                        onClick={() => selectTemplate(index)}
+                      >
+                        <div className="bg-white rounded-md shadow-sm overflow-hidden">
+                          <div className="relative aspect-[0.7]">
+                            <Image
+                              src={option.image}
+                              alt={option.name}
+                              fill
+                              className="object-cover"
+                              sizes="128px"
+                            />
+                            <div
+                              className="absolute bottom-0 left-0 right-0 h-1"
+                              style={{ backgroundColor: option.defaultColor }}
+                            ></div>
+                          </div>
+                          <div className="p-2 text-center text-xs font-medium truncate">
+                            {option.name}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={nextTemplate}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
+                    aria-label="Next template"
+                  >
+                    <ChevronRight className="w-5 h-5 text-gray-700" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-4 justify-center items-center">
+                {/* Template selector */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowTemplateCarousel(true)}
+                    className="flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <Layout className="w-5 h-5 text-gray-700" />
+                    <span>Templates</span>
+                  </button>
+                </div>
+
+                {/* Font family selector */}
+                <div className="flex items-center gap-2">
+                  <Type className="w-5 h-5 text-gray-700" />
+                  <select
+                    value={fontFamily}
+                    onChange={(e) => setFontFamily(e.target.value)}
+                    className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    style={{ fontFamily: fontFamily }}
+                  >
+                    {fontFamilies.map((font) => (
+                      <option
+                        key={font.name}
+                        value={font.value}
+                        style={{ fontFamily: font.value }}
+                      >
+                        {font.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Color selector */}
+                <div className="flex items-center gap-2">
+                  <Palette className="w-5 h-5 text-gray-700" />
+                  <div className="relative">
+                    <select
+                      value={accentColor}
+                      onChange={(e) => setAccentColor(e.target.value)}
+                      className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-8"
+                    >
+                      {colorThemes.map((color) => (
+                        <option key={color.name} value={color.value}>
+                          {color.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full"
+                      style={{ backgroundColor: accentColor }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      // Reset to default color for this template
+                      const defaultColor = templateOptions.find(
+                        (t) => t.value === template
+                      )?.defaultColor;
+                      if (defaultColor) {
+                        setAccentColor(defaultColor);
+                      }
+                    }}
+                    className="ml-1 p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
+                    title="Reset to default color"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

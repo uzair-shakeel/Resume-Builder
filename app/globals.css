@@ -6,11 +6,277 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --accent-color: #3498db;
+  --page-margin-top: 20mm;
+  --page-margin-right: 20mm;
+  --page-margin-bottom: 20mm;
+  --page-margin-left: 20mm;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #f5f5f5;
+}
+
+/* CV Template Styling */
+.cv-accent-color {
+  color: var(--accent-color) !important;
+}
+
+.cv-accent-bg {
+  background-color: var(--accent-color) !important;
+}
+
+.cv-accent-border {
+  border-color: var(--accent-color) !important;
+}
+
+.cv-accent-fill {
+  fill: var(--accent-color) !important;
+}
+
+.cv-accent-stroke {
+  stroke: var(--accent-color) !important;
+}
+
+/* Page layout and margins */
+.cv-page {
+  width: 210mm;
+  min-height: 297mm;
+  box-sizing: border-box;
+  position: relative;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  page-break-after: always;
+  overflow: hidden;
+}
+
+/* Apply margins to the content inside the page */
+.cv-page-content {
+  padding-top: var(--page-margin-top);
+  padding-right: var(--page-margin-right);
+  padding-bottom: var(--page-margin-bottom);
+  padding-left: var(--page-margin-left);
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Special handling for sidebar templates */
+.cv-page .cv-sidebar {
+  padding-top: var(--page-margin-top);
+  padding-bottom: var(--page-margin-bottom);
+  padding-left: var(--page-margin-left);
+  min-height: calc(297mm - var(--page-margin-top) - var(--page-margin-bottom));
+}
+
+.cv-page .cv-main-content {
+  padding-top: var(--page-margin-top);
+  padding-right: var(--page-margin-right);
+  padding-bottom: var(--page-margin-bottom);
+  min-height: calc(297mm - var(--page-margin-top) - var(--page-margin-bottom));
+}
+
+/* Page break controls */
+.keep-with-next {
+  page-break-after: avoid;
+}
+
+.keep-together {
+  page-break-inside: avoid;
+}
+
+.section-heading {
+  page-break-after: avoid;
+}
+
+.section-content {
+  page-break-before: avoid;
+}
+
+/* Utility classes for CV templates */
+.section-title {
+  color: var(--accent-color) !important;
+  border-bottom: 2px solid var(--accent-color) !important;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.cv-bullet {
+  color: var(--accent-color) !important;
+  margin-right: 0.5rem;
+}
+
+.cv-date {
+  color: var(--accent-color) !important;
+  font-weight: 500;
+}
+
+.cv-skill-bar {
+  background-color: var(--accent-color) !important;
+}
+
+.cv-sidebar {
+  background-color: var(--accent-color) !important;
+}
+
+/* Override template-specific colors */
+/* Text colors */
+[class*="text-teal-"],
+[class*="text-blue-"],
+[class*="text-pink-"],
+[class*="text-purple-"],
+[class*="text-red-"],
+[class*="text-green-"],
+[class*="text-indigo-"],
+[class*="text-gray-700"],
+[class*="text-gray-800"],
+[class*="text-gray-900"] {
+  color: var(--accent-color) !important;
+}
+
+/* Background colors */
+[class*="bg-teal-"],
+[class*="bg-blue-"],
+[class*="bg-pink-"],
+[class*="bg-purple-"],
+[class*="bg-red-"],
+[class*="bg-green-"],
+[class*="bg-indigo-"] {
+  background-color: var(--accent-color) !important;
+}
+
+/* Border colors */
+[class*="border-teal-"],
+[class*="border-blue-"],
+[class*="border-pink-"],
+[class*="border-purple-"],
+[class*="border-red-"],
+[class*="border-green-"],
+[class*="border-indigo-"] {
+  border-color: var(--accent-color) !important;
+}
+
+/* Template-specific gradients */
+.bg-gradient-to-b[class*="from-teal-"],
+.bg-gradient-to-r[class*="from-teal-"],
+.bg-gradient-to-l[class*="from-teal-"],
+.bg-gradient-to-t[class*="from-teal-"],
+.bg-gradient-to-b[class*="from-blue-"],
+.bg-gradient-to-r[class*="from-blue-"],
+.bg-gradient-to-l[class*="from-blue-"],
+.bg-gradient-to-t[class*="from-blue-"],
+.bg-gradient-to-b[class*="from-pink-"],
+.bg-gradient-to-r[class*="from-pink-"],
+.bg-gradient-to-l[class*="from-pink-"],
+.bg-gradient-to-t[class*="from-pink-"],
+.bg-gradient-to-b[class*="from-purple-"],
+.bg-gradient-to-r[class*="from-purple-"],
+.bg-gradient-to-l[class*="from-purple-"],
+.bg-gradient-to-t[class*="from-purple-"] {
+  --tw-gradient-from: var(--accent-color) !important;
+  --tw-gradient-stops: var(--tw-gradient-from),
+    var(--tw-gradient-to, rgba(0, 0, 0, 0)) !important;
+}
+
+.bg-gradient-to-b[class*="to-teal-"],
+.bg-gradient-to-r[class*="to-teal-"],
+.bg-gradient-to-l[class*="to-teal-"],
+.bg-gradient-to-t[class*="to-teal-"],
+.bg-gradient-to-b[class*="to-blue-"],
+.bg-gradient-to-r[class*="to-blue-"],
+.bg-gradient-to-l[class*="to-blue-"],
+.bg-gradient-to-t[class*="to-blue-"],
+.bg-gradient-to-b[class*="to-pink-"],
+.bg-gradient-to-r[class*="to-pink-"],
+.bg-gradient-to-l[class*="to-pink-"],
+.bg-gradient-to-t[class*="to-pink-"],
+.bg-gradient-to-b[class*="to-purple-"],
+.bg-gradient-to-r[class*="to-purple-"],
+.bg-gradient-to-l[class*="to-purple-"],
+.bg-gradient-to-t[class*="to-purple-"] {
+  --tw-gradient-to: var(--accent-color) !important;
+}
+
+/* Specific template overrides */
+/* Sherlock template */
+.bg-gray-800,
+.bg-gray-900,
+.bg-black {
+  background-color: var(--accent-color) !important;
+}
+
+/* HR template */
+.bg-purple-700,
+.bg-purple-800,
+.bg-purple-900 {
+  background-color: var(--accent-color) !important;
+}
+
+/* Minimal template */
+.bg-pink-500,
+.bg-pink-600,
+.bg-pink-700 {
+  background-color: var(--accent-color) !important;
+}
+
+/* Teal template */
+.bg-teal-500,
+.bg-teal-600,
+.bg-teal-700 {
+  background-color: var(--accent-color) !important;
+}
+
+/* Print styles for PDF generation */
+@media print {
+  .cv-page {
+    box-shadow: none;
+    margin: 0;
+  }
+
+  .cv-page-content {
+    padding-top: var(--page-margin-top);
+    padding-right: var(--page-margin-right);
+    padding-bottom: var(--page-margin-bottom);
+    padding-left: var(--page-margin-left);
+  }
+
+  .cv-page .cv-sidebar {
+    padding-top: var(--page-margin-top);
+    padding-bottom: var(--page-margin-bottom);
+    padding-left: var(--page-margin-left);
+  }
+
+  .cv-page .cv-main-content {
+    padding-top: var(--page-margin-top);
+    padding-right: var(--page-margin-right);
+    padding-bottom: var(--page-margin-bottom);
+  }
+
+  .section-heading {
+    page-break-after: avoid !important;
+  }
+
+  .section-content {
+    page-break-before: avoid !important;
+  }
+
+  .keep-with-next {
+    page-break-after: avoid !important;
+  }
+
+  .keep-together {
+    page-break-inside: avoid !important;
+  }
 }
 
 @layer utilities {

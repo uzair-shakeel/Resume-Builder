@@ -1,242 +1,267 @@
-import type { CVData } from "@/types"
-import Image from "next/image"
-import { Mail, Phone, MapPin, Home } from "lucide-react"
+import type { CVData } from "@/types";
+import Image from "next/image";
+import { Mail, Phone, MapPin, Home } from "lucide-react";
 
 interface CVPreviewProps {
-  data: CVData
-  sectionOrder: string[]
+  data: CVData;
+  sectionOrder: string[];
+  pageBreakSettings?: {
+    keepHeadingsWithContent: boolean;
+    avoidOrphanedHeadings: boolean;
+    minLinesBeforeBreak: number;
+  };
 }
 
-export default function CVPreview({ data, sectionOrder }: CVPreviewProps) {
-  const { personalInfo, profile, education, experience, skills, languages, interests } = data
+export default function CVPreview({
+  data,
+  sectionOrder,
+  pageBreakSettings,
+}: CVPreviewProps) {
+  const {
+    personalInfo,
+    profile,
+    education,
+    experience,
+    skills,
+    languages,
+    interests,
+  } = data;
+
+  // Default page break settings if not provided
+  const breakSettings = pageBreakSettings || {
+    keepHeadingsWithContent: true,
+    avoidOrphanedHeadings: true,
+    minLinesBeforeBreak: 3,
+  };
 
   const renderSection = (section: string) => {
     switch (section) {
       case "personal-info":
-        return renderPersonalInfo()
+        return renderPersonalInfo();
       case "profile":
-        return renderProfile()
+        return renderProfile();
       case "education":
-        return renderEducation()
+        return renderEducation();
       case "experience":
-        return renderExperience()
+        return renderExperience();
       case "skills":
-        return renderSkills()
+        return renderSkills();
       case "languages":
-        return renderLanguages()
+        return renderLanguages();
       case "interests":
-        return renderInterests()
+        return renderInterests();
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   const renderPersonalInfo = () => (
     <div className="text-white space-y-6">
-      <h2 className="text-xl font-medium mb-4">Informations personnelles</h2>
-      <div className="space-y-3">
+      <h2 className="text-xl font-medium mb-4 section-heading">
+        Informations personnelles
+      </h2>
+      <div className="space-y-3 section-content">
         <div className="flex items-center gap-3">
-          <Mail className="w-5 h-5" />
+          <Mail className="w-5 h-5 cv-accent-stroke" />
           <span className="text-sm">{personalInfo.email}</span>
         </div>
         <div className="flex items-center gap-3">
-          <Phone className="w-5 h-5" />
+          <Phone className="w-5 h-5 cv-accent-stroke" />
           <span className="text-sm">{personalInfo.phone}</span>
         </div>
         <div className="flex items-center gap-3">
-          <Home className="w-5 h-5" />
+          <Home className="w-5 h-5 cv-accent-stroke" />
           <span className="text-sm">{personalInfo.address}</span>
         </div>
         <div className="flex items-center gap-3">
-          <MapPin className="w-5 h-5" />
+          <MapPin className="w-5 h-5 cv-accent-stroke" />
           <span className="text-sm">
             {personalInfo.postalCode} {personalInfo.city}
           </span>
         </div>
       </div>
     </div>
-  )
+  );
 
   const renderProfile = () =>
     profile && (
-      <section className="mb-8">
-        <h2 className="text-xl text-teal-600 font-medium mb-3">Profil</h2>
-        <p className="text-gray-600 leading-relaxed">{profile}</p>
-      </section>
-    )
+      <div
+        className={`mb-6 ${
+          breakSettings.keepHeadingsWithContent ? "keep-together" : ""
+        }`}
+      >
+        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
+          Profil
+        </h2>
+        <p className="text-sm text-gray-700 section-content">{profile}</p>
+      </div>
+    );
 
   const renderEducation = () =>
     education.length > 0 && (
-      <section className="mb-8">
-        <h2 className="text-xl text-teal-600 font-medium mb-4">Formation</h2>
-        {education.map((edu, index) => (
-          <div key={index} className="mb-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="font-medium text-gray-800">{edu.school}</p>
-                <p className="text-gray-600">{edu.degree}</p>
+      <div className="mb-6">
+        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
+          Formation
+        </h2>
+        <div className="space-y-4 section-content">
+          {education.map((edu, index) => (
+            <div
+              key={index}
+              className={`text-sm ${
+                index > 0 && index < education.length - 1 ? "keep-together" : ""
+              }`}
+            >
+              <div className="flex justify-between">
+                <div className="font-medium">{edu.degree}</div>
+                <div className="cv-accent-color">
+                  {edu.startDate} - {edu.endDate}
+                </div>
               </div>
-              <p className="text-sm text-gray-500">
-                {edu.startDate} - {edu.endDate}
-              </p>
+              <div className="text-gray-600">{edu.school}</div>
+              <div className="text-gray-700 mt-1">{edu.description}</div>
             </div>
-          </div>
-        ))}
-      </section>
-    )
+          ))}
+        </div>
+      </div>
+    );
 
   const renderExperience = () =>
     experience.length > 0 && (
-      <section className="mb-8">
-        <h2 className="text-xl text-teal-600 font-medium mb-4">Expérience professionnelle</h2>
-        {experience.map((exp, index) => (
-          <div key={index} className="mb-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="font-medium text-gray-800">{exp.position || "Web Developer"}</p>
-                <p className="text-gray-600">{exp.company || "Agilo, Sindh"}</p>
+      <div className="mb-6">
+        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
+          Expérience professionnelle
+        </h2>
+        <div className="space-y-4 section-content">
+          {experience.map((exp, index) => (
+            <div
+              key={index}
+              className={`text-sm ${
+                index > 0 && index < experience.length - 1
+                  ? "keep-together"
+                  : ""
+              }`}
+            >
+              <div className="flex justify-between">
+                <div className="font-medium">{exp.position}</div>
+                <div className="cv-accent-color">
+                  {exp.startDate} - {exp.endDate}
+                </div>
               </div>
-              <p className="text-sm text-gray-500">
-                {exp.startDate} - {exp.endDate}
-              </p>
+              <div className="text-gray-600">{exp.company}</div>
+              <div className="text-gray-700 mt-1">{exp.description}</div>
             </div>
-            {exp.description && <p className="mt-2 text-gray-600 leading-relaxed">{exp.description}</p>}
-          </div>
-        ))}
-      </section>
-    )
+          ))}
+        </div>
+      </div>
+    );
 
   const renderSkills = () =>
     skills.length > 0 && (
-      <div className="text-white">
-        <h2 className="text-xl font-medium mb-4">Compétences</h2>
-        <div className="space-y-3">
+      <div
+        className={`mb-6 ${
+          breakSettings.keepHeadingsWithContent ? "keep-together" : ""
+        }`}
+      >
+        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
+          Compétences
+        </h2>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 section-content">
           {skills.map((skill, index) => (
-            <div key={index}>
-              <div className="text-sm mb-1">{skill.name}</div>
-              <div className="flex gap-1">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className={`w-2 h-2 rounded-full ${i < skill.level ? "bg-white" : "bg-white/30"}`} />
-                ))}
+            <div key={index} className="text-sm">
+              <div className="flex justify-between mb-1">
+                <span>{skill.name}</span>
+                <span>{skill.level}/5</span>
+              </div>
+              <div className="h-2 bg-gray-200 rounded-full">
+                <div
+                  className="h-2 rounded-full cv-accent-bg"
+                  style={{ width: `${(parseInt(skill.level) / 5) * 100}%` }}
+                ></div>
               </div>
             </div>
           ))}
         </div>
       </div>
-    )
+    );
 
   const renderLanguages = () =>
     languages.length > 0 && (
-      <div className="text-white">
-        <h2 className="text-xl font-medium mb-4">Langues</h2>
-        <div className="space-y-3">
+      <div
+        className={`mb-6 ${
+          breakSettings.keepHeadingsWithContent ? "keep-together" : ""
+        }`}
+      >
+        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
+          Langues
+        </h2>
+        <div className="space-y-2 section-content">
           {languages.map((language, index) => (
-            <div key={index}>
-              <div className="text-sm mb-1">{language.name}</div>
-              <div className="text-sm text-white/80">{language.level}</div>
+            <div key={index} className="flex justify-between text-sm">
+              <span>{language.name}</span>
+              <span className="cv-accent-color">{language.level}</span>
             </div>
           ))}
         </div>
       </div>
-    )
+    );
 
   const renderInterests = () =>
     interests.length > 0 && (
-      <div className="text-white">
-        <h2 className="text-xl font-medium mb-4">Centres d'intérêt</h2>
-        <div className="space-y-2">
+      <div
+        className={`mb-6 ${
+          breakSettings.keepHeadingsWithContent ? "keep-together" : ""
+        }`}
+      >
+        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
+          Centres d'intérêt
+        </h2>
+        <ul className="list-disc list-inside text-sm space-y-1 section-content">
           {interests.map((interest, index) => (
-            <div key={index} className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-white rounded-full" />
-              <span className="text-sm">{interest.name}</span>
-            </div>
+            <li key={index} className="text-gray-700">
+              <span className="cv-bullet">•</span>
+              {interest}
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
-    )
+    );
 
   return (
-    <div className="bg-white shadow-lg" style={{ width: "210mm", minHeight: "297mm", margin: "0 auto" }}>
-      <div className="flex">
-        {/* Left Sidebar */}
-        <div className="w-[240px] relative bg-gradient-to-b from-teal-500 to-teal-600 p-6 min-h-[297mm]">
-          <div className="relative w-40 h-40 mx-auto mb-6">
-            <div className="w-full h-full rounded-full overflow-hidden border-4 border-white">
+    <div className="cv-page">
+      <div className="cv-page-content flex">
+        {/* Left sidebar */}
+        <div className="w-1/3 cv-sidebar flex flex-col">
+          <div className="mb-6 flex flex-col items-center">
+            <div className="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-white">
               <Image
-                src={personalInfo.photo || "/placeholder.svg?height=200&width=200"}
-                alt="Profile"
-                width={160}
-                height={160}
+                src={personalInfo.photo || "/placeholder-user.jpg"}
+                alt={`${personalInfo.firstName} ${personalInfo.lastName}`}
+                width={128}
+                height={128}
                 className="object-cover w-full h-full"
               />
             </div>
-          </div>
-
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-white mb-1">
+            <h1 className="text-xl font-bold text-white text-center">
               {personalInfo.firstName} {personalInfo.lastName}
             </h1>
-            <p className="text-white/90">{personalInfo.title}</p>
+            <p className="text-white text-opacity-90 text-center mt-1">
+              {personalInfo.title}
+            </p>
           </div>
-
-          <div className="space-y-8">
-            {renderPersonalInfo()}
-            {renderSkills()}
-            {renderLanguages()}
-            {renderInterests()}
-          </div>
+          {renderPersonalInfo()}
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 p-8">
-          {profile && (
-            <section className="mb-8">
-              <h2 className="text-xl text-teal-600 font-medium mb-3">Profil</h2>
-              <p className="text-gray-600 leading-relaxed">{profile}</p>
-            </section>
-          )}
-
-          {experience.length > 0 && (
-            <section className="mb-8">
-              <h2 className="text-xl text-teal-600 font-medium mb-4">Expérience professionnelle</h2>
-              {experience.map((exp, index) => (
-                <div key={index} className="mb-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium text-gray-800">{exp.position || "Web Developer"}</p>
-                      <p className="text-gray-600">{exp.company || "Agilo, Sindh"}</p>
-                    </div>
-                    <p className="text-sm text-gray-500">
-                      {exp.startDate} - {exp.endDate}
-                    </p>
-                  </div>
-                  {exp.description && <p className="mt-2 text-gray-600 leading-relaxed">{exp.description}</p>}
-                </div>
+        {/* Main content */}
+        <div className="w-2/3 cv-main-content">
+          <div className="space-y-6">
+            {sectionOrder
+              .filter((section) => section !== "personal-info")
+              .map((section) => (
+                <div key={section}>{renderSection(section)}</div>
               ))}
-            </section>
-          )}
-
-          {education.length > 0 && (
-            <section className="mb-8">
-              <h2 className="text-xl text-teal-600 font-medium mb-4">Formation</h2>
-              {education.map((edu, index) => (
-                <div key={index} className="mb-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium text-gray-800">{edu.school}</p>
-                      <p className="text-gray-600">{edu.degree}</p>
-                    </div>
-                    <p className="text-sm text-gray-500">
-                      {edu.startDate} - {edu.endDate}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </section>
-          )}
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
-

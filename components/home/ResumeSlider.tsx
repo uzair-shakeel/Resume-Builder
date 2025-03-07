@@ -28,7 +28,7 @@ const resumeTemplates = [
   {
     id: 4,
     name: "Sherlock Holmes",
-    image: "/assets/resume4.png",
+    image: "/assets/resume3.png",
     type: "sherlock",
   },
   {
@@ -40,13 +40,13 @@ const resumeTemplates = [
   {
     id: 6,
     name: "Minimal Pink",
-    image: "/assets/resume1.png",
+    image: "/assets/resume 5.png",
     type: "minimal",
   },
   {
     id: 7,
     name: "Medical Teal",
-    image: "/assets/resume2.jpg",
+    image: "/assets/resume6.png",
     type: "teal",
   },
   {
