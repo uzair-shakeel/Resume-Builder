@@ -95,7 +95,7 @@ const templateOptions = [
   {
     name: "Sherlock",
     value: "sherlock",
-    image: "/assets/sherlock-resume.jpg",
+    image: "/assets/resume3.png",
     defaultColor: "#34495e",
   },
   {

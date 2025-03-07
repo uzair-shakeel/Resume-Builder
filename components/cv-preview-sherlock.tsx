@@ -52,16 +52,6 @@ export default function CVPreviewSherlock({
             </div>
           </div>
 
-          {/* Name and title */}
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold uppercase tracking-wider mb-1">
-              {personalInfo.firstName} {personalInfo.lastName}
-            </h1>
-            <p className="text-sm uppercase tracking-wider text-gray-300">
-              {personalInfo.title}
-            </p>
-          </div>
-
           {/* About me */}
           <div className="mb-6">
             <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
@@ -122,28 +112,40 @@ export default function CVPreviewSherlock({
 
         {/* Main content */}
         <div className="w-2/3 p-6">
-          {/* Contact info */}
-          <div className="mb-8">
-            <div className="flex items-center mb-2">
-              <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
-                <span className="text-white text-xs">📍</span>
-              </div>
-              <p className="text-sm text-gray-700">
-                {personalInfo.address}, {personalInfo.city},{" "}
-                {personalInfo.postalCode}
+          <div className="flex justify-between ">
+            {/* Name and title */}
+            <div className="w-1/3 mb-8">
+              <h1 className="text-2xl font-bold uppercase tracking-wider mb-1">
+                {personalInfo.firstName} {personalInfo.lastName}
+              </h1>
+              <p className="text-sm uppercase tracking-wider text-gray-800">
+                {personalInfo.title}
               </p>
             </div>
-            <div className="flex items-center mb-2">
-              <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
-                <span className="text-white text-xs">📞</span>
+
+            {/* Contact info */}
+            <div className="mb-8">
+              <div className="flex items-center justify-end gap-3 mb-2">
+                <p className="text-sm text-gray-700">
+                  {personalInfo.address}, {personalInfo.city},{" "}
+                  {personalInfo.postalCode}
+                </p>
+                <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
+                  <span className="text-white text-xs">📍</span>
+                </div>
               </div>
-              <p className="text-sm text-gray-700">{personalInfo.phone}</p>
-            </div>
-            <div className="flex items-center">
-              <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
-                <span className="text-white text-xs">✉️</span>
+              <div className="flex items-center justify-end gap-3 mb-2">
+                <p className="text-sm text-gray-700">{personalInfo.phone}</p>
+                <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
+                  <span className="text-white text-xs">📞</span>
+                </div>
               </div>
-              <p className="text-sm text-gray-700">{personalInfo.email}</p>
+              <div className="flex items-center justify-end gap-3">
+                <p className="text-sm text-gray-700">{personalInfo.email}</p>
+                <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
+                  <span className="text-white text-xs">✉️</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -152,29 +154,47 @@ export default function CVPreviewSherlock({
             <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
               Work Experience
             </h2>
-            {experience.map((exp, index) => (
-              <div key={index} className="mb-4">
-                <div className="flex mb-1">
-                  <div className="w-1/3">
-                    <p className="font-semibold text-sm uppercase">
-                      {exp.company}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {exp.startDate} - {exp.current ? "Present" : exp.endDate}
-                    </p>
-                  </div>
-                  <div className="w-2/3">
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 rounded-full bg-gray-700 mt-1.5 mr-2"></div>
-                      <p className="font-semibold text-sm">{exp.position}</p>
+            <div className="relative">
+              {/* Continuous vertical line that spans the entire timeline */}
+              <div className="absolute left-[calc(33.333%+5.2px)] top-2 bottom-10 w-0.5 bg-gray-700"></div>
+
+              {experience.map((exp, index) => (
+                <div key={index} className="mb-8 relative">
+                  <div className="flex">
+                    <div className="w-1/3">
+                      <p className="font-semibold text-sm uppercase">
+                        {exp.company}
+                      </p>
+                      {exp.location && (
+                        <p className="text-xs text-gray-500">{exp.location}</p>
+                      )}
+                      <p className="text-xs text-gray-500">
+                        {exp.startDate} -{" "}
+                        {exp.current ? "Present" : exp.endDate}
+                      </p>
                     </div>
-                    <p className="text-xs text-gray-700 mt-1 ml-4">
-                      {exp.description}
-                    </p>
+                    <div className="w-2/3">
+                      <div className="flex relative pl-6 items-start">
+                        {/* Timeline dot */}
+                        <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-gray-700 z-10"></div>
+
+                        <p className="font-semibold text-sm">{exp.position}</p>
+                      </div>
+                      <div className="pl-6 mt-1">
+                        <p
+                          className="text-xs text-gray-700"
+                          dangerouslySetInnerHTML={{
+                            __html: exp.description
+                              .replace(/\n/g, "<br/>")
+                              .replace(/\./g, ".<br/>"),
+                          }}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* Education */}
@@ -183,9 +203,10 @@ export default function CVPreviewSherlock({
               Education
             </h2>
             {education.map((edu, index) => (
-              <div key={index} className="mb-4">
-                <div className="flex mb-1">
-                  <div className="w-1/3">
+              <div key={index} className="mb-6 relative">
+                <div className="grid grid-cols-3 gap-4">
+                  {/* Left column - School and dates */}
+                  <div className="col-span-1">
                     <p className="font-semibold text-sm uppercase">
                       {edu.school}
                     </p>
@@ -193,11 +214,21 @@ export default function CVPreviewSherlock({
                       {edu.startDate} - {edu.current ? "Present" : edu.endDate}
                     </p>
                   </div>
-                  <div className="w-2/3">
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 rounded-full bg-gray-700 mt-1.5 mr-2"></div>
-                      <p className="font-semibold text-sm">{edu.degree}</p>
-                    </div>
+
+                  {/* Right column - Degree and description */}
+                  <div className="col-span-2 relative pl-6">
+                    {/* Timeline dot */}
+                    <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-gray-700"></div>
+
+                    {/* Vertical line connecting dots (except for last item) */}
+                    {index < education.length - 1 && (
+                      <div
+                        className="absolute left-[5.2px] top-3 w-0.5 bg-gray-700"
+                        style={{ height: "calc(100% + 1.5rem)" }}
+                      ></div>
+                    )}
+
+                    <p className="font-semibold text-sm">{edu.degree}</p>
                   </div>
                 </div>
               </div>
@@ -242,13 +273,13 @@ export default function CVPreviewSherlock({
                       className="bg-gray-700 h-2 rounded-sm"
                       style={{
                         width:
-                          language.level === "Native"
+                          language.level === "Natif"
                             ? "100%"
-                            : language.level === "Fluent"
+                            : language.level === "Courant"
                             ? "80%"
-                            : language.level === "Advanced"
+                            : language.level === "Avancé"
                             ? "60%"
-                            : language.level === "Intermediate"
+                            : language.level === "Intermédiaire"
                             ? "40%"
                             : "20%",
                       }}
