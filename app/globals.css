@@ -48,7 +48,7 @@ body {
 
 /* Page layout and margins */
 .cv-page {
-  width: 210mm;
+  /* width: 210mm; */
   min-height: 297mm;
   box-sizing: border-box;
   position: relative;
@@ -61,10 +61,7 @@ body {
 
 /* Apply margins to the content inside the page */
 .cv-page-content {
-  padding-top: var(--page-margin-top);
-  padding-right: var(--page-margin-right);
-  padding-bottom: var(--page-margin-bottom);
-  padding-left: var(--page-margin-left);
+  padding: 20px;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -72,16 +69,12 @@ body {
 
 /* Special handling for sidebar templates */
 .cv-page .cv-sidebar {
-  padding-top: var(--page-margin-top);
-  padding-bottom: var(--page-margin-bottom);
-  padding-left: var(--page-margin-left);
+  padding: 40px 20px;
   min-height: calc(297mm - var(--page-margin-top) - var(--page-margin-bottom));
 }
 
 .cv-page .cv-main-content {
-  padding-top: var(--page-margin-top);
-  padding-right: var(--page-margin-right);
-  padding-bottom: var(--page-margin-bottom);
+  padding: 30px 20px;
   min-height: calc(297mm - var(--page-margin-top) - var(--page-margin-bottom));
 }
 
@@ -241,25 +234,6 @@ body {
   .cv-page {
     box-shadow: none;
     margin: 0;
-  }
-
-  .cv-page-content {
-    padding-top: var(--page-margin-top);
-    padding-right: var(--page-margin-right);
-    padding-bottom: var(--page-margin-bottom);
-    padding-left: var(--page-margin-left);
-  }
-
-  .cv-page .cv-sidebar {
-    padding-top: var(--page-margin-top);
-    padding-bottom: var(--page-margin-bottom);
-    padding-left: var(--page-margin-left);
-  }
-
-  .cv-page .cv-main-content {
-    padding-top: var(--page-margin-top);
-    padding-right: var(--page-margin-right);
-    padding-bottom: var(--page-margin-bottom);
   }
 
   .section-heading {
