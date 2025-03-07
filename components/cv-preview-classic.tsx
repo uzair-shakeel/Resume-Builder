@@ -5,11 +5,17 @@ import Image from "next/image";
 interface CVPreviewClassicProps {
   data: CVData;
   sectionOrder: string[];
+  pageBreakSettings?: {
+    keepHeadingsWithContent: boolean;
+    avoidOrphanedHeadings: boolean;
+    minLinesBeforeBreak: number;
+  };
 }
 
 export default function CVPreviewClassic({
   data,
   sectionOrder,
+  pageBreakSettings,
 }: CVPreviewClassicProps) {
   const {
     personalInfo,
@@ -21,239 +27,214 @@ export default function CVPreviewClassic({
     interests,
   } = data;
 
+  // Default page break settings if not provided
+  const breakSettings = pageBreakSettings || {
+    keepHeadingsWithContent: true,
+    avoidOrphanedHeadings: true,
+    minLinesBeforeBreak: 3,
+  };
+
   return (
-    <div className="w-[210mm] h-[297mm] bg-white shadow-lg p-8">
-      {/* Header with name */}
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold mb-6">
-          {personalInfo.firstName} {personalInfo.lastName}
-        </h1>
-      </div>
+    <div className="cv-page">
+      <div className="cv-page-content">
+        {/* Header with name */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold mb-6">
+            {personalInfo.firstName} {personalInfo.lastName}
+          </h1>
+        </div>
 
-      {/* Two-column layout */}
-      <div className="flex">
-        {/* Left column */}
-        <div className="w-1/3 pr-6">
-          {/* Photo */}
-          <div className="mb-6 flex justify-center">
-            <div className="w-32 h-32 overflow-hidden">
-              <Image
-                src={personalInfo.photo || "/placeholder-user.jpg"}
-                alt={`${personalInfo.firstName} ${personalInfo.lastName}`}
-                width={128}
-                height={128}
-                className="object-cover w-full h-full"
-              />
-            </div>
-          </div>
-
-          {/* Personal information */}
-          <div className="mb-6">
-            <h2 className="text-lg font-bold mb-3 border-b border-gray-300 pb-1">
-              Informations personnelles
-            </h2>
-            <div className="space-y-2 text-sm">
-              <div>
-                <p className="font-semibold">Adresse e-mail</p>
-                <p>{personalInfo.email || "angelunel@gmail.com"}</p>
-              </div>
-              <div>
-                <p className="font-semibold">Numéro de téléphone</p>
-                <p>{personalInfo.phone || "0123233953"}</p>
-              </div>
-              <div>
-                <p className="font-semibold">Adresse</p>
-                <p>
-                  {personalInfo.address || "41 passage des arts"},{" "}
-                  {personalInfo.postalCode || "75002"}{" "}
-                  {personalInfo.city || "Paris"}
-                </p>
-              </div>
-              <div>
-                <p className="font-semibold">Permis de conduire</p>
-                <p>B, véhicule personnel</p>
+        {/* Two-column layout */}
+        <div className="flex">
+          {/* Left column */}
+          <div className="w-1/3 pr-6">
+            {/* Photo */}
+            <div className="mb-6 flex justify-center">
+              <div className="w-32 h-32 overflow-hidden">
+                <Image
+                  src={personalInfo.photo || "/placeholder-user.jpg"}
+                  alt={`${personalInfo.firstName} ${personalInfo.lastName}`}
+                  width={128}
+                  height={128}
+                  className="object-cover w-full h-full"
+                />
               </div>
             </div>
-          </div>
 
-          {/* Formation */}
-          <div className="mb-6">
-            <h2 className="text-lg font-bold mb-3 border-b border-gray-300 pb-1">
-              Formation
-            </h2>
-            <div className="space-y-4 text-sm">
-              {education.map((edu, index) => (
-                <div key={index}>
-                  <p className="font-semibold">{edu.startDate}</p>
-                  <p>{edu.degree}</p>
-                  <p>{edu.school}</p>
-                </div>
-              ))}
-              {education.length === 0 && (
+            {/* Personal information */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                Contact
+              </h2>
+              <div className="space-y-2 section-content">
                 <div>
-                  <p className="font-semibold">2016</p>
-                  <p>CAP Opérateur logistique</p>
-                  <p>Lycée Mermoz, Paris</p>
+                  <p className="text-sm font-medium">Email:</p>
+                  <p className="text-sm">{personalInfo.email}</p>
                 </div>
-              )}
-            </div>
-          </div>
-
-          {/* Compétences */}
-          <div className="mb-6">
-            <h2 className="text-lg font-bold mb-3 border-b border-gray-300 pb-1">
-              Compétences
-            </h2>
-            <div className="space-y-2 text-sm">
-              {skills.map((skill, index) => (
-                <div key={index} className="flex justify-between">
-                  <span>{skill.name}</span>
-                  <span>
-                    {skill.level === 5
-                      ? "Excellent"
-                      : skill.level === 4
-                      ? "Très bon"
-                      : skill.level === 3
-                      ? "Bon"
-                      : skill.level === 2
-                      ? "Intermédiaire"
-                      : "Débutant"}
-                  </span>
+                <div>
+                  <p className="text-sm font-medium">Téléphone:</p>
+                  <p className="text-sm">{personalInfo.phone}</p>
                 </div>
-              ))}
-              {skills.length === 0 && (
-                <>
-                  <div className="flex justify-between">
-                    <span>Microsoft Word</span>
-                    <span>Excellent</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Étiquetage</span>
-                    <span>Excellent</span>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Qualités */}
-          <div>
-            <h2 className="text-lg font-bold mb-3 border-b border-gray-300 pb-1">
-              Qualités
-            </h2>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-blue-900 mr-2"></div>
-                <span>Organisée</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-blue-900 mr-2"></div>
-                <span>Rigoureuse</span>
+                <div>
+                  <p className="text-sm font-medium">Adresse:</p>
+                  <p className="text-sm">
+                    {personalInfo.address}, {personalInfo.postalCode}{" "}
+                    {personalInfo.city}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Right column */}
-        <div className="w-2/3 pl-6 border-l border-gray-300">
-          {/* Expérience professionnelle */}
-          <div className="mb-6">
-            <h2 className="text-lg font-bold mb-3 border-b border-gray-300 pb-1">
-              Expérience professionnelle
-            </h2>
-            <div className="space-y-6 text-sm">
-              {experience.map((exp, index) => (
-                <div key={index}>
-                  <div className="mb-1">
-                    <p className="font-semibold">
-                      de {exp.startDate} à{" "}
-                      {exp.current ? "ce jour" : exp.endDate}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">{exp.position}</p>
-                    <p>
-                      {exp.company}, {exp.location}
-                    </p>
-                    <ul className="list-disc pl-5 mt-1 space-y-1">
-                      {exp.description
-                        .split("\n")
-                        .map(
-                          (item, i) => item.trim() && <li key={i}>{item}</li>
-                        )}
-                    </ul>
-                  </div>
+            {/* Skills */}
+            {skills.length > 0 && (
+              <div
+                className={`mb-6 ${
+                  breakSettings.keepHeadingsWithContent ? "keep-together" : ""
+                }`}
+              >
+                <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                  Compétences
+                </h2>
+                <div className="space-y-2 section-content">
+                  {skills.map((skill, index) => (
+                    <div key={index}>
+                      <p className="text-sm font-medium">{skill.name}</p>
+                      <div className="w-full bg-gray-200 h-2 rounded-full">
+                        <div
+                          className="h-2 rounded-full cv-accent-bg"
+                          style={{
+                            width: `${(parseInt(skill.level) / 5) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-              {experience.length === 0 && (
-                <>
-                  <div>
-                    <div className="mb-1">
-                      <p className="font-semibold">de sept. 2017 à ce jour</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Préparatrice de commandes</p>
-                      <p>Oridis, Paris</p>
-                      <ul className="list-disc pl-5 mt-1 space-y-1">
-                        <li>Réception de la marchandise</li>
-                        <li>Vérification des arrivées</li>
-                        <li>
-                          Mise en place informatique et physique de la
-                          marchandise
-                        </li>
-                        <li>Préparation des commandes clients</li>
-                        <li>Édition du bon de livraison</li>
-                        <li>Stockage et manutention</li>
-                      </ul>
-                    </div>
-                  </div>
+              </div>
+            )}
 
-                  <div>
-                    <div className="mb-1">
-                      <p className="font-semibold">de juil. 2014 à août 2017</p>
+            {/* Languages */}
+            {languages.length > 0 && (
+              <div
+                className={`mb-6 ${
+                  breakSettings.keepHeadingsWithContent ? "keep-together" : ""
+                }`}
+              >
+                <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                  Langues
+                </h2>
+                <div className="space-y-2 section-content">
+                  {languages.map((language, index) => (
+                    <div key={index}>
+                      <p className="text-sm font-medium">{language.name}</p>
+                      <p className="text-sm cv-accent-color">
+                        {language.level}
+                      </p>
                     </div>
-                    <div>
-                      <p className="font-semibold">Préparatrice de commandes</p>
-                      <p>Inter Dépôt, Paris</p>
-                      <ul className="list-disc pl-5 mt-1 space-y-1">
-                        <li>Prélèvement des commandes (commande vocale)</li>
-                        <li>
-                          Positionnement des colis sur les supports adaptés
-                        </li>
-                        <li>
-                          Vérification de la stabilité du support avant
-                          expédition
-                        </li>
-                        <li>
-                          Participation au rangement et à la propreté du site
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-                  <div>
-                    <div className="mb-1">
-                      <p className="font-semibold">de juin 2010 à juin 2014</p>
+            {/* Interests */}
+            {interests.length > 0 && (
+              <div
+                className={`mb-6 ${
+                  breakSettings.keepHeadingsWithContent ? "keep-together" : ""
+                }`}
+              >
+                <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                  Centres d'intérêt
+                </h2>
+                <ul className="list-disc list-inside text-sm space-y-1 section-content">
+                  {interests.map((interest, index) => (
+                    <li key={index}>
+                      <span className="cv-bullet">•</span> {interest}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Right column */}
+          <div className="w-2/3">
+            {/* Profile */}
+            {profile && (
+              <div
+                className={`mb-6 ${
+                  breakSettings.keepHeadingsWithContent ? "keep-together" : ""
+                }`}
+              >
+                <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                  Profil
+                </h2>
+                <p className="text-sm section-content">{profile}</p>
+              </div>
+            )}
+
+            {/* Experience */}
+            {experience.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                  Expérience professionnelle
+                </h2>
+                <div className="space-y-4 section-content">
+                  {experience.map((exp, index) => (
+                    <div
+                      key={index}
+                      className={`${
+                        index > 0 && index < experience.length - 1
+                          ? "keep-together"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex justify-between">
+                        <h3 className="text-sm font-medium">{exp.position}</h3>
+                        <p className="text-sm cv-accent-color">
+                          {exp.startDate} - {exp.endDate}
+                        </p>
+                      </div>
+                      <p className="text-sm italic">{exp.company}</p>
+                      <p className="text-sm mt-1">{exp.description}</p>
                     </div>
-                    <div>
-                      <p className="font-semibold">Préparatrice de commandes</p>
-                      <p>Rapid' Colis, Paris</p>
-                      <ul className="list-disc pl-5 mt-1 space-y-1">
-                        <li>Conditionnement des produits frais</li>
-                        <li>Contrôle de la marchandise</li>
-                        <li>Étiquetage des colis et des palettes</li>
-                      </ul>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Education */}
+            {education.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                  Formation
+                </h2>
+                <div className="space-y-4 section-content">
+                  {education.map((edu, index) => (
+                    <div
+                      key={index}
+                      className={`${
+                        index > 0 && index < education.length - 1
+                          ? "keep-together"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex justify-between">
+                        <h3 className="text-sm font-medium">{edu.degree}</h3>
+                        <p className="text-sm cv-accent-color">
+                          {edu.startDate} - {edu.endDate}
+                        </p>
+                      </div>
+                      <p className="text-sm italic">{edu.school}</p>
+                      <p className="text-sm mt-1">{edu.description}</p>
                     </div>
-                  </div>
-                </>
-              )}
-            </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <div className="text-center text-gray-400 text-xs mt-12">© CV+</div>
     </div>
   );
 }

@@ -1,30 +1,42 @@
-import type { CVData } from "@/types"
-import Image from "next/image"
-import { Mail, Phone, MapPin } from "lucide-react"
+import type { CVData } from "@/types";
+import Image from "next/image";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 interface CVPreviewProps {
-  data: CVData
-  sectionOrder: string[]
+  data: CVData;
+  sectionOrder: string[];
 }
 
 export default function CVPreviewPro({ data, sectionOrder }: CVPreviewProps) {
-  const { personalInfo, profile, education, experience, skills, languages, interests } = data
+  const {
+    personalInfo,
+    profile,
+    education,
+    experience,
+    skills,
+    languages,
+    interests,
+  } = data;
 
   const renderProfile = () => {
-    if (!profile) return null
+    if (!profile) return null;
     return (
       <section className="mb-8">
-        <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">Profil</h2>
+        <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+          Profil
+        </h2>
         <p className="text-gray-600 leading-relaxed">{profile}</p>
       </section>
-    )
-  }
+    );
+  };
 
   const renderEducation = () => {
-    if (!education || education.length === 0) return null
+    if (!education || education.length === 0) return null;
     return (
       <section className="mb-8">
-        <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">Formation</h2>
+        <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+          Formation
+        </h2>
         {education.map((edu, index) => (
           <div key={index} className="mb-6">
             <div className="flex justify-between items-start">
@@ -39,14 +51,16 @@ export default function CVPreviewPro({ data, sectionOrder }: CVPreviewProps) {
           </div>
         ))}
       </section>
-    )
-  }
+    );
+  };
 
   const renderExperience = () => {
-    if (!experience || experience.length === 0) return null
+    if (!experience || experience.length === 0) return null;
     return (
       <section className="mb-8">
-        <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">Expérience professionnelle</h2>
+        <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+          Expérience professionnelle
+        </h2>
         {experience.map((exp, index) => (
           <div key={index} className="mb-6">
             <div className="flex justify-between items-start">
@@ -58,42 +72,48 @@ export default function CVPreviewPro({ data, sectionOrder }: CVPreviewProps) {
                 {exp.startDate} - {exp.endDate}
               </p>
             </div>
-            {exp.description && <p className="mt-2 text-gray-600 leading-relaxed">{exp.description}</p>}
+            {exp.description && (
+              <p className="mt-2 text-gray-600 leading-relaxed">
+                {exp.description}
+              </p>
+            )}
           </div>
         ))}
       </section>
-    )
-  }
+    );
+  };
 
   const renderSection = (section: string) => {
     switch (section) {
       case "personal-info":
-        return null // Personal info is in header
+        return null; // Personal info is in header
       case "profile":
-        return renderProfile()
+        return renderProfile();
       case "education":
-        return renderEducation()
+        return renderEducation();
       case "experience":
-        return renderExperience()
+        return renderExperience();
       case "skills":
-        return null // Skills are in sidebar
+        return null; // Skills are in sidebar
       case "languages":
-        return null // Languages are in sidebar
+        return null; // Languages are in sidebar
       case "interests":
-        return null // Interests are in sidebar
+        return null; // Interests are in sidebar
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
-    <div className="bg-white shadow-lg" style={{ width: "210mm", minHeight: "297mm", margin: "0 auto" }}>
-      <div className="flex flex-col h-full">
+    <div className="cv-page">
+      <div className="cv-page-content flex flex-col h-full">
         {/* Header */}
         <div className="bg-teal-600 text-white p-6 flex items-center gap-6">
           <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white">
             <Image
-              src={personalInfo.photo || "/placeholder.svg?height=200&width=200"}
+              src={
+                personalInfo.photo || "/placeholder.svg?height=200&width=200"
+              }
               alt="Profile"
               width={96}
               height={96}
@@ -128,7 +148,9 @@ export default function CVPreviewPro({ data, sectionOrder }: CVPreviewProps) {
             {/* Competences */}
             {skills.length > 0 && (
               <div className="mb-8">
-                <h2 className="text-lg font-medium mb-4 uppercase tracking-wider">Compétences</h2>
+                <h2 className="text-lg font-medium mb-4 uppercase tracking-wider">
+                  Compétences
+                </h2>
                 <div className="space-y-3">
                   {skills.map((skill, index) => (
                     <div key={index}>
@@ -148,12 +170,16 @@ export default function CVPreviewPro({ data, sectionOrder }: CVPreviewProps) {
             {/* Languages */}
             {languages.length > 0 && (
               <div className="mb-8">
-                <h2 className="text-lg font-medium mb-4 uppercase tracking-wider">Langues</h2>
+                <h2 className="text-lg font-medium mb-4 uppercase tracking-wider">
+                  Langues
+                </h2>
                 <div className="space-y-3">
                   {languages.map((language, index) => (
                     <div key={index}>
                       <div className="text-sm mb-1">{language.name}</div>
-                      <div className="text-sm text-gray-400">{language.level}</div>
+                      <div className="text-sm text-gray-400">
+                        {language.level}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -163,7 +189,9 @@ export default function CVPreviewPro({ data, sectionOrder }: CVPreviewProps) {
             {/* Interests */}
             {interests.length > 0 && (
               <div className="mb-8">
-                <h2 className="text-lg font-medium mb-4 uppercase tracking-wider">Centres d'intérêt</h2>
+                <h2 className="text-lg font-medium mb-4 uppercase tracking-wider">
+                  Centres d'intérêt
+                </h2>
                 <div className="space-y-2">
                   {interests.map((interest, index) => (
                     <div key={index} className="flex items-center gap-2">
@@ -180,7 +208,9 @@ export default function CVPreviewPro({ data, sectionOrder }: CVPreviewProps) {
           <div className="flex-1 p-8">
             {profile && (
               <section className="mb-8">
-                <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">Profil</h2>
+                <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+                  Profil
+                </h2>
                 <p className="text-gray-600 leading-relaxed">{profile}</p>
               </section>
             )}
@@ -194,14 +224,20 @@ export default function CVPreviewPro({ data, sectionOrder }: CVPreviewProps) {
                   <div key={index} className="mb-6">
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="font-medium text-gray-800">{exp.position}</p>
+                        <p className="font-medium text-gray-800">
+                          {exp.position}
+                        </p>
                         <p className="text-gray-600">{exp.company}</p>
                       </div>
                       <p className="text-sm text-teal-600 font-medium">
                         {exp.startDate} - {exp.endDate}
                       </p>
                     </div>
-                    {exp.description && <p className="mt-2 text-gray-600 leading-relaxed">{exp.description}</p>}
+                    {exp.description && (
+                      <p className="mt-2 text-gray-600 leading-relaxed">
+                        {exp.description}
+                      </p>
+                    )}
                   </div>
                 ))}
               </section>
@@ -209,12 +245,16 @@ export default function CVPreviewPro({ data, sectionOrder }: CVPreviewProps) {
 
             {education.length > 0 && (
               <section className="mb-8">
-                <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">Formation</h2>
+                <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+                  Formation
+                </h2>
                 {education.map((edu, index) => (
                   <div key={index} className="mb-6">
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="font-medium text-gray-800">{edu.school}</p>
+                        <p className="font-medium text-gray-800">
+                          {edu.school}
+                        </p>
                         <p className="text-gray-600">{edu.degree}</p>
                       </div>
                       <p className="text-sm text-teal-600 font-medium">
@@ -229,6 +269,5 @@ export default function CVPreviewPro({ data, sectionOrder }: CVPreviewProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
