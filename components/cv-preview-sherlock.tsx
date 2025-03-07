@@ -113,7 +113,7 @@ export default function CVPreviewSherlock({
             <ul className="text-sm text-gray-300">
               {interests.map((interest, index) => (
                 <li key={index} className="mb-1">
-                  • {interest.name.toUpperCase()}
+                  • {interest.name}
                 </li>
               ))}
             </ul>

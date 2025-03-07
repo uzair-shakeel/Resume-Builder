@@ -39,6 +39,7 @@ import CVPreviewHR from "@/components/cv-preview-hr";
 import CVPreviewMinimal from "@/components/cv-preview-minimal";
 import CVPreviewTeal from "@/components/cv-preview-teal";
 import CVPreviewClassic from "@/components/cv-preview-classic";
+import CVPreviewStudent from "@/components/cv-preview-student";
 import Image from "next/image";
 
 // Font families
@@ -121,84 +122,13 @@ const templateOptions = [
     image: "/assets/classic-resume.jpg",
     defaultColor: "#3498db",
   },
-];
-
-// Dummy data for CV preview
-const dummyData: CVData = {
-  personalInfo: {
-    firstName: "Josephine",
-    lastName: "Fournier",
-    title: "Senior Product Designer",
-    email: "josephine.fournier@example.com",
-    phone: "+33 6 12 34 56 78",
-    address: "15 Rue de la Paix",
-    postalCode: "75001",
-    city: "Paris, France",
-    photo: "/placeholder-user.jpg",
+  {
+    name: "Student",
+    value: "student",
+    image: "/assets/student-resume.jpg",
+    defaultColor: "#4dabf7",
   },
-  profile:
-    "Product designer with over 8 years of experience creating user-centered digital solutions. Specialized in UX/UI design, user research, and design systems. Passionate about creating intuitive and accessible experiences that solve real user problems.",
-  education: [
-    {
-      school: "École Nationale Supérieure des Arts Décoratifs",
-      degree: "Master's Degree in Digital Design",
-      startDate: "2012",
-      endDate: "2014",
-      description:
-        "Specialized in user experience and interface design. Thesis on mobile application accessibility patterns.",
-    },
-    {
-      school: "Université Paris-Sorbonne",
-      degree: "Bachelor's Degree in Graphic Design",
-      startDate: "2009",
-      endDate: "2012",
-      description:
-        "Foundation in visual communication, typography, and design principles.",
-    },
-  ],
-  experience: [
-    {
-      company: "Digitalize Agency",
-      position: "Senior Product Designer",
-      startDate: "2019",
-      endDate: "Present",
-      description:
-        "Lead designer for enterprise SaaS products. Established design system used across multiple products. Conducted user research and usability testing to inform design decisions.",
-    },
-    {
-      company: "CreativeTech",
-      position: "UX/UI Designer",
-      startDate: "2016",
-      endDate: "2019",
-      description:
-        "Designed mobile applications and responsive websites for clients in finance, healthcare, and retail sectors. Collaborated with development teams to ensure design implementation.",
-    },
-    {
-      company: "StartupVision",
-      position: "Junior Designer",
-      startDate: "2014",
-      endDate: "2016",
-      description:
-        "Created visual assets for marketing campaigns. Assisted in redesigning company website and product interfaces.",
-    },
-  ],
-  skills: [
-    { name: "UX Design", level: "5" },
-    { name: "UI Design", level: "5" },
-    { name: "Figma", level: "5" },
-    { name: "Adobe Creative Suite", level: "4" },
-    { name: "Prototyping", level: "4" },
-    { name: "User Research", level: "4" },
-    { name: "Design Systems", level: "5" },
-    { name: "HTML/CSS", level: "3" },
-  ],
-  languages: [
-    { name: "French", level: "Native" },
-    { name: "English", level: "Fluent" },
-    { name: "Spanish", level: "Intermediate" },
-  ],
-  interests: ["Photography", "Hiking", "Modern Art", "Travel"],
-};
+];
 
 export default function Builder() {
   const searchParams = useSearchParams();
@@ -287,7 +217,7 @@ export default function Builder() {
   );
 
   // State to track if we should show dummy data
-  const [showDummyData, setShowDummyData] = useState(true);
+  // const [showDummyData, setShowDummyData] = useState(true);
 
   // Add state for page margins
   const [pageMargins, setPageMargins] = useState({
@@ -308,25 +238,8 @@ export default function Builder() {
   // Add state for download progress
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Function to toggle between dummy data and user data
-  const toggleDummyData = () => {
-    setShowDummyData((prev) => !prev);
-  };
-
-  // Check if user has entered any data
-  const hasUserData =
-    cvData.personalInfo.firstName !== "" ||
-    cvData.personalInfo.lastName !== "" ||
-    cvData.personalInfo.title !== "" ||
-    cvData.profile !== "" ||
-    cvData.experience.length > 0 ||
-    cvData.education.length > 0 ||
-    cvData.skills.length > 0 ||
-    cvData.languages.length > 0 ||
-    cvData.interests.length > 0;
-
-  // Determine which data to display
-  const displayData = showDummyData && !hasUserData ? dummyData : cvData;
+  // Replace the displayData with just cvData
+  const displayData = cvData;
 
   useEffect(() => {
     const templateParam = searchParams.get("template") as
@@ -547,6 +460,117 @@ export default function Builder() {
     }));
   };
 
+  const renderTemplate = () => {
+    const pageBreakSettingsProps = {
+      keepHeadingsWithContent: pageBreakSettings.keepHeadingsWithContent,
+      avoidOrphanedHeadings: pageBreakSettings.avoidOrphanedHeadings,
+      minLinesBeforeBreak: pageBreakSettings.minLinesBeforeBreak,
+    };
+
+    switch (template) {
+      case "modern":
+        return (
+          <CVPreview
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+      case "classic":
+        return (
+          <CVPreviewAlt
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+      case "pro":
+        return (
+          <CVPreviewPro
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+      case "sherlock":
+        return (
+          <CVPreviewSherlock
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+      case "hr":
+        return (
+          <CVPreviewHR
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+      case "minimal":
+        return (
+          <CVPreviewMinimal
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+      case "teal":
+        return (
+          <CVPreviewTeal
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+      case "simple-classic":
+        return (
+          <CVPreviewClassic
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+      case "student":
+        return (
+          <CVPreviewStudent
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+      default:
+        return (
+          <CVPreview
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+    }
+  };
+
   return (
     <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
       <div className="flex flex-1 overflow-hidden">
@@ -557,18 +581,6 @@ export default function Builder() {
               <h1 className="text-xl font-bold">CV Builder</h1>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex items-center mr-2">
-                <input
-                  type="checkbox"
-                  id="showDummy"
-                  checked={showDummyData}
-                  onChange={toggleDummyData}
-                  className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                />
-                <label htmlFor="showDummy" className="text-sm text-gray-600">
-                  Show example data
-                </label>
-              </div>
               <div className="relative">
                 <button
                   onClick={() => setShowDownloadOptions(!showDownloadOptions)}
@@ -969,55 +981,7 @@ export default function Builder() {
                 } as React.CSSProperties
               }
             >
-              {template === "modern" ? (
-                <CVPreview
-                  data={displayData}
-                  sectionOrder={sectionOrder}
-                  pageBreakSettings={pageBreakSettings}
-                />
-              ) : template === "classic" ? (
-                <CVPreviewAlt
-                  data={displayData}
-                  sectionOrder={sectionOrder}
-                  pageBreakSettings={pageBreakSettings}
-                />
-              ) : template === "sherlock" ? (
-                <CVPreviewSherlock
-                  data={displayData}
-                  sectionOrder={sectionOrder}
-                  pageBreakSettings={pageBreakSettings}
-                />
-              ) : template === "hr" ? (
-                <CVPreviewHR
-                  data={displayData}
-                  sectionOrder={sectionOrder}
-                  pageBreakSettings={pageBreakSettings}
-                />
-              ) : template === "minimal" ? (
-                <CVPreviewMinimal
-                  data={displayData}
-                  sectionOrder={sectionOrder}
-                  pageBreakSettings={pageBreakSettings}
-                />
-              ) : template === "teal" ? (
-                <CVPreviewTeal
-                  data={displayData}
-                  sectionOrder={sectionOrder}
-                  pageBreakSettings={pageBreakSettings}
-                />
-              ) : template === "simple-classic" ? (
-                <CVPreviewClassic
-                  data={displayData}
-                  sectionOrder={sectionOrder}
-                  pageBreakSettings={pageBreakSettings}
-                />
-              ) : (
-                <CVPreviewPro
-                  data={displayData}
-                  sectionOrder={sectionOrder}
-                  pageBreakSettings={pageBreakSettings}
-                />
-              )}
+              {renderTemplate()}
             </div>
           </div>
 

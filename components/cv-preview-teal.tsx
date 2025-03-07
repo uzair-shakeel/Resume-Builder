@@ -1,15 +1,60 @@
 import React from "react";
 import type { CVData } from "@/types";
 import Image from "next/image";
+import { placeholderData, getPlaceholderOrValue } from "@/lib/utils";
+
+// Define the types locally to avoid import issues
+interface Education {
+  school: string;
+  degree: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  description?: string;
+}
+
+interface Experience {
+  position: string;
+  company: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  description?: string;
+}
+
+interface Skill {
+  name: string;
+  level: number;
+}
+
+interface Language {
+  name: string;
+  level: string;
+}
+
+interface Interest {
+  name: string;
+}
 
 interface CVPreviewTealProps {
   data: CVData;
   sectionOrder: string[];
+  accentColor?: string;
+  fontFamily?: string;
+  pageBreakSettings?: {
+    keepHeadingsWithContent: boolean;
+    avoidOrphanedHeadings: boolean;
+    minLinesBeforeBreak: number;
+  };
 }
 
 export default function CVPreviewTeal({
   data,
   sectionOrder,
+  accentColor = "#2BCBBA",
+  fontFamily = "Arial, sans-serif",
+  pageBreakSettings,
 }: CVPreviewTealProps) {
   const {
     personalInfo,
@@ -21,7 +66,12 @@ export default function CVPreviewTeal({
     interests,
   } = data;
 
-  const accentColor = "#2BCBBA"; // Teal accent color
+  // Add default page break settings
+  const breakSettings = pageBreakSettings || {
+    keepHeadingsWithContent: true,
+    avoidOrphanedHeadings: true,
+    minLinesBeforeBreak: 3,
+  };
 
   return (
     <div className="cv-page">
