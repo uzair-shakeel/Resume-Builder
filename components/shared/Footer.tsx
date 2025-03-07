@@ -13,7 +13,7 @@ const footerLinks = {
   produit: {
     title: "Produit",
     links: [
-      { label: "Prix", href: "/prix" },
+      { label: "Prix", href: "/pricing" },
       { label: "Modèles", href: "/modeles" },
       { label: "Avis", href: "/avis" },
     ],

@@ -2,33 +2,36 @@
 
 import { useState, useEffect } from "react";
 import FeatureCard from "./FeatureCard";
-import { FileText, Mail, Briefcase, FolderOpen } from "lucide-react";
 import Image from "next/image";
 
 const features = [
   {
-    icon: FileText,
+    lightIcon: "/assets/resume-light.svg",
+    darkIcon: "/assets/resume-dark.svg",
     title: "CV",
     description:
       "Créez de manière illimitée de nouveaux CV et modifiez-les à tout moment.",
     image: "/assets/our-tools-step-1.svg",
   },
   {
-    icon: Mail,
+    lightIcon: "/assets/letter-light.svg",
+    darkIcon: "/assets/letter-dark.svg",
     title: "Lettre de motivation",
     description:
       "Écrivez facilement des lettres de motivation professionnelles.",
     image: "/assets/our-tools-step-2.svg",
   },
   {
-    icon: Briefcase,
+    lightIcon: "/assets/businesscenter-light.svg",
+    darkIcon: "/assets/businesscenter-dark.svg",
     title: "Offres d'emplois",
     description:
       "Soyez informés automatiquement des offres d'emploi pertinentes pour vous.",
     image: "/assets/our-tools-step-3.svg",
   },
   {
-    icon: FolderOpen,
+    lightIcon: "/assets/applications-light.svg",
+    darkIcon: "/assets/applications-dark.svg",
     title: "Candidatures",
     description: "Organisez toutes vos candidatures de manière claire.",
     image: "/assets/our-tools-step-4.svg",
@@ -37,7 +40,7 @@ const features = [
 
 const STEP_ORDER = [0, 1, 2, 3];
 const PROGRESS_INCREMENT = 1;
-const INTERVAL_DELAY = 40;
+const INTERVAL_DELAY = 100;
 
 export default function FeaturesSlider() {
   const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0);
@@ -67,45 +70,45 @@ export default function FeaturesSlider() {
   };
 
   return (
-    <section className="max-w-[1150px] mx-auto px-4 md:px-5 py-20">
-      <h1 className="text-4xl font-bold text-center mb-16">Fonctionnalités</h1>
+    <section className="max-w-[1150px] w-full mx-auto pt-20 px-5 flex flex-col items-center">
+      <h1 className="text-gray-900 font-medium text-3xl md:text-5xl mb-12">
+        Fonctionnalités
+      </h1>
 
-      <div className="flex flex-col lg:flex-row gap-12 items-start">
+      <div className="flex w-full flex-col lg:flex-row items-center lg:items-start">
         {/* Features list */}
-        <div className="w-full lg:w-1/2 space-y-4">
-          {features.map((feature, index) => (
-            <FeatureCard
-              key={index}
-              Icon={feature.icon}
-              title={feature.title}
-              description={feature.description}
-              isActive={index === currentFeatureIndex}
-              progress={index === currentFeatureIndex ? progress : 0}
-              onClick={() => handleFeatureClick(index)}
-            />
-          ))}
+        <div className="pb-10 lg:pb-16 w-full lg:w-2/5">
+          <div className="w-full flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible pe-0 md:pe-5 lg:pe-10">
+            {features.map((feature, index) => (
+              <FeatureCard
+                key={index}
+                lightIcon={feature.lightIcon}
+                darkIcon={feature.darkIcon}
+                title={feature.title}
+                description={feature.description}
+                isActive={index === currentFeatureIndex}
+                progress={index === currentFeatureIndex ? progress : 0}
+                onClick={() => handleFeatureClick(index)}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Feature preview */}
-        <div className="w-full lg:w-1/2">
+        <div className="relative w-full self-end lg:w-3/5 pb-[80%] sm:pb-[70%] md:pb-[60%] lg:pb-[50%]">
           {features.map((feature, index) => (
-            <div
+            <Image
               key={index}
-              className={`transition-opacity duration-500 ${
+              src={feature.image || "/placeholder.svg"}
+              alt={feature.title}
+              fill
+              className={`absolute w-full h-full lg:h-auto lg:bottom-0 rounded-md transition-opacity duration-500 ${
                 index === currentFeatureIndex
-                  ? "opacity-100"
+                  ? "opacity-100 block"
                   : "opacity-0 hidden"
               }`}
-            >
-              <Image
-                src={feature.image || "/placeholder.svg"}
-                alt={feature.title}
-                width={500}
-                height={800}
-                className="w-full h-auto"
-                priority={index === 0}
-              />
-            </div>
+              priority={index === 0}
+            />
           ))}
         </div>
       </div>

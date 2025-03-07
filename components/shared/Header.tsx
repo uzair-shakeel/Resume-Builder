@@ -51,7 +51,7 @@ export default function Header() {
 
         <nav className="hidden md:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2 space-x-7">
           <Link
-            href="/modeles-cv"
+            href="/modeles"
             className="text-gray-500 focus-visible:ring-4 ring-[#b0bdff] hover:text-gray-900 rounded lg:text-lg py-1 px-2 lg:py-2 lg:px-4"
           >
             Modèles
@@ -72,7 +72,7 @@ export default function Header() {
 
         <div className="flex items-center justify-end gap-2">
           <Link
-            href="/connexion"
+            href="/login"
             className="hidden md:inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-transparent active:bg-brand-100 active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
           >
             Connexion
@@ -159,7 +159,7 @@ export default function Header() {
             </Link>
             <div>
               <Link
-                href="/connexion"
+                href="/login"
                 className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center w-full bg-transparent active:bg-[#e3e8ff] active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-2 ps-4 pe-4 text-base mt-4"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
