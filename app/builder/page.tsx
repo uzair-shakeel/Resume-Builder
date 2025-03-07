@@ -967,7 +967,7 @@ export default function Builder() {
           <div className="flex-1 overflow-y-auto flex justify-center">
             <div
               ref={previewRef}
-              className="my-8 transform-gpu transition-transform duration-200"
+              className="my-8 transform-gpu transition-transform duration-200 w-full"
               style={
                 {
                   transform: `scale(${zoomLevel / 100})`,
