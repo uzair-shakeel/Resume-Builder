@@ -1,6 +1,45 @@
 import type { CVData } from "@/types";
 import Image from "next/image";
 import { Mail, Phone, MapPin, Home } from "lucide-react";
+import {
+  getPlaceholderOrValue,
+  getArrayPlaceholderOrValue,
+  placeholderData,
+} from "@/lib/utils";
+
+// Define the types locally to avoid import issues
+interface Education {
+  school: string;
+  degree: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  description?: string;
+}
+
+interface Experience {
+  position: string;
+  company: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  description?: string;
+}
+
+interface Skill {
+  name: string;
+  level: number;
+}
+
+interface Language {
+  name: string;
+  level: string;
+}
+
+interface Interest {
+  name: string;
+}
 
 interface CVPreviewProps {
   data: CVData;
@@ -10,12 +49,18 @@ interface CVPreviewProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  template?: string;
+  accentColor?: string;
+  fontFamily?: string;
 }
 
 export default function CVPreview({
   data,
   sectionOrder,
   pageBreakSettings,
+  template = "modern",
+  accentColor = "#2563eb",
+  fontFamily = "inter",
 }: CVPreviewProps) {
   const {
     personalInfo,
@@ -55,176 +100,206 @@ export default function CVPreview({
     }
   };
 
-  const renderPersonalInfo = () => (
-    <div className="text-white space-y-6">
-      <h2 className="text-xl font-medium mb-4 section-heading">
-        Informations personnelles
-      </h2>
-      <div className="space-y-3 section-content">
-        <div className="flex items-center gap-3">
-          <Mail className="w-5 h-5 cv-accent-stroke" />
-          <span className="text-sm">{personalInfo.email}</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Phone className="w-5 h-5 cv-accent-stroke" />
-          <span className="text-sm">{personalInfo.phone}</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Home className="w-5 h-5 cv-accent-stroke" />
-          <span className="text-sm">{personalInfo.address}</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <MapPin className="w-5 h-5 cv-accent-stroke" />
-          <span className="text-sm">
-            {personalInfo.postalCode} {personalInfo.city}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderProfile = () =>
-    profile && (
-      <div
-        className={`mb-6 ${
-          breakSettings.keepHeadingsWithContent ? "keep-together" : ""
-        }`}
-      >
-        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
-          Profil
-        </h2>
-        <p className="text-sm text-gray-700 section-content">{profile}</p>
-      </div>
-    );
-
-  const renderEducation = () =>
-    education.length > 0 && (
+  const renderPersonalInfo = () => {
+    return (
       <div className="mb-6">
-        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
-          Formation
+        <h2 className="text-2xl font-bold mb-4 text-gray-900">
+          {getPlaceholderOrValue(
+            "personalInfo",
+            "firstName",
+            personalInfo?.firstName
+          )}{" "}
+          {getPlaceholderOrValue(
+            "personalInfo",
+            "lastName",
+            personalInfo?.lastName
+          )}
         </h2>
-        <div className="space-y-4 section-content">
-          {education.map((edu, index) => (
-            <div
-              key={index}
-              className={`text-sm ${
-                index > 0 && index < education.length - 1 ? "keep-together" : ""
-              }`}
-            >
-              <div className="flex justify-between">
-                <div className="font-medium">{edu.degree}</div>
-                <div className="cv-accent-color">
-                  {edu.startDate} - {edu.endDate}
-                </div>
-              </div>
-              <div className="text-gray-600">{edu.school}</div>
-              <div className="text-gray-700 mt-1">{edu.description}</div>
-            </div>
-          ))}
+        <p className="text-lg text-gray-600 mb-2">
+          {getPlaceholderOrValue("personalInfo", "title", personalInfo?.title)}
+        </p>
+        <div className="text-sm text-gray-600 space-y-1">
+          <p>
+            {getPlaceholderOrValue(
+              "personalInfo",
+              "email",
+              personalInfo?.email
+            )}
+          </p>
+          <p>
+            {getPlaceholderOrValue(
+              "personalInfo",
+              "phone",
+              personalInfo?.phone
+            )}
+          </p>
+          <p>
+            {getPlaceholderOrValue(
+              "personalInfo",
+              "address",
+              personalInfo?.address
+            )}
+          </p>
+          <p>
+            {getPlaceholderOrValue(
+              "personalInfo",
+              "postalCode",
+              personalInfo?.postalCode
+            )}{" "}
+            {getPlaceholderOrValue("personalInfo", "city", personalInfo?.city)}
+          </p>
         </div>
       </div>
     );
+  };
 
-  const renderExperience = () =>
-    experience.length > 0 && (
+  const renderProfile = () => {
+    return data.profile ? (
       <div className="mb-6">
-        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
-          Expérience professionnelle
-        </h2>
-        <div className="space-y-4 section-content">
-          {experience.map((exp, index) => (
-            <div
-              key={index}
-              className={`text-sm ${
-                index > 0 && index < experience.length - 1
-                  ? "keep-together"
-                  : ""
-              }`}
-            >
-              <div className="flex justify-between">
-                <div className="font-medium">{exp.position}</div>
-                <div className="cv-accent-color">
-                  {exp.startDate} - {exp.endDate}
-                </div>
-              </div>
-              <div className="text-gray-600">{exp.company}</div>
-              <div className="text-gray-700 mt-1">{exp.description}</div>
+        <h3 className="text-lg font-semibold mb-2 text-gray-900">Profil</h3>
+        <p className="text-sm text-gray-600">
+          {getPlaceholderOrValue("profile", "profile", data.profile)}
+              </p>
             </div>
-          ))}
-        </div>
-      </div>
-    );
+    ) : null;
+  };
 
-  const renderSkills = () =>
-    skills.length > 0 && (
-      <div
-        className={`mb-6 ${
-          breakSettings.keepHeadingsWithContent ? "keep-together" : ""
-        }`}
-      >
-        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
-          Compétences
-        </h2>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2 section-content">
-          {skills.map((skill, index) => (
+  const renderEducation = () => {
+    return (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3 text-gray-900">Formation</h3>
+        <div className="space-y-4">
+          {(data.education?.length
+            ? data.education
+            : placeholderData.education
+          ).map((edu: Education, index: number) => (
             <div key={index} className="text-sm">
               <div className="flex justify-between mb-1">
-                <span>{skill.name}</span>
-                <span>{skill.level}/5</span>
+              <div>
+                  <p className="font-medium text-gray-900">{edu.school}</p>
+                  <p className="text-gray-600">{edu.degree}</p>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full">
-                <div
-                  className="h-2 rounded-full cv-accent-bg"
-                  style={{ width: `${(parseInt(skill.level) / 5) * 100}%` }}
-                ></div>
+                <div className="text-gray-500">
+                  {edu.startDate} - {edu.current ? "Présent" : edu.endDate}
+          </div>
               </div>
+              {edu.description && (
+                <p className="text-gray-600 mt-1">{edu.description}</p>
+              )}
             </div>
           ))}
         </div>
       </div>
     );
+  };
 
-  const renderLanguages = () =>
-    languages.length > 0 && (
-      <div
-        className={`mb-6 ${
-          breakSettings.keepHeadingsWithContent ? "keep-together" : ""
-        }`}
-      >
-        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
-          Langues
-        </h2>
-        <div className="space-y-2 section-content">
-          {languages.map((language, index) => (
+  const renderExperience = () => {
+    return (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3 text-gray-900">
+          Expérience professionnelle
+        </h3>
+        <div className="space-y-4">
+          {(data.experience?.length
+            ? data.experience
+            : placeholderData.experience
+          ).map((exp: Experience, index: number) => (
+            <div key={index} className="text-sm">
+              <div className="flex justify-between mb-1">
+                <div>
+                  <p className="font-medium text-gray-900">{exp.position}</p>
+                  <p className="text-gray-600">
+                    {exp.company}, {exp.location}
+                  </p>
+                </div>
+                <div className="text-gray-500">
+                  {exp.startDate} - {exp.current ? "Présent" : exp.endDate}
+                </div>
+              </div>
+              {exp.description && (
+                <p className="text-gray-600 mt-1 whitespace-pre-line">
+                  {exp.description}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderSkills = () => {
+    return (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3 text-gray-900">
+          Compétences
+        </h3>
+        <div className="space-y-2">
+          {(data.skills?.length ? data.skills : placeholderData.skills).map(
+            (skill: Skill, index: number) => (
+              <div key={index} className="text-sm">
+                <div className="flex justify-between mb-1">
+                  <span className="text-gray-700">{skill.name}</span>
+                  <span className="text-gray-500">{skill.level}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-1.5">
+                  <div
+                    className="h-1.5 rounded-full"
+                    style={{
+                      width: `${skill.level}%`,
+                      backgroundColor: accentColor,
+                    }}
+                  />
+        </div>
+      </div>
+    )
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderLanguages = () => {
+    return data.languages?.length || placeholderData.languages ? (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3 text-gray-900">Langues</h3>
+        <div className="space-y-2">
+          {(data.languages?.length
+            ? data.languages
+            : placeholderData.languages
+          ).map((lang: Language, index: number) => (
             <div key={index} className="flex justify-between text-sm">
-              <span>{language.name}</span>
-              <span className="cv-accent-color">{language.level}</span>
+              <span className="text-gray-700">{lang.name}</span>
+              <span className="text-gray-500">{lang.level}</span>
             </div>
           ))}
         </div>
       </div>
-    );
+    ) : null;
+  };
 
-  const renderInterests = () =>
-    interests.length > 0 && (
-      <div
-        className={`mb-6 ${
-          breakSettings.keepHeadingsWithContent ? "keep-together" : ""
-        }`}
-      >
-        <h2 className="text-xl font-medium mb-4 cv-accent-color section-heading">
+  const renderInterests = () => {
+    return data.interests?.length || placeholderData.interests ? (
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-3 text-gray-900">
           Centres d'intérêt
-        </h2>
-        <ul className="list-disc list-inside text-sm space-y-1 section-content">
-          {interests.map((interest, index) => (
-            <li key={index} className="text-gray-700">
-              <span className="cv-bullet">•</span>
-              {interest}
-            </li>
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {(data.interests?.length
+            ? data.interests
+            : placeholderData.interests
+          ).map((interest: Interest, index: number) => (
+            <span
+              key={index}
+              className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100"
+            >
+              {interest.name}
+            </span>
           ))}
-        </ul>
+        </div>
       </div>
-    );
+    ) : null;
+  };
 
   return (
     <div className="cv-page">
@@ -248,7 +323,7 @@ export default function CVPreview({
               {personalInfo.title}
             </p>
           </div>
-          {renderPersonalInfo()}
+            {renderPersonalInfo()}
         </div>
 
         {/* Main content */}
@@ -259,7 +334,7 @@ export default function CVPreview({
               .map((section) => (
                 <div key={section}>{renderSection(section)}</div>
               ))}
-          </div>
+                </div>
         </div>
       </div>
     </div>
