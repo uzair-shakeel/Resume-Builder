@@ -365,3 +365,26 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.custom-shape-divider-top-1741392645 {
+  position: absolute;
+  top: 220px;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+  z-index: 20;
+}
+
+.custom-shape-divider-top-1741392645 svg {
+  position: relative;
+  display: block;
+  width: calc(138% + 1.3px);
+  height: 36px;
+  transform: rotateY(180deg);
+}
+
+.custom-shape-divider-top-1741392645 .shape-fill {
+  fill: #ffffff;
+}
