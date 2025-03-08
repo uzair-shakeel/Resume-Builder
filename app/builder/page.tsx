@@ -40,6 +40,7 @@ import CVPreviewMinimal from "@/components/cv-preview-minimal";
 import CVPreviewTeal from "@/components/cv-preview-teal";
 import CVPreviewClassic from "@/components/cv-preview-classic";
 import CVPreviewStudent from "@/components/cv-preview-student";
+import CVPreviewCirculaire from "@/components/cv-preview-circulaire";
 import Image from "next/image";
 
 // Font families
@@ -103,6 +104,12 @@ const templateOptions = [
     value: "hr",
     image: "/assets/hr-resume.jpg",
     defaultColor: "#9b59b6",
+  },
+  {
+    name: "Circulaire",
+    value: "circulaire",
+    image: "/assets/circulaire.jpg",
+    defaultColor: "#2BCBBA",
   },
   {
     name: "Minimal",
@@ -511,6 +518,16 @@ export default function Builder() {
       case "hr":
         return (
           <CVPreviewHR
+            data={displayData}
+            sectionOrder={sectionOrder}
+            pageBreakSettings={pageBreakSettingsProps}
+            accentColor={accentColor}
+            fontFamily={fontFamily}
+          />
+        );
+      case "circulaire":
+        return (
+          <CVPreviewCirculaire
             data={displayData}
             sectionOrder={sectionOrder}
             pageBreakSettings={pageBreakSettingsProps}
