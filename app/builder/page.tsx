@@ -29,6 +29,9 @@ import {
   ArrowUp,
   ArrowDown,
   Ruler,
+  Pencil,
+  Trash2,
+  FileText,
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -148,7 +151,9 @@ export default function Builder() {
       | "hr"
       | "minimal"
       | "teal"
-      | "simple-classic") || "modern";
+      | "simple-classic"
+      | "circulaire"
+      | "student") || "modern";
 
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
@@ -204,6 +209,8 @@ export default function Builder() {
     | "minimal"
     | "teal"
     | "simple-classic"
+    | "circulaire"
+    | "student"
   >(initialTemplate);
 
   // Add zoom state
@@ -245,6 +252,22 @@ export default function Builder() {
   // Add state for download progress
   const [isDownloading, setIsDownloading] = useState(false);
 
+  // Add state for section page assignment
+  const [sectionPages, setSectionPages] = useState<Record<string, number>>({});
+
+  // Add state for section menu
+  const [activeSectionMenu, setActiveSectionMenu] = useState<string | null>(
+    null
+  );
+
+  // Add state for section renaming
+  const [isRenamingSection, setIsRenamingSection] = useState(false);
+  const [sectionToRename, setSectionToRename] = useState<string | null>(null);
+  const [newSectionName, setNewSectionName] = useState("");
+  const [customSectionNames, setCustomSectionNames] = useState<
+    Record<string, string>
+  >({});
+
   // Replace the displayData with just cvData
   const displayData = cvData;
 
@@ -257,7 +280,9 @@ export default function Builder() {
       | "hr"
       | "minimal"
       | "teal"
-      | "simple-classic";
+      | "simple-classic"
+      | "circulaire"
+      | "student";
     if (templateParam) {
       setTemplate(templateParam);
       const index = templateOptions.findIndex((t) => t.value === templateParam);
@@ -327,72 +352,53 @@ export default function Builder() {
       setIsDownloading(true);
       const element = previewRef.current;
 
-      // Set a higher scale for better quality
-      const scale = 2;
-
-      // A4 dimensions in pixels at 96 DPI
-      const a4Width = 210 * 3.78; // 210mm in pixels
-      const a4Height = 297 * 3.78; // 297mm in pixels
-
-      // Get the computed margins in pixels
-      const marginTop =
-        parseFloat(
-          getComputedStyle(document.documentElement).getPropertyValue(
-            "--page-margin-top"
-          )
-        ) * 3.78;
-      const marginRight =
-        parseFloat(
-          getComputedStyle(document.documentElement).getPropertyValue(
-            "--page-margin-right"
-          )
-        ) * 3.78;
-      const marginBottom =
-        parseFloat(
-          getComputedStyle(document.documentElement).getPropertyValue(
-            "--page-margin-bottom"
-          )
-        ) * 3.78;
-      const marginLeft =
-        parseFloat(
-          getComputedStyle(document.documentElement).getPropertyValue(
-            "--page-margin-left"
-          )
-        ) * 3.78;
-
-      // Calculate content area dimensions
-      const contentWidth = a4Width - marginLeft - marginRight;
-      const contentHeight = a4Height - marginTop - marginBottom;
-
-      const canvas = await html2canvas(element, {
-        scale: scale,
-        width: a4Width / scale,
-        height: a4Height / scale,
-        windowWidth: a4Width,
-        windowHeight: a4Height,
-      });
+      // Get all pages
+      const pages = element.querySelectorAll(".cv-page");
 
       if (format === "pdf") {
-        const imgData = canvas.toDataURL("image/png");
+        // Create PDF with A4 size
         const pdf = new jsPDF({
           orientation: "portrait",
           unit: "mm",
           format: "a4",
         });
 
-        // Add the image to the PDF, positioning it to account for margins
-        pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
+        // Process each page
+        for (let i = 0; i < pages.length; i++) {
+          const page = pages[i] as HTMLElement;
 
-        pdf.save("cv.pdf");
-      } else if (format === "jpeg") {
+          // For pages after the first, add a new page to the PDF
+          if (i > 0) {
+            pdf.addPage();
+          }
+
+          // Capture the page as canvas
+          const canvas = await html2canvas(page, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+          });
+
+          // Add to PDF
+          const imgData = canvas.toDataURL("image/jpeg", 1.0);
+          pdf.addImage(imgData, "JPEG", 0, 0, 210, 297);
+        }
+
+        // Save the PDF
+        pdf.save(`cv-${new Date().toISOString().slice(0, 10)}.pdf`);
+      } else {
+        // For image formats, only capture the first page
+        const firstPage = pages[0] as HTMLElement;
+        const canvas = await html2canvas(firstPage, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+        });
+
+        // Download as image
         const link = document.createElement("a");
-        link.download = "cv.jpeg";
-        link.href = canvas.toDataURL("image/jpeg");
-        link.click();
-      } else if (format === "png") {
-        const link = document.createElement("a");
-        link.download = "cv.png";
-        link.href = canvas.toDataURL("image/png");
+        link.download = `cv-${new Date().toISOString().slice(0, 10)}.${format}`;
+        link.href = canvas.toDataURL(`image/${format}`, 1.0);
         link.click();
       }
     } catch (error) {
@@ -467,126 +473,195 @@ export default function Builder() {
     }));
   };
 
+  // Function to handle section renaming
+  const handleRenameSection = (section: string) => {
+    setSectionToRename(section);
+    setNewSectionName(customSectionNames[section] || getSectionTitle(section));
+    setIsRenamingSection(true);
+    setActiveSectionMenu(null);
+    // No need to show a modal dialog anymore
+  };
+
+  // Function to save renamed section
+  const saveRenamedSection = () => {
+    if (sectionToRename && newSectionName.trim()) {
+      // Only update if the name has changed
+      if (newSectionName.trim() !== getSectionTitle(sectionToRename)) {
+        setCustomSectionNames((prev) => ({
+          ...prev,
+          [sectionToRename]: newSectionName.trim(),
+        }));
+      }
+      setIsRenamingSection(false);
+      setSectionToRename(null);
+      setNewSectionName("");
+    } else {
+      // If the name is empty, just cancel the renaming
+      setIsRenamingSection(false);
+      setSectionToRename(null);
+      setNewSectionName("");
+    }
+  };
+
+  // Function to delete a section
+  const handleDeleteSection = (section: string) => {
+    setSectionOrder((prev) => prev.filter((s) => s !== section));
+    setActiveSectionMenu(null);
+  };
+
+  // Function to assign section to page 2
+  const handleAssignSectionToPage = (section: string, page: number) => {
+    setSectionPages((prev) => ({
+      ...prev,
+      [section]: page,
+    }));
+    setActiveSectionMenu(null);
+  };
+
+  // Function to toggle section menu
+  const toggleSectionMenu = (section: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveSectionMenu(activeSectionMenu === section ? null : section);
+  };
+
+  // Function to get section title with custom names
+  const getSectionTitle = (section: string): string => {
+    // If there's a custom name for this section, use it
+    if (customSectionNames && customSectionNames[section]) {
+      return customSectionNames[section];
+    }
+
+    // Otherwise use the default name
+    switch (section) {
+      case "personal-info":
+        return "Personal Information";
+      case "profile":
+        return "Profile";
+      case "education":
+        return "Education";
+      case "experience":
+        return "Professional Experience";
+      case "skills":
+        return "Skills";
+      case "languages":
+        return "Languages";
+      case "interests":
+        return "Interests";
+      default:
+        return "";
+    }
+  };
+
   const renderTemplate = () => {
+    // Create props object for page break settings
     const pageBreakSettingsProps = {
       keepHeadingsWithContent: pageBreakSettings.keepHeadingsWithContent,
       avoidOrphanedHeadings: pageBreakSettings.avoidOrphanedHeadings,
       minLinesBeforeBreak: pageBreakSettings.minLinesBeforeBreak,
     };
 
+    // Common props for all templates
+    const commonProps = {
+      data: displayData,
+      sectionOrder,
+      pageBreakSettings: pageBreakSettingsProps,
+      accentColor,
+      fontFamily,
+      sectionPages,
+      customSectionNames,
+    };
+
     switch (template) {
       case "modern":
-        return (
-          <CVPreview
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
+        return <CVPreviewAlt {...(commonProps as any)} />;
       case "classic":
-        return (
-          <CVPreviewAlt
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
+        return <CVPreviewClassic {...(commonProps as any)} />;
       case "pro":
-        return (
-          <CVPreviewPro
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
+        return <CVPreviewPro {...(commonProps as any)} />;
       case "sherlock":
-        return (
-          <CVPreviewSherlock
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
+        return <CVPreviewSherlock {...(commonProps as any)} />;
       case "hr":
-        return (
-          <CVPreviewHR
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
-      case "circulaire":
-        return (
-          <CVPreviewCirculaire
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
+        return <CVPreviewHR {...(commonProps as any)} />;
       case "minimal":
-        return (
-          <CVPreviewMinimal
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
+        return <CVPreviewMinimal {...(commonProps as any)} />;
       case "teal":
-        return (
-          <CVPreviewTeal
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
-      case "simple-classic":
-        return (
-          <CVPreviewClassic
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
+        return <CVPreviewTeal {...(commonProps as any)} />;
+      case "circulaire":
+        return <CVPreviewCirculaire {...(commonProps as any)} />;
       case "student":
-        return (
-          <CVPreviewStudent
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
+        return <CVPreviewStudent {...(commonProps as any)} />;
       default:
-        return (
-          <CVPreview
-            data={displayData}
-            sectionOrder={sectionOrder}
-            pageBreakSettings={pageBreakSettingsProps}
-            accentColor={accentColor}
-            fontFamily={fontFamily}
-          />
-        );
+        return <CVPreview {...(commonProps as any)} />;
     }
   };
+
+  // Add effect to close section menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      // Close section menu when clicking outside
+      if (activeSectionMenu) {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".section-menu-container")) {
+          setActiveSectionMenu(null);
+        }
+      }
+
+      // Save section name when clicking outside the input (if renaming)
+      if (isRenamingSection && sectionToRename) {
+        const target = e.target as HTMLElement;
+        const isInputElement = target.tagName.toLowerCase() === "input";
+        const isEditingCurrentSection = target.closest(
+          `[data-section="${sectionToRename}"]`
+        );
+
+        if (!isInputElement || !isEditingCurrentSection) {
+          saveRenamedSection();
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [activeSectionMenu, isRenamingSection, sectionToRename]);
+
+  // Load section pages from localStorage
+  useEffect(() => {
+    const savedSectionPages = localStorage.getItem("cv-section-pages");
+    if (savedSectionPages) {
+      try {
+        setSectionPages(JSON.parse(savedSectionPages));
+      } catch (e) {
+        console.error("Failed to parse saved section pages", e);
+      }
+    }
+  }, []);
+
+  // Save section pages to localStorage
+  useEffect(() => {
+    localStorage.setItem("cv-section-pages", JSON.stringify(sectionPages));
+  }, [sectionPages]);
+
+  // Load custom section names from localStorage
+  useEffect(() => {
+    const savedCustomNames = localStorage.getItem("cv-custom-section-names");
+    if (savedCustomNames) {
+      try {
+        setCustomSectionNames(JSON.parse(savedCustomNames));
+      } catch (e) {
+        console.error("Failed to parse saved custom section names", e);
+      }
+    }
+  }, []);
+
+  // Save custom section names to localStorage
+  useEffect(() => {
+    localStorage.setItem(
+      "cv-custom-section-names",
+      JSON.stringify(customSectionNames)
+    );
+  }, [customSectionNames]);
 
   return (
     <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
@@ -643,6 +718,7 @@ export default function Builder() {
                   onDragStart={(e) => handleDragStart(e, index)}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, index)}
+                  data-section={section}
                 >
                   <div
                     className="flex items-center justify-between p-4 bg-white cursor-pointer"
@@ -651,14 +727,85 @@ export default function Builder() {
                     <div className="flex items-center">
                       <GripVertical className="w-5 h-5 text-gray-400 mr-2 cursor-move" />
                       <span className="text-gray-400 mr-2">:</span>
-                      <h2 className="text-lg font-medium">
-                        {getSectionTitle(section)}
-                      </h2>
+                      {isRenamingSection && sectionToRename === section ? (
+                        <input
+                          type="text"
+                          value={newSectionName}
+                          onChange={(e) => setNewSectionName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              saveRenamedSection();
+                            } else if (e.key === "Escape") {
+                              setIsRenamingSection(false);
+                              setSectionToRename(null);
+                            }
+                            e.stopPropagation();
+                          }}
+                          onBlur={saveRenamedSection}
+                          autoFocus
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-lg font-medium border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent min-w-[150px]"
+                        />
+                      ) : (
+                        <h2 className="text-lg font-medium">
+                          {getSectionTitle(section)}
+                          {sectionPages[section] === 2 && (
+                            <span className="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                              Page 2
+                            </span>
+                          )}
+                        </h2>
+                      )}
                     </div>
                     <div className="flex space-x-2">
-                      <button className="p-2 rounded-md hover:bg-gray-100">
-                        <MoreVertical className="w-5 h-5 text-gray-500" />
-                      </button>
+                      <div className="relative">
+                        <button
+                          className={`p-2 rounded-md ${
+                            activeSectionMenu === section
+                              ? "bg-gray-200"
+                              : "hover:bg-gray-100"
+                          }`}
+                          onClick={(e) => toggleSectionMenu(section, e)}
+                        >
+                          <MoreVertical className="w-5 h-5 text-gray-500" />
+                        </button>
+
+                        {/* Section Menu Popup */}
+                        {activeSectionMenu === section && (
+                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200 section-menu-container">
+                            <div className="py-1">
+                              <button
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                onClick={() => handleRenameSection(section)}
+                              >
+                                <Pencil className="w-4 h-4 mr-2" />
+                                Rename section
+                              </button>
+                              <button
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                onClick={() => handleDeleteSection(section)}
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete section
+                              </button>
+                              <button
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                onClick={() =>
+                                  handleAssignSectionToPage(
+                                    section,
+                                    sectionPages[section] === 2 ? 1 : 2
+                                  )
+                                }
+                              >
+                                <FileText className="w-4 h-4 mr-2" />
+                                {sectionPages[section] === 2
+                                  ? "Move to page 1"
+                                  : "Move to page 2"}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                       <button className="p-2 rounded-md hover:bg-gray-100">
                         {expandedSections[section] ? (
                           <ChevronUp className="w-5 h-5 text-gray-500" />
@@ -1141,29 +1288,10 @@ export default function Builder() {
           </div>
         </div>
       </div>
+
+      {/* Section Renaming Dialog - Removed in favor of inline editing */}
     </main>
   );
-}
-
-function getSectionTitle(section: string): string {
-  switch (section) {
-    case "personal-info":
-      return "Personal Information";
-    case "profile":
-      return "Profile";
-    case "education":
-      return "Education";
-    case "experience":
-      return "Professional Experience";
-    case "skills":
-      return "Skills";
-    case "languages":
-      return "Languages";
-    case "interests":
-      return "Interests";
-    default:
-      return "";
-  }
 }
 
 function renderSectionContent(

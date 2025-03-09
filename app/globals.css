@@ -47,9 +47,17 @@ body {
 }
 
 /* Page layout and margins */
+.cv-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .cv-page {
-  /* width: 210mm; */
+  width: 210mm;
   min-height: 297mm;
+  max-height: 297mm;
   box-sizing: border-box;
   position: relative;
   background-color: white;
@@ -61,7 +69,8 @@ body {
 
 /* Apply margins to the content inside the page */
 .cv-page-content {
-  padding: 20px;
+  padding: var(--page-margin-top) var(--page-margin-right)
+    var(--page-margin-bottom) var(--page-margin-left);
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -234,6 +243,11 @@ body {
   .cv-page {
     box-shadow: none;
     margin: 0;
+    page-break-after: always;
+  }
+
+  .cv-page:last-child {
+    page-break-after: auto;
   }
 
   .section-heading {
