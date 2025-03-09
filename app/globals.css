@@ -9,10 +9,10 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
   --accent-color: #3498db;
-  --page-margin-top: 20mm;
-  --page-margin-right: 20mm;
-  --page-margin-bottom: 20mm;
-  --page-margin-left: 20mm;
+  --page-margin-top: 40px;
+  --page-margin-right: 20px;
+  --page-margin-bottom: 40px;
+  --page-margin-left: 20px;
   --cv-primary: theme("colors.blue.600");
   --cv-primary-dark: theme("colors.blue.700");
   --cv-primary-light: theme("colors.blue.100");

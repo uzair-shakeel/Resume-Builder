@@ -1191,10 +1191,6 @@ export default function Builder() {
                   transformOrigin: "top center",
                   fontFamily: fontFamily,
                   "--accent-color": accentColor,
-                  "--page-margin-top": `${pageMargins.top}mm`,
-                  "--page-margin-right": `${pageMargins.right}mm`,
-                  "--page-margin-bottom": `${pageMargins.bottom}mm`,
-                  "--page-margin-left": `${pageMargins.left}mm`,
                 } as React.CSSProperties
               }
             >
