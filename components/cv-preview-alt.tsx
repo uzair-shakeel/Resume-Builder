@@ -1,5 +1,5 @@
 import React from "react";
-import type { CVData } from "@/types";
+import type { CVData, CustomSectionItem } from "@/types";
 import Image from "next/image";
 import { Mail, Phone, MapPin, Home } from "lucide-react";
 
@@ -98,6 +98,10 @@ export default function CVPreviewAlt({
       case "interests":
         return null; // Interests are always in sidebar
       default:
+        // Handle custom sections
+        if (section.startsWith("custom-") && data[section]) {
+          return renderCustomSection(section);
+        }
         return null;
     }
   };
@@ -162,6 +166,33 @@ export default function CVPreviewAlt({
         ))}
       </section>
     );
+
+  // Render custom section
+  const renderCustomSection = (section: string) => {
+    const sectionData = data[section] as CustomSectionItem[];
+
+    if (!sectionData || sectionData.length === 0) return null;
+
+    return (
+      <section className="mb-8">
+        <h2 className="text-xl text-purple-800 font-medium mb-4">
+          {getSectionTitle(section)}
+        </h2>
+        {sectionData.map((item, index) => (
+          <div key={index} className="mb-4">
+            {item.title && (
+              <p className="font-medium text-gray-800">{item.title}</p>
+            )}
+            {item.description && (
+              <p className="text-gray-600 mt-2 text-sm whitespace-pre-line">
+                {item.description}
+              </p>
+            )}
+          </div>
+        ))}
+      </section>
+    );
+  };
 
   return (
     <div

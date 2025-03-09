@@ -5,6 +5,7 @@ import type {
   SkillItem,
   LanguageItem,
   InterestItem,
+  CustomSectionItem,
 } from "@/types";
 import Image from "next/image";
 import { Mail, Phone, MapPin, Home } from "lucide-react";
@@ -81,6 +82,10 @@ export default function CVPreview({
       case "interests":
         return renderInterests();
       default:
+        // Handle custom sections
+        if (section.startsWith("custom-") && data[section]) {
+          return renderCustomSection(section);
+        }
         return null;
     }
   };
@@ -253,6 +258,33 @@ export default function CVPreview({
         </div>
       </div>
     ) : null;
+  };
+
+  // Render custom section
+  const renderCustomSection = (section: string) => {
+    const sectionData = data[section] as CustomSectionItem[];
+
+    if (!sectionData || sectionData.length === 0) return null;
+
+    return (
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-3 section-title">
+          {getSectionTitle(section)}
+        </h2>
+        <div className="space-y-4">
+          {sectionData.map((item, index) => (
+            <div key={index} className="keep-together">
+              {item.title && (
+                <h3 className="font-medium text-gray-800">{item.title}</h3>
+              )}
+              {item.description && (
+                <p className="text-gray-600 mt-1 text-sm">{item.description}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   // Helper function to get section title with custom names

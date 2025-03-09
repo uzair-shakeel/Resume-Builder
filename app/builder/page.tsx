@@ -11,7 +11,7 @@ import Skills from "@/components/sections/skills";
 import Languages from "@/components/sections/languages";
 import Interests from "@/components/sections/interests";
 import CVPreview from "@/components/cv-preview";
-import type { CVData } from "@/types";
+import type { CVData, CustomSectionItem } from "@/types";
 import {
   ChevronDown,
   ChevronUp,
@@ -663,6 +663,33 @@ export default function Builder() {
     );
   }, [customSectionNames]);
 
+  // Function to add a new custom section
+  const addCustomSection = (sectionName: string) => {
+    // Generate a unique ID for the new section
+    const sectionId = `custom-${Date.now()}`;
+
+    // Add the section to the section order
+    setSectionOrder((prev) => [...prev, sectionId]);
+
+    // Set the custom name for the section
+    setCustomSectionNames((prev) => ({
+      ...prev,
+      [sectionId]: sectionName,
+    }));
+
+    // Initialize the section data
+    setCvData((prev) => ({
+      ...prev,
+      [sectionId]: [],
+    }));
+
+    // Expand the new section
+    setExpandedSections((prev) => ({
+      ...prev,
+      [sectionId]: true,
+    }));
+  };
+
   return (
     <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
       <div className="flex flex-1 overflow-hidden">
@@ -819,6 +846,32 @@ export default function Builder() {
                     renderSectionContent(section, cvData, updateCVData)}
                 </div>
               ))}
+
+              {/* Add Section Button */}
+              <div className="mt-4">
+                <h3 className="text-sm font-medium text-gray-700 mb-2">
+                  Add Section
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "Certifications",
+                    "Projects",
+                    "Publications",
+                    "Awards",
+                    "References",
+                    "Volunteer Work",
+                    "Custom Section",
+                  ].map((sectionName) => (
+                    <button
+                      key={sectionName}
+                      onClick={() => addCustomSection(sectionName)}
+                      className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                    >
+                      + {sectionName}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1350,6 +1403,80 @@ function renderSectionContent(
         />
       );
     default:
+      // Handle custom sections
+      if (section.startsWith("custom-")) {
+        return (
+          <CustomSection
+            data={cvData[section] || []}
+            updateData={(data) => updateCVData(section, data)}
+          />
+        );
+      }
       return null;
   }
+}
+
+// Custom Section Component
+function CustomSection({
+  data = [],
+  updateData,
+}: {
+  data: CustomSectionItem[];
+  updateData: (data: CustomSectionItem[]) => void;
+}) {
+  const [items, setItems] = useState(data);
+
+  useEffect(() => {
+    updateData(items);
+  }, [items, updateData]);
+
+  const addItem = () => {
+    setItems([...items, { title: "", description: "" }]);
+  };
+
+  const updateItem = (index: number, field: string, value: string) => {
+    const newItems = [...items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    setItems(newItems);
+  };
+
+  const removeItem = (index: number) => {
+    setItems(items.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="space-y-4 p-4">
+      {items.map((item, index) => (
+        <div key={index} className="border rounded-md p-3 bg-white">
+          <div className="flex justify-between mb-2">
+            <input
+              type="text"
+              value={item.title || ""}
+              onChange={(e) => updateItem(index, "title", e.target.value)}
+              placeholder="Title"
+              className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
+            />
+            <button
+              onClick={() => removeItem(index)}
+              className="text-gray-400 hover:text-red-500 ml-2"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+          <textarea
+            value={item.description || ""}
+            onChange={(e) => updateItem(index, "description", e.target.value)}
+            placeholder="Description"
+            className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:border-blue-500 min-h-[80px]"
+          />
+        </div>
+      ))}
+      <button
+        onClick={addItem}
+        className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
+      >
+        + Add Item
+      </button>
+    </div>
+  );
 }
