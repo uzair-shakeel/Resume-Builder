@@ -317,7 +317,7 @@ export default function CVPreview({
 
   return (
     <div
-      className="cv-container"
+      className="cv-container text-gray-900"
       style={
         {
           "--accent-color": accentColor,
@@ -326,9 +326,16 @@ export default function CVPreview({
       }
     >
       {/* Page 1 */}
-      <div className="cv-page">
-        <div className="cv-page-content">
-          <header className="mb-6">
+      <div className="cv-page bg-white">
+        <div
+          className="relative"
+          style={
+            {
+              "--cv-accent": accentColor,
+            } as React.CSSProperties
+          }
+        >
+          <header className="mb-6 text-gray-900">
             <h1 className="text-3xl font-bold mb-1">
               {getPlaceholderOrValue(
                 "personalInfo",
@@ -385,7 +392,14 @@ export default function CVPreview({
       {/* Page 2 (if needed) */}
       {hasPage2 && (
         <div className="cv-page">
-          <div className="cv-page-content">
+          <div
+            className="relative"
+            style={
+              {
+                "--cv-accent": accentColor,
+              } as React.CSSProperties
+            }
+          >
             <header className="mb-6">
               <h1 className="text-3xl font-bold mb-1">
                 {getPlaceholderOrValue(

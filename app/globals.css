@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 :root {
+  --foreground: 0 0% 0%;
+  --background: 0 0% 100%;
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -11,22 +13,53 @@
   --page-margin-right: 20mm;
   --page-margin-bottom: 20mm;
   --page-margin-left: 20mm;
+  --cv-primary: theme("colors.blue.600");
+  --cv-primary-dark: theme("colors.blue.700");
+  --cv-primary-light: theme("colors.blue.100");
+  --cv-text: theme("colors.gray.900");
+  --cv-text-light: theme("colors.gray.600");
+  --cv-background: theme("colors.white");
+  --cv-border: theme("colors.gray.200");
+  --cv-accent: var(--accent-color, theme("colors.blue.600"));
 }
 
+/* Remove dark mode override to prevent white text */
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    /* Remove this section to prevent dark mode color changes */
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
+@layer base {
+  /* Remove custom background overrides and use Tailwind defaults */
+  html {
+    @apply text-gray-900;
+  }
+
+  body {
+    @apply text-gray-900 bg-white;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply text-gray-900 bg-white;
+  }
+
+  /* Ensure button text colors */
+  button {
+    @apply text-current;
+  }
 }
 
-/* CV Template Styling */
+/* Ensure CV text is always visible */
+.cv-page {
+  @apply text-gray-900;
+}
+
+/* Keep existing CV template styling but ensure text contrast */
 .cv-accent-color {
+  @apply text-gray-900;
   color: var(--accent-color) !important;
 }
 
@@ -131,8 +164,7 @@ body {
   background-color: var(--accent-color) !important;
 }
 
-/* Override template-specific colors */
-/* Text colors */
+/* Remove template-specific color overrides */
 [class*="text-teal-"],
 [class*="text-blue-"],
 [class*="text-pink-"],
@@ -143,18 +175,19 @@ body {
 [class*="text-gray-700"],
 [class*="text-gray-800"],
 [class*="text-gray-900"] {
-  color: var(--accent-color) !important;
+  /* Remove these overrides completely */
 }
 
-/* Background colors */
+/* Remove all background color overrides */
 [class*="bg-teal-"],
 [class*="bg-blue-"],
 [class*="bg-pink-"],
 [class*="bg-purple-"],
 [class*="bg-red-"],
 [class*="bg-green-"],
-[class*="bg-indigo-"] {
-  background-color: var(--accent-color) !important;
+[class*="bg-indigo-"],
+[class*="bg-gray-"] {
+  /* Remove these overrides to use Tailwind defaults */
 }
 
 /* Border colors */
@@ -210,32 +243,20 @@ body {
 }
 
 /* Specific template overrides */
-/* Sherlock template */
+/* Remove template-specific background overrides */
 .bg-gray-800,
 .bg-gray-900,
-.bg-black {
-  background-color: var(--accent-color) !important;
-}
-
-/* HR template */
+.bg-black,
 .bg-purple-700,
 .bg-purple-800,
-.bg-purple-900 {
-  background-color: var(--accent-color) !important;
-}
-
-/* Minimal template */
+.bg-purple-900,
 .bg-pink-500,
 .bg-pink-600,
-.bg-pink-700 {
-  background-color: var(--accent-color) !important;
-}
-
-/* Teal template */
+.bg-pink-700,
 .bg-teal-500,
 .bg-teal-600,
 .bg-teal-700 {
-  background-color: var(--accent-color) !important;
+  /* Remove these overrides to use Tailwind defaults */
 }
 
 /* Print styles for PDF generation */
@@ -276,7 +297,7 @@ body {
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --foreground: 0 0% 0%; /* Change this from black RGB */
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
@@ -309,39 +330,20 @@ body {
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+
+  /* Add this to ensure inputs have black text */
+  input,
+  textarea {
+    @apply text-gray-900;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
@@ -371,15 +373,6 @@ body {
   animation: marquee-down 40s linear infinite;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
 .custom-shape-divider-top-1741392645 {
   position: absolute;
   top: 220px;
@@ -401,4 +394,28 @@ body {
 
 .custom-shape-divider-top-1741392645 .shape-fill {
   fill: #ffffff;
+}
+
+/* Template color overrides */
+.cv-text-accent {
+  color: var(--cv-accent) !important;
+}
+
+.cv-bg-accent {
+  background-color: var(--cv-accent) !important;
+}
+
+.cv-border-accent {
+  border-color: var(--cv-accent) !important;
+}
+
+/* Keep the gradient overrides but update them */
+.cv-gradient-primary {
+  --tw-gradient-from: var(--cv-accent) !important;
+  --tw-gradient-stops: var (--tw-gradient-from),
+    var(--tw-gradient-to, rgba(0, 0, 0, 0)) !important;
+}
+
+.cv-gradient-secondary {
+  --tw-gradient-to: var(--cv-accent) !important;
 }

@@ -64,25 +64,25 @@ const fontSizes = [
   { name: "X-Large", value: "1.25" },
 ];
 
-// Color themes
+// Update color themes
 const colorThemes = [
-  { name: "Blue", value: "#3498db" },
-  { name: "Red", value: "#e74c3c" },
-  { name: "Green", value: "#2ecc71" },
-  { name: "Purple", value: "#9b59b6" },
-  { name: "Orange", value: "#e67e22" },
-  { name: "Teal", value: "#2BCBBA" },
-  { name: "Pink", value: "#fd79a8" },
-  { name: "Gray", value: "#7f8c8d" },
+  { name: "Blue", value: "#3b82f6" }, // blue-500
+  { name: "Red", value: "#ef4444" }, // red-500
+  { name: "Green", value: "#22c55e" }, // green-500
+  { name: "Purple", value: "#a855f7" }, // purple-500
+  { name: "Orange", value: "#f97316" }, // orange-500
+  { name: "Teal", value: "#14b8a6" }, // teal-500
+  { name: "Pink", value: "#ec4899" }, // pink-500
+  { name: "Slate", value: "#64748b" }, // slate-500
 ];
 
-// Template options with images and default colors
+// Update template options with new default colors
 const templateOptions = [
   {
     name: "Modern",
     value: "modern",
     image: "/assets/resume4.png",
-    defaultColor: "#3498db",
+    defaultColor: "#3b82f6", // blue-500
   },
   {
     name: "Classic",
@@ -771,7 +771,7 @@ export default function Builder() {
                           onBlur={saveRenamedSection}
                           autoFocus
                           onClick={(e) => e.stopPropagation()}
-                          className="text-lg font-medium border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent min-w-[150px]"
+                          className="text-lg font-medium border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-white min-w-[150px] text-gray-900"
                         />
                       ) : (
                         <h2 className="text-lg font-medium">
@@ -910,8 +910,8 @@ export default function Builder() {
                 onClick={() => setShowPageBreakControls(!showPageBreakControls)}
                 className={`flex items-center gap-1 p-1 rounded-md ${
                   showPageBreakControls
-                    ? "bg-blue-100 text-blue-700"
-                    : "hover:bg-gray-200 text-gray-700"
+                    ? "bg-blue-50 text-blue-700"
+                    : "hover:bg-gray-100 text-gray-700"
                 }`}
                 title="Page Layout Settings"
               >
@@ -958,7 +958,7 @@ export default function Builder() {
                               Math.max(0, parseInt(e.target.value) || 0)
                             )
                           }
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs"
+                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button
                           onClick={() =>
@@ -994,7 +994,7 @@ export default function Builder() {
                               Math.max(0, parseInt(e.target.value) || 0)
                             )
                           }
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs"
+                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button
                           onClick={() =>
@@ -1030,7 +1030,7 @@ export default function Builder() {
                               Math.max(0, parseInt(e.target.value) || 0)
                             )
                           }
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs"
+                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button
                           onClick={() =>
@@ -1066,7 +1066,7 @@ export default function Builder() {
                               Math.max(0, parseInt(e.target.value) || 0)
                             )
                           }
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs"
+                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button
                           onClick={() =>
@@ -1158,7 +1158,7 @@ export default function Builder() {
                               Math.max(1, parseInt(e.target.value) || 1)
                             )
                           }
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs"
+                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button
                           onClick={() =>
@@ -1467,7 +1467,7 @@ function CustomSection({
             value={item.description || ""}
             onChange={(e) => updateItem(index, "description", e.target.value)}
             placeholder="Description"
-            className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:border-blue-500 min-h-[80px]"
+            className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:border-blue-500 min-h-[80px] text-gray-900 bg-white"
           />
         </div>
       ))}
