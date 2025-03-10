@@ -305,7 +305,7 @@ export default function Dashboard() {
               key={cv._id}
               className="relative p-5 w-1/2 md:w-1/3 lg:w-1/4 group"
             >
-              <div className="relative pb-[141%] bg-white rounded shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+              <div className="relative z-10 pb-[141%] bg-white rounded shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                 <Link
                   href={`/builder?id=${cv._id}`}
                   className="absolute inset-0 flex items-center justify-center"
@@ -321,30 +321,29 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="absolute bottom-2 right-2 z-30 p-1.5 rounded-lg bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-colors">
+                      <MoreVertical size={18} />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="z-50">
+                    <DropdownMenuItem onClick={() => startRenaming(cv)}>
+                      <Pencil className="w-4 h-4 mr-2" />
+                      Rename
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleDelete(cv._id)}
+                      className="text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="absolute top-2 right-2 z-[20] p-1.5 rounded-lg bg-white/90 hover:bg-white text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <MoreVertical size={18} />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => startRenaming(cv)}>
-                    <Pencil className="w-4 h-4 mr-2" />
-                    Rename
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleDelete(cv._id)}
-                    className="text-red-600"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <div className="relative p-3 z-[20] bg-white border-t">
+              <div className="relative p-3 z-[20] border-t">
                 {renamingCV === cv._id ? (
                   <div className="flex items-center gap-2">
                     <input
