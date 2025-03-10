@@ -1,33 +1,47 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import { Bold, Italic, Underline, Link, List, ListOrdered, AlignLeft } from "lucide-react"
+import { useState, useEffect } from "react";
+import {
+  Bold,
+  Italic,
+  Underline,
+  Link,
+  List,
+  ListOrdered,
+  AlignLeft,
+} from "lucide-react";
 
 interface ProfileProps {
-  data: string
-  updateData: (data: string) => void
+  data: string;
+  updateData: (data: string) => void;
 }
 
 export default function Profile({ data, updateData }: ProfileProps) {
-  const [localData, setLocalData] = useState<string>(data)
+  const [localData, setLocalData] = useState<string>(data);
+
+  // Update local state when parent data changes
+  useEffect(() => {
+    setLocalData(data);
+  }, [data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value
-    setLocalData(value)
-    updateData(value)
-  }
+    const value = e.target.value;
+    setLocalData(value);
+    updateData(value);
+  };
 
   return (
     <div className="p-4">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Profil professionnel
+      </label>
       <div className="border border-gray-300 rounded-md overflow-hidden">
         <textarea
           value={localData}
           onChange={handleChange}
           rows={6}
           className="w-full p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Professionnel dynamique avec une solide expérience..."
+          placeholder="Décrivez votre profil professionnel..."
         />
         <div className="flex border-t p-2 bg-gray-50">
           <div className="flex space-x-1">
@@ -64,6 +78,5 @@ export default function Profile({ data, updateData }: ProfileProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
