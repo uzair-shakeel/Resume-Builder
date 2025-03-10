@@ -12,6 +12,10 @@ const CVSchema = new mongoose.Schema({
     maxlength: [100, "Title cannot be more than 100 characters"],
     default: "My CV",
   },
+  preview: {
+    type: String,
+    required: false,
+  },
   template: {
     type: String,
     required: true,
@@ -24,6 +28,8 @@ const CVSchema = new mongoose.Schema({
       "minimal",
       "teal",
       "simple-classic",
+      "circulaire",
+      "student",
     ],
     default: "modern",
   },
@@ -48,6 +54,8 @@ const CVSchema = new mongoose.Schema({
       skills: [],
       languages: [],
       interests: [],
+      references: [],
+      socials: [],
     },
   },
   sectionOrder: {
@@ -69,6 +77,16 @@ const CVSchema = new mongoose.Schema({
   fontFamily: {
     type: String,
     default: "'DejaVu Sans', sans-serif",
+  },
+  sectionPages: {
+    type: Map,
+    of: Number,
+    default: {},
+  },
+  customSectionNames: {
+    type: Map,
+    of: String,
+    default: {},
   },
   lastEdited: {
     type: Date,

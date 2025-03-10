@@ -145,6 +145,157 @@ const templateOptions = [
   },
 ];
 
+// Function to render section content
+function renderSectionContent(
+  section: string,
+  cvData: CVData,
+  updateCVData: (section: string, data: any) => void,
+  template: string
+) {
+  switch (section) {
+    case "personal-info":
+      return (
+        <PersonalInfo
+          data={cvData.personalInfo}
+          updateData={(data) => updateCVData("personalInfo", data)}
+          template={template}
+        />
+      );
+    case "profile":
+      return (
+        <Profile
+          data={cvData.profile}
+          updateData={(data) => updateCVData("profile", data)}
+        />
+      );
+    case "education":
+      return (
+        <Education
+          data={cvData.education}
+          updateData={(data) => updateCVData("education", data)}
+        />
+      );
+    case "experience":
+      return (
+        <Experience
+          data={cvData.experience}
+          updateData={(data) => updateCVData("experience", data)}
+        />
+      );
+    case "skills":
+      return (
+        <Skills
+          data={cvData.skills}
+          updateData={(data) => updateCVData("skills", data)}
+        />
+      );
+    case "languages":
+      return (
+        <Languages
+          data={cvData.languages}
+          updateData={(data) => updateCVData("languages", data)}
+        />
+      );
+    case "interests":
+      return (
+        <Interests
+          data={cvData.interests}
+          updateData={(data) => updateCVData("interests", data)}
+        />
+      );
+    case "references":
+      return (
+        <References
+          data={cvData.references}
+          updateData={(data) => updateCVData("references", data)}
+        />
+      );
+    case "socials":
+      return (
+        <Socials
+          data={cvData.socials}
+          updateData={(data) => updateCVData("socials", data)}
+        />
+      );
+    default:
+      // Handle custom sections
+      if (section.startsWith("custom-")) {
+        return (
+          <CustomSection
+            data={cvData[section] || []}
+            updateData={(data) => updateCVData(section, data)}
+          />
+        );
+      }
+      return null;
+  }
+}
+
+// Custom Section Component
+function CustomSection({
+  data = [],
+  updateData,
+}: {
+  data: CustomSectionItem[];
+  updateData: (data: CustomSectionItem[]) => void;
+}) {
+  const [items, setItems] = useState(data);
+
+  useEffect(() => {
+    updateData(items);
+  }, [items, updateData]);
+
+  const addItem = () => {
+    setItems([...items, { title: "", description: "" }]);
+  };
+
+  const updateItem = (index: number, field: string, value: string) => {
+    const newItems = [...items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    setItems(newItems);
+  };
+
+  const removeItem = (index: number) => {
+    setItems(items.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="space-y-4 p-4">
+      {items.map((item, index) => (
+        <div key={index} className="border rounded-md p-3 bg-white">
+          <div className="flex justify-between mb-2">
+            <input
+              type="text"
+              value={item.title || ""}
+              onChange={(e) => updateItem(index, "title", e.target.value)}
+              placeholder="Title"
+              className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
+            />
+            <button
+              onClick={() => removeItem(index)}
+              className="text-gray-400 hover:text-red-500 ml-2"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+          <textarea
+            value={item.description || ""}
+            onChange={(e) => updateItem(index, "description", e.target.value)}
+            placeholder="Description"
+            className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:border-blue-500 min-h-[80px] text-gray-900 bg-white"
+          />
+        </div>
+      ))}
+      <button
+        onClick={addItem}
+        className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
+      >
+        + Add Item
+      </button>
+    </div>
+  );
+}
+
 export default function Builder() {
   const searchParams = useSearchParams();
   const cvId = searchParams.get("id");
@@ -163,15 +314,7 @@ export default function Builder() {
 
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
-  >({
-    "personal-info": true,
-    profile: false,
-    education: false,
-    experience: false,
-    skills: false,
-    languages: false,
-    interests: false,
-  });
+  >({});
 
   // Add save status states
   const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "error">(
@@ -373,6 +516,36 @@ export default function Builder() {
     setSaveStatus("saving");
 
     try {
+      // Generate preview image
+      let preview;
+      if (previewRef.current) {
+        const firstPage = previewRef.current.querySelector(".cv-page");
+        if (firstPage) {
+          try {
+            // Wait for any images to load
+            await Promise.all(
+              Array.from(firstPage.getElementsByTagName("img")).map(
+                (img) =>
+                  new Promise((resolve) => {
+                    if (img.complete) resolve(null);
+                    else img.onload = () => resolve(null);
+                  })
+              )
+            );
+
+            const canvas = await html2canvas(firstPage as HTMLElement, {
+              scale: 2, // Higher quality for stored preview
+              useCORS: true,
+              logging: false,
+              backgroundColor: "#ffffff",
+            });
+            preview = canvas.toDataURL("image/jpeg", 0.9);
+          } catch (error) {
+            console.error("Error generating preview:", error);
+          }
+        }
+      }
+
       const response = await fetch("/api/cv/save", {
         method: "POST",
         headers: {
@@ -390,6 +563,7 @@ export default function Builder() {
           fontFamily,
           customSectionNames,
           sectionPages,
+          preview, // Include the preview image
           lastEdited: new Date().toISOString(),
         }),
       });
@@ -914,6 +1088,10 @@ export default function Builder() {
     );
   };
 
+  const handleTopMarginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleMarginChange("top", Math.max(0, parseInt(e.target.value) || 0));
+  };
+
   return (
     <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
       <div className="flex flex-1 overflow-hidden">
@@ -1191,12 +1369,7 @@ export default function Builder() {
                         <input
                           type="number"
                           value={pageMargins.top}
-                          onChange={(e) => {
-                            handleMarginChange(
-                              "top",
-                              Math.max(0, parseInt(e.target.value) || 0)
-                            );
-                          }}
+                          onChange={handleTopMarginChange}
                           className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button
@@ -1556,158 +1729,6 @@ export default function Builder() {
           </div>
         </div>
       </div>
-
-      {/* Section Renaming Dialog - Removed in favor of inline editing */}
     </main>
-  );
-}
-
-function renderSectionContent(
-  section: string,
-  cvData: CVData,
-  updateCVData: (section: string, data: any) => void,
-  template: string
-) {
-  switch (section) {
-    case "personal-info":
-      return (
-        <PersonalInfo
-          data={cvData.personalInfo}
-          updateData={(data) => updateCVData("personalInfo", data)}
-          template={template}
-        />
-      );
-    case "profile":
-      return (
-        <Profile
-          data={cvData.profile}
-          updateData={(data) => updateCVData("profile", data)}
-        />
-      );
-    case "education":
-      return (
-        <Education
-          data={cvData.education}
-          updateData={(data) => updateCVData("education", data)}
-        />
-      );
-    case "experience":
-      return (
-        <Experience
-          data={cvData.experience}
-          updateData={(data) => updateCVData("experience", data)}
-        />
-      );
-    case "skills":
-      return (
-        <Skills
-          data={cvData.skills}
-          updateData={(data) => updateCVData("skills", data)}
-        />
-      );
-    case "languages":
-      return (
-        <Languages
-          data={cvData.languages}
-          updateData={(data) => updateCVData("languages", data)}
-        />
-      );
-    case "interests":
-      return (
-        <Interests
-          data={cvData.interests}
-          updateData={(data) => updateCVData("interests", data)}
-        />
-      );
-    case "references":
-      return (
-        <References
-          data={cvData.references}
-          updateData={(data) => updateCVData("references", data)}
-        />
-      );
-    case "socials":
-      return (
-        <Socials
-          data={cvData.socials}
-          updateData={(data) => updateCVData("socials", data)}
-        />
-      );
-    default:
-      // Handle custom sections
-      if (section.startsWith("custom-")) {
-        return (
-          <CustomSection
-            data={cvData[section] || []}
-            updateData={(data) => updateCVData(section, data)}
-          />
-        );
-      }
-      return null;
-  }
-}
-
-// Custom Section Component
-function CustomSection({
-  data = [],
-  updateData,
-}: {
-  data: CustomSectionItem[];
-  updateData: (data: CustomSectionItem[]) => void;
-}) {
-  const [items, setItems] = useState(data);
-
-  useEffect(() => {
-    updateData(items);
-  }, [items, updateData]);
-
-  const addItem = () => {
-    setItems([...items, { title: "", description: "" }]);
-  };
-
-  const updateItem = (index: number, field: string, value: string) => {
-    const newItems = [...items];
-    newItems[index] = { ...newItems[index], [field]: value };
-    setItems(newItems);
-  };
-
-  const removeItem = (index: number) => {
-    setItems(items.filter((_, i) => i !== index));
-  };
-
-  return (
-    <div className="space-y-4 p-4">
-      {items.map((item, index) => (
-        <div key={index} className="border rounded-md p-3 bg-white">
-          <div className="flex justify-between mb-2">
-            <input
-              type="text"
-              value={item.title || ""}
-              onChange={(e) => updateItem(index, "title", e.target.value)}
-              placeholder="Title"
-              className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
-            />
-            <button
-              onClick={() => removeItem(index)}
-              className="text-gray-400 hover:text-red-500 ml-2"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-          <textarea
-            value={item.description || ""}
-            onChange={(e) => updateItem(index, "description", e.target.value)}
-            placeholder="Description"
-            className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:border-blue-500 min-h-[80px] text-gray-900 bg-white"
-          />
-        </div>
-      ))}
-      <button
-        onClick={addItem}
-        className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
-      >
-        + Add Item
-      </button>
-    </div>
   );
 }

@@ -18,9 +18,21 @@ export async function GET(req: Request) {
     const cvId = searchParams.get("cvId");
 
     if (!cvId) {
-      // Return all CVs for the user
+      // Return all CVs for the user with complete data
       const cvs = await CV.find({ userId: session.user.id })
-        .select("title template lastEdited createdAt")
+        .select({
+          title: 1,
+          template: 1,
+          lastEdited: 1,
+          createdAt: 1,
+          data: 1,
+          sectionOrder: 1,
+          accentColor: 1,
+          fontFamily: 1,
+          sectionPages: 1,
+          customSectionNames: 1,
+          preview: 1,
+        })
         .sort({ lastEdited: -1 });
       return NextResponse.json({ success: true, cvs });
     }

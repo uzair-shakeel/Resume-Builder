@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     await dbConnect();
 
     const data = await req.json();
-    const { cvId, ...cvData } = data;
+    const { cvId, preview, ...cvData } = data;
 
     let cv;
     if (cvId) {
@@ -24,6 +24,7 @@ export async function POST(req: Request) {
         { _id: cvId, userId: session.user.id },
         {
           ...cvData,
+          preview: preview || undefined, // Only update preview if provided
           lastEdited: new Date(),
         },
         { new: true }
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
       // Create new CV
       cv = await CV.create({
         ...cvData,
+        preview: preview || undefined,
         userId: session.user.id,
       });
     }
