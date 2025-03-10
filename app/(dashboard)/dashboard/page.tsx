@@ -3,15 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  FileText,
-  Plus,
-  Calendar,
-  Clock,
-  MoreVertical,
-  Pencil,
-  Trash2,
-} from "lucide-react";
+import { FileText, Plus, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,6 +58,34 @@ const CVPreviewWrapper = ({ children }: { children: React.ReactNode }) => {
       <div className="w-full h-full">{children}</div>
     </div>
   );
+};
+
+// Add formatRelativeTime function
+const formatRelativeTime = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+  const diffInMonths = Math.floor(diffInDays / 30);
+  const diffInYears = Math.floor(diffInDays / 365);
+
+  if (diffInSeconds < 60) {
+    return "Modifié à l'instant";
+  } else if (diffInMinutes < 60) {
+    return `Modifié il y a ${diffInMinutes} minute${
+      diffInMinutes > 1 ? "s" : ""
+    }`;
+  } else if (diffInHours < 24) {
+    return `Modifié il y a ${diffInHours} heure${diffInHours > 1 ? "s" : ""}`;
+  } else if (diffInDays < 30) {
+    return `Modifié il y a ${diffInDays} jour${diffInDays > 1 ? "s" : ""}`;
+  } else if (diffInMonths < 12) {
+    return `Modifié il y a ${diffInMonths} mois`;
+  } else {
+    return `Modifié il y a ${diffInYears} an${diffInYears > 1 ? "s" : ""}`;
+  }
 };
 
 export default function Dashboard() {
@@ -249,147 +269,141 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="container mx-auto pt-5 pb-40 lg:pb-32">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">My CVs</h1>
-        <button
-          onClick={() => router.push("/builder")}
-          className="bg-blue-600 text-white text-center px-4 py-2 rounded hover:bg-blue-700 flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          Create New CV
-        </button>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        </div>
-      ) : cvs.length === 0 ? (
-        <div className="text-center py-12">
-          <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">
-            No CVs yet
-          </h2>
-          <p className="text-gray-500 mb-4">
-            Create your first CV to get started
-          </p>
-          <button
-            onClick={() => router.push("/builder")}
-            className="bg-blue-600 text-white text-center px-4 py-2 rounded hover:bg-blue-700 inline-flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Create New CV
-          </button>
-        </div>
-      ) : (
-        <div className="flex flex-wrap -ms-5">
-          {/* Create New CV Card */}
-          <div className="relative p-5 w-1/2 md:w-1/3 lg:w-1/4 group">
-            <div className="relative pb-[141%]">
-              <Link
-                href="/builder"
-                className="group absolute top-1/2 left-1/2-translate-x-1/2 -translate-y-1/2 h-full w-full flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50/50 transition-colors"
-              >
-                <div className="flex flex-col items-center gap-2 text-gray-500 group-hover:text-blue-500">
-                  <Plus className="w-8 h-8" />
-                  <span className="font-medium text-center">Create New CV</span>
-                </div>
-              </Link>
-            </div>
+    <div className="min-h-screen flex flex-col">
+      {/* Main content */}
+      <main className="flex-1 lg:ml-64 pt-20 lg:pt-5 pb-24">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-2xl font-bold">Mes CV</h1>
+            <button
+              onClick={() => router.push("/builder")}
+              className="lg:flex hidden bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Créer un CV
+            </button>
           </div>
 
-          {/* CV Cards */}
-          {cvs.map((cv) => (
-            <div
-              key={cv._id}
-              className="relative p-5 w-1/2 md:w-1/3 lg:w-1/4 group"
-            >
-              <div className="relative z-10 pb-[141%] bg-white rounded shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+          {/* CV grid content */}
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : cvs.length === 0 ? (
+            <div className="text-center py-12">
+              <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-gray-700 mb-2">
+                Aucun CV
+              </h2>
+              <p className="text-gray-500 mb-4">
+                Créez votre premier CV pour commencer
+              </p>
+              <button
+                onClick={() => router.push("/builder")}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Créer un CV
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {/* Create New CV Card */}
+              <div className="relative aspect-[1/1.414] group lg:block hidden">
                 <Link
-                  href={`/builder?id=${cv._id}`}
-                  className="absolute inset-0 flex items-center justify-center"
+                  href="/builder"
+                  className="absolute inset-0 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50/50 transition-colors"
                 >
-                  <div className="w-full h-full relative">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div
-                        className="w-[21cm] transform origin-center"
-                        style={{ transform: `scale(${scale})` }}
-                      >
-                        {renderCVPreview(cv)}
-                      </div>
-                    </div>
+                  <div className="flex flex-col items-center gap-2 text-gray-500 group-hover:text-blue-500">
+                    <Plus className="w-8 h-8" />
+                    <span className="font-medium">Créer un CV</span>
                   </div>
                 </Link>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="absolute bottom-2 right-2 z-30 p-1.5 rounded-lg bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-colors">
-                      <MoreVertical size={18} />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="z-50">
-                    <DropdownMenuItem onClick={() => startRenaming(cv)}>
-                      <Pencil className="w-4 h-4 mr-2" />
-                      Rename
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleDelete(cv._id)}
-                      className="text-red-600"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
 
-              <div className="relative p-3 z-[20] border-t">
-                {renamingCV === cv._id ? (
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={newTitle}
-                      onChange={(e) => setNewTitle(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleRename(cv._id);
-                        } else if (e.key === "Escape") {
-                          setRenamingCV(null);
-                          setNewTitle("");
-                        }
-                      }}
-                      className="flex-1 px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      autoFocus
-                    />
-                    <button
-                      onClick={() => handleRename(cv._id)}
-                      className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+              {/* CV Cards */}
+              {cvs.map((cv) => (
+                <div key={cv._id} className="relative group">
+                  <div className="aspect-[1/1.414] bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+                    <Link
+                      href={`/builder?id=${cv._id}`}
+                      className="absolute inset-0 flex items-center justify-center"
                     >
-                      Save
-                    </button>
+                      <div className="w-full h-full relative">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div
+                            className="w-[21cm] transform origin-center"
+                            style={{ transform: `scale(${scale})` }}
+                          >
+                            {renderCVPreview(cv)}
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="absolute top-2 right-2 z-30 p-1.5 rounded-lg bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-colors">
+                          <MoreVertical size={18} />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="z-50">
+                        <DropdownMenuItem onClick={() => startRenaming(cv)}>
+                          <Pencil className="w-4 h-4 mr-2" />
+                          Renommer
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(cv._id)}
+                          className="text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Supprimer
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                ) : (
-                  <>
-                    <h3 className="font-medium text-gray-900 truncate">
-                      {cv.title}
-                    </h3>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Calendar className="w-4 h-4" />
-                        <span>Created {formatDate(cv.createdAt)}</span>
+
+                  <div className="mt-3">
+                    {renamingCV === cv._id ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={newTitle}
+                          onChange={(e) => setNewTitle(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              handleRename(cv._id);
+                            } else if (e.key === "Escape") {
+                              setRenamingCV(null);
+                              setNewTitle("");
+                            }
+                          }}
+                          className="flex-1 px-2 py-1 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          autoFocus
+                        />
+                        <button
+                          onClick={() => handleRename(cv._id)}
+                          className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                        >
+                          Enregistrer
+                        </button>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Clock className="w-4 h-4" />
-                        <span>Last edited {formatTime(cv.lastEdited)}</span>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
+                    ) : (
+                      <>
+                        <h3 className="font-medium text-gray-900 truncate">
+                          {cv.title}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          {formatRelativeTime(cv.lastEdited)}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
-      )}
+      </main>
     </div>
   );
 }
