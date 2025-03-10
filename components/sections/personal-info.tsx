@@ -10,11 +10,19 @@ import Image from "next/image";
 interface PersonalInfoProps {
   data: PersonalInfoData;
   updateData: (data: PersonalInfoData) => void;
+  template?: string;
 }
 
-export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
+export default function PersonalInfo({
+  data,
+  updateData,
+  template = "modern",
+}: PersonalInfoProps) {
   const [localData, setLocalData] = useState<PersonalInfoData>(data);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Check if the current template is HR (which doesn't use a photo)
+  const isHRTemplate = template === "hr";
 
   useEffect(() => {
     setLocalData(data);
@@ -54,35 +62,42 @@ export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-start space-x-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Photo
-          </label>
-          <div
-            className="relative w-24 h-24 bg-gray-100 rounded-md overflow-hidden cursor-pointer"
-            onClick={handleImageClick}
-          >
-            <Image
-              src={localData.photo || "/placeholder.svg?height=200&width=200"}
-              alt="Profile"
-              width={96}
-              height={96}
-              className="object-cover w-full h-full"
-            />
-            <button className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow-md">
-              <PencilIcon className="w-4 h-4 text-gray-500" />
-            </button>
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
+        {/* Only show photo field if not using HR template */}
+        {!isHRTemplate && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Photo
+            </label>
+            <div
+              className="relative w-24 h-24 bg-gray-100 rounded-md overflow-hidden cursor-pointer"
+              onClick={handleImageClick}
+            >
+              <Image
+                src={localData.photo || "/placeholder.svg?height=200&width=200"}
+                alt="Profile"
+                width={96}
+                height={96}
+                className="object-cover w-full h-full"
+              />
+              <button className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow-md">
+                <PencilIcon className="w-4 h-4 text-gray-500" />
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="flex-1 grid grid-cols-2 gap-4">
+        <div
+          className={`flex-1 grid grid-cols-2 gap-4 ${
+            isHRTemplate ? "col-span-2" : ""
+          }`}
+        >
           <div>
             <label
               htmlFor="firstName"

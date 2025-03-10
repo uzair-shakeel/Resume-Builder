@@ -1,9 +1,8 @@
 import React from "react";
-import type { CVData } from "@/types";
-import Image from "next/image";
+import type { CVData, CustomSectionItem } from "@/types";
 import { placeholderData, getPlaceholderOrValue } from "@/lib/utils";
 
-// Define the Education type locally if needed
+// Define the types locally to avoid import issues
 interface Education {
   school: string;
   degree: string;
@@ -47,6 +46,8 @@ interface CVPreviewHRProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  sectionPages?: Record<string, number>;
+  customSectionNames?: Record<string, string>;
 }
 
 export default function CVPreviewHR({
@@ -55,6 +56,8 @@ export default function CVPreviewHR({
   accentColor = "#9b59b6",
   fontFamily = "Arial, sans-serif",
   pageBreakSettings,
+  sectionPages = {},
+  customSectionNames = {},
 }: CVPreviewHRProps) {
   const {
     personalInfo,
@@ -73,10 +76,51 @@ export default function CVPreviewHR({
     minLinesBeforeBreak: 3,
   };
 
+  // Filter sections for page 1 and page 2
+  const page1Sections = sectionOrder.filter(
+    (section) => !sectionPages[section] || sectionPages[section] === 1
+  );
+  const page2Sections = sectionOrder.filter(
+    (section) => sectionPages[section] === 2
+  );
+
+  const hasPage2 = page2Sections.length > 0;
+
+  // Helper function to get section title with custom names
+  const getSectionTitle = (section: string): string => {
+    // If there's a custom name for this section, use it
+    if (customSectionNames && customSectionNames[section]) {
+      return customSectionNames[section].toUpperCase();
+    }
+
+    // Otherwise use the default name
+    switch (section) {
+      case "personal-info":
+        return "INFORMATIONS PERSONNELLES";
+      case "profile":
+        return "PROFIL";
+      case "education":
+        return "FORMATION";
+      case "experience":
+        return "EXPÉRIENCE PROFESSIONNELLE";
+      case "skills":
+        return "COMPÉTENCES";
+      case "languages":
+        return "LANGUES";
+      case "interests":
+        return "CENTRES D'INTÉRÊT";
+      default:
+        if (section.startsWith("custom-")) {
+          return "SECTION PERSONNALISÉE";
+        }
+        return "";
+    }
+  };
+
   const renderPersonalInfo = () => {
     return (
       <div className="mb-6 text-center">
-        <h1 className="text-3xl font-bold mb-2">
+        <h1 className="text-3xl font-bold mb-3">
           {getPlaceholderOrValue(
             "personalInfo",
             "firstName",
@@ -88,7 +132,7 @@ export default function CVPreviewHR({
             personalInfo?.lastName
           )}
         </h1>
-        <p className="text-xl mb-3">
+        <p className="text-xl mb-4">
           {getPlaceholderOrValue("personalInfo", "title", personalInfo?.title)}
         </p>
         <div className="flex justify-center space-x-4 text-sm">
@@ -135,10 +179,10 @@ export default function CVPreviewHR({
         }`}
       >
         <h2
-          className="text-xl font-semibold mb-2 pb-1 border-b-2"
+          className="text-xl font-semibold mb-3 pb-2 border-b-2"
           style={{ borderColor: accentColor }}
         >
-          PROFIL
+          {getSectionTitle("profile")}
         </h2>
         <p className="text-sm">
           {getPlaceholderOrValue("profile", "profile", data.profile)}
@@ -151,10 +195,10 @@ export default function CVPreviewHR({
     return (
       <div className="mb-6">
         <h2
-          className="text-xl font-semibold mb-3 pb-1 border-b-2"
+          className="text-xl font-semibold mb-3 pb-2 border-b-2"
           style={{ borderColor: accentColor }}
         >
-          FORMATION
+          {getSectionTitle("education")}
         </h2>
         <div className="space-y-4">
           {(data.education?.length
@@ -188,10 +232,10 @@ export default function CVPreviewHR({
     return (
       <div className="mb-6">
         <h2
-          className="text-xl font-semibold mb-3 pb-1 border-b-2"
+          className="text-xl font-semibold mb-3 pb-2 border-b-2"
           style={{ borderColor: accentColor }}
         >
-          EXPÉRIENCE PROFESSIONNELLE
+          {getSectionTitle("experience")}
         </h2>
         <div className="space-y-4">
           {(data.experience?.length
@@ -229,10 +273,10 @@ export default function CVPreviewHR({
     return (
       <div className="mb-6">
         <h2
-          className="text-xl font-semibold mb-3 pb-1 border-b-2"
+          className="text-xl font-semibold mb-3 pb-2 border-b-2"
           style={{ borderColor: accentColor }}
         >
-          COMPÉTENCES
+          {getSectionTitle("skills")}
         </h2>
         <div className="grid grid-cols-2 gap-x-4 gap-y-2">
           {(data.skills?.length ? data.skills : placeholderData.skills).map(
@@ -248,7 +292,7 @@ export default function CVPreviewHR({
                         backgroundColor:
                           level <= skill.level ? accentColor : "#e2e8f0",
                       }}
-                    />
+                    ></div>
                   ))}
                 </div>
               </div>
@@ -263,19 +307,19 @@ export default function CVPreviewHR({
     return (
       <div className="mb-6">
         <h2
-          className="text-xl font-semibold mb-3 pb-1 border-b-2"
+          className="text-xl font-semibold mb-3 pb-2 border-b-2"
           style={{ borderColor: accentColor }}
         >
-          LANGUES
+          {getSectionTitle("languages")}
         </h2>
-        <div className="space-y-2">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
           {(data.languages?.length
             ? data.languages
             : placeholderData.languages
-          ).map((lang: Language, index: number) => (
-            <div key={index} className="flex justify-between">
-              <span className="text-sm">{lang.name}</span>
-              <span className="text-sm">{lang.level}</span>
+          ).map((language: Language, index: number) => (
+            <div key={index} className="flex justify-between items-center">
+              <span className="text-sm">{language.name}</span>
+              <span className="text-sm text-gray-600">{language.level}</span>
             </div>
           ))}
         </div>
@@ -287,10 +331,10 @@ export default function CVPreviewHR({
     return (
       <div className="mb-6">
         <h2
-          className="text-xl font-semibold mb-3 pb-1 border-b-2"
+          className="text-xl font-semibold mb-3 pb-2 border-b-2"
           style={{ borderColor: accentColor }}
         >
-          CENTRES D'INTÉRÊT
+          {getSectionTitle("interests")}
         </h2>
         <div className="flex flex-wrap gap-2">
           {(data.interests?.length
@@ -300,10 +344,42 @@ export default function CVPreviewHR({
             <span
               key={index}
               className="px-3 py-1 text-sm rounded-full"
-              style={{ backgroundColor: "#f3f4f6" }}
+              style={{ backgroundColor: `${accentColor}20` }}
             >
               {interest.name}
             </span>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Render custom section
+  const renderCustomSection = (section: string) => {
+    const sectionData = data[section] as CustomSectionItem[];
+
+    if (!sectionData || sectionData.length === 0) return null;
+
+    return (
+      <div className="mb-6">
+        <h2
+          className="text-xl font-semibold mb-3 pb-2 border-b-2"
+          style={{ borderColor: accentColor }}
+        >
+          {getSectionTitle(section)}
+        </h2>
+        <div className="space-y-4">
+          {sectionData.map((item, index) => (
+            <div key={index} className="mb-4">
+              {item.title && (
+                <p className="font-semibold text-sm">{item.title}</p>
+              )}
+              {item.description && (
+                <p className="text-sm text-gray-600 mt-2 whitespace-pre-line">
+                  {item.description}
+                </p>
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -327,20 +403,66 @@ export default function CVPreviewHR({
       case "interests":
         return renderInterests();
       default:
+        // Handle custom sections
+        if (section.startsWith("custom-") && data[section]) {
+          return renderCustomSection(section);
+        }
         return null;
     }
   };
 
   return (
-    <div
-      className="cv-page bg-white p-8 shadow-lg mx-auto"
-      style={{ fontFamily }}
-    >
-      <div className="cv-content">
-        {sectionOrder.map((section) => (
+    <div className="cv-container">
+      <style jsx global>{`
+        @media print {
+          @page {
+            size: A4;
+            margin: 0;
+          }
+          body {
+            -webkit-print-color-adjust: exact;
+          }
+        }
+      `}</style>
+
+      {/* Page 1 */}
+      <div
+        className="cv-page bg-white"
+        style={{
+          width: "210mm",
+          minHeight: "297mm",
+          padding: "20mm",
+          boxSizing: "border-box",
+          margin: "0 auto",
+        }}
+      >
+        {page1Sections.map((section) => (
           <div key={section}>{renderSection(section)}</div>
         ))}
       </div>
+
+      {/* Page 2 (if needed) */}
+      {hasPage2 && (
+        <div
+          className="cv-page bg-white"
+          style={{
+            width: "210mm",
+            minHeight: "297mm",
+            padding: "20mm",
+            boxSizing: "border-box",
+            margin: "2rem auto 0",
+            pageBreakBefore: "always",
+          }}
+        >
+          {/* Always include personal info at the top of page 2 */}
+          {renderPersonalInfo()}
+
+          {/* Render sections for page 2 */}
+          {page2Sections.map((section) => (
+            <div key={section}>{renderSection(section)}</div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

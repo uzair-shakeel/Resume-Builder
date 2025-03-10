@@ -1,8 +1,8 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export const placeholderData = {
@@ -17,7 +17,8 @@ export const placeholderData = {
     city: "Paris",
     photo: "/placeholder-user.jpg",
   },
-  profile: "Professionnel expérimenté avec plus de X années d'expérience dans le domaine de [votre domaine]. Passionné par [vos centres d'intérêt professionnels] et expert en [vos compétences clés]. À la recherche de nouvelles opportunités pour mettre à profit mes compétences en [domaine] et contribuer au succès d'une entreprise innovante.",
+  profile:
+    "Professionnel expérimenté avec plus de X années d'expérience dans le domaine de [votre domaine]. Passionné par [vos centres d'intérêt professionnels] et expert en [vos compétences clés]. À la recherche de nouvelles opportunités pour mettre à profit mes compétences en [domaine] et contribuer au succès d'une entreprise innovante.",
   education: [
     {
       school: "Université Example",
@@ -25,7 +26,8 @@ export const placeholderData = {
       startDate: "2018",
       endDate: "2020",
       current: false,
-      description: "Spécialisation en [votre spécialité]. Projets majeurs réalisés dans [domaine]."
+      description:
+        "Spécialisation en [votre spécialité]. Projets majeurs réalisés dans [domaine].",
     },
     {
       school: "École Exemple",
@@ -33,8 +35,9 @@ export const placeholderData = {
       startDate: "2015",
       endDate: "2018",
       current: false,
-      description: "Formation approfondie en [domaine]. Participation active aux projets étudiants."
-    }
+      description:
+        "Formation approfondie en [domaine]. Participation active aux projets étudiants.",
+    },
   ],
   experience: [
     {
@@ -44,7 +47,8 @@ export const placeholderData = {
       startDate: "2020",
       endDate: "Présent",
       current: true,
-      description: "• Gestion de projets importants dans [domaine]\n• Direction d'une équipe de X personnes\n• Amélioration des processus de [domaine]\n• Réalisation d'objectifs clés"
+      description:
+        "• Gestion de projets importants dans [domaine]\n• Direction d'une équipe de X personnes\n",
     },
     {
       position: "Poste Précédent",
@@ -53,8 +57,9 @@ export const placeholderData = {
       startDate: "2018",
       endDate: "2020",
       current: false,
-      description: "• Développement de solutions pour [domaine]\n• Collaboration avec différentes équipes\n• Mise en place de [projet/processus]"
-    }
+      description:
+        "• Développement de solutions pour [domaine]\n• Collaboration avec différentes équipes]",
+    },
   ],
   skills: [
     { name: "Compétence 1", level: 90 },
@@ -65,7 +70,6 @@ export const placeholderData = {
   languages: [
     { name: "Français", level: "Langue maternelle" },
     { name: "Anglais", level: "Professionnel" },
-    { name: "Espagnol", level: "Intermédiaire" },
   ],
   interests: [
     { name: "Centre d'intérêt 1" },
@@ -74,8 +78,13 @@ export const placeholderData = {
   ],
 };
 
-export function getPlaceholderOrValue(section: string, field: string, value: any, parentField?: string) {
-  if (!value || (typeof value === 'string' && value.trim() === '')) {
+export function getPlaceholderOrValue(
+  section: string,
+  field: string,
+  value: any,
+  parentField?: string
+) {
+  if (!value || (typeof value === "string" && value.trim() === "")) {
     if (parentField) {
       return placeholderData[section][parentField][field];
     }
@@ -84,7 +93,11 @@ export function getPlaceholderOrValue(section: string, field: string, value: any
   return value;
 }
 
-export function getArrayPlaceholderOrValue(section: string, array: any[], index: number) {
+export function getArrayPlaceholderOrValue(
+  section: string,
+  array: any[],
+  index: number
+) {
   if (!array || array.length <= index) {
     return placeholderData[section][index];
   }

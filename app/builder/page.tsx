@@ -869,27 +869,29 @@ export default function Builder() {
       // Check if references and socials are already in the section order
       const hasReferences = sectionOrder.includes("references");
       const hasSocials = sectionOrder.includes("socials");
-      
+
       // If not, add them
       if (!hasReferences || !hasSocials) {
         const newSectionOrder = [...sectionOrder];
-        
+
         if (!hasReferences) {
           newSectionOrder.push("references");
         }
-        
+
         if (!hasSocials) {
           newSectionOrder.push("socials");
         }
-        
+
         setSectionOrder(newSectionOrder);
       }
     } else {
       // If not using Sherlock template, remove references and socials from section order
       // but keep the data in case user switches back to Sherlock
-      setSectionOrder(prev => prev.filter(section => 
-        section !== "references" && section !== "socials"
-      ));
+      setSectionOrder((prev) =>
+        prev.filter(
+          (section) => section !== "references" && section !== "socials"
+        )
+      );
     }
   }, [template, sectionOrder]);
   // Add margin change handlers
@@ -1075,7 +1077,12 @@ export default function Builder() {
                     </div>
                   </div>
                   {expandedSections[section] &&
-                    renderSectionContent(section, cvData, updateCVData)}
+                    renderSectionContent(
+                      section,
+                      cvData,
+                      updateCVData,
+                      template
+                    )}
                 </div>
               ))}
 
@@ -1558,7 +1565,8 @@ export default function Builder() {
 function renderSectionContent(
   section: string,
   cvData: CVData,
-  updateCVData: (section: string, data: any) => void
+  updateCVData: (section: string, data: any) => void,
+  template: string
 ) {
   switch (section) {
     case "personal-info":
@@ -1566,6 +1574,7 @@ function renderSectionContent(
         <PersonalInfo
           data={cvData.personalInfo}
           updateData={(data) => updateCVData("personalInfo", data)}
+          template={template}
         />
       );
     case "profile":
