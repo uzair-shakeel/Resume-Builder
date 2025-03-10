@@ -70,11 +70,11 @@ export default function Profile({ data, updateData }: ProfileProps) {
               <AlignLeft className="w-5 h-5 text-gray-700" />
             </button>
           </div>
-          <div className="ml-auto">
+          {/* <div className="ml-auto">
             <button className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
               Suggestions de l'IA
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
