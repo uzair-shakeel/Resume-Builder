@@ -45,6 +45,8 @@ import CVPreviewClassic from "@/components/cv-preview-classic";
 import CVPreviewStudent from "@/components/cv-preview-student";
 import CVPreviewCirculaire from "@/components/cv-preview-circulaire";
 import Image from "next/image";
+import References from "@/components/sections/references";
+import Socials from "@/components/sections/socials";
 
 // Font families
 const fontFamilies = [
@@ -185,6 +187,8 @@ export default function Builder() {
     skills: [],
     languages: [],
     interests: [],
+    references: [],
+    socials: [],
   });
 
   const [sectionOrder, setSectionOrder] = useState([
@@ -547,6 +551,10 @@ export default function Builder() {
         return "Languages";
       case "interests":
         return "Interests";
+      case "references":
+        return "References";
+      case "socials":
+        return "Social Links";
       default:
         return "";
     }
@@ -689,6 +697,36 @@ export default function Builder() {
       [sectionId]: true,
     }));
   };
+
+  // Add effect to conditionally add References and Socials sections for Sherlock template
+  useEffect(() => {
+    if (template === "sherlock") {
+      // Check if references and socials are already in the section order
+      const hasReferences = sectionOrder.includes("references");
+      const hasSocials = sectionOrder.includes("socials");
+      
+      // If not, add them
+      if (!hasReferences || !hasSocials) {
+        const newSectionOrder = [...sectionOrder];
+        
+        if (!hasReferences) {
+          newSectionOrder.push("references");
+        }
+        
+        if (!hasSocials) {
+          newSectionOrder.push("socials");
+        }
+        
+        setSectionOrder(newSectionOrder);
+      }
+    } else {
+      // If not using Sherlock template, remove references and socials from section order
+      // but keep the data in case user switches back to Sherlock
+      setSectionOrder(prev => prev.filter(section => 
+        section !== "references" && section !== "socials"
+      ));
+    }
+  }, [template, sectionOrder]);
 
   return (
     <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
@@ -1396,6 +1434,20 @@ function renderSectionContent(
         <Interests
           data={cvData.interests}
           updateData={(data) => updateCVData("interests", data)}
+        />
+      );
+    case "references":
+      return (
+        <References
+          data={cvData.references}
+          updateData={(data) => updateCVData("references", data)}
+        />
+      );
+    case "socials":
+      return (
+        <Socials
+          data={cvData.socials}
+          updateData={(data) => updateCVData("socials", data)}
         />
       );
     default:

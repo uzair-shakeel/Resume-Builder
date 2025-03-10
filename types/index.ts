@@ -43,6 +43,18 @@ export interface Interest {
   name: string;
 }
 
+export interface Reference {
+  name: string;
+  company: string;
+  phone: string;
+  email: string;
+}
+
+export interface Social {
+  platform: string;
+  url: string;
+}
+
 export interface CVData {
   personalInfo: PersonalInfo;
   profile?: string;
@@ -51,4 +63,7 @@ export interface CVData {
   skills?: Skill[];
   languages?: Language[];
   interests?: Interest[];
+  references?: Reference[];
+  socials?: Social[];
+  [key: string]: any; // Allow for custom sections
 }
