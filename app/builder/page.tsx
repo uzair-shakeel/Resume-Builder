@@ -32,6 +32,9 @@ import {
   Pencil,
   Trash2,
   FileText,
+  Cloud,
+  CloudOff,
+  RefreshCw,
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -144,6 +147,7 @@ const templateOptions = [
 
 export default function Builder() {
   const searchParams = useSearchParams();
+  const cvId = searchParams.get("id");
   const initialTemplate =
     (searchParams.get("template") as
       | "modern"
@@ -169,7 +173,12 @@ export default function Builder() {
     interests: false,
   });
 
-  const [cvData, setCvData] = useState<CVData>({
+  // Add save status states
+  const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "error">(
+    "saved"
+  );
+  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const [cvData, setCVData] = useState<CVData>({
     personalInfo: {
       firstName: "",
       lastName: "",
@@ -275,6 +284,169 @@ export default function Builder() {
   // Replace the displayData with just cvData
   const displayData = cvData;
 
+  // Load CV data if editing existing CV
+  useEffect(() => {
+    const loadCV = async () => {
+      if (!cvId) {
+        // If creating a new CV, initialize with empty data
+        setCVData({
+          personalInfo: {
+            firstName: "",
+            lastName: "",
+            title: "",
+            email: "",
+            phone: "",
+            address: "",
+            postalCode: "",
+            city: "",
+            photo: "/placeholder-user.jpg",
+          },
+          profile: "",
+          education: [],
+          experience: [],
+          skills: [],
+          languages: [],
+          interests: [],
+        });
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/cv/load?cvId=${cvId}`);
+        const data = await response.json();
+
+        if (data.success) {
+          // Initialize all CV data
+          setCVData(data.cv.data);
+          setTemplate(data.cv.template || initialTemplate);
+          setSectionOrder(
+            data.cv.sectionOrder || [
+              "personal-info",
+              "profile",
+              "education",
+              "experience",
+              "skills",
+              "languages",
+              "interests",
+            ]
+          );
+          setAccentColor(data.cv.accentColor || colorThemes[0].value);
+          setFontFamily(data.cv.fontFamily || fontFamilies[0].value);
+          setCustomSectionNames(data.cv.customSectionNames || {});
+          setSectionPages(data.cv.sectionPages || {});
+
+          // Expand sections that have data
+          const sectionsWithData = Object.entries(data.cv.data || {}).reduce(
+            (acc, [section, value]) => {
+              if (Array.isArray(value) && value.length > 0) {
+                acc[section] = true;
+              } else if (typeof value === "string" && value.trim() !== "") {
+                acc[section] = true;
+              } else if (
+                value &&
+                typeof value === "object" &&
+                Object.values(value).some((v) => v !== "")
+              ) {
+                acc[section] = true;
+              }
+              return acc;
+            },
+            {} as Record<string, boolean>
+          );
+
+          setExpandedSections((prev) => ({
+            ...prev,
+            ...sectionsWithData,
+          }));
+        }
+      } catch (error) {
+        console.error("Error loading CV:", error);
+        setSaveStatus("error");
+      }
+    };
+
+    loadCV();
+  }, [cvId, initialTemplate]);
+
+  // Auto-save functionality
+  const saveCV = async () => {
+    setSaveStatus("saving");
+
+    try {
+      const response = await fetch("/api/cv/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cvId,
+          title: cvData.personalInfo.firstName
+            ? `${cvData.personalInfo.firstName}'s CV`
+            : "Untitled CV",
+          data: cvData,
+          template,
+          sectionOrder,
+          accentColor,
+          fontFamily,
+          customSectionNames,
+          sectionPages,
+          lastEdited: new Date().toISOString(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSaveStatus("saved");
+        // If this is a new CV, update the URL with the new CV ID
+        if (!cvId && data.cv._id) {
+          window.history.replaceState({}, "", `/builder?id=${data.cv._id}`);
+        }
+      } else {
+        setSaveStatus("error");
+      }
+    } catch (error) {
+      console.error("Error saving CV:", error);
+      setSaveStatus("error");
+    }
+  };
+
+  // Debounced auto-save with immediate save for important changes
+  const debouncedSave = (immediate = false) => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    if (immediate) {
+      saveCV();
+    } else {
+      saveTimeoutRef.current = setTimeout(saveCV, 1000);
+    }
+  };
+
+  // Update CV data with auto-save
+  const updateCVData = (section: string, data: any) => {
+    setCVData((prev) => {
+      const newData = {
+        ...prev,
+        [section]: data,
+      };
+      return newData;
+    });
+
+    // Save immediately for personal info changes, debounce for others
+    debouncedSave(section === "personalInfo");
+  };
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     const templateParam = searchParams.get("template") as
       | "modern"
@@ -321,13 +493,6 @@ export default function Builder() {
   useEffect(() => {
     localStorage.setItem(`cv-color-${template}`, accentColor);
   }, [accentColor, template]);
-
-  const updateCVData = (section: string, data: any) => {
-    setCvData((prev) => ({
-      ...prev,
-      [section]: data,
-    }));
-  };
 
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
@@ -686,7 +851,7 @@ export default function Builder() {
     }));
 
     // Initialize the section data
-    setCvData((prev) => ({
+    setCVData((prev) => ({
       ...prev,
       [sectionId]: [],
     }));
@@ -727,6 +892,25 @@ export default function Builder() {
       ));
     }
   }, [template, sectionOrder]);
+  // Add margin change handlers
+  const handleRightMarginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleMarginChange("right", Math.max(0, parseInt(e.target.value) || 0));
+  };
+
+  const handleBottomMarginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleMarginChange("bottom", Math.max(0, parseInt(e.target.value) || 0));
+  };
+
+  const handleLeftMarginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleMarginChange("left", Math.max(0, parseInt(e.target.value) || 0));
+  };
+
+  const handleMinLinesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handlePageBreakSettingChange(
+      "minLinesBeforeBreak",
+      Math.max(1, parseInt(e.target.value) || 1)
+    );
+  };
 
   return (
     <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
@@ -736,6 +920,16 @@ export default function Builder() {
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-bold">CV Builder</h1>
+              {/* Save status indicator */}
+              <div className="text-gray-500">
+                {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
+                {saveStatus === "saving" && (
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                )}
+                {saveStatus === "error" && (
+                  <CloudOff className="w-5 h-5 text-red-500" />
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -990,12 +1184,12 @@ export default function Builder() {
                         <input
                           type="number"
                           value={pageMargins.top}
-                          onChange={(e) =>
+                          onChange={(e) => {
                             handleMarginChange(
                               "top",
                               Math.max(0, parseInt(e.target.value) || 0)
-                            )
-                          }
+                            );
+                          }}
                           className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button
@@ -1026,12 +1220,7 @@ export default function Builder() {
                         <input
                           type="number"
                           value={pageMargins.right}
-                          onChange={(e) =>
-                            handleMarginChange(
-                              "right",
-                              Math.max(0, parseInt(e.target.value) || 0)
-                            )
-                          }
+                          onChange={handleRightMarginChange}
                           className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button
@@ -1062,12 +1251,7 @@ export default function Builder() {
                         <input
                           type="number"
                           value={pageMargins.bottom}
-                          onChange={(e) =>
-                            handleMarginChange(
-                              "bottom",
-                              Math.max(0, parseInt(e.target.value) || 0)
-                            )
-                          }
+                          onChange={handleBottomMarginChange}
                           className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button
@@ -1098,12 +1282,7 @@ export default function Builder() {
                         <input
                           type="number"
                           value={pageMargins.left}
-                          onChange={(e) =>
-                            handleMarginChange(
-                              "left",
-                              Math.max(0, parseInt(e.target.value) || 0)
-                            )
-                          }
+                          onChange={handleLeftMarginChange}
                           className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button
@@ -1190,12 +1369,7 @@ export default function Builder() {
                         <input
                           type="number"
                           value={pageBreakSettings.minLinesBeforeBreak}
-                          onChange={(e) =>
-                            handlePageBreakSettingChange(
-                              "minLinesBeforeBreak",
-                              Math.max(1, parseInt(e.target.value) || 1)
-                            )
-                          }
+                          onChange={handleMinLinesChange}
                           className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
                         />
                         <button

@@ -1,5 +1,6 @@
 import type { CVData } from "@/types";
 import { getPlaceholderOrValue, placeholderData } from "@/lib/utils";
+import { Home, HomeIcon, Mail, Phone } from "lucide-react";
 
 // Define the types locally to avoid import issues
 interface Education {
@@ -168,16 +169,22 @@ export default function CVPreviewStudent({
       <div className="mb-8">
         <h3 className="text-xl font-bold mb-4 uppercase">Contact</h3>
         <div className="space-y-3 text-base">
-          <div className="flex items-start gap-3">
-            <span className="inline-block">📱</span>
+          <div className="flex items-center gap-3">
+            <span className="inline-block">
+              <Phone size={18} />
+            </span>
             <span>{phone}</span>
           </div>
-          <div className="flex items-start gap-3">
-            <span className="inline-block">✉️</span>
+          <div className="flex items-center gap-3">
+            <span className="inline-block">
+              <Mail size={18} />
+            </span>
             <span>{email}</span>
           </div>
-          <div className="flex items-start gap-3">
-            <span className="inline-block">🏠</span>
+          <div className="flex items-center gap-3">
+            <span className="inline-block">
+              <HomeIcon size={18} />
+            </span>
             <div>
               <p>{address},</p>
               <p>

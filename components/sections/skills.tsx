@@ -1,42 +1,49 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import type { SkillItem } from "@/types"
-import { MoreVertical, ChevronUp, Trash2 } from "lucide-react"
+import { useState, useEffect } from "react";
+import type { SkillItem } from "@/types";
+import { MoreVertical, ChevronUp, Trash2 } from "lucide-react";
 
 interface SkillsProps {
-  data: SkillItem[]
-  updateData: (data: SkillItem[]) => void
+  data: SkillItem[];
+  updateData: (data: SkillItem[]) => void;
 }
 
 export default function Skills({ data, updateData }: SkillsProps) {
-  const [localData, setLocalData] = useState<SkillItem[]>(data)
-  const [newSkill, setNewSkill] = useState<string>("")
+  const [localData, setLocalData] = useState<SkillItem[]>(data);
+  const [newSkill, setNewSkill] = useState<string>("");
 
-  const handleChange = (index: number, field: keyof SkillItem, value: string | number) => {
-    const newData = [...localData]
-    newData[index] = { ...newData[index], [field]: value }
-    setLocalData(newData)
-    updateData(newData)
-  }
+  // Update local state when parent data changes
+  useEffect(() => {
+    setLocalData(data);
+  }, [data]);
+
+  const handleChange = (
+    index: number,
+    field: keyof SkillItem,
+    value: string | number
+  ) => {
+    const newData = [...localData];
+    newData[index] = { ...newData[index], [field]: value };
+    setLocalData(newData);
+    updateData(newData);
+  };
 
   const addSkill = () => {
-    if (newSkill.trim()) {
-      const newItem: SkillItem = {
-        name: newSkill,
-        level: 3,
-      }
-      setLocalData([...localData, newItem])
-      updateData([...localData, newItem])
-      setNewSkill("")
-    }
-  }
+    const newItem: SkillItem = {
+      name: "",
+      level: 3,
+    };
+    const newData = [...localData, newItem];
+    setLocalData(newData);
+    updateData(newData);
+  };
 
   const removeSkill = (index: number) => {
-    const newData = localData.filter((_, i) => i !== index)
-    setLocalData(newData)
-    updateData(newData)
-  }
+    const newData = localData.filter((_, i) => i !== index);
+    setLocalData(newData);
+    updateData(newData);
+  };
 
   return (
     <div className="bg-white rounded-md">
@@ -57,50 +64,57 @@ export default function Skills({ data, updateData }: SkillsProps) {
 
       <div className="p-4 space-y-4">
         {localData.map((item, index) => (
-          <div key={index} className="flex items-center space-x-4">
-            <input
-              type="text"
-              value={item.name}
-              onChange={(e) => handleChange(index, "name", e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <div className="flex items-center space-x-1">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleChange(index, "level", i + 1)}
-                  className={`w-6 h-6 rounded-full ${i < item.level ? "bg-blue-600" : "bg-gray-200"}`}
+          <div key={index} className="border border-gray-200 rounded-md p-4">
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Compétence
+                </label>
+                <input
+                  type="text"
+                  value={item.name}
+                  onChange={(e) => handleChange(index, "name", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-              ))}
+              </div>
+              <button
+                onClick={() => removeSkill(index)}
+                className="ml-4 text-gray-400 hover:text-red-500"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
             </div>
 
-            <button onClick={() => removeSkill(index)} className="p-2 text-gray-400 hover:text-gray-600">
-              <Trash2 className="w-5 h-5" />
-            </button>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Niveau
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="5"
+                value={item.level}
+                onChange={(e) =>
+                  handleChange(index, "level", parseInt(e.target.value))
+                }
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>Débutant</span>
+                <span>Intermédiaire</span>
+                <span>Expert</span>
+              </div>
+            </div>
           </div>
         ))}
 
-        <div className="flex items-center space-x-2">
-          <input
-            type="text"
-            value={newSkill}
-            onChange={(e) => setNewSkill(e.target.value)}
-            placeholder="Ajouter une compétence"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault()
-                addSkill()
-              }
-            }}
-          />
-          <button onClick={addSkill} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-            Ajouter
-          </button>
-        </div>
+        <button
+          onClick={addSkill}
+          className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
+        >
+          + Ajouter une compétence
+        </button>
       </div>
     </div>
-  )
+  );
 }
-

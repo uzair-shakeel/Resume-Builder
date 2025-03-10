@@ -1,54 +1,63 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useRef, type ChangeEvent } from "react"
-import type { PersonalInfoData } from "@/types"
-import { PencilIcon } from "lucide-react"
-import Image from "next/image"
+import { useState, useRef, type ChangeEvent, useEffect } from "react";
+import type { PersonalInfoData } from "@/types";
+import { PencilIcon } from "lucide-react";
+import Image from "next/image";
 
 interface PersonalInfoProps {
-  data: PersonalInfoData
-  updateData: (data: PersonalInfoData) => void
+  data: PersonalInfoData;
+  updateData: (data: PersonalInfoData) => void;
 }
 
 export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
-  const [localData, setLocalData] = useState<PersonalInfoData>(data)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [localData, setLocalData] = useState<PersonalInfoData>(data);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setLocalData(data);
+  }, [data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    const newData = { ...localData, [name]: value }
-    setLocalData(newData)
-    updateData(newData)
-  }
+    const { name, value } = e.target;
+    const newData = { ...localData, [name]: value };
+    setLocalData(newData);
+    updateData(newData);
+  };
 
   const handleImageClick = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.click()
+      fileInputRef.current.click();
     }
-  }
+  };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
-          const newData = { ...localData, photo: event.target.result as string }
-          setLocalData(newData)
-          updateData(newData)
+          const newData = {
+            ...localData,
+            photo: event.target.result as string,
+          };
+          setLocalData(newData);
+          updateData(newData);
         }
-      }
-      reader.readAsDataURL(file)
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   return (
     <div className="p-4 space-y-4">
       <div className="flex items-start space-x-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Photo
+          </label>
           <div
             className="relative w-24 h-24 bg-gray-100 rounded-md overflow-hidden cursor-pointer"
             onClick={handleImageClick}
@@ -63,13 +72,22 @@ export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
             <button className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow-md">
               <PencilIcon className="w-4 h-4 text-gray-500" />
             </button>
-            <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageChange} />
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
           </div>
         </div>
 
         <div className="flex-1 grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="firstName"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Prénom
             </label>
             <input
@@ -82,7 +100,10 @@ export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
             />
           </div>
           <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="lastName"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Nom de famille
             </label>
             <input
@@ -98,7 +119,10 @@ export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
       </div>
 
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="title"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Titre
         </label>
         <input
@@ -112,7 +136,10 @@ export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Adresse e-mail
         </label>
         <input
@@ -126,7 +153,10 @@ export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
       </div>
 
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="phone"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Numéro de téléphone
         </label>
         <input
@@ -140,7 +170,10 @@ export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
       </div>
 
       <div>
-        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          htmlFor="address"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
           Adresse
         </label>
         <input
@@ -155,7 +188,10 @@ export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="postalCode"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Code postal
           </label>
           <input
@@ -168,7 +204,10 @@ export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
           />
         </div>
         <div>
-          <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="city"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Ville
           </label>
           <input
@@ -212,6 +251,5 @@ export default function PersonalInfo({ data, updateData }: PersonalInfoProps) {
         </button>
       </div>
     </div>
-  )
+  );
 }
-
