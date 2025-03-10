@@ -5,76 +5,165 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const placeholderData = {
+// Define the type for placeholderData with an index signature
+interface PlaceholderData {
   personalInfo: {
-    firstName: "Votre Prénom",
-    lastName: "Votre Nom",
-    title: "Votre Titre Professionnel",
-    email: "votre.email@exemple.com",
-    phone: "+33 6 12 34 56 78",
-    address: "123 Rue de l'Exemple",
-    postalCode: "75000",
-    city: "Paris",
-    photo: "/placeholder-user.jpg",
+    firstName: string;
+    lastName: string;
+    title: string;
+    email: string;
+    phone: string;
+    address: string;
+    postalCode: string;
+    city: string;
+    photo: string;
+  };
+  profile: string;
+  education: Array<{
+    school: string;
+    degree: string;
+    startDate: string;
+    endDate: string;
+    current: boolean;
+    description: string;
+  }>;
+  experience: Array<{
+    position: string;
+    company: string;
+    location: string;
+    startDate: string;
+    endDate: string;
+    current: boolean;
+    description: string;
+  }>;
+  skills: Array<{
+    name: string;
+    level: number;
+  }>;
+  languages: Array<{
+    name: string;
+    level: string;
+  }>;
+  interests: Array<{
+    name: string;
+  }>;
+  references: Array<{
+    name: string;
+    company: string;
+    phone: string;
+    email: string;
+  }>;
+  socials: Array<{
+    platform: string;
+    url: string;
+  }>;
+  [key: string]: any; // Index signature to allow string indexing
+}
+
+export const placeholderData: PlaceholderData = {
+  personalInfo: {
+    firstName: "Sherlock",
+    lastName: "Holmes",
+    title: "Consulting Detective",
+    email: "sherlock.holmes@detective.com",
+    phone: "+44 20 7946 0123",
+    address: "221B Baker Street",
+    postalCode: "NW1 6XE",
+    city: "London",
+    photo: "/placeholder-logo.svg",
   },
   profile:
-    "Professionnel expérimenté avec plus de X années d'expérience dans le domaine de [votre domaine]. Passionné par [vos centres d'intérêt professionnels] et expert en [vos compétences clés]. À la recherche de nouvelles opportunités pour mettre à profit mes compétences en [domaine] et contribuer au succès d'une entreprise innovante.",
+    "Highly analytical consulting detective with exceptional observational skills and expertise in criminal psychology. Specializing in solving complex cases that baffle conventional investigators. Known for attention to detail, logical reasoning, and the science of deduction.",
   education: [
     {
-      school: "Université Example",
-      degree: "Master en [Votre Domaine]",
-      startDate: "2018",
-      endDate: "2020",
+      school: "University of London",
+      degree: "Master of Science in Chemistry",
+      startDate: "2010",
+      endDate: "2012",
       current: false,
       description:
-        "Spécialisation en [votre spécialité]. Projets majeurs réalisés dans [domaine].",
+        "Specialized in forensic chemistry and toxicology. Graduated with honors.",
     },
     {
-      school: "École Exemple",
-      degree: "Licence en [Votre Domaine]",
-      startDate: "2015",
-      endDate: "2018",
+      school: "Oxford University",
+      degree: "Bachelor of Science in Criminal Psychology",
+      startDate: "2006",
+      endDate: "2010",
       current: false,
       description:
-        "Formation approfondie en [domaine]. Participation active aux projets étudiants.",
+        "Focused on behavioral analysis and criminal profiling. Thesis on patterns of serial offenders.",
     },
   ],
   experience: [
     {
-      position: "Poste Exemple",
-      company: "Entreprise Example",
-      location: "Paris, France",
-      startDate: "2020",
-      endDate: "Présent",
+      position: "Consulting Detective",
+      company: "Self-Employed",
+      location: "London, UK",
+      startDate: "2012",
+      endDate: "Present",
       current: true,
       description:
-        "• Gestion de projets importants dans [domaine]\n• Direction d'une équipe de X personnes\n",
+        "• Solved over 100 complex criminal cases in collaboration with Scotland Yard\n• Developed innovative methods for crime scene analysis and evidence collection\n• Provided expert consultation to international law enforcement agencies\n• Published research on criminal behavior patterns and forensic techniques",
     },
     {
-      position: "Poste Précédent",
-      company: "Entreprise Précédente",
-      location: "Lyon, France",
-      startDate: "2018",
-      endDate: "2020",
+      position: "Forensic Analyst",
+      company: "Metropolitan Police",
+      location: "London, UK",
+      startDate: "2010",
+      endDate: "2012",
       current: false,
       description:
-        "• Développement de solutions pour [domaine]\n• Collaboration avec différentes équipes]",
+        "• Analyzed crime scene evidence using advanced chemical techniques\n• Assisted detectives with technical aspects of investigations\n• Developed new protocols for evidence preservation and analysis\n• Trained junior staff in forensic methodologies",
     },
   ],
   skills: [
-    { name: "Compétence 1", level: 90 },
-    { name: "Compétence 2", level: 85 },
-    { name: "Compétence 3", level: 80 },
-    { name: "Compétence 4", level: 75 },
+    { name: "Deductive Reasoning", level: 5 },
+    { name: "Forensic Analysis", level: 5 },
+    { name: "Criminal Psychology", level: 4 },
+    { name: "Disguise & Infiltration", level: 4 },
+    { name: "Chemical Analysis", level: 5 },
+    { name: "Combat Skills", level: 3 },
   ],
   languages: [
-    { name: "Français", level: "Langue maternelle" },
-    { name: "Anglais", level: "Professionnel" },
+    { name: "English", level: "Native" },
+    { name: "French", level: "Fluent" },
+    { name: "German", level: "Intermediate" },
+    { name: "Latin", level: "Basic" },
   ],
   interests: [
-    { name: "Centre d'intérêt 1" },
-    { name: "Centre d'intérêt 2" },
-    { name: "Centre d'intérêt 3" },
+    { name: "Violin" },
+    { name: "Boxing" },
+    { name: "Chemistry" },
+    { name: "Beekeeping" },
+    { name: "Literature" },
+  ],
+  references: [
+    {
+      name: "Dr. John Watson",
+      company: "Medical Practice",
+      phone: "+44 20 7946 0456",
+      email: "john.watson@medical.co.uk",
+    },
+    {
+      name: "Inspector Lestrade",
+      company: "Scotland Yard",
+      phone: "+44 20 7946 0789",
+      email: "g.lestrade@scotlandyard.gov.uk",
+    },
+  ],
+  socials: [
+    {
+      platform: "Website",
+      url: "www.thescienceofdeduction.co.uk",
+    },
+    {
+      platform: "LinkedIn",
+      url: "linkedin.com/in/sherlock-holmes",
+    },
+    {
+      platform: "Twitter",
+      url: "twitter.com/consulting_detective",
+    },
   ],
 };
 
@@ -86,9 +175,9 @@ export function getPlaceholderOrValue(
 ) {
   if (!value || (typeof value === "string" && value.trim() === "")) {
     if (parentField) {
-      return placeholderData[section][parentField][field];
+      return placeholderData[section]?.[parentField]?.[field] || "";
     }
-    return placeholderData[section][field];
+    return placeholderData[section]?.[field] || "";
   }
   return value;
 }
@@ -98,8 +187,8 @@ export function getArrayPlaceholderOrValue(
   array: any[],
   index: number
 ) {
-  if (!array || array.length <= index) {
-    return placeholderData[section][index];
+  if (!array || array.length === 0 || !array[index]) {
+    return placeholderData[section]?.[index] || null;
   }
   return array[index];
 }

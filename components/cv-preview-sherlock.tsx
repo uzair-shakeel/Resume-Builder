@@ -1,6 +1,7 @@
 import React from "react";
 import type { CVData, CustomSectionItem } from "@/types";
 import Image from "next/image";
+import { placeholderData, getPlaceholderOrValue } from "@/lib/utils";
 
 // Define the types locally to avoid import issues
 interface Reference {
@@ -116,7 +117,10 @@ export default function CVPreviewSherlock({
               {/* Continuous vertical line that spans the entire timeline */}
               <div className="absolute left-[calc(33.333%+5.2px)] top-2 bottom-10 w-0.5 bg-gray-700"></div>
 
-              {experience.map((exp, index) => (
+              {(experience?.length
+                ? experience
+                : placeholderData.experience
+              ).map((exp, index) => (
                 <div key={index} className="mb-8 relative">
                   <div className="flex">
                     <div className="w-1/3">
@@ -143,8 +147,10 @@ export default function CVPreviewSherlock({
                           className="text-xs text-gray-700"
                           dangerouslySetInnerHTML={{
                             __html: exp.description
-                              .replace(/\n/g, "<br/>")
-                              .replace(/\./g, ".<br/>"),
+                              ? exp.description
+                                  .replace(/\n/g, "<br/>")
+                                  .replace(/\./g, ".<br/>")
+                              : "",
                           }}
                         />
                       </div>
@@ -161,37 +167,43 @@ export default function CVPreviewSherlock({
             <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
               {getSectionTitle(section)}
             </h2>
-            {education.map((edu, index) => (
-              <div key={index} className="mb-6 relative">
-                <div className="grid grid-cols-3 gap-4">
-                  {/* Left column - School and dates */}
-                  <div className="col-span-1">
-                    <p className="font-semibold text-sm uppercase">
-                      {edu.school}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {edu.startDate} - {edu.current ? "Present" : edu.endDate}
-                    </p>
-                  </div>
+            {(education?.length ? education : placeholderData.education).map(
+              (edu, index) => (
+                <div key={index} className="mb-6 relative">
+                  <div className="grid grid-cols-3 gap-4">
+                    {/* Left column - School and dates */}
+                    <div className="col-span-1">
+                      <p className="font-semibold text-sm uppercase">
+                        {edu.school}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {edu.startDate} -{" "}
+                        {edu.current ? "Present" : edu.endDate}
+                      </p>
+                    </div>
 
-                  {/* Right column - Degree and description */}
-                  <div className="col-span-2 relative pl-6">
-                    {/* Timeline dot */}
-                    <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-gray-700"></div>
+                    {/* Right column - Degree and description */}
+                    <div className="col-span-2 relative pl-6">
+                      {/* Timeline dot */}
+                      <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-gray-700"></div>
 
-                    {/* Vertical line connecting dots (except for last item) */}
-                    {index < education.length - 1 && (
-                      <div
-                        className="absolute left-[5.2px] top-3 w-0.5 bg-gray-700"
-                        style={{ height: "calc(100% + 1.5rem)" }}
-                      ></div>
-                    )}
+                      {/* Vertical line connecting dots (except for last item) */}
+                      {index <
+                        (education?.length ||
+                          placeholderData.education.length) -
+                          1 && (
+                        <div
+                          className="absolute left-[5.2px] top-3 w-0.5 bg-gray-700"
+                          style={{ height: "calc(100% + 1.5rem)" }}
+                        ></div>
+                      )}
 
-                    <p className="font-semibold text-sm">{edu.degree}</p>
+                      <p className="font-semibold text-sm">{edu.degree}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
         );
       case "skills":
@@ -201,19 +213,21 @@ export default function CVPreviewSherlock({
               {getSectionTitle(section)}
             </h2>
             <div className="grid grid-cols-2 gap-4">
-              {skills.slice(0, 6).map((skill, index) => (
-                <div key={index} className="mb-2">
-                  <p className="text-xs uppercase mb-1 text-gray-600">
-                    {skill.name}
-                  </p>
-                  <div className="w-full bg-gray-200 h-2 rounded-sm">
-                    <div
-                      className="h-full bg-gray-700 rounded-sm"
-                      style={{ width: `${(skill.level / 5) * 100}%` }}
-                    ></div>
+              {(skills?.length ? skills : placeholderData.skills)
+                .slice(0, 6)
+                .map((skill, index) => (
+                  <div key={index} className="mb-2">
+                    <p className="text-xs uppercase mb-1 text-gray-600">
+                      {skill.name}
+                    </p>
+                    <div className="w-full bg-gray-200 h-2 rounded-sm">
+                      <div
+                        className="h-full bg-gray-700 rounded-sm"
+                        style={{ width: `${(skill.level / 5) * 100}%` }}
+                      ></div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         );
@@ -224,30 +238,32 @@ export default function CVPreviewSherlock({
               {getSectionTitle(section)}
             </h2>
             <div className="grid grid-cols-2 gap-4">
-              {languages.map((language, index) => (
-                <div key={index} className="mb-2">
-                  <p className="text-xs uppercase mb-1 text-gray-600">
-                    {language.name}
-                  </p>
-                  <div className="w-full bg-gray-200 h-2 rounded-sm">
-                    <div
-                      className="bg-gray-700 h-2 rounded-sm"
-                      style={{
-                        width:
-                          language.level === "Natif"
-                            ? "100%"
-                            : language.level === "Courant"
-                            ? "80%"
-                            : language.level === "Avancé"
-                            ? "60%"
-                            : language.level === "Intermédiaire"
-                            ? "40%"
-                            : "20%",
-                      }}
-                    ></div>
+              {(languages?.length ? languages : placeholderData.languages).map(
+                (language, index) => (
+                  <div key={index} className="mb-2">
+                    <p className="text-xs uppercase mb-1 text-gray-600">
+                      {language.name}
+                    </p>
+                    <div className="w-full bg-gray-200 h-2 rounded-sm">
+                      <div
+                        className="bg-gray-700 h-2 rounded-sm"
+                        style={{
+                          width:
+                            language.level === "Natif"
+                              ? "100%"
+                              : language.level === "Courant"
+                              ? "80%"
+                              : language.level === "Avancé"
+                              ? "60%"
+                              : language.level === "Intermédiaire"
+                              ? "40%"
+                              : "20%",
+                        }}
+                      ></div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         );
@@ -258,14 +274,16 @@ export default function CVPreviewSherlock({
               {getSectionTitle(section)}
             </h2>
             <div className="flex flex-wrap gap-2">
-              {interests.map((interest, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100"
-                >
-                  {interest.name}
-                </span>
-              ))}
+              {(interests?.length ? interests : placeholderData.interests).map(
+                (interest, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100"
+                  >
+                    {interest.name}
+                  </span>
+                )
+              )}
             </div>
           </div>
         );
@@ -300,12 +318,10 @@ export default function CVPreviewSherlock({
 
   return (
     <div
-      style={
-        {
-          "--accent-color": accentColor,
-          fontFamily: fontFamily,
-        } as React.CSSProperties
-      }
+      style={{
+        fontFamily: fontFamily,
+      }}
+      className="cv-container"
     >
       {/* Page 1 */}
       <div className="cv-page bg-white">
@@ -316,8 +332,14 @@ export default function CVPreviewSherlock({
             <div className="mx-auto mb-4">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-500 bg-gray-500">
                 <Image
-                  src={personalInfo.photo || "/placeholder-user.jpg"}
-                  alt={`${personalInfo.firstName} ${personalInfo.lastName}`}
+                  src={
+                    personalInfo?.photo || placeholderData?.personalInfo?.photo
+                  }
+                  alt={`${getPlaceholderOrValue(
+                    "personalInfo",
+                    "lastName",
+                    personalInfo?.lastName
+                  )}`}
                   width={128}
                   height={128}
                   className="object-cover w-full h-full"
@@ -326,12 +348,14 @@ export default function CVPreviewSherlock({
             </div>
 
             {/* About me - only show if profile is in section order */}
-            {profile && sectionOrder.includes("profile") && (
+            {sectionOrder.includes("profile") && (
               <div className="mb-6">
                 <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                   {getSectionTitle("profile")}
                 </h2>
-                <p className="text-sm text-gray-300">{profile}</p>
+                <p className="text-sm text-gray-300">
+                  {profile || placeholderData.profile}
+                </p>
               </div>
             )}
 
@@ -341,25 +365,41 @@ export default function CVPreviewSherlock({
                 {getSectionTitle("socials")}
               </h2>
               <div className="text-sm">
-                {socials &&
-                  socials.length > 0 &&
-                  socials.map((social: Social, index: number) => (
-                    <div key={index} className="mb-2">
-                      <p className="mb-1">{social.platform}:</p>
-                      <a
-                        href={
-                          social.url.startsWith("http")
-                            ? social.url
-                            : `https://${social.url}`
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-300 mb-2 text-xs break-words underline hover:text-gray-100"
-                      >
-                        {social.url}
-                      </a>
-                    </div>
-                  ))}
+                {socials && socials.length > 0
+                  ? socials.map((social: Social, index: number) => (
+                      <div key={index} className="mb-2">
+                        <p className="mb-1">{social.platform}:</p>
+                        <a
+                          href={
+                            social.url.startsWith("http")
+                              ? social.url
+                              : `https://${social.url}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-300 mb-2 text-xs break-words underline hover:text-gray-100"
+                        >
+                          {social.url}
+                        </a>
+                      </div>
+                    ))
+                  : placeholderData.socials.map((social, index) => (
+                      <div key={index} className="mb-2">
+                        <p className="mb-1">{social.platform}:</p>
+                        <a
+                          href={
+                            social.url.startsWith("http")
+                              ? social.url
+                              : `https://${social.url}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-300 mb-2 text-xs break-words underline hover:text-gray-100"
+                        >
+                          {social.url}
+                        </a>
+                      </div>
+                    ))}
               </div>
             </div>
 
@@ -368,23 +408,37 @@ export default function CVPreviewSherlock({
               <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                 {getSectionTitle("references")}
               </h2>
-              {references &&
-                references.length > 0 &&
-                references.map((reference: Reference, index: number) => (
-                  <div key={index} className="text-sm mb-4">
-                    <p className="font-semibold mb-1">
-                      {reference.name.toUpperCase()}
-                    </p>
-                    <p className="text-gray-300 mb-1">{reference.company}</p>
-                    <p className="text-gray-300 mb-1">{reference.phone}</p>
-                    <a
-                      href={`mailto:${reference.email}`}
-                      className="text-gray-300 text-xs break-words underline hover:text-gray-100"
-                    >
-                      {reference.email}
-                    </a>
-                  </div>
-                ))}
+              {references && references.length > 0
+                ? references.map((reference: Reference, index: number) => (
+                    <div key={index} className="text-sm mb-4">
+                      <p className="font-semibold mb-1">
+                        {reference.name.toUpperCase()}
+                      </p>
+                      <p className="text-gray-300 mb-1">{reference.company}</p>
+                      <p className="text-gray-300 mb-1">{reference.phone}</p>
+                      <a
+                        href={`mailto:${reference.email}`}
+                        className="text-gray-300 text-xs break-words underline hover:text-gray-100"
+                      >
+                        {reference.email}
+                      </a>
+                    </div>
+                  ))
+                : placeholderData.references.map((reference, index) => (
+                    <div key={index} className="text-sm mb-4">
+                      <p className="font-semibold mb-1">
+                        {reference.name.toUpperCase()}
+                      </p>
+                      <p className="text-gray-300 mb-1">{reference.company}</p>
+                      <p className="text-gray-300 mb-1">{reference.phone}</p>
+                      <a
+                        href={`mailto:${reference.email}`}
+                        className="text-gray-300 text-xs break-words underline hover:text-gray-100"
+                      >
+                        {reference.email}
+                      </a>
+                    </div>
+                  ))}
             </div>
 
             {/* Hobbies/Interests */}
@@ -396,7 +450,10 @@ export default function CVPreviewSherlock({
                     {getSectionTitle("interests")}
                   </h2>
                   <ul className="text-sm text-gray-300">
-                    {interests.map((interest, index) => (
+                    {(interests?.length
+                      ? interests
+                      : placeholderData.interests
+                    ).map((interest, index) => (
                       <li key={index} className="mb-1">
                         • {interest.name}
                       </li>
@@ -412,10 +469,13 @@ export default function CVPreviewSherlock({
               {/* Name and title */}
               <div className="w-1/3 mb-8">
                 <h1 className="text-2xl font-bold uppercase tracking-wider mb-1">
-                  {personalInfo.firstName} {personalInfo.lastName}
+                  {personalInfo?.firstName ||
+                    placeholderData.personalInfo.firstName}{" "}
+                  {personalInfo?.lastName ||
+                    placeholderData.personalInfo.lastName}
                 </h1>
                 <p className="text-sm uppercase tracking-wider text-gray-800">
-                  {personalInfo.title}
+                  {personalInfo?.title || placeholderData.personalInfo.title}
                 </p>
               </div>
 
@@ -423,21 +483,28 @@ export default function CVPreviewSherlock({
               <div className="mb-8">
                 <div className="flex items-center justify-end gap-3 mb-2">
                   <p className="text-sm text-gray-700">
-                    {personalInfo.address}, {personalInfo.city},{" "}
-                    {personalInfo.postalCode}
+                    {personalInfo?.address ||
+                      placeholderData.personalInfo.address}
+                    , {personalInfo?.city || placeholderData.personalInfo.city},{" "}
+                    {personalInfo?.postalCode ||
+                      placeholderData.personalInfo.postalCode}
                   </p>
                   <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
                     <span className="text-white text-xs">📍</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-end gap-3 mb-2">
-                  <p className="text-sm text-gray-700">{personalInfo.phone}</p>
+                  <p className="text-sm text-gray-700">
+                    {personalInfo?.phone || placeholderData.personalInfo.phone}
+                  </p>
                   <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
                     <span className="text-white text-xs">📞</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-end gap-3">
-                  <p className="text-sm text-gray-700">{personalInfo.email}</p>
+                  <p className="text-sm text-gray-700">
+                    {personalInfo?.email || placeholderData.personalInfo.email}
+                  </p>
                   <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
                     <span className="text-white text-xs">✉️</span>
                   </div>
@@ -463,8 +530,18 @@ export default function CVPreviewSherlock({
               <div className="mx-auto mb-4">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-500 bg-gray-500">
                   <Image
-                    src={personalInfo.photo || "/placeholder-user.jpg"}
-                    alt={`${personalInfo.firstName} ${personalInfo.lastName}`}
+                    src={
+                      personalInfo?.photo || placeholderData.personalInfo.photo
+                    }
+                    alt={`${getPlaceholderOrValue(
+                      "personalInfo",
+                      "firstName",
+                      personalInfo?.firstName
+                    )} ${getPlaceholderOrValue(
+                      "personalInfo",
+                      "lastName",
+                      personalInfo?.lastName
+                    )}`}
                     width={128}
                     height={128}
                     className="object-cover w-full h-full"
@@ -473,12 +550,14 @@ export default function CVPreviewSherlock({
               </div>
 
               {/* About me - only show if profile is in section order */}
-              {profile && sectionOrder.includes("profile") && (
+              {sectionOrder.includes("profile") && (
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                     {getSectionTitle("profile")}
                   </h2>
-                  <p className="text-sm text-gray-300">{profile}</p>
+                  <p className="text-sm text-gray-300">
+                    {profile || placeholderData.profile}
+                  </p>
                 </div>
               )}
 
@@ -488,25 +567,41 @@ export default function CVPreviewSherlock({
                   {getSectionTitle("socials")}
                 </h2>
                 <div className="text-sm">
-                  {socials &&
-                    socials.length > 0 &&
-                    socials.map((social: Social, index: number) => (
-                      <div key={index} className="mb-2">
-                        <p className="mb-1">{social.platform}:</p>
-                        <a
-                          href={
-                            social.url.startsWith("http")
-                              ? social.url
-                              : `https://${social.url}`
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-gray-300 mb-2 text-xs break-words underline hover:text-gray-100"
-                        >
-                          {social.url}
-                        </a>
-                      </div>
-                    ))}
+                  {socials && socials.length > 0
+                    ? socials.map((social: Social, index: number) => (
+                        <div key={index} className="mb-2">
+                          <p className="mb-1">{social.platform}:</p>
+                          <a
+                            href={
+                              social.url.startsWith("http")
+                                ? social.url
+                                : `https://${social.url}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-300 mb-2 text-xs break-words underline hover:text-gray-100"
+                          >
+                            {social.url}
+                          </a>
+                        </div>
+                      ))
+                    : placeholderData.socials.map((social, index) => (
+                        <div key={index} className="mb-2">
+                          <p className="mb-1">{social.platform}:</p>
+                          <a
+                            href={
+                              social.url.startsWith("http")
+                                ? social.url
+                                : `https://${social.url}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-300 mb-2 text-xs break-words underline hover:text-gray-100"
+                          >
+                            {social.url}
+                          </a>
+                        </div>
+                      ))}
                 </div>
               </div>
 
@@ -515,27 +610,41 @@ export default function CVPreviewSherlock({
                 <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                   {getSectionTitle("references")}
                 </h2>
-                {references && references.length > 0 ? (
-                  references.map((reference: Reference, index: number) => (
-                    <div key={index} className="text-sm mb-4">
-                      <p className="font-semibold mb-1">
-                        {reference.name.toUpperCase()}
-                      </p>
-                      <p className="text-gray-300 mb-1">{reference.company}</p>
-                      <p className="text-gray-300 mb-1">{reference.phone}</p>
-                      <a
-                        href={`mailto:${reference.email}`}
-                        className="text-gray-300 text-xs break-words underline hover:text-gray-100"
-                      >
-                        {reference.email}
-                      </a>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-300 text-xs">
-                    No references provided
-                  </p>
-                )}
+                {references && references.length > 0
+                  ? references.map((reference: Reference, index: number) => (
+                      <div key={index} className="text-sm mb-4">
+                        <p className="font-semibold mb-1">
+                          {reference.name.toUpperCase()}
+                        </p>
+                        <p className="text-gray-300 mb-1">
+                          {reference.company}
+                        </p>
+                        <p className="text-gray-300 mb-1">{reference.phone}</p>
+                        <a
+                          href={`mailto:${reference.email}`}
+                          className="text-gray-300 text-xs break-words underline hover:text-gray-100"
+                        >
+                          {reference.email}
+                        </a>
+                      </div>
+                    ))
+                  : placeholderData.references.map((reference, index) => (
+                      <div key={index} className="text-sm mb-4">
+                        <p className="font-semibold mb-1">
+                          {reference.name.toUpperCase()}
+                        </p>
+                        <p className="text-gray-300 mb-1">
+                          {reference.company}
+                        </p>
+                        <p className="text-gray-300 mb-1">{reference.phone}</p>
+                        <a
+                          href={`mailto:${reference.email}`}
+                          className="text-gray-300 text-xs break-words underline hover:text-gray-100"
+                        >
+                          {reference.email}
+                        </a>
+                      </div>
+                    ))}
               </div>
 
               {/* Interests for page 2 */}
@@ -547,7 +656,10 @@ export default function CVPreviewSherlock({
                       {getSectionTitle("interests")}
                     </h2>
                     <ul className="text-sm text-gray-300">
-                      {interests.map((interest, index) => (
+                      {(interests?.length
+                        ? interests
+                        : placeholderData.interests
+                      ).map((interest, index) => (
                         <li key={index} className="mb-1">
                           • {interest.name}
                         </li>
@@ -563,10 +675,13 @@ export default function CVPreviewSherlock({
                 {/* Name and title */}
                 <div className="w-1/3 mb-8">
                   <h1 className="text-2xl font-bold uppercase tracking-wider mb-1">
-                    {personalInfo.firstName} {personalInfo.lastName}
+                    {personalInfo?.firstName ||
+                      placeholderData.personalInfo.firstName}{" "}
+                    {personalInfo?.lastName ||
+                      placeholderData.personalInfo.lastName}
                   </h1>
                   <p className="text-sm uppercase tracking-wider text-gray-800">
-                    {personalInfo.title}
+                    {personalInfo?.title || placeholderData.personalInfo.title}
                   </p>
                 </div>
 
@@ -574,8 +689,12 @@ export default function CVPreviewSherlock({
                 <div className="mb-8">
                   <div className="flex items-center justify-end gap-3 mb-2">
                     <p className="text-sm text-gray-700">
-                      {personalInfo.address}, {personalInfo.city},{" "}
-                      {personalInfo.postalCode}
+                      {personalInfo?.address ||
+                        placeholderData.personalInfo.address}
+                      ,{" "}
+                      {personalInfo?.city || placeholderData.personalInfo.city},{" "}
+                      {personalInfo?.postalCode ||
+                        placeholderData.personalInfo.postalCode}
                     </p>
                     <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
                       <span className="text-white text-xs">📍</span>
@@ -583,7 +702,8 @@ export default function CVPreviewSherlock({
                   </div>
                   <div className="flex items-center justify-end gap-3 mb-2">
                     <p className="text-sm text-gray-700">
-                      {personalInfo.phone}
+                      {personalInfo?.phone ||
+                        placeholderData.personalInfo.phone}
                     </p>
                     <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
                       <span className="text-white text-xs">📞</span>
@@ -591,7 +711,8 @@ export default function CVPreviewSherlock({
                   </div>
                   <div className="flex items-center justify-end gap-3">
                     <p className="text-sm text-gray-700">
-                      {personalInfo.email}
+                      {personalInfo?.email ||
+                        placeholderData.personalInfo.email}
                     </p>
                     <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
                       <span className="text-white text-xs">✉️</span>
