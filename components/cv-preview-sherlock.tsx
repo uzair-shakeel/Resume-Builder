@@ -341,7 +341,8 @@ export default function CVPreviewSherlock({
                 {getSectionTitle("socials")}
               </h2>
               <div className="text-sm">
-                {socials && socials.length > 0 ? (
+                {socials &&
+                  socials.length > 0 &&
                   socials.map((social: Social, index: number) => (
                     <div key={index} className="mb-2">
                       <p className="mb-1">{social.platform}:</p>
@@ -358,12 +359,7 @@ export default function CVPreviewSherlock({
                         {social.url}
                       </a>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-gray-300 text-xs">
-                    No social links provided
-                  </p>
-                )}
+                  ))}
               </div>
             </div>
 
@@ -372,7 +368,8 @@ export default function CVPreviewSherlock({
               <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                 {getSectionTitle("references")}
               </h2>
-              {references && references.length > 0 ? (
+              {references &&
+                references.length > 0 &&
                 references.map((reference: Reference, index: number) => (
                   <div key={index} className="text-sm mb-4">
                     <p className="font-semibold mb-1">
@@ -387,10 +384,7 @@ export default function CVPreviewSherlock({
                       {reference.email}
                     </a>
                   </div>
-                ))
-              ) : (
-                <p className="text-gray-300 text-xs">No references provided</p>
-              )}
+                ))}
             </div>
 
             {/* Hobbies/Interests */}
@@ -494,7 +488,8 @@ export default function CVPreviewSherlock({
                   {getSectionTitle("socials")}
                 </h2>
                 <div className="text-sm">
-                  {socials && socials.length > 0 ? (
+                  {socials &&
+                    socials.length > 0 &&
                     socials.map((social: Social, index: number) => (
                       <div key={index} className="mb-2">
                         <p className="mb-1">{social.platform}:</p>
@@ -511,12 +506,7 @@ export default function CVPreviewSherlock({
                           {social.url}
                         </a>
                       </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-300 text-xs">
-                      No social links provided
-                    </p>
-                  )}
+                    ))}
                 </div>
               </div>
 
