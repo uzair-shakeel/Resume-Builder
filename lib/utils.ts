@@ -65,7 +65,7 @@ export const placeholderData: PlaceholderData = {
     firstName: "Sherlock",
     lastName: "Holmes",
     title: "Consulting Detective",
-    email: "sherlock.holmes@detective.com",
+    email: "sh.holmes@dt.com",
     phone: "+44 20 7946 0123",
     address: "221B Baker Street",
     postalCode: "NW1 6XE",
