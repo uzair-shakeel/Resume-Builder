@@ -1,5 +1,6 @@
-import type { CVData } from "@/types";
+import type { CVData, CustomSectionItem } from "@/types";
 import Image from "next/image";
+import { placeholderData, getPlaceholderOrValue } from "@/lib/utils";
 
 // Define the types locally to avoid import issues
 interface Education {
@@ -46,6 +47,8 @@ interface CVPreviewMinimalProps {
   template?: string;
   accentColor?: string;
   fontFamily?: string;
+  sectionPages?: Record<string, number>;
+  customSectionNames?: Record<string, string>;
 }
 
 export default function CVPreviewMinimal({
@@ -55,6 +58,8 @@ export default function CVPreviewMinimal({
   template = "modern",
   accentColor = "#2a6496",
   fontFamily = "inter",
+  sectionPages = {},
+  customSectionNames = {},
 }: CVPreviewMinimalProps) {
   const {
     personalInfo,
@@ -73,119 +78,113 @@ export default function CVPreviewMinimal({
     minLinesBeforeBreak: 3,
   };
 
-  // Helper function to get placeholder or actual value
-  const getPlaceholderOrValue = (
-    section: string,
-    field: string,
-    value?: string
-  ) => {
-    if (value) return value;
-    return `[Your ${field}]`;
-  };
+  // Filter sections for page 1 and page 2
+  const page1Sections = sectionOrder.filter(
+    (section) => !sectionPages[section] || sectionPages[section] === 1
+  );
+  const page2Sections = sectionOrder.filter(
+    (section) => sectionPages[section] === 2
+  );
 
-  // Placeholder data for preview
-  const placeholderData = {
-    education: [
-      {
-        school: "EFAP, Montpellier",
-        degree: "Responsable de la communication",
-        startDate: "Sep 2006",
-        endDate: "Jan 2009",
-        current: false,
-        description:
-          "Obtention du diplôme de responsable de la communication Images et médias en juin 2009.",
-      },
-      {
-        school: "CPEA, Montpellier",
-        degree: "BTS Management des Unités Commerciales",
-        startDate: "Sep 2004",
-        endDate: "Jun 2006",
-        current: false,
-        description:
-          "Obtention du diplôme de management des unités commerciales en juin 2006.",
-      },
-    ],
-    experience: [
-      {
-        position: "Chargée de clientèle",
-        company: "Nanelle",
-        location: "Marseille",
-        startDate: "Feb 2013",
-        endDate: "May 2020",
-        current: false,
-        description:
-          "• Gestion du portefeuille clients B2B France et international\n• Développement de la notoriété de la marque : réseaux sociaux, partenariat, concours\n• Mise en place et développement de partenariats institutionnels et co-brandings\n• Mise à jour des outils analytiques afin de mesurer la performance du service client",
-      },
-      {
-        position: "Assistante commerciale",
-        company: "Nanelle",
-        location: "Marseille",
-        startDate: "Apr 2011",
-        endDate: "Jun 2013",
-        current: false,
-        description:
-          "• Gestion du portefeuille clients B2B France\n• Suivi et participation aux salons professionnels comme Maison et Objet\n• Prospection et création d'un portefeuille clients B2B à l'international",
-      },
-      {
-        position: "Attachée de presse",
-        company: "Agence Hopscotch",
-        location: "Montpellier",
-        startDate: "Sep 2009",
-        endDate: "Mar 2011",
-        current: false,
-        description:
-          "• Elaboration des stratégies de communication des marques\n• Communication de crise\n• Relations avec les médias",
-      },
-    ],
-    skills: [
-      { name: "Communication", level: 90 },
-      { name: "Gestion de clientèle", level: 85 },
-      { name: "Marketing", level: 80 },
-    ],
-    languages: [
-      { name: "Français", level: "Langue maternelle" },
-      { name: "Anglais", level: "Courant" },
-      { name: "Espagnol", level: "Intermédiaire" },
-    ],
-    interests: [
-      { name: "Voyages" },
-      { name: "Photographie" },
-      { name: "Cuisine" },
-    ],
+  const hasPage2 = page2Sections.length > 0;
+
+  // Helper function to get section title with custom names
+  const getSectionTitle = (section: string): string => {
+    // If there's a custom name for this section, use it
+    if (customSectionNames && customSectionNames[section]) {
+      return customSectionNames[section];
+    }
+
+    // Otherwise use the default name
+    switch (section) {
+      case "personal-info":
+        return "Personal details";
+      case "profile":
+        return "Profile";
+      case "education":
+        return "Education";
+      case "experience":
+        return "Employment";
+      case "skills":
+        return "Skills";
+      case "languages":
+        return "Languages";
+      case "interests":
+        return "Interests";
+      default:
+        if (section.startsWith("custom-")) {
+          return "Custom Section";
+        }
+        return "";
+    }
   };
 
   const renderPersonalDetails = () => {
     return (
       <div className="personal-details">
         <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b border-gray-200 pb-2">
-          Personal details
+          {getSectionTitle("personal-info")}
         </h3>
 
         <div className="space-y-4">
           <div>
             <h4 className="font-medium">Name</h4>
             <p>
-              {personalInfo?.firstName || "Josephine"}{" "}
-              {personalInfo?.lastName || "Fournier"}
+              {getPlaceholderOrValue(
+                "personalInfo",
+                "firstName",
+                personalInfo?.firstName
+              )}{" "}
+              {getPlaceholderOrValue(
+                "personalInfo",
+                "lastName",
+                personalInfo?.lastName
+              )}
             </p>
           </div>
 
           <div>
             <h4 className="font-medium">Email address</h4>
-            <p>{personalInfo?.email || "j.fournier@mail.com"}</p>
+            <p>
+              {getPlaceholderOrValue(
+                "personalInfo",
+                "email",
+                personalInfo?.email
+              )}
+            </p>
           </div>
 
           <div>
             <h4 className="font-medium">Phone number</h4>
-            <p>{personalInfo?.phone || "0610012035"}</p>
+            <p>
+              {getPlaceholderOrValue(
+                "personalInfo",
+                "phone",
+                personalInfo?.phone
+              )}
+            </p>
           </div>
 
           <div>
             <h4 className="font-medium">Address</h4>
-            <p>{personalInfo?.address || "78, Rue de Bois Sacré"}</p>
             <p>
-              {personalInfo?.postalCode || "13007"}{" "}
-              {personalInfo?.city || "Marseille"}
+              {getPlaceholderOrValue(
+                "personalInfo",
+                "address",
+                personalInfo?.address
+              )}
+            </p>
+            <p>
+              {getPlaceholderOrValue(
+                "personalInfo",
+                "postalCode",
+                personalInfo?.postalCode
+              )}{" "}
+              {getPlaceholderOrValue(
+                "personalInfo",
+                "city",
+                personalInfo?.city
+              )}
             </p>
           </div>
 
@@ -201,31 +200,31 @@ export default function CVPreviewMinimal({
   };
 
   const renderProfile = () => {
+    if (!sectionOrder.includes("profile")) return null;
     return (
       <div className="mb-8">
         <h3
           className="text-xl font-semibold mb-3"
           style={{ color: accentColor }}
         >
-          Profile
+          {getSectionTitle("profile")}
         </h3>
         <div className="border-t border-gray-200 pt-3">
-          <p className="text-gray-700">
-            {profile || placeholderData.experience[0].description}
-          </p>
+          <p className="text-gray-700">{profile || placeholderData.profile}</p>
         </div>
       </div>
     );
   };
 
   const renderExperience = () => {
+    if (!sectionOrder.includes("experience")) return null;
     return (
       <div className="mb-8">
         <h3
           className="text-xl font-semibold mb-3"
           style={{ color: accentColor }}
         >
-          Employment
+          {getSectionTitle("experience")}
         </h3>
         <div className="border-t border-gray-200 pt-3 space-y-6">
           {(experience?.length ? experience : placeholderData.experience).map(
@@ -262,13 +261,14 @@ export default function CVPreviewMinimal({
   };
 
   const renderEducation = () => {
+    if (!sectionOrder.includes("education")) return null;
     return (
       <div className="mb-8">
         <h3
           className="text-xl font-semibold mb-3"
           style={{ color: accentColor }}
         >
-          Education
+          {getSectionTitle("education")}
         </h3>
         <div className="border-t border-gray-200 pt-3 space-y-6">
           {(education?.length ? education : placeholderData.education).map(
@@ -297,13 +297,14 @@ export default function CVPreviewMinimal({
   };
 
   const renderSkills = () => {
+    if (!sectionOrder.includes("skills")) return null;
     return (
       <div className="mb-8">
         <h3
           className="text-xl font-semibold mb-3"
           style={{ color: accentColor }}
         >
-          Skills
+          {getSectionTitle("skills")}
         </h3>
         <div className="border-t border-gray-200 pt-3">
           <div className="space-y-2">
@@ -312,13 +313,13 @@ export default function CVPreviewMinimal({
                 <div key={index}>
                   <div className="flex justify-between mb-1">
                     <span className="text-gray-700">{skill.name}</span>
-                    <span className="text-gray-500">{skill.level}%</span>
+                    <span className="text-gray-500">{skill.level * 20}%</span>
                   </div>
                   <div className="w-full bg-gray-200 h-1.5">
                     <div
                       className="h-1.5"
                       style={{
-                        width: `${skill.level}%`,
+                        width: `${skill.level * 20}%`,
                         backgroundColor: accentColor,
                       }}
                     />
@@ -333,13 +334,14 @@ export default function CVPreviewMinimal({
   };
 
   const renderLanguages = () => {
+    if (!sectionOrder.includes("languages")) return null;
     return (
       <div className="mb-8">
         <h3
           className="text-xl font-semibold mb-3"
           style={{ color: accentColor }}
         >
-          Languages
+          {getSectionTitle("languages")}
         </h3>
         <div className="border-t border-gray-200 pt-3">
           <div className="space-y-2">
@@ -358,13 +360,14 @@ export default function CVPreviewMinimal({
   };
 
   const renderInterests = () => {
+    if (!sectionOrder.includes("interests")) return null;
     return (
       <div className="mb-8">
         <h3
           className="text-xl font-semibold mb-3"
           style={{ color: accentColor }}
         >
-          Interests
+          {getSectionTitle("interests")}
         </h3>
         <div className="border-t border-gray-200 pt-3">
           <div className="flex flex-wrap gap-2">
@@ -372,7 +375,8 @@ export default function CVPreviewMinimal({
               (interest, index) => (
                 <span
                   key={index}
-                  className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100"
+                  className="px-3 py-1 text-sm rounded-full text-gray-700"
+                  style={{ backgroundColor: `${accentColor}15` }}
                 >
                   {interest.name}
                 </span>
@@ -384,56 +388,250 @@ export default function CVPreviewMinimal({
     );
   };
 
-  return (
-    <div className={`cv-page font-${fontFamily} bg-white`}>
-      {/* Header bar */}
-      <div
-        className="w-full h-12"
-        style={{ backgroundColor: accentColor }}
-      ></div>
+  // Render custom section
+  const renderCustomSection = (section: string) => {
+    const sectionData = data[section] as CustomSectionItem[];
+    if (!sectionData || sectionData.length === 0) return null;
 
-      {/* Main name header */}
-      <div className="px-12 py-8">
-        <h1 className="text-3xl font-bold" style={{ color: accentColor }}>
-          {personalInfo?.firstName || "Josephine"}{" "}
-          {personalInfo?.lastName || "Fournier"}
-        </h1>
-      </div>
-
-      {/* Main content */}
-      <div className="px-12 pb-12 flex">
-        {/* Left column - Personal details */}
-        <div className="w-1/3 pr-8">
-          {personalInfo?.photo && (
-            <div className="mb-6">
-              <Image
-                src={personalInfo.photo || "/placeholder.svg"}
-                alt={`${personalInfo.firstName} ${personalInfo.lastName}`}
-                width={240}
-                height={240}
-                className="object-cover w-full h-auto"
-              />
+    return (
+      <div className="mb-8">
+        <h3
+          className="text-xl font-semibold mb-3"
+          style={{ color: accentColor }}
+        >
+          {getSectionTitle(section)}
+        </h3>
+        <div className="border-t border-gray-200 pt-3 space-y-4">
+          {sectionData.map((item, index) => (
+            <div key={index}>
+              {item.title && (
+                <h4 className="font-semibold text-gray-800">{item.title}</h4>
+              )}
+              {item.description && (
+                <p className="mt-2 text-gray-700">{item.description}</p>
+              )}
             </div>
-          )}
-          {renderPersonalDetails()}
-        </div>
-
-        {/* Right column - Main content */}
-        <div className="w-2/3">
-          {renderProfile()}
-          {renderExperience()}
-          {renderEducation()}
-          {sectionOrder.includes("skills") && renderSkills()}
-          {sectionOrder.includes("languages") && renderLanguages()}
-          {sectionOrder.includes("interests") && renderInterests()}
+          ))}
         </div>
       </div>
+    );
+  };
 
-      {/* Footer bar */}
+  // Helper function to render sections
+  const renderSection = (section: string) => {
+    switch (section) {
+      case "profile":
+        return renderProfile();
+      case "education":
+        return renderEducation();
+      case "experience":
+        return renderExperience();
+      case "skills":
+        return renderSkills();
+      case "languages":
+        return renderLanguages();
+      case "interests":
+        return renderInterests();
+      default:
+        if (section.startsWith("custom-")) {
+          return renderCustomSection(section);
+        }
+        return null;
+    }
+  };
+
+  return (
+    <div className="cv-container print:p-0">
+      {/* Page 1 */}
       <div
-        className="w-full h-12"
-        style={{ backgroundColor: accentColor }}
-      ></div>
+        className={`cv-page font-${fontFamily} bg-white`}
+        style={{
+          width: "210mm",
+          minHeight: "297mm",
+          margin: "0 auto",
+          position: "relative",
+          boxSizing: "border-box",
+        }}
+      >
+        {/* Header bar */}
+        <div
+          className="w-full h-12 print:h-12"
+          style={{ backgroundColor: accentColor }}
+        ></div>
+
+        {/* Main name header */}
+        <div className="px-12 py-8 print:px-12 print:py-8">
+          <h1
+            className="text-3xl font-bold"
+            style={{
+              color: accentColor,
+              marginBottom: 0,
+            }}
+          >
+            {getPlaceholderOrValue(
+              "personalInfo",
+              "firstName",
+              personalInfo?.firstName
+            )}{" "}
+            {getPlaceholderOrValue(
+              "personalInfo",
+              "lastName",
+              personalInfo?.lastName
+            )}
+          </h1>
+          <p className="text-gray-600 mt-2">
+            {getPlaceholderOrValue(
+              "personalInfo",
+              "title",
+              personalInfo?.title
+            )}
+          </p>
+        </div>
+
+        {/* Main content */}
+        <div className="px-12 pb-12 flex print:px-12 print:pb-12">
+          {/* Left column - Personal details */}
+          <div className="w-1/3 pr-8 print:pr-8">
+            {personalInfo?.photo && (
+              <div className="mb-6 print:mb-6">
+                <div className="relative w-full pb-[100%]">
+                  <Image
+                    src={
+                      personalInfo.photo || placeholderData.personalInfo.photo
+                    }
+                    alt={`${getPlaceholderOrValue(
+                      "personalInfo",
+                      "firstName",
+                      personalInfo?.firstName
+                    )} ${getPlaceholderOrValue(
+                      "personalInfo",
+                      "lastName",
+                      personalInfo?.lastName
+                    )}`}
+                    fill
+                    className="object-cover rounded-md"
+                    sizes="(max-width: 240px) 100vw, 240px"
+                  />
+                </div>
+              </div>
+            )}
+            {renderPersonalDetails()}
+          </div>
+
+          {/* Right column - Main content */}
+          <div className="w-2/3 print:w-2/3">
+            {/* Render sections for page 1 */}
+            {page1Sections.map((section) => (
+              <div key={section} className="print:break-inside-avoid">
+                {renderSection(section)}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer bar */}
+        <div
+          className="w-full h-12 absolute bottom-0 print:h-12"
+          style={{ backgroundColor: accentColor }}
+        ></div>
+      </div>
+
+      {/* Page 2 (if needed) */}
+      {hasPage2 && (
+        <div
+          className={`cv-page font-${fontFamily} bg-white mt-8 print:mt-0`}
+          style={{
+            width: "210mm",
+            minHeight: "297mm",
+            margin: "0 auto",
+            position: "relative",
+            boxSizing: "border-box",
+            pageBreakBefore: "always",
+          }}
+        >
+          {/* Header bar */}
+          <div
+            className="w-full h-12 print:h-12"
+            style={{ backgroundColor: accentColor }}
+          ></div>
+
+          {/* Main name header */}
+          <div className="px-12 py-8 print:px-12 print:py-8">
+            <h1
+              className="text-3xl font-bold"
+              style={{
+                color: accentColor,
+                marginBottom: 0,
+              }}
+            >
+              {getPlaceholderOrValue(
+                "personalInfo",
+                "firstName",
+                personalInfo?.firstName
+              )}{" "}
+              {getPlaceholderOrValue(
+                "personalInfo",
+                "lastName",
+                personalInfo?.lastName
+              )}
+            </h1>
+            <p className="text-gray-600 mt-2">
+              {getPlaceholderOrValue(
+                "personalInfo",
+                "title",
+                personalInfo?.title
+              )}
+            </p>
+          </div>
+
+          {/* Main content */}
+          <div className="px-12 pb-12 flex print:px-12 print:pb-12">
+            {/* Left column - Personal details */}
+            <div className="w-1/3 pr-8 print:pr-8">
+              {personalInfo?.photo && (
+                <div className="mb-6 print:mb-6">
+                  <div className="relative w-full pb-[100%]">
+                    <Image
+                      src={
+                        personalInfo.photo || placeholderData.personalInfo.photo
+                      }
+                      alt={`${getPlaceholderOrValue(
+                        "personalInfo",
+                        "firstName",
+                        personalInfo?.firstName
+                      )} ${getPlaceholderOrValue(
+                        "personalInfo",
+                        "lastName",
+                        personalInfo?.lastName
+                      )}`}
+                      fill
+                      className="object-cover rounded-md"
+                      sizes="(max-width: 240px) 100vw, 240px"
+                    />
+                  </div>
+                </div>
+              )}
+              {renderPersonalDetails()}
+            </div>
+
+            {/* Right column - Main content */}
+            <div className="w-2/3 print:w-2/3">
+              {/* Render sections for page 2 */}
+              {page2Sections.map((section) => (
+                <div key={section} className="print:break-inside-avoid">
+                  {renderSection(section)}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Footer bar */}
+          <div
+            className="w-full h-12 absolute bottom-0 print:h-12"
+            style={{ backgroundColor: accentColor }}
+          ></div>
+        </div>
+      )}
     </div>
   );
 }

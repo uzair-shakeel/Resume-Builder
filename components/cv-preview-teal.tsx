@@ -376,10 +376,10 @@ export default function CVPreviewTeal({
     const photo = personalInfo?.photo || placeholderData.personalInfo.photo;
     const title = personalInfo?.title || placeholderData.personalInfo.title;
 
-    return (
-      <div className="bg-gray-100 p-4">
-        {/* Header with name and photo */}
-        <div className="flex justify-between items-center mb-6">
+  return (
+        <div className="bg-gray-100 p-4">
+          {/* Header with name and photo */}
+          <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-4xl font-medium" style={{ color: accentColor }}>
               {firstName} {lastName}
@@ -390,18 +390,18 @@ export default function CVPreviewTeal({
             className="w-24 h-24 rounded-full overflow-hidden border-2"
             style={{ borderColor: accentColor }}
           >
-            <Image
+              <Image
               src={photo || "/placeholder-user.jpg"}
               alt={`${firstName} ${lastName}`}
-              width={96}
-              height={96}
-              className="object-cover w-full h-full"
-            />
+                width={96}
+                height={96}
+                className="object-cover w-full h-full"
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Contact information */}
-        <div className="flex flex-wrap gap-y-2 mb-6">
+          {/* Contact information */}
+          <div className="flex flex-wrap gap-y-2 mb-6">
           {email && (
             <div className="flex items-center mr-6">
               <span className="mr-2" style={{ color: accentColor }}>
@@ -430,8 +430,8 @@ export default function CVPreviewTeal({
               </span>
             </div>
           )}
-        </div>
-      </div>
+            </div>
+          </div>
     );
   };
 
@@ -445,9 +445,9 @@ export default function CVPreviewTeal({
             {page1Sections.map((section) => (
               <div key={section}>{renderSection(section)}</div>
             ))}
-          </div>
-        </div>
-      </div>
+                        </div>
+                      </div>
+                    </div>
 
       {/* Page 2 (if needed) */}
       {hasPage2 && (
