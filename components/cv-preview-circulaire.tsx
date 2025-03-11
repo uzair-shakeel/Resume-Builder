@@ -48,6 +48,8 @@ interface CVPreviewCirculaireProps {
   template?: string;
   accentColor?: string;
   fontFamily?: string;
+  sectionPages?: Record<string, number>;
+  customSectionNames?: Record<string, string>;
 }
 
 export default function CVPreviewCirculaire({
@@ -57,15 +59,17 @@ export default function CVPreviewCirculaire({
   template = "modern",
   accentColor = "#006273",
   fontFamily = "inter",
+  sectionPages = {},
+  customSectionNames = {},
 }: CVPreviewCirculaireProps) {
   const {
-    personalInfo,
-    profile,
-    education,
-    experience,
-    skills,
-    languages,
-    interests,
+    personalInfo = {},
+    profile = "",
+    education = [],
+    experience = [],
+    skills = [],
+    languages = [],
+    interests = [],
   } = data;
 
   // Default page break settings if not provided
@@ -73,6 +77,47 @@ export default function CVPreviewCirculaire({
     keepHeadingsWithContent: true,
     avoidOrphanedHeadings: true,
     minLinesBeforeBreak: 3,
+  };
+
+  // Filter sections for page 1 and page 2
+  const page1Sections = sectionOrder.filter(
+    (section) => !sectionPages[section] || sectionPages[section] === 1
+  );
+  const page2Sections = sectionOrder.filter(
+    (section) => sectionPages[section] === 2
+  );
+
+  const hasPage2 = page2Sections.length > 0;
+
+  // Helper function to get section title with custom names
+  const getSectionTitle = (section: string): string => {
+    // If there's a custom name for this section, use it
+    if (customSectionNames && customSectionNames[section]) {
+      return customSectionNames[section];
+    }
+
+    // Otherwise use the default name
+    switch (section) {
+      case "profile":
+        return "Profil";
+      case "education":
+        return "Formation";
+      case "experience":
+        return "Expérience professionnelle";
+      case "skills":
+        return "Compétences";
+      case "languages":
+        return "Langues";
+      case "interests":
+        return "Centres d'intérêt";
+      case "personal-info":
+        return "Informations personnelles";
+      default:
+        if (section.startsWith("custom-")) {
+          return "Section personnalisée";
+        }
+        return "";
+    }
   };
 
   const renderSection = (section: string) => {
@@ -168,7 +213,7 @@ export default function CVPreviewCirculaire({
     return data.profile ? (
       <div className="mb-8">
         <h3 className="text-2xl font-bold mb-4 text-[#006273] border-b border-[#006273]/20 pb-2">
-          Profil
+          {getSectionTitle("profile")}
         </h3>
         <p className="text-gray-700">
           {getPlaceholderOrValue("profile", "profile", data.profile)}
@@ -181,7 +226,7 @@ export default function CVPreviewCirculaire({
     return (
       <div className="mb-8">
         <h3 className="text-2xl font-bold mb-4 text-[#006273] border-b border-[#006273]/20 pb-2">
-          Formation
+          {getSectionTitle("education")}
         </h3>
         <div className="space-y-6">
           {(data.education?.length
@@ -210,7 +255,7 @@ export default function CVPreviewCirculaire({
     return (
       <div className="mb-8">
         <h3 className="text-2xl font-bold mb-4 text-[#006273] border-b border-[#006273]/20 pb-2">
-          Expérience professionnelle
+          {getSectionTitle("experience")}
         </h3>
         <div className="space-y-6">
           {(data.experience?.length
@@ -231,9 +276,6 @@ export default function CVPreviewCirculaire({
               </div>
               {exp.description && (
                 <div className="mt-3 text-gray-700">
-                  <h4 className="font-medium mb-2">
-                    Réalisation de soins esthétiques :
-                  </h4>
                   <div className="whitespace-pre-line">
                     {exp.description.split("\n").map((item, i) => (
                       <div key={i} className="flex items-start">
@@ -255,7 +297,7 @@ export default function CVPreviewCirculaire({
     return (
       <div className="mb-8">
         <h2 className="text-xl font-bold mb-4 text-[#006273] border-b border-[#006273]/30 pb-2">
-          Compétences
+          {getSectionTitle("skills")}
         </h2>
         <div className="space-y-3">
           {(data.skills?.length ? data.skills : placeholderData.skills).map(
@@ -288,7 +330,7 @@ export default function CVPreviewCirculaire({
     return data.languages?.length || placeholderData.languages ? (
       <div className="mb-8">
         <h2 className="text-xl font-bold mb-4 text-[#006273] border-b border-[#006273]/30 pb-2">
-          Langues
+          {getSectionTitle("languages")}
         </h2>
         <div className="space-y-2">
           {(data.languages?.length
@@ -305,35 +347,11 @@ export default function CVPreviewCirculaire({
     ) : null;
   };
 
-  const renderQualities = () => {
-    return (
-      <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4 text-[#006273] border-b border-[#006273]/30 pb-2">
-          Qualités
-        </h2>
-        <div className="space-y-2">
-          <div className="flex items-start">
-            <div className="w-3 h-3 bg-[#006273] mt-1.5 mr-2 flex-shrink-0"></div>
-            <span className="text-gray-700">Dynamique</span>
-          </div>
-          <div className="flex items-start">
-            <div className="w-3 h-3 bg-[#006273] mt-1.5 mr-2 flex-shrink-0"></div>
-            <span className="text-gray-700">Ponctuelle</span>
-          </div>
-          <div className="flex items-start">
-            <div className="w-3 h-3 bg-[#006273] mt-1.5 mr-2 flex-shrink-0"></div>
-            <span className="text-gray-700">Souriante</span>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const renderInterests = () => {
     return data.interests?.length || placeholderData.interests ? (
       <div className="mb-8">
         <h2 className="text-xl font-bold mb-4 text-[#006273] border-b border-[#006273]/30 pb-2">
-          Centres d'intérêt
+          {getSectionTitle("interests")}
         </h2>
         <div className="space-y-2">
           {(data.interests?.length
@@ -350,15 +368,15 @@ export default function CVPreviewCirculaire({
     ) : null;
   };
 
-  return (
+  const renderPage = (sections: string[]) => (
     <div className="cv-page bg-white shadow-lg">
-      <div className="cv-page-content flex">
+      <div className="cv-page-content flex h-full">
         {/* Left sidebar */}
-        <div className="w-1/3 relative bg-[#e6eaeb]">
+        <div className="w-1/3 relative bg-[#e6eaeb]  min-h-[297mm]">
           {/* Top teal curved section */}
           <div className="absolute top-0 left-0 w-full h-[160px] bg-[#006273]">
             <div
-              className="absolute bottom-[-77px] left-0 w-full h-24 w-full"
+              className="absolute bottom-[-77px] left-0 w-full h-24"
               style={{
                 background: "#006273",
                 clipPath: "ellipse(55% 60% at 52% 0%)",
@@ -386,8 +404,16 @@ export default function CVPreviewCirculaire({
           <div className="relative z-10 flex justify-center mt-6">
             <div className="w-36 h-36 rounded-full overflow-hidden border-4 border-white">
               <Image
-                src={personalInfo.photo || "/placeholder-user.jpg"}
-                alt={`${personalInfo.firstName} ${personalInfo.lastName}`}
+                src={personalInfo?.photo || placeholderData.personalInfo.photo}
+                alt={`${getPlaceholderOrValue(
+                  "personalInfo",
+                  "firstName",
+                  personalInfo?.firstName
+                )} ${getPlaceholderOrValue(
+                  "personalInfo",
+                  "lastName",
+                  personalInfo?.lastName
+                )}`}
                 width={144}
                 height={144}
                 className="object-cover w-full h-full"
@@ -397,10 +423,10 @@ export default function CVPreviewCirculaire({
 
           {/* Content sections */}
           <div className="relative z-10 px-8 pt-8 pb-32">
-            {renderPersonalInfo()}
-            {renderSkills()}
-            {renderQualities()}
-            {renderInterests()}
+            {sections.includes("personal-info") && renderPersonalInfo()}
+            {sections.includes("skills") && renderSkills()}
+            {sections.includes("languages") && renderLanguages()}
+            {sections.includes("interests") && renderInterests()}
           </div>
 
           {/* Bottom teal curved section */}
@@ -418,7 +444,7 @@ export default function CVPreviewCirculaire({
         {/* Main content */}
         <div className="w-2/3 p-8">
           <div className="space-y-6">
-            {sectionOrder
+            {sections
               .filter((section) =>
                 ["profile", "experience", "education"].includes(section)
               )
@@ -426,9 +452,39 @@ export default function CVPreviewCirculaire({
                 <div key={section}>{renderSection(section)}</div>
               ))}
           </div>
-          <div className="text-center text-gray-400 text-sm mt-12">© CV.fr</div>
         </div>
       </div>
+    </div>
+  );
+
+  return (
+    <div className="cv-container">
+      {/* Page 1 */}
+      {renderPage(page1Sections)}
+
+      {/* Page 2 (if needed) */}
+      {hasPage2 && (
+        <div className="mt-8 print:mt-0">{renderPage(page2Sections)}</div>
+      )}
+
+      <style jsx>{`
+        .cv-page {
+          width: 210mm;
+          min-height: 297mm;
+          position: relative;
+          margin: 0 auto;
+          background: white;
+        }
+
+        .cv-page-content {
+          min-height: 297mm;
+        }
+        @media print {
+          .cv-page + .cv-page {
+            page-break-before: always;
+          }
+        }
+      `}</style>
     </div>
   );
 }

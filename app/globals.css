@@ -419,3 +419,15 @@
 .cv-gradient-secondary {
   --tw-gradient-to: var(--cv-accent) !important;
 }
+
+ul {
+  list-style-type: disc !important;
+}
+li::before {
+  content: "• "; /* Ensures bullet rendering */
+  font-size: 14px;
+}
+
+.underline {
+  border-bottom: 1px solid black !important;
+}
