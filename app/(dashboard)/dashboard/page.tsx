@@ -94,11 +94,11 @@ export default function Dashboard() {
   const [renamingCV, setRenamingCV] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState("");
   const router = useRouter();
-  const [scale, setScale] = useState((0.25 + window.innerWidth) / 5300);
+  const [scale, setScale] = useState((0.6 + window.innerWidth) / 4600);
 
   useEffect(() => {
     const handleResize = () => {
-      setScale((0.25 + window.innerWidth) / 5300);
+      setScale((0.6 + window.innerWidth) / 4600);
     };
 
     window.addEventListener("resize", handleResize);
@@ -271,7 +271,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Main content */}
-      <main className="flex-1 lg:ml-64 pt-20 lg:pt-5 pb-24">
+      <main className="flex-1 pt-20 lg:pt-5 pb-24">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-2xl font-bold">Mes CV</h1>
@@ -324,7 +324,7 @@ export default function Dashboard() {
               {/* CV Cards */}
               {cvs.map((cv) => (
                 <div key={cv._id} className="relative group">
-                  <div className="aspect-[1/1.414] bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+                  <div className="relative aspect-[1/1.414] bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
                     <Link
                       href={`/builder?id=${cv._id}`}
                       className="absolute inset-0 flex items-center justify-center"
@@ -342,7 +342,7 @@ export default function Dashboard() {
                     </Link>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="absolute top-2 right-2 z-30 p-1.5 rounded-lg bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-colors">
+                        <button className="absolute bottom-2 right-2 z-30 p-1.5 rounded-lg bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-colors">
                           <MoreVertical size={18} />
                         </button>
                       </DropdownMenuTrigger>
