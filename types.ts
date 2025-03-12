@@ -57,3 +57,34 @@ export interface CVData {
   interests: InterestItem[];
   [key: string]: any; // Allow for custom sections
 }
+
+export interface CoverLetterData {
+  personalInfo: {
+    firstName: string;
+    lastName: string;
+    title: string;
+    email: string;
+    phone: string;
+    address: string;
+    postalCode: string;
+    city: string;
+    photo: string;
+  };
+  recipient: {
+    description: string;
+    name: string;
+    company: string;
+    address: string;
+    postalCode: string;
+    city: string;
+  };
+  dateAndSubject: {
+    date: string;
+    location: string;
+    subject: string;
+  };
+  introduction: string;
+  currentSituation: string;
+  motivation: string;
+  conclusion: string;
+}

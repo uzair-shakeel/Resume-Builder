@@ -1110,6 +1110,14 @@ export default function Builder() {
                   <CloudOff className="w-5 h-5 text-red-500" />
                 )}
               </div>
+              {/* Link to Cover Letter Builder */}
+              <a
+                href="/builder/cover-letter"
+                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
+              >
+                <FileText className="w-4 h-4" />
+                Lettre de motivation
+              </a>
             </div>
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -1691,38 +1699,35 @@ export default function Builder() {
                 {/* Color selector */}
                 <div className="flex items-center gap-2">
                   <Palette className="w-5 h-5 text-gray-700" />
-                  <div className="relative">
-                    <select
-                      value={accentColor}
-                      onChange={(e) => setAccentColor(e.target.value)}
-                      className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-8"
+                  <div className="relative flex items-center gap-2">
+                    <div className="flex items-center border border-gray-300 rounded-md px-2 py-1.5">
+                      <div
+                        className="w-4 h-4 rounded-full mr-2"
+                        style={{ backgroundColor: accentColor }}
+                      />
+                      <input
+                        type="color"
+                        value={accentColor}
+                        onChange={(e) => setAccentColor(e.target.value)}
+                        className="w-20 h-8 cursor-pointer bg-transparent border-0"
+                      />
+                    </div>
+                    <button
+                      onClick={() => {
+                        // Reset to default color for this template
+                        const defaultColor = templateOptions.find(
+                          (t) => t.value === template
+                        )?.defaultColor;
+                        if (defaultColor) {
+                          setAccentColor(defaultColor);
+                        }
+                      }}
+                      className="p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
+                      title="Reset to default color"
                     >
-                      {colorThemes.map((color) => (
-                        <option key={color.name} value={color.value}>
-                          {color.name}
-                        </option>
-                      ))}
-                    </select>
-                    <div
-                      className="absolute left-2 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded-full"
-                      style={{ backgroundColor: accentColor }}
-                    />
+                      Reset
+                    </button>
                   </div>
-                  <button
-                    onClick={() => {
-                      // Reset to default color for this template
-                      const defaultColor = templateOptions.find(
-                        (t) => t.value === template
-                      )?.defaultColor;
-                      if (defaultColor) {
-                        setAccentColor(defaultColor);
-                      }
-                    }}
-                    className="ml-1 p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
-                    title="Reset to default color"
-                  >
-                    Reset
-                  </button>
                 </div>
               </div>
             )}
