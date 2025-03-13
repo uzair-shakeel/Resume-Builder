@@ -11,7 +11,7 @@ export default function Hero() {
         en quelques minutes.
       </p>
       <Link
-        href="/creer-un-cv"
+        href="/builder"
         className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 active:bg-brand-300 text-white border-transparent hover:bg-brand-400 font-medium py-4 ps-9 pe-9 text-xl"
       >
         Créer un CV
