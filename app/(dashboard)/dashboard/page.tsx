@@ -13,24 +13,32 @@ import {
 import dynamic from "next/dynamic";
 
 // Dynamically import all CV preview components
-const CVPreviewAlt = dynamic(() => import("@/components/cv-preview-alt"));
+const CVPreviewAlt = dynamic(
+  () => import("@/components/cv-templates/cv-preview-alt")
+);
 const CVPreviewClassic = dynamic(
-  () => import("@/components/cv-preview-classic")
+  () => import("@/components/cv-templates/cv-preview-classic")
 );
-const CVPreviewPro = dynamic(() => import("@/components/cv-preview-pro"));
+const CVPreviewPro = dynamic(
+  () => import("@/components/cv-templates/cv-preview-pro")
+);
 const CVPreviewSherlock = dynamic(
-  () => import("@/components/cv-preview-sherlock")
+  () => import("@/components/cv-templates/cv-preview-sherlock")
 );
-const CVPreviewHR = dynamic(() => import("@/components/cv-preview-hr"));
+const CVPreviewHR = dynamic(
+  () => import("@/components/cv-templates/cv-preview-hr")
+);
 const CVPreviewMinimal = dynamic(
-  () => import("@/components/cv-preview-minimal")
+  () => import("@/components/cv-templates/cv-preview-minimal")
 );
-const CVPreviewTeal = dynamic(() => import("@/components/cv-preview-teal"));
+const CVPreviewTeal = dynamic(
+  () => import("@/components/cv-templates/cv-preview-teal")
+);
 const CVPreviewCirculaire = dynamic(
-  () => import("@/components/cv-preview-circulaire")
+  () => import("@/components/cv-templates/cv-preview-circulaire")
 );
 const CVPreviewStudent = dynamic(
-  () => import("@/components/cv-preview-student")
+  () => import("@/components/cv-templates/cv-preview-student")
 );
 
 interface CV {

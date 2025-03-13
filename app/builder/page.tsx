@@ -10,7 +10,7 @@ import Experience from "@/components/sections/experience";
 import Skills from "@/components/sections/skills";
 import Languages from "@/components/sections/languages";
 import Interests from "@/components/sections/interests";
-import CVPreview from "@/components/cv-preview";
+import CVPreview from "@/components/cv-templates/cv-preview";
 import type { CVData, CustomSectionItem } from "@/types";
 import {
   ChevronDown,
@@ -38,15 +38,15 @@ import {
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import CVPreviewAlt from "@/components/cv-preview-alt";
-import CVPreviewPro from "@/components/cv-preview-pro";
-import CVPreviewSherlock from "@/components/cv-preview-sherlock";
-import CVPreviewHR from "@/components/cv-preview-hr";
-import CVPreviewMinimal from "@/components/cv-preview-minimal";
-import CVPreviewTeal from "@/components/cv-preview-teal";
-import CVPreviewClassic from "@/components/cv-preview-classic";
-import CVPreviewStudent from "@/components/cv-preview-student";
-import CVPreviewCirculaire from "@/components/cv-preview-circulaire";
+import CVPreviewAlt from "@/components/cv-templates/cv-preview-alt";
+import CVPreviewPro from "@/components/cv-templates/cv-preview-pro";
+import CVPreviewSherlock from "@/components/cv-templates/cv-preview-sherlock";
+import CVPreviewHR from "@/components/cv-templates/cv-preview-hr";
+import CVPreviewMinimal from "@/components/cv-templates/cv-preview-minimal";
+import CVPreviewTeal from "@/components/cv-templates/cv-preview-teal";
+import CVPreviewClassic from "@/components/cv-templates/cv-preview-classic";
+import CVPreviewStudent from "@/components/cv-templates/cv-preview-student";
+import CVPreviewCirculaire from "@/components/cv-templates/cv-preview-circulaire";
 import Image from "next/image";
 import References from "@/components/sections/references";
 import Socials from "@/components/sections/socials";

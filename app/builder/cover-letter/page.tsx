@@ -3,7 +3,7 @@
 import type React from "react";
 import { useState, useRef } from "react";
 import PersonalInfo from "@/components/sections/personal-info";
-import CoverLetterPreviewAlt from "@/components/cover-letter-preview-alt";
+import CoverLetterPreviewAlt from "@/components/cover-letter-templates/cover-letter-preview-alt";
 import type { CoverLetterData } from "@/types";
 import {
   ChevronDown,
