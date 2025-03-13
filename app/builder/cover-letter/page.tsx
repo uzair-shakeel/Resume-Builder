@@ -4,6 +4,14 @@ import type React from "react";
 import { useState, useRef } from "react";
 import PersonalInfo from "@/components/sections/personal-info";
 import CoverLetterPreviewAlt from "@/components/cover-letter-templates/cover-letter-preview-alt";
+import CoverLetterPreviewSherlock from "@/components/cover-letter-templates/cover-letter-preview-sherlock";
+import CoverLetterPreviewMinimal from "@/components/cover-letter-templates/cover-letter-preview-minimal";
+import CoverLetterPreviewClassic from "@/components/cover-letter-templates/cover-letter-preview-classic";
+import CoverLetterPreviewProfessional from "@/components/cover-letter-templates/cover-letter-preview-professional";
+import CoverLetterPreviewCirculaire from "@/components/cover-letter-templates/cover-letter-preview-circulaire";
+import CoverLetterPreviewStudent from "@/components/cover-letter-templates/cover-letter-preview-student";
+import CoverLetterPreviewHR from "@/components/cover-letter-templates/cover-letter-preview-hr";
+import CoverLetterPreviewTeal from "@/components/cover-letter-templates/cover-letter-preview-teal";
 import type { CoverLetterData } from "@/types";
 import {
   ChevronDown,
@@ -19,11 +27,15 @@ import {
   Trash2,
   FileText,
   Plus,
+  Layout,
+  Type,
+  Palette,
+  Maximize,
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import format from "date-fns/format";
-import fr from "date-fns/locale/fr";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import RichTextEditor from "@/components/shared/rich-text-editor";
 
 // Font families
@@ -195,6 +207,64 @@ const conclusionOptions = [
   },
 ];
 
+// Add template options
+const templateOptions = [
+  {
+    name: "Modern",
+    value: "modern",
+    image: "/templates/cover-letter-modern.png",
+    defaultColor: "#2563eb",
+  },
+  {
+    name: "Sherlock",
+    value: "sherlock",
+    image: "/templates/cover-letter-sherlock.png",
+    defaultColor: "#0f766e",
+  },
+  {
+    name: "Minimal",
+    value: "minimal",
+    image: "/templates/cover-letter-minimal.png",
+    defaultColor: "#4f46e5",
+  },
+  {
+    name: "Classic",
+    value: "classic",
+    image: "/templates/cover-letter-classic.png",
+    defaultColor: "#be123c",
+  },
+  {
+    name: "Professional",
+    value: "professional",
+    image: "/templates/cover-letter-professional.png",
+    defaultColor: "#0369a1",
+  },
+  {
+    name: "Circulaire",
+    value: "circulaire",
+    image: "/assets/cover-letter/circulaire.png",
+    defaultColor: "#006273",
+  },
+  {
+    name: "Student",
+    value: "student",
+    image: "/assets/cover-letter/student.png",
+    defaultColor: "#a5d8ff",
+  },
+  {
+    name: "HR",
+    value: "hr",
+    image: "/assets/cover-letter/hr.png",
+    defaultColor: "#9b59b6",
+  },
+  {
+    name: "Teal",
+    value: "teal",
+    image: "/assets/cover-letter/teal.png",
+    defaultColor: "#2BCBBA",
+  },
+];
+
 export default function CoverLetterBuilder() {
   const previewRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(0.8);
@@ -254,7 +324,7 @@ export default function CoverLetterBuilder() {
       city: "",
     },
     dateAndSubject: {
-      date: format(new Date(), "dd/MM/yyyy", { locale: fr }),
+      date: new Date().toLocaleDateString("fr-FR"),
       location: "",
       subject: "",
     },
@@ -276,27 +346,60 @@ export default function CoverLetterBuilder() {
   const [customSections, setCustomSections] = useState<Record<string, string>>(
     {}
   );
+  const [template, setTemplate] = useState<
+    | "modern"
+    | "classic"
+    | "professional"
+    | "minimal"
+    | "circulaire"
+    | "sherlock"
+    | "student"
+    | "hr"
+    | "teal"
+  >("modern");
+  const [showTemplateCarousel, setShowTemplateCarousel] = useState(false);
+  const [activeTemplateIndex, setActiveTemplateIndex] = useState(0);
+  const [showDownloadOptions, setShowDownloadOptions] = useState(false);
 
   // Handle input changes
   const updateCoverLetterData = (
     section: keyof CoverLetterData | "root",
     field: string,
-    value: string
+    value: string | boolean | number
   ) => {
     setCoverLetterData((prev) => {
       if (section === "root") {
         return {
           ...prev,
           [field]: value,
-        } as CoverLetterData;
+        };
       }
-      return {
-        ...prev,
-        [section]: {
-          ...prev[section],
+
+      // Create a new object for the updated state
+      const newState = { ...prev };
+
+      // Handle the section update without using spread on the section
+      if (section === "personalInfo") {
+        newState.personalInfo = {
+          ...newState.personalInfo,
           [field]: value,
-        },
-      } as CoverLetterData;
+        };
+      } else if (section === "recipient") {
+        newState.recipient = {
+          ...newState.recipient,
+          [field]: value,
+        };
+      } else if (section === "dateAndSubject") {
+        newState.dateAndSubject = {
+          ...newState.dateAndSubject,
+          [field]: value,
+        };
+      } else {
+        // For other sections like introduction, motivation, etc.
+        newState[section] = value as string;
+      }
+
+      return newState;
     });
   };
 
@@ -980,9 +1083,7 @@ export default function CoverLetterBuilder() {
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = e.target.value
-      ? format(new Date(e.target.value), "dd/MM/yyyy", {
-          locale: fr,
-        })
+      ? new Date(e.target.value).toLocaleDateString("fr-FR")
       : "";
     updateCoverLetterData("dateAndSubject", "date", date);
   };
@@ -1022,6 +1123,34 @@ export default function CoverLetterBuilder() {
     const [removed] = newOrder.splice(sourceIndex, 1);
     newOrder.splice(targetIndex, 0, removed);
     setSectionOrder(newOrder);
+  };
+
+  // Add template carousel navigation
+  const prevTemplate = () => {
+    setActiveTemplateIndex((prev) => {
+      const newIndex = prev === 0 ? templateOptions.length - 1 : prev - 1;
+      setTemplate(templateOptions[newIndex].value as any);
+      return newIndex;
+    });
+  };
+
+  const nextTemplate = () => {
+    setActiveTemplateIndex((prev) => {
+      const newIndex = prev === templateOptions.length - 1 ? 0 : prev + 1;
+      setTemplate(templateOptions[newIndex].value as any);
+      return newIndex;
+    });
+  };
+
+  const selectTemplate = (index: number) => {
+    setActiveTemplateIndex(index);
+    setTemplate(templateOptions[index].value as any);
+    setShowTemplateCarousel(false);
+  };
+
+  // Reset zoom function
+  const resetZoom = () => {
+    setZoom(0.8);
   };
 
   return (
@@ -1184,33 +1313,295 @@ export default function CoverLetterBuilder() {
             </button>
             <button
               className="p-2 rounded hover:bg-gray-100"
-              onClick={generatePDF}
+              onClick={resetZoom}
+              title="Reset Zoom"
             >
-              <Download size={18} />
+              <Maximize size={18} />
             </button>
+            <div className="relative">
+              <button
+                className="p-2 rounded hover:bg-gray-100"
+                onClick={() => setShowDownloadOptions(!showDownloadOptions)}
+              >
+                <Download size={18} />
+              </button>
+              {showDownloadOptions && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        generatePDF();
+                        setShowDownloadOptions(false);
+                      }}
+                      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+                    >
+                      Download as PDF
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex-1 overflow-auto bg-gray-200 flex justify-center p-8">
           <div
             className="bg-white shadow-lg"
-            style={{
-              width: "210mm",
-              height: "297mm",
-              transform: `scale(${zoom})`,
-              transformOrigin: "top center",
-            }}
+            style={
+              {
+                width: "210mm",
+                height: "297mm",
+                transform: `scale(${zoom})`,
+                transformOrigin: "top center",
+                fontFamily: fontFamily,
+                "--accent-color": accentColor,
+              } as React.CSSProperties
+            }
             ref={previewRef}
           >
-            <CoverLetterPreviewAlt
-              data={coverLetterData}
-              sectionOrder={sectionOrder}
-              accentColor={accentColor}
-              fontFamily={fontFamily}
-              sectionPages={sectionPages}
-              customSectionNames={customSectionNames}
-              customSections={customSections}
-            />
+            {template === "modern" && (
+              <CoverLetterPreviewAlt
+                data={coverLetterData}
+                sectionOrder={sectionOrder}
+                accentColor={accentColor}
+                fontFamily={fontFamily}
+                sectionPages={sectionPages}
+                customSectionNames={customSectionNames}
+                customSections={customSections}
+              />
+            )}
+            {template === "sherlock" && (
+              <CoverLetterPreviewSherlock
+                data={coverLetterData}
+                sectionOrder={sectionOrder}
+                accentColor={accentColor}
+                fontFamily={fontFamily}
+                sectionPages={sectionPages}
+                customSectionNames={customSectionNames}
+                customSections={customSections}
+              />
+            )}
+            {template === "minimal" && (
+              <CoverLetterPreviewMinimal
+                data={coverLetterData}
+                sectionOrder={sectionOrder}
+                accentColor={accentColor}
+                fontFamily={fontFamily}
+                sectionPages={sectionPages}
+                customSectionNames={customSectionNames}
+                customSections={customSections}
+              />
+            )}
+            {template === "classic" && (
+              <CoverLetterPreviewClassic
+                data={coverLetterData}
+                sectionOrder={sectionOrder}
+                accentColor={accentColor}
+                fontFamily={fontFamily}
+                sectionPages={sectionPages}
+                customSectionNames={customSectionNames}
+                customSections={customSections}
+              />
+            )}
+            {template === "professional" && (
+              <CoverLetterPreviewProfessional
+                data={coverLetterData}
+                sectionOrder={sectionOrder}
+                accentColor={accentColor}
+                fontFamily={fontFamily}
+                sectionPages={sectionPages}
+                customSectionNames={customSectionNames}
+                customSections={customSections}
+              />
+            )}
+            {template === "circulaire" && (
+              <CoverLetterPreviewCirculaire
+                data={coverLetterData}
+                sectionOrder={sectionOrder}
+                accentColor={accentColor}
+                fontFamily={fontFamily}
+                sectionPages={sectionPages}
+                customSectionNames={customSectionNames}
+                customSections={customSections}
+              />
+            )}
+            {template === "student" && (
+              <CoverLetterPreviewStudent
+                data={coverLetterData}
+                sectionOrder={sectionOrder}
+                accentColor={accentColor}
+                fontFamily={fontFamily}
+                sectionPages={sectionPages}
+                customSectionNames={customSectionNames}
+                customSections={customSections}
+              />
+            )}
+            {template === "hr" && (
+              <CoverLetterPreviewHR
+                data={coverLetterData}
+                sectionOrder={sectionOrder}
+                accentColor={accentColor}
+                fontFamily={fontFamily}
+                sectionPages={sectionPages}
+                customSectionNames={customSectionNames}
+                customSections={customSections}
+              />
+            )}
+            {template === "teal" && (
+              <CoverLetterPreviewTeal
+                data={coverLetterData}
+                sectionOrder={sectionOrder}
+                accentColor={accentColor}
+                fontFamily={fontFamily}
+                sectionPages={sectionPages}
+                customSectionNames={customSectionNames}
+                customSections={customSections}
+              />
+            )}
           </div>
+        </div>
+
+        {/* Add bottom edit bar */}
+        <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 p-3 shadow-md">
+          {showTemplateCarousel ? (
+            <div className="mb-4">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="font-medium text-gray-800">Select Template</h3>
+                <button
+                  onClick={() => setShowTemplateCarousel(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  Close
+                </button>
+              </div>
+              <div className="relative">
+                <button
+                  onClick={prevTemplate}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
+                  aria-label="Previous template"
+                >
+                  <ChevronLeft className="w-5 h-5 text-gray-700" />
+                </button>
+
+                <div className="flex overflow-x-auto py-2 px-8 gap-4 snap-x">
+                  {templateOptions.map((option, index) => (
+                    <div
+                      key={option.value}
+                      className={`flex-none w-32 cursor-pointer transition-all duration-200 ${
+                        index === activeTemplateIndex
+                          ? "ring-2 ring-blue-500 scale-105"
+                          : "hover:scale-105"
+                      }`}
+                      onClick={() => selectTemplate(index)}
+                    >
+                      <div className="bg-white rounded-md shadow-sm overflow-hidden">
+                        <div className="relative aspect-[0.7] bg-gray-100 flex items-center justify-center">
+                          {option.image ? (
+                            <img
+                              src={option.image}
+                              alt={option.name}
+                              className="object-cover w-full h-full"
+                            />
+                          ) : (
+                            <div
+                              className="w-full h-full flex items-center justify-center"
+                              style={{ backgroundColor: option.defaultColor }}
+                            >
+                              <span className="text-white font-medium">
+                                {option.name}
+                              </span>
+                            </div>
+                          )}
+                          <div
+                            className="absolute bottom-0 left-0 right-0 h-1"
+                            style={{ backgroundColor: option.defaultColor }}
+                          ></div>
+                        </div>
+                        <div className="p-2 text-center text-xs font-medium truncate">
+                          {option.name}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={nextTemplate}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
+                  aria-label="Next template"
+                >
+                  <ChevronRight className="w-5 h-5 text-gray-700" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-4 justify-center items-center">
+              {/* Template selector */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowTemplateCarousel(true)}
+                  className="flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <Layout className="w-5 h-5 text-gray-700" />
+                  <span>Templates</span>
+                </button>
+              </div>
+
+              {/* Font family selector */}
+              <div className="flex items-center gap-2">
+                <Type className="w-5 h-5 text-gray-700" />
+                <select
+                  value={fontFamily}
+                  onChange={(e) => setFontFamily(e.target.value)}
+                  className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  style={{ fontFamily: fontFamily }}
+                >
+                  {fontFamilies.map((font) => (
+                    <option
+                      key={font.name}
+                      value={font.value}
+                      style={{ fontFamily: font.value }}
+                    >
+                      {font.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Color selector */}
+              <div className="flex items-center gap-2">
+                <Palette className="w-5 h-5 text-gray-700" />
+                <div className="relative flex items-center gap-2">
+                  <div className="flex items-center border border-gray-300 rounded-md px-2 py-1.5">
+                    <div
+                      className="w-4 h-4 rounded-full mr-2"
+                      style={{ backgroundColor: accentColor }}
+                    />
+                    <input
+                      type="color"
+                      value={accentColor}
+                      onChange={(e) => setAccentColor(e.target.value)}
+                      className="w-20 h-8 cursor-pointer bg-transparent border-0"
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      // Reset to default color for this template
+                      const defaultColor = templateOptions.find(
+                        (t) => t.value === template
+                      )?.defaultColor;
+                      if (defaultColor) {
+                        setAccentColor(defaultColor);
+                      }
+                    }}
+                    className="p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
+                    title="Reset to default color"
+                  >
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

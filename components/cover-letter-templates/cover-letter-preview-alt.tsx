@@ -44,6 +44,63 @@ export default function CoverLetterPreviewAlt({
   );
   const hasPage2 = page2Sections.length > 0;
 
+  // Render content sections
+  const renderSections = (sections: string[]) => {
+    return sections.map((section) => {
+      if (
+        section === "personal-info" ||
+        section === "destinataire" ||
+        section === "date-et-objet"
+      ) {
+        return null;
+      }
+
+      if (section.startsWith("custom-")) {
+        return (
+          <div
+            key={section}
+            dangerouslySetInnerHTML={{
+              __html: customSections[section] || "",
+            }}
+          />
+        );
+      }
+
+      switch (section) {
+        case "introduction":
+          return (
+            <div
+              key={section}
+              dangerouslySetInnerHTML={{ __html: introduction }}
+            />
+          );
+        case "situation-actuelle":
+          return (
+            <div
+              key={section}
+              dangerouslySetInnerHTML={{ __html: currentSituation }}
+            />
+          );
+        case "motivation":
+          return (
+            <div
+              key={section}
+              dangerouslySetInnerHTML={{ __html: motivation }}
+            />
+          );
+        case "conclusion":
+          return (
+            <div
+              key={section}
+              dangerouslySetInnerHTML={{ __html: conclusion }}
+            />
+          );
+        default:
+          return null;
+      }
+    });
+  };
+
   return (
     <div className="cv-page w-[210mm] h-[297mm] relative bg-white shadow-lg mx-auto overflow-hidden">
       {/* Left Sidebar */}
@@ -109,50 +166,7 @@ export default function CoverLetterPreviewAlt({
 
         {/* Letter Content */}
         <div className="space-y-4 text-justify">
-          {page1Sections.map((section) => {
-            if (section.startsWith("custom-")) {
-              return (
-                <div
-                  key={section}
-                  dangerouslySetInnerHTML={{
-                    __html: customSections[section] || "",
-                  }}
-                />
-              );
-            }
-            switch (section) {
-              case "introduction":
-                return (
-                  <div
-                    key={section}
-                    dangerouslySetInnerHTML={{ __html: introduction }}
-                  />
-                );
-              case "situation-actuelle":
-                return (
-                  <div
-                    key={section}
-                    dangerouslySetInnerHTML={{ __html: currentSituation }}
-                  />
-                );
-              case "motivation":
-                return (
-                  <div
-                    key={section}
-                    dangerouslySetInnerHTML={{ __html: motivation }}
-                  />
-                );
-              case "conclusion":
-                return (
-                  <div
-                    key={section}
-                    dangerouslySetInnerHTML={{ __html: conclusion }}
-                  />
-                );
-              default:
-                return null;
-            }
-          })}
+          {renderSections(page1Sections)}
         </div>
       </div>
 
@@ -181,50 +195,7 @@ export default function CoverLetterPreviewAlt({
           <div className="ml-[70mm] p-8">
             {/* Page 2 Content */}
             <div className="space-y-4 text-justify">
-              {page2Sections.map((section) => {
-                if (section.startsWith("custom-")) {
-                  return (
-                    <div
-                      key={section}
-                      dangerouslySetInnerHTML={{
-                        __html: customSections[section] || "",
-                      }}
-                    />
-                  );
-                }
-                switch (section) {
-                  case "introduction":
-                    return (
-                      <div
-                        key={section}
-                        dangerouslySetInnerHTML={{ __html: introduction }}
-                      />
-                    );
-                  case "situation-actuelle":
-                    return (
-                      <div
-                        key={section}
-                        dangerouslySetInnerHTML={{ __html: currentSituation }}
-                      />
-                    );
-                  case "motivation":
-                    return (
-                      <div
-                        key={section}
-                        dangerouslySetInnerHTML={{ __html: motivation }}
-                      />
-                    );
-                  case "conclusion":
-                    return (
-                      <div
-                        key={section}
-                        dangerouslySetInnerHTML={{ __html: conclusion }}
-                      />
-                    );
-                  default:
-                    return null;
-                }
-              })}
+              {renderSections(page2Sections)}
             </div>
           </div>
         </div>
