@@ -1287,13 +1287,17 @@ export default function Builder() {
                     "Volunteer Work",
                     "Custom Section",
                   ].map((sectionName) => (
-                    <button
-                      key={sectionName}
-                      onClick={() => addCustomSection(sectionName)}
-                      className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
-                    >
-                      + {sectionName}
-                    </button>
+                    // <button
+                    //   key={sectionName}
+                    //   onClick={() => addCustomSection(sectionName)}
+                    //   className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                    // >
+                    //   + {sectionName}
+                    // </button>
+                <button  key={sectionName}
+                      onClick={() => addCustomSection(sectionName)} className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
+                  <span className="mr-1">+</span> {sectionName}
+                </button>
                   ))}
                 </div>
               </div>

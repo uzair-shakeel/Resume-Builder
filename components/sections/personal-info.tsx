@@ -219,7 +219,7 @@ export default function PersonalInfo({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 mt-4">
+      {/* <div className="flex flex-wrap gap-2 mt-4">
         <button className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
           <span className="mr-1">+</span> Date de naissance
         </button>
@@ -247,7 +247,7 @@ export default function PersonalInfo({
         <button className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
           <span className="mr-1">+</span> Champ personnalisé
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

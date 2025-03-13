@@ -47,7 +47,7 @@ export default function Skills({ data, updateData }: SkillsProps) {
 
   return (
     <div className="bg-white rounded-md">
-      <div className="flex items-center justify-between p-4 border-b">
+      {/* <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center">
           <span className="text-gray-400 mr-2">:</span>
           <h2 className="text-lg font-medium">Compétences</h2>
@@ -60,7 +60,7 @@ export default function Skills({ data, updateData }: SkillsProps) {
             <ChevronUp className="w-5 h-5 text-gray-500" />
           </button>
         </div>
-      </div>
+      </div> */}
 
       <div className="p-4 space-y-4">
         {localData.map((item, index) => (
