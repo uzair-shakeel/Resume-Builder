@@ -115,7 +115,10 @@ export default function CVPreviewSherlock({
             </h2>
             <div className="relative">
               {/* Continuous vertical line that spans the entire timeline */}
-              <div className="absolute left-[calc(33.333%+5.2px)] top-2 bottom-10 w-0.5 bg-gray-700"></div>
+              <div
+                style={{ backgroundColor: accentColor }}
+                className="absolute left-[calc(33.333%+5.2px)] top-2 bottom-10 w-0.5 "
+              ></div>
 
               {(experience?.length
                 ? experience
@@ -138,7 +141,10 @@ export default function CVPreviewSherlock({
                     <div className="w-2/3">
                       <div className="flex relative pl-6 items-start">
                         {/* Timeline dot */}
-                        <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-gray-700 z-10"></div>
+                        <div
+                          style={{ backgroundColor: accentColor }}
+                          className="absolute left-0 top-1.5 w-3 h-3 rounded-full  z-10"
+                        ></div>
 
                         <p className="font-semibold text-sm">{exp.position}</p>
                       </div>
@@ -185,7 +191,10 @@ export default function CVPreviewSherlock({
                     {/* Right column - Degree and description */}
                     <div className="col-span-2 relative pl-6">
                       {/* Timeline dot */}
-                      <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-gray-700"></div>
+                      <div
+                        style={{ backgroundColor: accentColor }}
+                        className="absolute left-0 top-1.5 w-3 h-3 rounded-full "
+                      ></div>
 
                       {/* Vertical line connecting dots (except for last item) */}
                       {index <
@@ -193,8 +202,11 @@ export default function CVPreviewSherlock({
                           placeholderData.education.length) -
                           1 && (
                         <div
-                          className="absolute left-[5.2px] top-3 w-0.5 bg-gray-700"
-                          style={{ height: "calc(100% + 1.5rem)" }}
+                          className="absolute left-[5.2px] top-3 w-0.5 "
+                          style={{
+                            height: "calc(100% + 1.5rem)",
+                            backgroundColor: accentColor,
+                          }}
                         ></div>
                       )}
 
@@ -222,8 +234,11 @@ export default function CVPreviewSherlock({
                     </p>
                     <div className="w-full bg-gray-200 h-2 rounded-sm">
                       <div
-                        className="h-full bg-gray-700 rounded-sm"
-                        style={{ width: `${(skill.level / 5) * 100}%` }}
+                        className="h-full  rounded-sm"
+                        style={{
+                          width: `${(skill.level / 5) * 100}%`,
+                          backgroundColor: accentColor,
+                        }}
                       ></div>
                     </div>
                   </div>
@@ -246,7 +261,7 @@ export default function CVPreviewSherlock({
                     </p>
                     <div className="w-full bg-gray-200 h-2 rounded-sm">
                       <div
-                        className="bg-gray-700 h-2 rounded-sm"
+                        className=" h-2 rounded-sm"
                         style={{
                           width:
                             language.level === "Natif"
@@ -258,6 +273,7 @@ export default function CVPreviewSherlock({
                               : language.level === "Intermédiaire"
                               ? "40%"
                               : "20%",
+                          backgroundColor: accentColor,
                         }}
                       ></div>
                     </div>
@@ -489,7 +505,10 @@ export default function CVPreviewSherlock({
                     {personalInfo?.postalCode ||
                       placeholderData.personalInfo.postalCode}
                   </p>
-                  <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
+                  <div
+                    style={{ backgroundColor: accentColor }}
+                    className="w-6 h-6 rounded-full y63hnhgb  flex items-center justify-center mr-2"
+                  >
                     <span className="text-white text-xs">📍</span>
                   </div>
                 </div>
@@ -497,7 +516,10 @@ export default function CVPreviewSherlock({
                   <p className="text-sm text-gray-700">
                     {personalInfo?.phone || placeholderData.personalInfo.phone}
                   </p>
-                  <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
+                  <div
+                    style={{ backgroundColor: accentColor }}
+                    className="w-6 h-6 rounded-full flex items-center justify-center mr-2"
+                  >
                     <span className="text-white text-xs">📞</span>
                   </div>
                 </div>
@@ -505,7 +527,10 @@ export default function CVPreviewSherlock({
                   <p className="text-sm text-gray-700">
                     {personalInfo?.email || placeholderData.personalInfo.email}
                   </p>
-                  <div className="w-6 h-6 rounded-full bg-gray-700 flex items-center justify-center mr-2">
+                  <div
+                    style={{ backgroundColor: accentColor }}
+                    className="w-6 h-6 rounded-full  flex items-center justify-center mr-2"
+                  >
                     <span className="text-white text-xs">✉️</span>
                   </div>
                 </div>

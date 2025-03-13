@@ -128,11 +128,17 @@ export default function CVPreviewStudent({
           {firstName.toUpperCase()} {lastName.toUpperCase()}
         </h1>
         <div className="relative py-4">
-          <div className="absolute top-0 left-0 right-0 h-[1px] bg-[#a5d8ff]"></div>
+          <div
+            style={{ backgroundColor: accentColor }}
+            className="absolute top-0 left-0 right-0 h-[1px] "
+          ></div>
           <h2 className="text-2xl text-center uppercase tracking-widest">
             {title}
           </h2>
-          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#a5d8ff]"></div>
+          <div
+            style={{ backgroundColor: accentColor }}
+            className="absolute bottom-0 left-0 right-0 h-[1px] "
+          ></div>
         </div>
       </div>
     );
@@ -228,7 +234,10 @@ export default function CVPreviewStudent({
             </div>
           ))}
         </div>
-        <div className="mt-6 h-[1px] bg-[#a5d8ff]"></div>
+        <div
+          style={{ backgroundColor: accentColor }}
+          className="mt-6 h-[1px] "
+        ></div>
       </div>
     );
   };
@@ -260,7 +269,10 @@ export default function CVPreviewStudent({
             </div>
           ))}
         </div>
-        <div className="mt-6 h-[1px] bg-[#a5d8ff]"></div>
+        <div
+          style={{ backgroundColor: accentColor }}
+          className="mt-6 h-[1px] "
+        ></div>
       </div>
     );
   };
