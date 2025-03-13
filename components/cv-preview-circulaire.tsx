@@ -312,7 +312,7 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         <h2
           style={{ color: accentColor, borderColor: accentColor }}
-          className={`text-xl font-bold mb-4  border-b  pb-2`}
+          className={`text-xl font-bold mb-4  border-b pt-6 pb-2`}
         >
           {getSectionTitle("skills")}
         </h2>
@@ -323,7 +323,7 @@ export default function CVPreviewCirculaire({
                 <div className="flex justify-between mb-1">
                   <span className="text-gray-700">{skill.name}</span>
                 </div>
-                <div className="flex">
+                {/* <div className="flex">
                   {[1, 2, 3, 4, 5].map((dot) => (
                     <div
                       key={dot}
@@ -334,7 +334,7 @@ export default function CVPreviewCirculaire({
                       }`}
                     />
                   ))}
-                </div>
+                </div> */}
               </div>
             )
           )}
@@ -462,7 +462,7 @@ export default function CVPreviewCirculaire({
           {/* Bottom teal curved section */}
           <div
             style={{ backgroundColor: accentColor }}
-            className="absolute bottom-0 left-0 w-full h-[85px] "
+            className="absolute bottom-10 left-0 w-full h-[125px] "
           >
             <div
               className="absolute  top-0 left-0 w-full h-20"

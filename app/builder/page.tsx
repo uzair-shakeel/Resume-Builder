@@ -715,16 +715,59 @@ export default function Builder() {
             pdf.addPage();
           }
 
-          // Capture the page as canvas
-          const canvas = await html2canvas(page, {
-            scale: 2,
+          // Wait for all images to load before capturing
+          await Promise.all(
+            Array.from(page.getElementsByTagName("img")).map(
+              (img) =>
+                new Promise((resolve) => {
+                  if (img.complete) {
+                    resolve(null);
+                  } else {
+                    img.onload = () => resolve(null);
+                    img.onerror = () => resolve(null);
+                  }
+                })
+            )
+          );
+
+          // Clone the page and prepare it for capture
+          const clone = page.cloneNode(true) as HTMLElement;
+          clone.style.transform = "none";
+          clone.style.position = "fixed";
+          clone.style.top = "0";
+          clone.style.left = "0";
+          clone.style.margin = "0";
+          clone.style.padding = "0";
+          clone.style.width = "210mm";
+          clone.style.height = "297mm";
+          document.body.appendChild(clone);
+
+          // Capture the page as canvas with improved settings
+          const canvas = await html2canvas(clone, {
+            scale: 3,
             useCORS: true,
+            allowTaint: true,
+            foreignObjectRendering: true,
             logging: false,
+            backgroundColor: "#ffffff",
+            imageTimeout: 15000,
+            onclone: (clonedDoc) => {
+              // Ensure all fonts are loaded
+              const fontElements = clonedDoc.querySelectorAll("*");
+              fontElements.forEach((el: Element) => {
+                if (el instanceof HTMLElement) {
+                  el.style.fontFamily = "'Arial', 'Helvetica', sans-serif";
+                }
+              });
+            },
           });
 
-          // Add to PDF
+          // Remove the clone after capture
+          document.body.removeChild(clone);
+
+          // Add to PDF with better quality settings
           const imgData = canvas.toDataURL("image/jpeg", 1.0);
-          pdf.addImage(imgData, "JPEG", 0, 0, 210, 297);
+          pdf.addImage(imgData, "JPEG", 0, 0, 210, 297, undefined, "FAST");
         }
 
         // Save the PDF
@@ -732,11 +775,46 @@ export default function Builder() {
       } else {
         // For image formats, only capture the first page
         const firstPage = pages[0] as HTMLElement;
-        const canvas = await html2canvas(firstPage, {
-          scale: 2,
+
+        // Wait for all images to load
+        await Promise.all(
+          Array.from(firstPage.getElementsByTagName("img")).map(
+            (img) =>
+              new Promise((resolve) => {
+                if (img.complete) {
+                  resolve(null);
+                } else {
+                  img.onload = () => resolve(null);
+                  img.onerror = () => resolve(null);
+                }
+              })
+          )
+        );
+
+        // Clone and prepare the page for capture
+        const clone = firstPage.cloneNode(true) as HTMLElement;
+        clone.style.transform = "none";
+        clone.style.position = "fixed";
+        clone.style.top = "0";
+        clone.style.left = "0";
+        clone.style.margin = "0";
+        clone.style.padding = "0";
+        clone.style.width = "210mm";
+        clone.style.height = "297mm";
+        document.body.appendChild(clone);
+
+        const canvas = await html2canvas(clone, {
+          scale: 3,
           useCORS: true,
+          allowTaint: true,
+          foreignObjectRendering: true,
           logging: false,
+          backgroundColor: "#ffffff",
+          imageTimeout: 15000,
         });
+
+        // Remove the clone after capture
+        document.body.removeChild(clone);
 
         // Download as image
         const link = document.createElement("a");
@@ -1294,10 +1372,13 @@ export default function Builder() {
                     // >
                     //   + {sectionName}
                     // </button>
-                <button  key={sectionName}
-                      onClick={() => addCustomSection(sectionName)} className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50">
-                  <span className="mr-1">+</span> {sectionName}
-                </button>
+                    <button
+                      key={sectionName}
+                      onClick={() => addCustomSection(sectionName)}
+                      className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                    >
+                      <span className="mr-1">+</span> {sectionName}
+                    </button>
                   ))}
                 </div>
               </div>
