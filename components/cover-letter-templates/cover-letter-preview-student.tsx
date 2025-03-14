@@ -146,7 +146,6 @@ export default function CoverLetterPreviewStudent({
             {dateAndSubject?.date || "01/01/2023"}
           </p>
           <p className="font-bold">
-            Objet :{" "}
             {dateAndSubject?.subject || "Candidature pour le poste de..."}
           </p>
         </div>

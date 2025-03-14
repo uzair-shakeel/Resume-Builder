@@ -149,7 +149,6 @@ export default function CoverLetterPreviewCirculaire({
               {dateAndSubject?.date || "01/01/2023"}
             </p>
             <p className="font-medium mt-2">
-              Objet :{" "}
               {dateAndSubject?.subject || "Candidature pour le poste de..."}
             </p>
           </div>

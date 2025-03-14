@@ -159,9 +159,7 @@ export default function CoverLetterPreviewAlt({
 
         {/* Subject */}
         <div className="mb-8">
-          <p>
-            <strong>Objet :</strong> {dateAndSubject.subject}
-          </p>
+          <p>{dateAndSubject.subject}</p>
         </div>
 
         {/* Letter Content */}
