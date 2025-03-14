@@ -110,12 +110,12 @@ export default function CoverLetterPreviewCirculaire({
   const renderRecipientInfo = () => {
     return (
       <div className="mt-6">
-        <h2
+        {/* <h2
           style={{ color: accentColor, borderColor: accentColor }}
           className="text-xl font-bold mb-4 border-b pb-2"
         >
           Destinataire
-        </h2>
+        </h2> */}
         <div className="space-y-4">
           <div className="text-gray-700">
             <p className="font-medium">
@@ -136,12 +136,12 @@ export default function CoverLetterPreviewCirculaire({
   const renderDateAndSubject = () => {
     return (
       <div className="mt-6">
-        <h2
+        {/* <h2
           style={{ color: accentColor, borderColor: accentColor }}
           className="text-xl font-bold mb-4 border-b pb-2"
         >
           Date et Objet
-        </h2>
+        </h2> */}
         <div className="space-y-4">
           <div className="text-gray-700">
             <p>
@@ -161,11 +161,7 @@ export default function CoverLetterPreviewCirculaire({
   // Render content sections
   const renderSections = (sections: string[]) => {
     return sections.map((section) => {
-      if (
-        section === "personal-info" ||
-        section === "destinataire" ||
-        section === "date-et-objet"
-      ) {
+      if (section === "personal-info") {
         return null;
       }
 
@@ -189,15 +185,62 @@ export default function CoverLetterPreviewCirculaire({
       }
 
       switch (section) {
+        case "destinataire":
+          return (
+            <div className="mt-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Destinataire
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="font-medium">
+                    {recipient?.company || "Entreprise XYZ"}
+                  </p>
+                  <p>{recipient?.name || "Responsable Recrutement"}</p>
+                  <p>{recipient?.address || "456 Avenue Business"}</p>
+                  <p>
+                    {recipient?.postalCode || "75001"}{" "}
+                    {recipient?.city || "Paris"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        case "date-et-objet":
+          return (
+            <div className="mt-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Date et Objet
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="flex items-end justify-end">
+                    {dateAndSubject?.location || "Paris"}, le{" "}
+                    {dateAndSubject?.date || "01/01/2023"}
+                  </p>
+                  <p className="font-bold mt-2">
+                    {dateAndSubject?.subject ||
+                      "Candidature pour le poste de..."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
         case "introduction":
           return (
             <div key={section} className="mb-8">
-              <h3
+              {/* <h3
                 style={{ color: accentColor, borderColor: accentColor }}
                 className="text-2xl font-bold mb-4 border-b pb-2"
               >
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div
                 dangerouslySetInnerHTML={{ __html: introduction || "" }}
                 className="text-gray-700"
@@ -207,12 +250,12 @@ export default function CoverLetterPreviewCirculaire({
         case "situation-actuelle":
           return (
             <div key={section} className="mb-8">
-              <h3
+              {/* <h3
                 style={{ color: accentColor, borderColor: accentColor }}
                 className="text-2xl font-bold mb-4 border-b pb-2"
               >
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div
                 dangerouslySetInnerHTML={{ __html: currentSituation || "" }}
                 className="text-gray-700"
@@ -222,12 +265,12 @@ export default function CoverLetterPreviewCirculaire({
         case "motivation":
           return (
             <div key={section} className="mb-8">
-              <h3
+              {/* <h3
                 style={{ color: accentColor, borderColor: accentColor }}
                 className="text-2xl font-bold mb-4 border-b pb-2"
               >
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div
                 dangerouslySetInnerHTML={{ __html: motivation || "" }}
                 className="text-gray-700"
@@ -237,12 +280,12 @@ export default function CoverLetterPreviewCirculaire({
         case "conclusion":
           return (
             <div key={section} className="mb-8">
-              <h3
+              {/* <h3
                 style={{ color: accentColor, borderColor: accentColor }}
                 className="text-2xl font-bold mb-4 border-b pb-2"
               >
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div
                 dangerouslySetInnerHTML={{ __html: conclusion || "" }}
                 className="text-gray-700"
@@ -300,8 +343,6 @@ export default function CoverLetterPreviewCirculaire({
           {/* Content sections */}
           <div className="relative z-10 px-8 pt-8 pb-32">
             {renderPersonalInfo()}
-            {renderRecipientInfo()}
-            {renderDateAndSubject()}
           </div>
 
           {/* Bottom teal curved section */}

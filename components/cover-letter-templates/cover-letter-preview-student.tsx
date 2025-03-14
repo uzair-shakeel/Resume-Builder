@@ -124,11 +124,8 @@ export default function CoverLetterPreviewStudent({
   const renderRecipientDetails = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Destinataire</h3>
         <div className="space-y-2 text-base">
-          <p className="font-bold uppercase">
-            {recipient?.company || "ENTREPRISE XYZ"}
-          </p>
+          <p className=" uppercase">{recipient?.company || "ENTREPRISE XYZ"}</p>
           <p>{recipient?.name || "Responsable Recrutement"}</p>
           <p>{recipient?.address || "456 Avenue Business"}</p>
           <p>
@@ -143,7 +140,6 @@ export default function CoverLetterPreviewStudent({
   const renderDateAndSubject = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Date et Objet</h3>
         <div className="space-y-2 text-base">
           <p>
             {dateAndSubject?.location || "Paris"}, le{" "}
@@ -165,11 +161,7 @@ export default function CoverLetterPreviewStudent({
   // Render content sections
   const renderSections = (sections: string[]) => {
     return sections.map((section) => {
-      if (
-        section === "personal-info" ||
-        section === "destinataire" ||
-        section === "date-et-objet"
-      ) {
+      if (section === "personal-info") {
         return null;
       }
 
@@ -194,68 +186,115 @@ export default function CoverLetterPreviewStudent({
       }
 
       switch (section) {
+        case "destinataire":
+          return (
+            <div className="mt-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Destinataire
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="font-medium">
+                    {recipient?.company || "Entreprise XYZ"}
+                  </p>
+                  <p>{recipient?.name || "Responsable Recrutement"}</p>
+                  <p>{recipient?.address || "456 Avenue Business"}</p>
+                  <p>
+                    {recipient?.postalCode || "75001"}{" "}
+                    {recipient?.city || "Paris"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        case "date-et-objet":
+          return (
+            <div className="mb-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Date et Objet
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="flex items-end justify-end">
+                    {dateAndSubject?.location || "Paris"}, le{" "}
+                    {dateAndSubject?.date || "01/01/2023"}
+                  </p>
+                  <p className="font-bold mt-2">
+                    {dateAndSubject?.subject ||
+                      "Candidature pour le poste de..."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
         case "introduction":
           return (
             <div key={section} className="mb-8">
-              <h3 className="text-xl font-bold mb-4 uppercase">
+              {/* <h3 className="text-xl font-bold mb-4 uppercase">
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div
                 dangerouslySetInnerHTML={{ __html: introduction || "" }}
                 className="text-base"
               />
-              <div
+              {/* <div
                 style={{ backgroundColor: accentColor }}
                 className="mt-6 h-[1px]"
-              ></div>
+              ></div> */}
             </div>
           );
         case "situation-actuelle":
           return (
             <div key={section} className="mb-8">
-              <h3 className="text-xl font-bold mb-4 uppercase">
+              {/* <h3 className="text-xl font-bold mb-4 uppercase">
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div
                 dangerouslySetInnerHTML={{ __html: currentSituation || "" }}
                 className="text-base"
               />
-              <div
+              {/* <div
                 style={{ backgroundColor: accentColor }}
                 className="mt-6 h-[1px]"
-              ></div>
+              ></div> */}
             </div>
           );
         case "motivation":
           return (
             <div key={section} className="mb-8">
-              <h3 className="text-xl font-bold mb-4 uppercase">
+              {/* <h3 className="text-xl font-bold mb-4 uppercase">
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div
                 dangerouslySetInnerHTML={{ __html: motivation || "" }}
                 className="text-base"
               />
-              <div
+              {/* <div
                 style={{ backgroundColor: accentColor }}
                 className="mt-6 h-[1px]"
-              ></div>
+              ></div> */}
             </div>
           );
         case "conclusion":
           return (
             <div key={section} className="mb-8">
-              <h3 className="text-xl font-bold mb-4 uppercase">
+              {/* <h3 className="text-xl font-bold mb-4 uppercase">
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div
                 dangerouslySetInnerHTML={{ __html: conclusion || "" }}
                 className="text-base"
               />
-              <div
+              {/* <div
                 style={{ backgroundColor: accentColor }}
                 className="mt-6 h-[1px]"
-              ></div>
+              ></div> */}
             </div>
           );
         default:
@@ -286,10 +325,7 @@ export default function CoverLetterPreviewStudent({
               </svg>
             </div>
           </div>
-          <div className="relative z-10 mt-[100px]">
-            {renderRecipientDetails()}
-            {renderDateAndSubject()}
-          </div>
+          <div className="relative z-10 mt-[100px]"></div>
         </div>
 
         {/* Main content */}

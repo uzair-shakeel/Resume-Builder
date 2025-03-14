@@ -142,18 +142,12 @@ export default function CoverLetterPreviewTeal({
   // Render recipient section
   const renderRecipient = () => {
     return (
-      <div className="mb-8">
-        <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("destinataire")}
-        </h2>
+      <div className="py-8">
         <div className="space-y-6">
           <div>
             <div className="flex justify-between mb-1">
               <div>
-                <h4 className="font-semibold text-gray-800">
+                <h4 className=" text-gray-800">
                   {recipient?.company || "Company Name"}
                 </h4>
                 <p className="text-gray-600">
@@ -180,16 +174,16 @@ export default function CoverLetterPreviewTeal({
   // Render date and subject section
   const renderDateAndSubject = () => {
     return (
-      <div className="mb-8">
-        <h2
+      <div className="pb-8">
+        {/* <h2
           className="text-xl font-semibold mb-4"
           style={{ color: accentColor }}
         >
           {getSectionTitle("date-et-objet")}
-        </h2>
+        </h2> */}
         <div>
           <h4 className="font-semibold text-gray-800">
-            Subject: {dateAndSubject?.subject || "Job Application"}
+            {dateAndSubject?.subject || "Job Application"}
           </h4>
         </div>
       </div>
@@ -200,12 +194,12 @@ export default function CoverLetterPreviewTeal({
   const renderIntroduction = () => {
     return (
       <div className="mb-8">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-4"
           style={{ color: accentColor }}
         >
           {getSectionTitle("introduction")}
-        </h2>
+        </h2> */}
         <div
           dangerouslySetInnerHTML={{ __html: introduction || "" }}
           className="text-gray-700"
@@ -218,12 +212,12 @@ export default function CoverLetterPreviewTeal({
   const renderCurrentSituation = () => {
     return (
       <div className="mb-8">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-4"
           style={{ color: accentColor }}
         >
           {getSectionTitle("situation-actuelle")}
-        </h2>
+        </h2> */}
         <div
           dangerouslySetInnerHTML={{ __html: currentSituation || "" }}
           className="text-gray-700"
@@ -236,12 +230,12 @@ export default function CoverLetterPreviewTeal({
   const renderMotivation = () => {
     return (
       <div className="mb-8">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-4"
           style={{ color: accentColor }}
         >
           {getSectionTitle("motivation")}
-        </h2>
+        </h2> */}
         <div
           dangerouslySetInnerHTML={{ __html: motivation || "" }}
           className="text-gray-700"
@@ -254,12 +248,12 @@ export default function CoverLetterPreviewTeal({
   const renderConclusion = () => {
     return (
       <div className="mb-8">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-4"
           style={{ color: accentColor }}
         >
           {getSectionTitle("conclusion")}
-        </h2>
+        </h2> */}
         <div
           dangerouslySetInnerHTML={{ __html: conclusion || "" }}
           className="text-gray-700"
@@ -272,12 +266,12 @@ export default function CoverLetterPreviewTeal({
   const renderCustomSection = (section: string) => {
     return (
       <div className="mb-8">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-4"
           style={{ color: accentColor }}
         >
           {getSectionTitle(section)}
-        </h2>
+        </h2> */}
         <div
           dangerouslySetInnerHTML={{
             __html: customSections?.[section] || "",

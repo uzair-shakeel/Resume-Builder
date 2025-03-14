@@ -130,35 +130,14 @@ export default function CoverLetterPreviewMinimal({
 
   // Render date and subject section
   const renderDateAndSubject = () => {
-    return (
-      <div className="mb-8">
-        <h3
-          className="text-xl font-semibold mb-3"
-          style={{ color: accentColor }}
-        >
-          Date et Objet
-        </h3>
-        <div className="border-t border-gray-200 pt-3">
-          <p className="text-gray-700">
-            {dateAndSubject?.location || "Paris"}, le{" "}
-            {dateAndSubject?.date || "01/01/2023"}
-          </p>
-          <p className="font-medium mt-2 text-gray-800">
-            Objet :{" "}
-            {dateAndSubject?.subject || "Candidature pour le poste de..."}
-          </p>
-        </div>
-      </div>
-    );
+    
   };
 
   // Render content sections
   const renderSections = (sections: string[]) => {
     return sections.map((section) => {
       if (
-        section === "personal-info" ||
-        section === "destinataire" ||
-        section === "date-et-objet"
+        section === "personal-info"
       ) {
         return null;
       }
@@ -185,15 +164,62 @@ export default function CoverLetterPreviewMinimal({
       }
 
       switch (section) {
+        case "destinataire":
+          return (
+            <div className="mt-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Destinataire
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="font-medium">
+                    {recipient?.company || "Entreprise XYZ"}
+                  </p>
+                  <p>{recipient?.name || "Responsable Recrutement"}</p>
+                  <p>{recipient?.address || "456 Avenue Business"}</p>
+                  <p>
+                    {recipient?.postalCode || "75001"}{" "}
+                    {recipient?.city || "Paris"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        case "date-et-objet":
+          return (
+            <div className="mt-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Date et Objet
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="flex items-end justify-end">
+                    {dateAndSubject?.location || "Paris"}, le{" "}
+                    {dateAndSubject?.date || "01/01/2023"}
+                  </p>
+                  <p className="font-bold mt-2">
+                    {dateAndSubject?.subject ||
+                      "Candidature pour le poste de..."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
         case "introduction":
           return (
             <div key={section} className="mb-8">
-              <h3
+              {/* <h3
                 className="text-xl font-semibold mb-3"
                 style={{ color: accentColor }}
               >
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div className="border-t border-gray-200 pt-3">
                 <div
                   dangerouslySetInnerHTML={{ __html: introduction || "" }}
@@ -205,12 +231,12 @@ export default function CoverLetterPreviewMinimal({
         case "situation-actuelle":
           return (
             <div key={section} className="mb-8">
-              <h3
+              {/* <h3
                 className="text-xl font-semibold mb-3"
                 style={{ color: accentColor }}
               >
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div className="border-t border-gray-200 pt-3">
                 <div
                   dangerouslySetInnerHTML={{ __html: currentSituation || "" }}
@@ -222,12 +248,12 @@ export default function CoverLetterPreviewMinimal({
         case "motivation":
           return (
             <div key={section} className="mb-8">
-              <h3
+              {/* <h3
                 className="text-xl font-semibold mb-3"
                 style={{ color: accentColor }}
               >
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div className="border-t border-gray-200 pt-3">
                 <div
                   dangerouslySetInnerHTML={{ __html: motivation || "" }}
@@ -239,12 +265,12 @@ export default function CoverLetterPreviewMinimal({
         case "conclusion":
           return (
             <div key={section} className="mb-8">
-              <h3
+              {/* <h3
                 className="text-xl font-semibold mb-3"
                 style={{ color: accentColor }}
               >
                 {getSectionTitle(section)}
-              </h3>
+              </h3> */}
               <div className="border-t border-gray-200 pt-3">
                 <div
                   dangerouslySetInnerHTML={{ __html: conclusion || "" }}
@@ -313,8 +339,6 @@ export default function CoverLetterPreviewMinimal({
             </div>
           )}
           {renderPersonalDetails()}
-          {renderRecipientDetails()}
-          {renderDateAndSubject()}
         </div>
 
         {/* Right column - Main content */}
