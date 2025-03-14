@@ -71,11 +71,7 @@ export default function CoverLetterPreviewSherlock({
   // Render content sections
   const renderSections = (sections: string[]) => {
     return sections.map((section) => {
-      if (
-        section === "personal-info" ||
-        section === "destinataire" ||
-        section === "date-et-objet"
-      ) {
+      if (section === "personal-info") {
         return null;
       }
 
@@ -96,12 +92,59 @@ export default function CoverLetterPreviewSherlock({
       }
 
       switch (section) {
+        case "destinataire":
+          return (
+            <div className="mt-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Destinataire
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="font-medium">
+                    {recipient?.company || "Entreprise XYZ"}
+                  </p>
+                  <p>{recipient?.name || "Responsable Recrutement"}</p>
+                  <p>{recipient?.address || "456 Avenue Business"}</p>
+                  <p>
+                    {recipient?.postalCode || "75001"}{" "}
+                    {recipient?.city || "Paris"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        case "date-et-objet":
+          return (
+            <div className="mb-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Date et Objet
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="flex items-end justify-end">
+                    {dateAndSubject?.location || "Paris"}, le{" "}
+                    {dateAndSubject?.date || "01/01/2023"}
+                  </p>
+                  <p className="font-bold mt-2">
+                    {dateAndSubject?.subject ||
+                      "Candidature pour le poste de..."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
         case "introduction":
           return (
             <div key={section} className="mb-8">
-              <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
+              {/* <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: introduction }}
                 className="text-sm"
@@ -111,9 +154,9 @@ export default function CoverLetterPreviewSherlock({
         case "situation-actuelle":
           return (
             <div key={section} className="mb-8">
-              <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
+              {/* <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: currentSituation }}
                 className="text-sm"
@@ -123,9 +166,9 @@ export default function CoverLetterPreviewSherlock({
         case "motivation":
           return (
             <div key={section} className="mb-8">
-              <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
+              {/* <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: motivation }}
                 className="text-sm"
@@ -135,9 +178,9 @@ export default function CoverLetterPreviewSherlock({
         case "conclusion":
           return (
             <div key={section} className="mb-8">
-              <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
+              {/* <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: conclusion }}
                 className="text-sm"
@@ -192,32 +235,6 @@ export default function CoverLetterPreviewSherlock({
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* Recipient Info */}
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold uppercase mb-2 border-b border-white/20 pb-1">
-              Destinataire
-            </h2>
-            <p className="text-sm font-semibold mb-1">{recipient.company}</p>
-            <p className="text-sm mb-1">{recipient.name}</p>
-            <p className="text-sm mb-1">{recipient.address}</p>
-            <p className="text-sm">
-              {recipient.postalCode} {recipient.city}
-            </p>
-          </div>
-
-          {/* Date and Subject */}
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold uppercase mb-2 border-b border-white/20 pb-1">
-              Date et Objet
-            </h2>
-            <p className="text-sm mb-2">
-              {dateAndSubject.location}, le {dateAndSubject.date}
-            </p>
-            <p className="text-sm font-semibold">
-              Objet : {dateAndSubject.subject}
-            </p>
           </div>
         </div>
 

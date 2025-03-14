@@ -64,20 +64,16 @@ export default function CoverLetterPreviewClassic({
   // Render content sections
   const renderSections = (sections: string[]) => {
     return sections.map((section) => {
-      if (
-        section === "personal-info" ||
-        section === "destinataire" ||
-        section === "date-et-objet"
-      ) {
+      if (section === "personal-info") {
         return null;
       }
 
       if (section.startsWith("custom-")) {
         return (
           <div key={section} className="mb-6 keep-together">
-            <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+            {/* <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
               {getSectionTitle(section)}
-            </h2>
+            </h2> */}
             <div
               dangerouslySetInnerHTML={{
                 __html: customSections[section] || "",
@@ -89,12 +85,59 @@ export default function CoverLetterPreviewClassic({
       }
 
       switch (section) {
+        case "destinataire":
+          return (
+            <div className="mt-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Destinataire
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="font-medium">
+                    {recipient?.company || "Entreprise XYZ"}
+                  </p>
+                  <p>{recipient?.name || "Responsable Recrutement"}</p>
+                  <p>{recipient?.address || "456 Avenue Business"}</p>
+                  <p>
+                    {recipient?.postalCode || "75001"}{" "}
+                    {recipient?.city || "Paris"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        case "date-et-objet":
+          return (
+            <div className="mb-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Date et Objet
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="flex items-end justify-end">
+                    {dateAndSubject?.location || "Paris"}, le{" "}
+                    {dateAndSubject?.date || "01/01/2023"}
+                  </p>
+                  <p className="font-bold mt-2">
+                    {dateAndSubject?.subject ||
+                      "Candidature pour le poste de..."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
         case "introduction":
           return (
             <div key={section} className="mb-6 keep-together">
-              <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+              {/* <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: introduction }}
                 className="text-sm section-content"
@@ -104,9 +147,9 @@ export default function CoverLetterPreviewClassic({
         case "situation-actuelle":
           return (
             <div key={section} className="mb-6 keep-together">
-              <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+              {/* <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: currentSituation }}
                 className="text-sm section-content"
@@ -116,9 +159,9 @@ export default function CoverLetterPreviewClassic({
         case "motivation":
           return (
             <div key={section} className="mb-6 keep-together">
-              <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+              {/* <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: motivation }}
                 className="text-sm section-content"
@@ -128,9 +171,9 @@ export default function CoverLetterPreviewClassic({
         case "conclusion":
           return (
             <div key={section} className="mb-6 keep-together">
-              <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+              {/* <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: conclusion }}
                 className="text-sm section-content"
@@ -203,58 +246,6 @@ export default function CoverLetterPreviewClassic({
                     {personalInfo?.address || "123 Rue Example"},{" "}
                     {personalInfo?.postalCode || "75000"}{" "}
                     {personalInfo?.city || "Paris"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Recipient information */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                Destinataire
-              </h2>
-              <div className="space-y-2 section-content">
-                <div>
-                  <p className="text-sm font-medium">Entreprise:</p>
-                  <p className="text-sm">
-                    {recipient?.company || "Entreprise XYZ"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Contact:</p>
-                  <p className="text-sm">
-                    {recipient?.name || "Responsable Recrutement"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Adresse:</p>
-                  <p className="text-sm">
-                    {recipient?.address || "456 Avenue Business"},{" "}
-                    {recipient?.postalCode || "75001"}{" "}
-                    {recipient?.city || "Paris"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Date and Subject */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                Date et Objet
-              </h2>
-              <div className="space-y-2 section-content">
-                <div>
-                  <p className="text-sm font-medium">Date:</p>
-                  <p className="text-sm">
-                    {dateAndSubject?.location || "Paris"}, le{" "}
-                    {dateAndSubject?.date || "01/01/2023"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Objet:</p>
-                  <p className="text-sm cv-accent-color">
-                    {dateAndSubject?.subject ||
-                      "Candidature pour le poste de..."}
                   </p>
                 </div>
               </div>

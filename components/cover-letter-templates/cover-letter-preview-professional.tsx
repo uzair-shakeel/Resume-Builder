@@ -63,11 +63,7 @@ export default function CoverLetterPreviewProfessional({
   // Render content sections
   const renderSections = (sections: string[]) => {
     return sections.map((section) => {
-      if (
-        section === "personal-info" ||
-        section === "destinataire" ||
-        section === "date-et-objet"
-      ) {
+      if (section === "personal-info") {
         return null;
       }
 
@@ -88,12 +84,59 @@ export default function CoverLetterPreviewProfessional({
       }
 
       switch (section) {
+        case "destinataire":
+          return (
+            <div className="mt-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Destinataire
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="font-medium">
+                    {recipient?.company || "Entreprise XYZ"}
+                  </p>
+                  <p>{recipient?.name || "Responsable Recrutement"}</p>
+                  <p>{recipient?.address || "456 Avenue Business"}</p>
+                  <p>
+                    {recipient?.postalCode || "75001"}{" "}
+                    {recipient?.city || "Paris"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        case "date-et-objet":
+          return (
+            <div className="mb-6">
+              {/* <h2
+          style={{ color: accentColor, borderColor: accentColor }}
+          className="text-xl font-bold mb-4 border-b pb-2"
+        >
+          Date et Objet
+        </h2> */}
+              <div className="space-y-4">
+                <div className="text-gray-700">
+                  <p className="flex items-end justify-end">
+                    {dateAndSubject?.location || "Paris"}, le{" "}
+                    {dateAndSubject?.date || "01/01/2023"}
+                  </p>
+                  <p className="font-bold mt-2">
+                    {dateAndSubject?.subject ||
+                      "Candidature pour le poste de..."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
         case "introduction":
           return (
             <section key={section} className="mb-8">
-              <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+              {/* <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: introduction }}
                 className="text-gray-600 leading-relaxed"
@@ -103,9 +146,9 @@ export default function CoverLetterPreviewProfessional({
         case "situation-actuelle":
           return (
             <section key={section} className="mb-8">
-              <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+              {/* <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: currentSituation }}
                 className="text-gray-600 leading-relaxed"
@@ -115,9 +158,9 @@ export default function CoverLetterPreviewProfessional({
         case "motivation":
           return (
             <section key={section} className="mb-8">
-              <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+              {/* <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: motivation }}
                 className="text-gray-600 leading-relaxed"
@@ -127,9 +170,9 @@ export default function CoverLetterPreviewProfessional({
         case "conclusion":
           return (
             <section key={section} className="mb-8">
-              <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+              {/* <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
                 {getSectionTitle(section)}
-              </h2>
+              </h2> */}
               <div
                 dangerouslySetInnerHTML={{ __html: conclusion }}
                 className="text-gray-600 leading-relaxed"
@@ -157,8 +200,8 @@ export default function CoverLetterPreviewProfessional({
         <h1 className="text-3xl font-bold">
           {personalInfo.firstName} {personalInfo.lastName}
         </h1>
-        <p className="text-teal-100">{personalInfo.title}</p>
-        <div className="flex gap-4 mt-2 text-sm text-teal-50">
+        <p className="text-teal-100 pb-2">{personalInfo.title}</p>
+        <div className="flex  gap-4  text-sm text-teal-50">
           <span className="flex items-center gap-1">
             <Mail className="w-4 h-4" />
             {personalInfo.email}
@@ -177,37 +220,7 @@ export default function CoverLetterPreviewProfessional({
   );
 
   const renderSidebar = () => (
-    <div className="w-[240px] bg-gray-900 text-white p-6 min-h-full">
-      {/* Recipient Info */}
-      <div className="mb-8">
-        <h2 className="text-lg font-medium mb-4 uppercase tracking-wider">
-          Destinataire
-        </h2>
-        <div className="space-y-2">
-          <p className="text-sm font-medium">{recipient.company}</p>
-          <p className="text-sm">{recipient.name}</p>
-          <p className="text-sm">{recipient.address}</p>
-          <p className="text-sm">
-            {recipient.postalCode} {recipient.city}
-          </p>
-        </div>
-      </div>
-
-      {/* Date and Subject */}
-      <div className="mb-8">
-        <h2 className="text-lg font-medium mb-4 uppercase tracking-wider">
-          Date et Objet
-        </h2>
-        <div className="space-y-2">
-          <p className="text-sm">
-            {dateAndSubject.location}, le {dateAndSubject.date}
-          </p>
-          <p className="text-sm font-medium">
-            Objet : {dateAndSubject.subject}
-          </p>
-        </div>
-      </div>
-    </div>
+    <div className="w-[240px] bg-gray-900 text-white p-6 min-h-full"></div>
   );
 
   const renderMainContent = (sections: string[]) => (

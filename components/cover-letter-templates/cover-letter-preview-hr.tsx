@@ -98,12 +98,12 @@ export default function CoverLetterPreviewHR({
   const renderRecipient = () => {
     return (
       <div className="mb-6 keep-together">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-3 pb-2 border-b-2 text-gray-800"
           style={{ borderColor: accentColor }}
         >
           {getSectionTitle("destinataire")}
-        </h2>
+        </h2> */}
         <div className="space-y-2 text-sm">
           <p className="font-semibold">
             {recipient?.company || "Entreprise XYZ"}
@@ -121,19 +121,19 @@ export default function CoverLetterPreviewHR({
   const renderDateAndSubject = () => {
     return (
       <div className="mb-6 keep-together">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-3 pb-2 border-b-2 text-gray-800"
           style={{ borderColor: accentColor }}
         >
           {getSectionTitle("date-et-objet")}
-        </h2>
+        </h2> */}
         <div className="space-y-2 text-sm">
-          <p>
+          <p className="flex items-end justify-end">
             {dateAndSubject?.location || "Paris"}, le{" "}
             {dateAndSubject?.date || "01/01/2023"}
           </p>
           <p className="font-semibold">
-            Objet :{" "}
+            {" "}
             {dateAndSubject?.subject || "Candidature pour le poste de..."}
           </p>
         </div>
@@ -144,12 +144,12 @@ export default function CoverLetterPreviewHR({
   const renderIntroduction = () => {
     return (
       <div className="mb-6 keep-together">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-3 pb-2 border-b-2 text-gray-800"
           style={{ borderColor: accentColor }}
         >
           {getSectionTitle("introduction")}
-        </h2>
+        </h2> */}
         <div
           dangerouslySetInnerHTML={{ __html: introduction || "" }}
           className="text-sm text-gray-700"
@@ -161,12 +161,12 @@ export default function CoverLetterPreviewHR({
   const renderCurrentSituation = () => {
     return (
       <div className="mb-6 keep-together">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-3 pb-2 border-b-2 text-gray-800"
           style={{ borderColor: accentColor }}
         >
           {getSectionTitle("situation-actuelle")}
-        </h2>
+        </h2> */}
         <div
           dangerouslySetInnerHTML={{ __html: currentSituation || "" }}
           className="text-sm text-gray-700"
@@ -178,12 +178,12 @@ export default function CoverLetterPreviewHR({
   const renderMotivation = () => {
     return (
       <div className="mb-6 keep-together">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-3 pb-2 border-b-2 text-gray-800"
           style={{ borderColor: accentColor }}
         >
           {getSectionTitle("motivation")}
-        </h2>
+        </h2> */}
         <div
           dangerouslySetInnerHTML={{ __html: motivation || "" }}
           className="text-sm text-gray-700"
@@ -195,12 +195,12 @@ export default function CoverLetterPreviewHR({
   const renderConclusion = () => {
     return (
       <div className="mb-6 keep-together">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-3 pb-2 border-b-2 text-gray-800"
           style={{ borderColor: accentColor }}
         >
           {getSectionTitle("conclusion")}
-        </h2>
+        </h2> */}
         <div
           dangerouslySetInnerHTML={{ __html: conclusion || "" }}
           className="text-sm text-gray-700"
@@ -213,12 +213,12 @@ export default function CoverLetterPreviewHR({
   const renderCustomSection = (section: string) => {
     return (
       <div className="mb-6 keep-together">
-        <h2
+        {/* <h2
           className="text-xl font-semibold mb-3 pb-2 border-b-2 text-gray-800"
           style={{ borderColor: accentColor }}
         >
           {getSectionTitle(section)}
-        </h2>
+        </h2> */}
         <div
           dangerouslySetInnerHTML={{
             __html: customSections?.[section] || "",

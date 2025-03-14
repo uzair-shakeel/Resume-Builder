@@ -26,7 +26,13 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        paragraph: {
+          HTMLAttributes: {
+            class: null,
+          },
+        },
+      }),
       Underline,
       Link.configure({
         openOnClick: false,
@@ -42,7 +48,20 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     ],
     content: value,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      let html = editor.getHTML();
+
+      // Remove empty paragraph tags
+      html = html.replace(/<p>\s*<\/p>/gi, "");
+
+      // If content is just text wrapped in p tags, extract just the text
+      if (html.match(/^<p>([^<>]*)<\/p>$/i)) {
+        html = html.replace(/<\/?p>/gi, "");
+      }
+
+      // For any remaining p tags, ensure they're lowercase
+      html = html.replace(/<\/?P>/g, (match) => match.toLowerCase());
+
+      onChange(html);
     },
   });
 
