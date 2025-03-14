@@ -771,7 +771,7 @@ export default function Builder() {
         }
 
         // Save the PDF
-        pdf.save(`cv-${new Date().toISOString().slice(0, 10)}.pdf`);
+        pdf.save(`resume.pdf`);
       } else {
         // For image formats, only capture the first page
         const firstPage = pages[0] as HTMLElement;

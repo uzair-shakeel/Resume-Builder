@@ -185,179 +185,169 @@ export default function CVPreviewTeal({
 
   // Render profile section
   const renderProfile = () => {
-    const profileText = profile || placeholderData.profile;
-    if (!profileText) return null;
-
-    return (
-      <div className="mb-8">
-        <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
+    return data.profile || placeholderData.profile ? (
+      <div className="py-8">
+        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
           {getSectionTitle("profile")}
-        </h2>
-        <p className="text-gray-700">{profileText}</p>
+        </h3>
+        <p className="text-gray-700">
+          {data.profile || placeholderData.profile}
+        </p>
       </div>
-    );
+    ) : null;
   };
 
   // Render education section
   const renderEducation = () => {
-    const educationItems = education || placeholderData.education;
-    if (!educationItems || educationItems.length === 0) return null;
-
-    return (
-      <div className="mb-8">
-        <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
+    return data.education?.length || placeholderData.education?.length ? (
+      <div className="pb-8">
+        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
           {getSectionTitle("education")}
-        </h2>
-        <div className="space-y-6">
-          {educationItems.map((edu, index) => (
+        </h3>
+        <div className="space-y-4">
+          {(data.education?.length
+            ? data.education
+            : placeholderData.education
+          ).map((edu: Education, index: number) => (
             <div key={index}>
               <div className="flex justify-between mb-1">
                 <div>
-                  <h4 className="font-semibold text-gray-800">{edu.degree}</h4>
-                  <p className="text-gray-600">{edu.school}</p>
+                  <p className="font-bold text-gray-800">{edu.degree}</p>
+                  <p style={{ color: accentColor }}>{edu.school}</p>
                 </div>
-                <div className="text-right" style={{ color: accentColor }}>
+                <div className="text-gray-600">
                   {edu.startDate} - {edu.current ? "Present" : edu.endDate}
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  // Render experience section
-  const renderExperience = () => {
-    const experienceItems = experience || placeholderData.experience;
-    if (!experienceItems || experienceItems.length === 0) return null;
-
-    return (
-      <div className="mb-8">
-        <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("experience")}
-        </h2>
-        <div className="space-y-6">
-          {experienceItems.map((exp, index) => (
-            <div key={index}>
-              <div className="flex justify-between mb-1">
-                <div>
-                  <h4 className="font-semibold text-gray-800">
-                    {exp.position}
-                  </h4>
-                  <p className="text-gray-600">
-                    {exp.company}, {exp.location}
-                  </p>
-                </div>
-                <div className="text-right" style={{ color: accentColor }}>
-                  {exp.startDate} - {exp.current ? "Present" : exp.endDate}
-                </div>
-              </div>
-              {exp.description && (
-                <p className="mt-2 text-gray-700">{exp.description}</p>
+              {edu.description && (
+                <p className="text-gray-700 mt-1">{edu.description}</p>
               )}
             </div>
           ))}
         </div>
       </div>
-    );
+    ) : null;
+  };
+
+  // Render experience section
+  const renderExperience = () => {
+    return data.experience?.length || placeholderData.experience?.length ? (
+      <div className="pb-8">
+        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
+          {getSectionTitle("experience")}
+        </h3>
+        <div className="space-y-4">
+          {(data.experience?.length
+            ? data.experience
+            : placeholderData.experience
+          ).map((exp: ExperienceItem, index: number) => (
+            <div key={index}>
+              <div className="flex justify-between mb-1">
+                <div>
+                  <p className="font-bold text-gray-800">{exp.position}</p>
+                  <p style={{ color: accentColor }}>
+                    {exp.company}, {exp.location}
+                  </p>
+                </div>
+                <div className="text-gray-600">
+                  {exp.startDate} - {exp.current ? "Present" : exp.endDate}
+                </div>
+              </div>
+              {exp.description && (
+                <div className="mt-2 text-gray-700">
+                  <div className="whitespace-pre-line">
+                    {exp.description.split("\n").map((item, i) => (
+                      <div key={i} className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>{item.replace("• ", "")}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    ) : null;
   };
 
   // Render skills section
   const renderSkills = () => {
-    const skillItems = skills || placeholderData.skills;
-    if (!skillItems || skillItems.length === 0) return null;
-
-    return (
-      <div className="mb-8">
-        <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
+    return data.skills?.length || placeholderData.skills?.length ? (
+      <div className="pb-8">
+        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
           {getSectionTitle("skills")}
-        </h2>
-        <div className="space-y-2">
-          {skillItems.map((skill, index) => (
-            <div key={index}>
-              <div className="flex justify-between mb-1">
-                <span className="text-gray-700">{skill.name}</span>
-                <span className="text-gray-500">{skill.level * 20}%</span>
+        </h3>
+        <div className="space-y-3">
+          {(data.skills?.length ? data.skills : placeholderData.skills).map(
+            (skill: SkillItem, index: number) => (
+              <div key={index}>
+                <div className="flex justify-between mb-1">
+                  <span className="text-gray-700">{skill.name}</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="h-2 rounded-full"
+                    style={{
+                      width: `${skill.level * 20}%`,
+                      backgroundColor: accentColor,
+                    }}
+                  ></div>
+                </div>
               </div>
-              <div className="w-full bg-gray-200 h-1.5">
-                <div
-                  className="h-1.5"
-                  style={{
-                    width: `${skill.level * 20}%`,
-                    backgroundColor: accentColor,
-                  }}
-                />
-              </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
       </div>
-    );
+    ) : null;
   };
 
   // Render languages section
   const renderLanguages = () => {
-    const languageItems = languages || placeholderData.languages;
-    if (!languageItems || languageItems.length === 0) return null;
-
-    return (
-      <div className="mb-8">
-        <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
+    return data.languages?.length || placeholderData.languages?.length ? (
+      <div className="pb-8">
+        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
           {getSectionTitle("languages")}
-        </h2>
+        </h3>
         <div className="space-y-2">
-          {languageItems.map((lang, index) => (
+          {(data.languages?.length
+            ? data.languages
+            : placeholderData.languages
+          ).map((lang: LanguageItem, index: number) => (
             <div key={index} className="flex justify-between">
               <span className="text-gray-700">{lang.name}</span>
-              <span className="text-gray-500">{lang.level}</span>
+              <span className="text-gray-600">{lang.level}</span>
             </div>
           ))}
         </div>
       </div>
-    );
+    ) : null;
   };
 
   // Render interests section
   const renderInterests = () => {
-    const interestItems = interests || placeholderData.interests;
-    if (!interestItems || interestItems.length === 0) return null;
-
-    return (
-      <div className="mb-8">
-        <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
+    return data.interests?.length || placeholderData.interests?.length ? (
+      <div className="pb-8">
+        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
           {getSectionTitle("interests")}
-        </h2>
+        </h3>
         <div className="flex flex-wrap gap-2">
-          {interestItems.map((interest, index) => (
+          {(data.interests?.length
+            ? data.interests
+            : placeholderData.interests
+          ).map((interest: InterestItem, index: number) => (
             <span
               key={index}
-              className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100"
+              className="px-3 py-1 text-center rounded-full text-white"
+              style={{ backgroundColor: accentColor }}
             >
               {interest.name}
             </span>
           ))}
         </div>
       </div>
-    );
+    ) : null;
   };
 
   // Render header with personal info
@@ -376,10 +366,10 @@ export default function CVPreviewTeal({
     const photo = personalInfo?.photo || placeholderData.personalInfo.photo;
     const title = personalInfo?.title || placeholderData.personalInfo.title;
 
-  return (
-        <div className="bg-gray-100 p-4">
-          {/* Header with name and photo */}
-          <div className="flex justify-between items-center mb-6">
+    return (
+      <div className="bg-gray-100 p-4">
+        {/* Header with name and photo */}
+        <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-4xl font-medium" style={{ color: accentColor }}>
               {firstName} {lastName}
@@ -390,18 +380,18 @@ export default function CVPreviewTeal({
             className="w-24 h-24 rounded-full overflow-hidden border-2"
             style={{ borderColor: accentColor }}
           >
-              <Image
+            <Image
               src={photo || "/placeholder-user.jpg"}
               alt={`${firstName} ${lastName}`}
-                width={96}
-                height={96}
-                className="object-cover w-full h-full"
-              />
-            </div>
+              width={96}
+              height={96}
+              className="object-cover w-full h-full"
+            />
           </div>
+        </div>
 
-          {/* Contact information */}
-          <div className="flex flex-wrap gap-y-2 mb-6">
+        {/* Contact information */}
+        <div className="flex flex-wrap gap-y-2 mb-6">
           {email && (
             <div className="flex items-center mr-6">
               <span className="mr-2" style={{ color: accentColor }}>
@@ -430,8 +420,8 @@ export default function CVPreviewTeal({
               </span>
             </div>
           )}
-            </div>
-          </div>
+        </div>
+      </div>
     );
   };
 
@@ -445,9 +435,9 @@ export default function CVPreviewTeal({
             {page1Sections.map((section) => (
               <div key={section}>{renderSection(section)}</div>
             ))}
-                        </div>
-                      </div>
-                    </div>
+          </div>
+        </div>
+      </div>
 
       {/* Page 2 (if needed) */}
       {hasPage2 && (
