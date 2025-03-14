@@ -86,8 +86,8 @@ const templateOptions = [
   {
     name: "Modern",
     value: "modern",
-    image: "/assets/resume4.png",
-    defaultColor: "#3b82f6", // blue-500
+    image: "/assets/modern-cv.svg",
+    defaultColor: "#953b2c",
   },
   {
     name: "Classic",
