@@ -71,9 +71,6 @@ export default function CoverLetterPreviewClassic({
       if (section.startsWith("custom-")) {
         return (
           <div key={section} className="mb-6 keep-together">
-            {/* <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-              {getSectionTitle(section)}
-            </h2> */}
             <div
               dangerouslySetInnerHTML={{
                 __html: customSections[section] || "",
@@ -88,12 +85,6 @@ export default function CoverLetterPreviewClassic({
         case "destinataire":
           return (
             <div className="mt-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Destinataire
-        </h2> */}
               <div className="space-y-4">
                 <div className="text-gray-700">
                   <p className="font-medium">
@@ -111,35 +102,30 @@ export default function CoverLetterPreviewClassic({
           );
         case "date-et-objet":
           return (
-            <div className="mb-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Date et Objet
-        </h2> */}
-              <div className="space-y-4">
-                <div className="text-gray-700">
-                  <p className="flex items-end justify-end">
-                    {dateAndSubject?.location || "Paris"}, le{" "}
-                    {dateAndSubject?.date || "01/01/2023"}
-                  </p>
-                  <p className="font-bold mt-2">
-                    {dateAndSubject?.subject ||
-                      "Candidature pour le poste de..."}
-                  </p>
-                </div>
+            <div key={section} className="mt-8 mb-8">
+              <div className="text-right mb-4">
+                <p>
+                  {dateAndSubject?.location || "Paris"}, le{" "}
+                  {dateAndSubject?.date ||
+                    new Date().toLocaleDateString("fr-FR")}
+                </p>
               </div>
+              <p className="font-medium">
+                Objet :{" "}
+                {dateAndSubject?.subject ||
+                  "Candidature pour le poste de [Poste]"}
+              </p>
             </div>
           );
         case "introduction":
           return (
             <div key={section} className="mb-6 keep-together">
-              {/* <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: introduction }}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    introduction ||
+                    "Je me permets de vous écrire concernant le poste de [Poste] que vous proposez. Ayant découvert votre annonce sur [Site], je souhaite vous faire part de ma candidature.",
+                }}
                 className="text-sm section-content"
               />
             </div>
@@ -147,11 +133,12 @@ export default function CoverLetterPreviewClassic({
         case "situation-actuelle":
           return (
             <div key={section} className="mb-6 keep-together">
-              {/* <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: currentSituation }}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    currentSituation ||
+                    "Actuellement [Poste actuel] chez [Entreprise] à [Ville], je suis en charge de [Responsabilités]. Cette expérience m'a permis de développer de solides compétences en [Compétences clés].",
+                }}
                 className="text-sm section-content"
               />
             </div>
@@ -159,11 +146,12 @@ export default function CoverLetterPreviewClassic({
         case "motivation":
           return (
             <div key={section} className="mb-6 keep-together">
-              {/* <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: motivation }}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    motivation ||
+                    "Votre entreprise m'intéresse particulièrement pour [Aspect spécifique]. Mes compétences en [Compétences clés] et mon expertise en [Domaine d'expertise] seraient des atouts pour contribuer aux [Projets/Objectifs de l'entreprise].",
+                }}
                 className="text-sm section-content"
               />
             </div>
@@ -171,11 +159,12 @@ export default function CoverLetterPreviewClassic({
         case "conclusion":
           return (
             <div key={section} className="mb-6 keep-together">
-              {/* <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: conclusion }}
+                dangerouslySetInnerHTML={{
+                  __html:
+                    conclusion ||
+                    "Je me tiens à votre disposition pour échanger plus en détail sur ma candidature lors d'un entretien. Dans l'attente de votre réponse, je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.",
+                }}
                 className="text-sm section-content"
               />
             </div>
@@ -188,41 +177,22 @@ export default function CoverLetterPreviewClassic({
 
   const renderPage = (sections: string[]) => (
     <div className="cv-page">
-      <div className="cv-page-content">
-        {/* Header with name and title */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold mb-2">
-            {personalInfo?.firstName || "Prénom"}{" "}
-            {personalInfo?.lastName || "Nom"}
+      <div className="cv-page-content p-8">
+        {/* Header with name */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold" style={{ color: accentColor }}>
+            {personalInfo?.firstName || "John"}{" "}
+            {personalInfo?.lastName || "Doe"}
           </h1>
           <p className="text-gray-600">
-            {personalInfo?.title || "Titre professionnel"}
+            {personalInfo?.title || "Professional Title"}
           </p>
         </div>
 
         {/* Two-column layout */}
-        <div className="flex">
-          {/* Left column */}
-          <div className="w-1/3 pr-6">
-            {/* Photo */}
-            <div className="mb-6 flex justify-center">
-              <div
-                className="w-32 h-32 overflow-hidden rounded-full border-2"
-                style={{ borderColor: accentColor }}
-              >
-                <Image
-                  src={personalInfo?.photo || "/placeholder-profile.jpg"}
-                  alt={`${personalInfo?.firstName || "Prénom"} ${
-                    personalInfo?.lastName || "Nom"
-                  }`}
-                  width={128}
-                  height={128}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-            </div>
-
-            {/* Personal information */}
+        <div className="flex gap-8">
+          {/* Left column - Contact info */}
+          <div className="w-1/3">
             <div className="mb-6">
               <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
                 Contact

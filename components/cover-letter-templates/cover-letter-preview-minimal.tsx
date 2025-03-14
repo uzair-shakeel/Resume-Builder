@@ -1,5 +1,6 @@
 import React from "react";
 import type { CoverLetterData } from "@/types";
+import { getPlaceholder } from "@/lib/placeholder-data";
 import Image from "next/image";
 
 interface CoverLetterPreviewMinimalProps {
@@ -10,16 +11,18 @@ interface CoverLetterPreviewMinimalProps {
   sectionPages: Record<string, number>;
   customSectionNames: Record<string, string>;
   customSections?: Record<string, string>;
+  language?: string;
 }
 
 export default function CoverLetterPreviewMinimal({
   data,
   sectionOrder,
-  accentColor = "#2a6496",
+  accentColor = "#000000",
   fontFamily = "inter",
   sectionPages = {},
   customSectionNames = {},
   customSections = {},
+  language = "fr",
 }: CoverLetterPreviewMinimalProps) {
   const {
     personalInfo,
@@ -48,235 +51,246 @@ export default function CoverLetterPreviewMinimal({
 
     switch (section) {
       case "introduction":
-        return "Introduction";
+        return language === "fr" ? "Introduction" : "Introduction";
       case "situation-actuelle":
-        return "Situation Actuelle";
+        return language === "fr" ? "Situation Actuelle" : "Current Situation";
       case "motivation":
-        return "Motivation";
+        return language === "fr" ? "Motivation" : "Motivation";
       case "conclusion":
-        return "Conclusion";
+        return language === "fr" ? "Conclusion" : "Conclusion";
       default:
         return section;
     }
   };
 
-  // Render personal details section for sidebar
-  const renderPersonalDetails = () => {
-    return (
-      <div className="personal-details">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b border-gray-200 pb-2">
-          Informations personnelles
-        </h3>
-
-        <div className="space-y-4">
-          <div>
-            <h4 className="font-medium">Nom</h4>
-            <p>
-              {personalInfo?.firstName || "Prénom"}{" "}
-              {personalInfo?.lastName || "Nom"}
-            </p>
-          </div>
-
-          <div>
-            <h4 className="font-medium">Email</h4>
-            <p>{personalInfo?.email || "email@example.com"}</p>
-          </div>
-
-          <div>
-            <h4 className="font-medium">Téléphone</h4>
-            <p>{personalInfo?.phone || "+33 6 12 34 56 78"}</p>
-          </div>
-
-          <div>
-            <h4 className="font-medium">Adresse</h4>
-            <p>{personalInfo?.address || "123 Rue Example"}</p>
-            <p>
-              {personalInfo?.postalCode || "75000"}{" "}
-              {personalInfo?.city || "Paris"}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Render recipient details section
-  const renderRecipientDetails = () => {
+  // Render header with personal info
+  const renderHeader = () => {
     return (
       <div className="mb-8">
-        <h3
-          className="text-xl font-semibold mb-3"
-          style={{ color: accentColor }}
-        >
-          Destinataire
-        </h3>
-        <div className="border-t border-gray-200 pt-3">
-          <p className="font-semibold text-gray-800">
-            {recipient?.company || "Entreprise XYZ"}
+        <h1 className="text-3xl font-bold mb-2">
+          {getPlaceholder(
+            "personalInfo",
+            "firstName",
+            personalInfo?.firstName,
+            language
+          )}{" "}
+          {getPlaceholder(
+            "personalInfo",
+            "lastName",
+            personalInfo?.lastName,
+            language
+          )}
+        </h1>
+        <p className="text-gray-600">
+          {getPlaceholder(
+            "personalInfo",
+            "title",
+            personalInfo?.title,
+            language
+          )}
+        </p>
+        <div className="mt-4 text-sm text-gray-600">
+          <p>
+            {getPlaceholder(
+              "personalInfo",
+              "email",
+              personalInfo?.email,
+              language
+            )}
           </p>
-          <p className="text-gray-700">
-            {recipient?.name || "Responsable Recrutement"}
+          <p>
+            {getPlaceholder(
+              "personalInfo",
+              "phone",
+              personalInfo?.phone,
+              language
+            )}
           </p>
-          <p className="text-gray-700">
-            {recipient?.address || "456 Avenue Business"}
-          </p>
-          <p className="text-gray-700">
-            {recipient?.postalCode || "75001"} {recipient?.city || "Paris"}
+          <p>
+            {getPlaceholder(
+              "personalInfo",
+              "address",
+              personalInfo?.address,
+              language
+            )}
+            ,{" "}
+            {getPlaceholder(
+              "personalInfo",
+              "postalCode",
+              personalInfo?.postalCode,
+              language
+            )}{" "}
+            {getPlaceholder(
+              "personalInfo",
+              "city",
+              personalInfo?.city,
+              language
+            )}
           </p>
         </div>
       </div>
     );
   };
 
-  // Render date and subject section
+  // Render recipient info
+  const renderRecipient = () => {
+    return (
+      <div className="mb-8">
+        <div className="text-sm">
+          <p className="font-semibold">
+            {getPlaceholder(
+              "recipient",
+              "company",
+              recipient?.company,
+              language
+            )}
+          </p>
+          <p>
+            {getPlaceholder("recipient", "name", recipient?.name, language)}
+          </p>
+          <p>
+            {getPlaceholder(
+              "recipient",
+              "address",
+              recipient?.address,
+              language
+            )}
+          </p>
+          <p>
+            {getPlaceholder(
+              "recipient",
+              "postalCode",
+              recipient?.postalCode,
+              language
+            )}{" "}
+            {getPlaceholder("recipient", "city", recipient?.city, language)}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  // Render date and subject
   const renderDateAndSubject = () => {
-    
+    return (
+      <div className="mb-8">
+        <div className="text-sm">
+          <p className="text-right mb-4">
+            {getPlaceholder(
+              "dateAndSubject",
+              "location",
+              dateAndSubject?.location,
+              language
+            )}
+            , le{" "}
+            {dateAndSubject?.date ||
+              new Date().toLocaleDateString(
+                language === "fr" ? "fr-FR" : "en-US"
+              )}
+          </p>
+          <p className="font-semibold">
+            {getPlaceholder(
+              "dateAndSubject",
+              "subject",
+              dateAndSubject?.subject,
+              language
+            )}
+          </p>
+        </div>
+      </div>
+    );
   };
 
   // Render content sections
   const renderSections = (sections: string[]) => {
     return sections.map((section) => {
-      if (
-        section === "personal-info"
-      ) {
+      if (section === "personal-info") {
         return null;
       }
 
       if (section.startsWith("custom-")) {
         return (
           <div key={section} className="mb-8">
-            <h3
-              className="text-xl font-semibold mb-3"
-              style={{ color: accentColor }}
-            >
+            <h3 className="text-lg font-semibold mb-4">
               {getSectionTitle(section)}
             </h3>
-            <div className="border-t border-gray-200 pt-3">
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: customSections?.[section] || "",
-                }}
-                className="text-gray-700"
-              />
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: customSections?.[section] || "",
+              }}
+              className="text-sm leading-relaxed"
+            />
           </div>
         );
       }
 
       switch (section) {
         case "destinataire":
-          return (
-            <div className="mt-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Destinataire
-        </h2> */}
-              <div className="space-y-4">
-                <div className="text-gray-700">
-                  <p className="font-medium">
-                    {recipient?.company || "Entreprise XYZ"}
-                  </p>
-                  <p>{recipient?.name || "Responsable Recrutement"}</p>
-                  <p>{recipient?.address || "456 Avenue Business"}</p>
-                  <p>
-                    {recipient?.postalCode || "75001"}{" "}
-                    {recipient?.city || "Paris"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          );
+          return renderRecipient();
         case "date-et-objet":
-          return (
-            <div className="mt-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Date et Objet
-        </h2> */}
-              <div className="space-y-4">
-                <div className="text-gray-700">
-                  <p className="flex items-end justify-end">
-                    {dateAndSubject?.location || "Paris"}, le{" "}
-                    {dateAndSubject?.date || "01/01/2023"}
-                  </p>
-                  <p className="font-bold mt-2">
-                    {dateAndSubject?.subject ||
-                      "Candidature pour le poste de..."}
-                  </p>
-                </div>
-              </div>
-            </div>
-          );
+          return renderDateAndSubject();
         case "introduction":
           return (
             <div key={section} className="mb-8">
-              {/* <h3
-                className="text-xl font-semibold mb-3"
-                style={{ color: accentColor }}
-              >
-                {getSectionTitle(section)}
-              </h3> */}
-              <div className="border-t border-gray-200 pt-3">
-                <div
-                  dangerouslySetInnerHTML={{ __html: introduction || "" }}
-                  className="text-gray-700"
-                />
-              </div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "introduction",
+                    introduction,
+                    language
+                  ),
+                }}
+                className="text-sm leading-relaxed"
+              />
             </div>
           );
         case "situation-actuelle":
           return (
             <div key={section} className="mb-8">
-              {/* <h3
-                className="text-xl font-semibold mb-3"
-                style={{ color: accentColor }}
-              >
-                {getSectionTitle(section)}
-              </h3> */}
-              <div className="border-t border-gray-200 pt-3">
-                <div
-                  dangerouslySetInnerHTML={{ __html: currentSituation || "" }}
-                  className="text-gray-700"
-                />
-              </div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "currentSituation",
+                    currentSituation,
+                    language
+                  ),
+                }}
+                className="text-sm leading-relaxed"
+              />
             </div>
           );
         case "motivation":
           return (
             <div key={section} className="mb-8">
-              {/* <h3
-                className="text-xl font-semibold mb-3"
-                style={{ color: accentColor }}
-              >
-                {getSectionTitle(section)}
-              </h3> */}
-              <div className="border-t border-gray-200 pt-3">
-                <div
-                  dangerouslySetInnerHTML={{ __html: motivation || "" }}
-                  className="text-gray-700"
-                />
-              </div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "motivation",
+                    motivation,
+                    language
+                  ),
+                }}
+                className="text-sm leading-relaxed"
+              />
             </div>
           );
         case "conclusion":
           return (
             <div key={section} className="mb-8">
-              {/* <h3
-                className="text-xl font-semibold mb-3"
-                style={{ color: accentColor }}
-              >
-                {getSectionTitle(section)}
-              </h3> */}
-              <div className="border-t border-gray-200 pt-3">
-                <div
-                  dangerouslySetInnerHTML={{ __html: conclusion || "" }}
-                  className="text-gray-700"
-                />
-              </div>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "conclusion",
+                    conclusion,
+                    language
+                  ),
+                }}
+                className="text-sm leading-relaxed"
+              />
             </div>
           );
         default:
@@ -303,21 +317,7 @@ export default function CoverLetterPreviewMinimal({
       ></div>
 
       {/* Main name header */}
-      <div className="px-12 py-8 print:px-12 print:py-8">
-        <h1
-          className="text-3xl font-bold"
-          style={{
-            color: accentColor,
-            marginBottom: 0,
-          }}
-        >
-          {personalInfo?.firstName || "Prénom"}{" "}
-          {personalInfo?.lastName || "Nom"}
-        </h1>
-        <p className="text-gray-600 mt-2">
-          {personalInfo?.title || "Titre professionnel"}
-        </p>
-      </div>
+      <div className="px-12 py-8 print:px-12 print:py-8">{renderHeader()}</div>
 
       {/* Main content */}
       <div className="px-12 pb-12 flex print:px-12 print:pb-12">
@@ -338,7 +338,6 @@ export default function CoverLetterPreviewMinimal({
               </div>
             </div>
           )}
-          {renderPersonalDetails()}
         </div>
 
         {/* Right column - Main content */}

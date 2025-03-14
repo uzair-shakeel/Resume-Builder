@@ -1,6 +1,7 @@
 import React from "react";
 import type { CoverLetterData } from "@/types";
 import { Home, HomeIcon, Mail, Phone } from "lucide-react";
+import { getPlaceholder } from "@/lib/placeholder-data";
 
 interface CoverLetterPreviewStudentProps {
   data: CoverLetterData;
@@ -10,6 +11,7 @@ interface CoverLetterPreviewStudentProps {
   sectionPages: Record<string, number>;
   customSectionNames: Record<string, string>;
   customSections?: Record<string, string>;
+  language?: string;
 }
 
 export default function CoverLetterPreviewStudent({
@@ -20,6 +22,7 @@ export default function CoverLetterPreviewStudent({
   sectionPages = {},
   customSectionNames = {},
   customSections = {},
+  language = "fr",
 }: CoverLetterPreviewStudentProps) {
   const {
     personalInfo,
@@ -65,8 +68,8 @@ export default function CoverLetterPreviewStudent({
     return (
       <div className="header mb-8">
         <h1 className="text-5xl font-bold tracking-[0.2em] text-center mb-4">
-          {personalInfo?.firstName?.toUpperCase() || "PRÉNOM"}{" "}
-          {personalInfo?.lastName?.toUpperCase() || "NOM"}
+          {getPlaceholder("personalInfo", "firstName", personalInfo?.firstName, language)?.toUpperCase()}{" "}
+          {getPlaceholder("personalInfo", "lastName", personalInfo?.lastName, language)?.toUpperCase()}
         </h1>
         <div className="relative py-4">
           <div
@@ -74,7 +77,7 @@ export default function CoverLetterPreviewStudent({
             className="absolute top-0 left-0 right-0 h-[1px]"
           ></div>
           <h2 className="text-2xl text-center uppercase tracking-widest">
-            {personalInfo?.title || "Titre professionnel"}
+            {getPlaceholder("personalInfo", "title", personalInfo?.title, language)}
           </h2>
           <div
             style={{ backgroundColor: accentColor }}
@@ -89,29 +92,31 @@ export default function CoverLetterPreviewStudent({
   const renderPersonalInfo = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Contact</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {language === "fr" ? "Contact" : "Contact"}
+        </h3>
         <div className="space-y-3 text-base">
           <div className="flex items-center gap-3">
             <span className="inline-block">
               <Phone size={18} />
             </span>
-            <span>{personalInfo?.phone || "+33 6 12 34 56 78"}</span>
+            <span>{getPlaceholder("personalInfo", "phone", personalInfo?.phone, language)}</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="inline-block">
               <Mail size={18} />
             </span>
-            <span>{personalInfo?.email || "email@example.com"}</span>
+            <span>{getPlaceholder("personalInfo", "email", personalInfo?.email, language)}</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="inline-block">
               <HomeIcon size={18} />
             </span>
             <div>
-              <p>{personalInfo?.address || "123 Rue Example"},</p>
+              <p>{getPlaceholder("personalInfo", "address", personalInfo?.address, language)},</p>
               <p>
-                {personalInfo?.city || "Paris"},{" "}
-                {personalInfo?.postalCode || "75000"}
+                {getPlaceholder("personalInfo", "city", personalInfo?.city, language)},{" "}
+                {getPlaceholder("personalInfo", "postalCode", personalInfo?.postalCode, language)}
               </p>
             </div>
           </div>
@@ -125,11 +130,14 @@ export default function CoverLetterPreviewStudent({
     return (
       <div className="mb-8">
         <div className="space-y-2 text-base">
-          <p className=" uppercase">{recipient?.company || "ENTREPRISE XYZ"}</p>
-          <p>{recipient?.name || "Responsable Recrutement"}</p>
-          <p>{recipient?.address || "456 Avenue Business"}</p>
+          <p className="uppercase">
+            {getPlaceholder("recipient", "company", recipient?.company, language)}
+          </p>
+          <p>{getPlaceholder("recipient", "name", recipient?.name, language)}</p>
+          <p>{getPlaceholder("recipient", "address", recipient?.address, language)}</p>
           <p>
-            {recipient?.city || "Paris"}, {recipient?.postalCode || "75001"}
+            {getPlaceholder("recipient", "city", recipient?.city, language)},{" "}
+            {getPlaceholder("recipient", "postalCode", recipient?.postalCode, language)}
           </p>
         </div>
       </div>
@@ -142,11 +150,11 @@ export default function CoverLetterPreviewStudent({
       <div className="mb-8">
         <div className="space-y-2 text-base">
           <p>
-            {dateAndSubject?.location || "Paris"}, le{" "}
-            {dateAndSubject?.date || "01/01/2023"}
+            {getPlaceholder("dateAndSubject", "location", dateAndSubject?.location, language)}, le{" "}
+            {dateAndSubject?.date || new Date().toLocaleDateString(language === "fr" ? "fr-FR" : "en-US")}
           </p>
           <p className="font-bold">
-            {dateAndSubject?.subject || "Candidature pour le poste de..."}
+            {getPlaceholder("dateAndSubject", "subject", dateAndSubject?.subject, language)}
           </p>
         </div>
         <div
@@ -186,114 +194,51 @@ export default function CoverLetterPreviewStudent({
 
       switch (section) {
         case "destinataire":
-          return (
-            <div className="mt-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Destinataire
-        </h2> */}
-              <div className="space-y-4">
-                <div className="text-gray-700">
-                  <p className="font-medium">
-                    {recipient?.company || "Entreprise XYZ"}
-                  </p>
-                  <p>{recipient?.name || "Responsable Recrutement"}</p>
-                  <p>{recipient?.address || "456 Avenue Business"}</p>
-                  <p>
-                    {recipient?.postalCode || "75001"}{" "}
-                    {recipient?.city || "Paris"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          );
+          return renderRecipientDetails();
         case "date-et-objet":
-          return (
-            <div className="mb-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Date et Objet
-        </h2> */}
-              <div className="space-y-4">
-                <div className="text-gray-700">
-                  <p className="flex items-end justify-end">
-                    {dateAndSubject?.location || "Paris"}, le{" "}
-                    {dateAndSubject?.date || "01/01/2023"}
-                  </p>
-                  <p className="font-bold mt-2">
-                    {dateAndSubject?.subject ||
-                      "Candidature pour le poste de..."}
-                  </p>
-                </div>
-              </div>
-            </div>
-          );
+          return renderDateAndSubject();
         case "introduction":
           return (
             <div key={section} className="mb-8">
-              {/* <h3 className="text-xl font-bold mb-4 uppercase">
-                {getSectionTitle(section)}
-              </h3> */}
               <div
-                dangerouslySetInnerHTML={{ __html: introduction || "" }}
+                dangerouslySetInnerHTML={{ 
+                  __html: getPlaceholder("sections", "introduction", introduction, language)
+                }}
                 className="text-base"
               />
-              {/* <div
-                style={{ backgroundColor: accentColor }}
-                className="mt-6 h-[1px]"
-              ></div> */}
             </div>
           );
         case "situation-actuelle":
           return (
             <div key={section} className="mb-8">
-              {/* <h3 className="text-xl font-bold mb-4 uppercase">
-                {getSectionTitle(section)}
-              </h3> */}
               <div
-                dangerouslySetInnerHTML={{ __html: currentSituation || "" }}
+                dangerouslySetInnerHTML={{ 
+                  __html: getPlaceholder("sections", "currentSituation", currentSituation, language)
+                }}
                 className="text-base"
               />
-              {/* <div
-                style={{ backgroundColor: accentColor }}
-                className="mt-6 h-[1px]"
-              ></div> */}
             </div>
           );
         case "motivation":
           return (
             <div key={section} className="mb-8">
-              {/* <h3 className="text-xl font-bold mb-4 uppercase">
-                {getSectionTitle(section)}
-              </h3> */}
               <div
-                dangerouslySetInnerHTML={{ __html: motivation || "" }}
+                dangerouslySetInnerHTML={{ 
+                  __html: getPlaceholder("sections", "motivation", motivation, language)
+                }}
                 className="text-base"
               />
-              {/* <div
-                style={{ backgroundColor: accentColor }}
-                className="mt-6 h-[1px]"
-              ></div> */}
             </div>
           );
         case "conclusion":
           return (
             <div key={section} className="mb-8">
-              {/* <h3 className="text-xl font-bold mb-4 uppercase">
-                {getSectionTitle(section)}
-              </h3> */}
               <div
-                dangerouslySetInnerHTML={{ __html: conclusion || "" }}
+                dangerouslySetInnerHTML={{ 
+                  __html: getPlaceholder("sections", "conclusion", conclusion, language)
+                }}
                 className="text-base"
               />
-              {/* <div
-                style={{ backgroundColor: accentColor }}
-                className="mt-6 h-[1px]"
-              ></div> */}
             </div>
           );
         default:

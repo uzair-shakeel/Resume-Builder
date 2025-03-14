@@ -2,6 +2,7 @@ import React from "react";
 import type { CoverLetterData } from "@/types";
 import Image from "next/image";
 import { Mail, Phone, Home, User } from "lucide-react";
+import { getPlaceholder } from "@/lib/placeholder-data";
 
 interface CoverLetterPreviewCirculaireProps {
   data: CoverLetterData;
@@ -11,6 +12,7 @@ interface CoverLetterPreviewCirculaireProps {
   sectionPages: Record<string, number>;
   customSectionNames: Record<string, string>;
   customSections?: Record<string, string>;
+  language?: string;
 }
 
 export default function CoverLetterPreviewCirculaire({
@@ -21,6 +23,7 @@ export default function CoverLetterPreviewCirculaire({
   sectionPages = {},
   customSectionNames = {},
   customSections = {},
+  language = "fr",
 }: CoverLetterPreviewCirculaireProps) {
   const {
     personalInfo,
@@ -69,35 +72,74 @@ export default function CoverLetterPreviewCirculaire({
           style={{ color: accentColor, borderColor: accentColor }}
           className="text-xl font-bold mb-4 border-b pb-2"
         >
-          Informations personnelles
+          {language === "fr"
+            ? "Informations personnelles"
+            : "Personal Information"}
         </h2>
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <User style={{ color: accentColor }} className="h-5 w-5" />
             <span className="text-gray-700">
-              {personalInfo?.firstName || "Prénom"}{" "}
-              {personalInfo?.lastName || "Nom"}
+              {getPlaceholder(
+                "personalInfo",
+                "firstName",
+                personalInfo?.firstName,
+                language
+              )}{" "}
+              {getPlaceholder(
+                "personalInfo",
+                "lastName",
+                personalInfo?.lastName,
+                language
+              )}
             </span>
           </div>
           <div className="flex items-center gap-3">
             <Mail style={{ color: accentColor }} className="h-5 w-5" />
             <span className="text-gray-700">
-              {personalInfo?.email || "email@example.com"}
+              {getPlaceholder(
+                "personalInfo",
+                "email",
+                personalInfo?.email,
+                language
+              )}
             </span>
           </div>
           <div className="flex items-center gap-3">
             <Phone style={{ color: accentColor }} className="h-5 w-5" />
             <span className="text-gray-700">
-              {personalInfo?.phone || "+33 6 12 34 56 78"}
+              {getPlaceholder(
+                "personalInfo",
+                "phone",
+                personalInfo?.phone,
+                language
+              )}
             </span>
           </div>
           <div className="flex items-start gap-3">
             <Home style={{ color: accentColor }} className="h-5 w-5 mt-0.5" />
             <div className="text-gray-700">
-              <div>{personalInfo?.address || "123 Rue Example"}</div>
               <div>
-                {personalInfo?.postalCode || "75000"}{" "}
-                {personalInfo?.city || "Paris"}
+                {getPlaceholder(
+                  "personalInfo",
+                  "address",
+                  personalInfo?.address,
+                  language
+                )}
+              </div>
+              <div>
+                {getPlaceholder(
+                  "personalInfo",
+                  "postalCode",
+                  personalInfo?.postalCode,
+                  language
+                )}{" "}
+                {getPlaceholder(
+                  "personalInfo",
+                  "city",
+                  personalInfo?.city,
+                  language
+                )}
               </div>
             </div>
           </div>
@@ -110,21 +152,35 @@ export default function CoverLetterPreviewCirculaire({
   const renderRecipientInfo = () => {
     return (
       <div className="mt-6">
-        {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Destinataire
-        </h2> */}
         <div className="space-y-4">
           <div className="text-gray-700">
             <p className="font-medium">
-              {recipient?.company || "Entreprise XYZ"}
+              {getPlaceholder(
+                "recipient",
+                "company",
+                recipient?.company,
+                language
+              )}
             </p>
-            <p>{recipient?.name || "Responsable Recrutement"}</p>
-            <p>{recipient?.address || "456 Avenue Business"}</p>
             <p>
-              {recipient?.postalCode || "75001"} {recipient?.city || "Paris"}
+              {getPlaceholder("recipient", "name", recipient?.name, language)}
+            </p>
+            <p>
+              {getPlaceholder(
+                "recipient",
+                "address",
+                recipient?.address,
+                language
+              )}
+            </p>
+            <p>
+              {getPlaceholder(
+                "recipient",
+                "postalCode",
+                recipient?.postalCode,
+                language
+              )}{" "}
+              {getPlaceholder("recipient", "city", recipient?.city, language)}
             </p>
           </div>
         </div>
@@ -136,20 +192,28 @@ export default function CoverLetterPreviewCirculaire({
   const renderDateAndSubject = () => {
     return (
       <div className="mt-6">
-        {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Date et Objet
-        </h2> */}
         <div className="space-y-4">
           <div className="text-gray-700">
             <p>
-              {dateAndSubject?.location || "Paris"}, le{" "}
-              {dateAndSubject?.date || "01/01/2023"}
+              {getPlaceholder(
+                "dateAndSubject",
+                "location",
+                dateAndSubject?.location,
+                language
+              )}
+              , le{" "}
+              {dateAndSubject?.date ||
+                new Date().toLocaleDateString(
+                  language === "fr" ? "fr-FR" : "en-US"
+                )}
             </p>
             <p className="font-medium mt-2">
-              {dateAndSubject?.subject || "Candidature pour le poste de..."}
+              {getPlaceholder(
+                "dateAndSubject",
+                "subject",
+                dateAndSubject?.subject,
+                language
+              )}
             </p>
           </div>
         </div>
@@ -185,63 +249,21 @@ export default function CoverLetterPreviewCirculaire({
 
       switch (section) {
         case "destinataire":
-          return (
-            <div className="mt-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Destinataire
-        </h2> */}
-              <div className="space-y-4">
-                <div className="text-gray-700">
-                  <p className="font-medium">
-                    {recipient?.company || "Entreprise XYZ"}
-                  </p>
-                  <p>{recipient?.name || "Responsable Recrutement"}</p>
-                  <p>{recipient?.address || "456 Avenue Business"}</p>
-                  <p>
-                    {recipient?.postalCode || "75001"}{" "}
-                    {recipient?.city || "Paris"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          );
+          return renderRecipientInfo();
         case "date-et-objet":
-          return (
-            <div className="mt-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Date et Objet
-        </h2> */}
-              <div className="space-y-4">
-                <div className="text-gray-700">
-                  <p className="flex items-end justify-end">
-                    {dateAndSubject?.location || "Paris"}, le{" "}
-                    {dateAndSubject?.date || "01/01/2023"}
-                  </p>
-                  <p className="font-bold mt-2">
-                    {dateAndSubject?.subject ||
-                      "Candidature pour le poste de..."}
-                  </p>
-                </div>
-              </div>
-            </div>
-          );
+          return renderDateAndSubject();
         case "introduction":
           return (
             <div key={section} className="mb-8">
-              {/* <h3
-                style={{ color: accentColor, borderColor: accentColor }}
-                className="text-2xl font-bold mb-4 border-b pb-2"
-              >
-                {getSectionTitle(section)}
-              </h3> */}
               <div
-                dangerouslySetInnerHTML={{ __html: introduction || "" }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "introduction",
+                    introduction,
+                    language
+                  ),
+                }}
                 className="text-gray-700"
               />
             </div>
@@ -249,14 +271,15 @@ export default function CoverLetterPreviewCirculaire({
         case "situation-actuelle":
           return (
             <div key={section} className="mb-8">
-              {/* <h3
-                style={{ color: accentColor, borderColor: accentColor }}
-                className="text-2xl font-bold mb-4 border-b pb-2"
-              >
-                {getSectionTitle(section)}
-              </h3> */}
               <div
-                dangerouslySetInnerHTML={{ __html: currentSituation || "" }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "currentSituation",
+                    currentSituation,
+                    language
+                  ),
+                }}
                 className="text-gray-700"
               />
             </div>
@@ -264,14 +287,15 @@ export default function CoverLetterPreviewCirculaire({
         case "motivation":
           return (
             <div key={section} className="mb-8">
-              {/* <h3
-                style={{ color: accentColor, borderColor: accentColor }}
-                className="text-2xl font-bold mb-4 border-b pb-2"
-              >
-                {getSectionTitle(section)}
-              </h3> */}
               <div
-                dangerouslySetInnerHTML={{ __html: motivation || "" }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "motivation",
+                    motivation,
+                    language
+                  ),
+                }}
                 className="text-gray-700"
               />
             </div>
@@ -279,14 +303,15 @@ export default function CoverLetterPreviewCirculaire({
         case "conclusion":
           return (
             <div key={section} className="mb-8">
-              {/* <h3
-                style={{ color: accentColor, borderColor: accentColor }}
-                className="text-2xl font-bold mb-4 border-b pb-2"
-              >
-                {getSectionTitle(section)}
-              </h3> */}
               <div
-                dangerouslySetInnerHTML={{ __html: conclusion || "" }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "conclusion",
+                    conclusion,
+                    language
+                  ),
+                }}
                 className="text-gray-700"
               />
             </div>

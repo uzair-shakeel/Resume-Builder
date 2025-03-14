@@ -9,6 +9,7 @@ import {
   Calendar,
   FileText,
 } from "lucide-react";
+import { getPlaceholder } from "@/lib/placeholder-data";
 
 interface CoverLetterPreviewSherlockProps {
   data: CoverLetterData;
@@ -18,6 +19,7 @@ interface CoverLetterPreviewSherlockProps {
   sectionPages: Record<string, number>;
   customSectionNames: Record<string, string>;
   customSections?: Record<string, string>;
+  language?: string;
 }
 
 export default function CoverLetterPreviewSherlock({
@@ -28,6 +30,7 @@ export default function CoverLetterPreviewSherlock({
   sectionPages = {},
   customSectionNames = {},
   customSections = {},
+  language = "fr",
 }: CoverLetterPreviewSherlockProps) {
   const {
     personalInfo,
@@ -95,22 +98,45 @@ export default function CoverLetterPreviewSherlock({
         case "destinataire":
           return (
             <div className="mt-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Destinataire
-        </h2> */}
               <div className="space-y-4">
                 <div className="text-gray-700">
                   <p className="font-medium">
-                    {recipient?.company || "Entreprise XYZ"}
+                    {getPlaceholder(
+                      "recipient",
+                      "company",
+                      recipient?.company,
+                      language
+                    )}
                   </p>
-                  <p>{recipient?.name || "Responsable Recrutement"}</p>
-                  <p>{recipient?.address || "456 Avenue Business"}</p>
                   <p>
-                    {recipient?.postalCode || "75001"}{" "}
-                    {recipient?.city || "Paris"}
+                    {getPlaceholder(
+                      "recipient",
+                      "name",
+                      recipient?.name,
+                      language
+                    )}
+                  </p>
+                  <p>
+                    {getPlaceholder(
+                      "recipient",
+                      "address",
+                      recipient?.address,
+                      language
+                    )}
+                  </p>
+                  <p>
+                    {getPlaceholder(
+                      "recipient",
+                      "postalCode",
+                      recipient?.postalCode,
+                      language
+                    )}{" "}
+                    {getPlaceholder(
+                      "recipient",
+                      "city",
+                      recipient?.city,
+                      language
+                    )}
                   </p>
                 </div>
               </div>
@@ -119,21 +145,28 @@ export default function CoverLetterPreviewSherlock({
         case "date-et-objet":
           return (
             <div className="mb-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Date et Objet
-        </h2> */}
               <div className="space-y-4">
                 <div className="text-gray-700">
                   <p className="flex items-end justify-end">
-                    {dateAndSubject?.location || "Paris"}, le{" "}
-                    {dateAndSubject?.date || "01/01/2023"}
+                    {getPlaceholder(
+                      "dateAndSubject",
+                      "location",
+                      dateAndSubject?.location,
+                      language
+                    )}
+                    , le{" "}
+                    {dateAndSubject?.date ||
+                      new Date().toLocaleDateString(
+                        language === "fr" ? "fr-FR" : "en-US"
+                      )}
                   </p>
                   <p className="font-bold mt-2">
-                    {dateAndSubject?.subject ||
-                      "Candidature pour le poste de..."}
+                    {getPlaceholder(
+                      "dateAndSubject",
+                      "subject",
+                      dateAndSubject?.subject,
+                      language
+                    )}
                   </p>
                 </div>
               </div>
@@ -142,11 +175,15 @@ export default function CoverLetterPreviewSherlock({
         case "introduction":
           return (
             <div key={section} className="mb-8">
-              {/* <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: introduction }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "introduction",
+                    introduction,
+                    language
+                  ),
+                }}
                 className="text-sm"
               />
             </div>
@@ -154,11 +191,15 @@ export default function CoverLetterPreviewSherlock({
         case "situation-actuelle":
           return (
             <div key={section} className="mb-8">
-              {/* <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: currentSituation }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "currentSituation",
+                    currentSituation,
+                    language
+                  ),
+                }}
                 className="text-sm"
               />
             </div>
@@ -166,11 +207,15 @@ export default function CoverLetterPreviewSherlock({
         case "motivation":
           return (
             <div key={section} className="mb-8">
-              {/* <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: motivation }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "motivation",
+                    motivation,
+                    language
+                  ),
+                }}
                 className="text-sm"
               />
             </div>
@@ -178,11 +223,15 @@ export default function CoverLetterPreviewSherlock({
         case "conclusion":
           return (
             <div key={section} className="mb-8">
-              {/* <h2 className="text-lg font-semibold uppercase mb-4 border-b border-gray-300 pb-1">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: conclusion }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "conclusion",
+                    conclusion,
+                    language
+                  ),
+                }}
                 className="text-sm"
               />
             </div>
@@ -213,25 +262,72 @@ export default function CoverLetterPreviewSherlock({
               </div>
             )}
             <h2 className="text-xl font-bold uppercase tracking-wider mb-2 text-center">
-              {personalInfo.firstName} {personalInfo.lastName}
+              {getPlaceholder(
+                "personalInfo",
+                "firstName",
+                personalInfo.firstName,
+                language
+              )}{" "}
+              {getPlaceholder(
+                "personalInfo",
+                "lastName",
+                personalInfo.lastName,
+                language
+              )}
             </h2>
             <p className="text-center text-sm uppercase tracking-wider mb-4 opacity-90">
-              {personalInfo.title}
+              {getPlaceholder(
+                "personalInfo",
+                "title",
+                personalInfo.title,
+                language
+              )}
             </p>
             <div className="border-t border-white/20 pt-4 mt-4">
               <div className="flex items-center mb-2">
                 <Mail className="w-4 h-4 mr-2" />
-                <p className="text-sm">{personalInfo.email}</p>
+                <p className="text-sm">
+                  {getPlaceholder(
+                    "personalInfo",
+                    "email",
+                    personalInfo.email,
+                    language
+                  )}
+                </p>
               </div>
               <div className="flex items-center mb-2">
                 <Phone className="w-4 h-4 mr-2" />
-                <p className="text-sm">{personalInfo.phone}</p>
+                <p className="text-sm">
+                  {getPlaceholder(
+                    "personalInfo",
+                    "phone",
+                    personalInfo.phone,
+                    language
+                  )}
+                </p>
               </div>
               <div className="flex items-center">
                 <MapPin className="w-4 h-4 mr-2" />
                 <p className="text-sm">
-                  {personalInfo.address}, {personalInfo.postalCode}{" "}
-                  {personalInfo.city}
+                  {getPlaceholder(
+                    "personalInfo",
+                    "address",
+                    personalInfo.address,
+                    language
+                  )}
+                  ,{" "}
+                  {getPlaceholder(
+                    "personalInfo",
+                    "postalCode",
+                    personalInfo.postalCode,
+                    language
+                  )}{" "}
+                  {getPlaceholder(
+                    "personalInfo",
+                    "city",
+                    personalInfo.city,
+                    language
+                  )}
                 </p>
               </div>
             </div>

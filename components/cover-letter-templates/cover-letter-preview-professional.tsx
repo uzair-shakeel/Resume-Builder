@@ -1,6 +1,7 @@
 import React from "react";
 import type { CoverLetterData } from "@/types";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { getPlaceholder } from "@/lib/placeholder-data";
 
 interface CoverLetterPreviewProfessionalProps {
   data: CoverLetterData;
@@ -10,6 +11,7 @@ interface CoverLetterPreviewProfessionalProps {
   sectionPages: Record<string, number>;
   customSectionNames: Record<string, string>;
   customSections?: Record<string, string>;
+  language?: string;
 }
 
 export default function CoverLetterPreviewProfessional({
@@ -20,6 +22,7 @@ export default function CoverLetterPreviewProfessional({
   sectionPages = {},
   customSectionNames = {},
   customSections = {},
+  language = "fr",
 }: CoverLetterPreviewProfessionalProps) {
   const {
     personalInfo,
@@ -87,22 +90,45 @@ export default function CoverLetterPreviewProfessional({
         case "destinataire":
           return (
             <div className="mt-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Destinataire
-        </h2> */}
               <div className="space-y-4">
                 <div className="text-gray-700">
                   <p className="font-medium">
-                    {recipient?.company || "Entreprise XYZ"}
+                    {getPlaceholder(
+                      "recipient",
+                      "company",
+                      recipient?.company,
+                      language
+                    )}
                   </p>
-                  <p>{recipient?.name || "Responsable Recrutement"}</p>
-                  <p>{recipient?.address || "456 Avenue Business"}</p>
                   <p>
-                    {recipient?.postalCode || "75001"}{" "}
-                    {recipient?.city || "Paris"}
+                    {getPlaceholder(
+                      "recipient",
+                      "name",
+                      recipient?.name,
+                      language
+                    )}
+                  </p>
+                  <p>
+                    {getPlaceholder(
+                      "recipient",
+                      "address",
+                      recipient?.address,
+                      language
+                    )}
+                  </p>
+                  <p>
+                    {getPlaceholder(
+                      "recipient",
+                      "postalCode",
+                      recipient?.postalCode,
+                      language
+                    )}{" "}
+                    {getPlaceholder(
+                      "recipient",
+                      "city",
+                      recipient?.city,
+                      language
+                    )}
                   </p>
                 </div>
               </div>
@@ -110,35 +136,45 @@ export default function CoverLetterPreviewProfessional({
           );
         case "date-et-objet":
           return (
-            <div className="mb-6">
-              {/* <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b pb-2"
-        >
-          Date et Objet
-        </h2> */}
-              <div className="space-y-4">
-                <div className="text-gray-700">
-                  <p className="flex items-end justify-end">
-                    {dateAndSubject?.location || "Paris"}, le{" "}
-                    {dateAndSubject?.date || "01/01/2023"}
-                  </p>
-                  <p className="font-bold mt-2">
-                    {dateAndSubject?.subject ||
-                      "Candidature pour le poste de..."}
-                  </p>
-                </div>
+            <div key={section} className="mt-8 mb-8">
+              <div className="text-right mb-4">
+                <p>
+                  {getPlaceholder(
+                    "dateAndSubject",
+                    "location",
+                    dateAndSubject?.location,
+                    language
+                  )}
+                  , le{" "}
+                  {dateAndSubject?.date ||
+                    new Date().toLocaleDateString(
+                      language === "fr" ? "fr-FR" : "en-US"
+                    )}
+                </p>
               </div>
+              <p className="font-medium">
+                {language === "fr" ? "Objet : " : "Subject: "}
+                {getPlaceholder(
+                  "dateAndSubject",
+                  "subject",
+                  dateAndSubject?.subject,
+                  language
+                )}
+              </p>
             </div>
           );
         case "introduction":
           return (
             <section key={section} className="mb-8">
-              {/* <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: introduction }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "introduction",
+                    introduction,
+                    language
+                  ),
+                }}
                 className="text-gray-600 leading-relaxed"
               />
             </section>
@@ -146,11 +182,15 @@ export default function CoverLetterPreviewProfessional({
         case "situation-actuelle":
           return (
             <section key={section} className="mb-8">
-              {/* <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: currentSituation }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "currentSituation",
+                    currentSituation,
+                    language
+                  ),
+                }}
                 className="text-gray-600 leading-relaxed"
               />
             </section>
@@ -158,11 +198,15 @@ export default function CoverLetterPreviewProfessional({
         case "motivation":
           return (
             <section key={section} className="mb-8">
-              {/* <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: motivation }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "motivation",
+                    motivation,
+                    language
+                  ),
+                }}
                 className="text-gray-600 leading-relaxed"
               />
             </section>
@@ -170,11 +214,15 @@ export default function CoverLetterPreviewProfessional({
         case "conclusion":
           return (
             <section key={section} className="mb-8">
-              {/* <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
-                {getSectionTitle(section)}
-              </h2> */}
               <div
-                dangerouslySetInnerHTML={{ __html: conclusion }}
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "conclusion",
+                    conclusion,
+                    language
+                  ),
+                }}
                 className="text-gray-600 leading-relaxed"
               />
             </section>
@@ -191,28 +239,71 @@ export default function CoverLetterPreviewProfessional({
         <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white">
           <img
             src={personalInfo.photo}
-            alt={`${personalInfo.firstName} ${personalInfo.lastName}`}
+            alt={`${getPlaceholder(
+              "personalInfo",
+              "firstName",
+              personalInfo.firstName,
+              language
+            )} ${getPlaceholder(
+              "personalInfo",
+              "lastName",
+              personalInfo.lastName,
+              language
+            )}`}
             className="object-cover w-full h-full"
           />
         </div>
       )}
       <div>
         <h1 className="text-3xl font-bold">
-          {personalInfo.firstName} {personalInfo.lastName}
+          {getPlaceholder(
+            "personalInfo",
+            "firstName",
+            personalInfo.firstName,
+            language
+          )}{" "}
+          {getPlaceholder(
+            "personalInfo",
+            "lastName",
+            personalInfo.lastName,
+            language
+          )}
         </h1>
-        <p className="text-teal-100 pb-2">{personalInfo.title}</p>
-        <div className="flex  gap-4  text-sm text-teal-50">
+        <p className="text-teal-100 pb-2">
+          {getPlaceholder(
+            "personalInfo",
+            "title",
+            personalInfo.title,
+            language
+          )}
+        </p>
+        <div className="flex gap-4 text-sm text-teal-50">
           <span className="flex items-center gap-1">
             <Mail className="w-4 h-4" />
-            {personalInfo.email}
+            {getPlaceholder(
+              "personalInfo",
+              "email",
+              personalInfo.email,
+              language
+            )}
           </span>
           <span className="flex items-center gap-1">
             <Phone className="w-4 h-4" />
-            {personalInfo.phone}
+            {getPlaceholder(
+              "personalInfo",
+              "phone",
+              personalInfo.phone,
+              language
+            )}
           </span>
           <span className="flex items-center gap-1">
             <MapPin className="w-4 h-4" />
-            {personalInfo.city}
+            {getPlaceholder(
+              "personalInfo",
+              "city",
+              personalInfo.city,
+              language
+            )}
           </span>
         </div>
       </div>

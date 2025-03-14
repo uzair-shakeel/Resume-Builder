@@ -1,5 +1,6 @@
 import React from "react";
 import type { CoverLetterData } from "@/types";
+import { getPlaceholder } from "@/lib/placeholder-data";
 
 interface CoverLetterPreviewHRProps {
   data: CoverLetterData;
@@ -9,6 +10,7 @@ interface CoverLetterPreviewHRProps {
   sectionPages: Record<string, number>;
   customSectionNames: Record<string, string>;
   customSections?: Record<string, string>;
+  language?: string;
 }
 
 export default function CoverLetterPreviewHR({
@@ -19,6 +21,7 @@ export default function CoverLetterPreviewHR({
   sectionPages = {},
   customSectionNames = {},
   customSections = {},
+  language = "fr",
 }: CoverLetterPreviewHRProps) {
   const {
     personalInfo,
@@ -74,21 +77,66 @@ export default function CoverLetterPreviewHR({
     return (
       <div className="mb-6 text-center">
         <h1 className="text-3xl font-bold mb-3 text-gray-800">
-          {personalInfo?.firstName || "Prénom"}{" "}
-          {personalInfo?.lastName || "Nom"}
+          {getPlaceholder(
+            "personalInfo",
+            "firstName",
+            personalInfo?.firstName,
+            language
+          )}{" "}
+          {getPlaceholder(
+            "personalInfo",
+            "lastName",
+            personalInfo?.lastName,
+            language
+          )}
         </h1>
         <p className="text-xl mb-4 text-gray-700">
-          {personalInfo?.title || "Titre professionnel"}
+          {getPlaceholder(
+            "personalInfo",
+            "title",
+            personalInfo?.title,
+            language
+          )}
         </p>
         <div className="flex justify-center space-x-4 text-sm text-gray-600">
-          <span>{personalInfo?.email || "email@example.com"}</span>
-          <span>|</span>
-          <span>{personalInfo?.phone || "+33 6 12 34 56 78"}</span>
+          <span>
+            {getPlaceholder(
+              "personalInfo",
+              "email",
+              personalInfo?.email,
+              language
+            )}
+          </span>
           <span>|</span>
           <span>
-            {personalInfo?.address || "123 Rue Example"},{" "}
-            {personalInfo?.postalCode || "75000"}{" "}
-            {personalInfo?.city || "Paris"}
+            {getPlaceholder(
+              "personalInfo",
+              "phone",
+              personalInfo?.phone,
+              language
+            )}
+          </span>
+          <span>|</span>
+          <span>
+            {getPlaceholder(
+              "personalInfo",
+              "address",
+              personalInfo?.address,
+              language
+            )}
+            ,{" "}
+            {getPlaceholder(
+              "personalInfo",
+              "postalCode",
+              personalInfo?.postalCode,
+              language
+            )}{" "}
+            {getPlaceholder(
+              "personalInfo",
+              "city",
+              personalInfo?.city,
+              language
+            )}
           </span>
         </div>
       </div>
@@ -106,12 +154,32 @@ export default function CoverLetterPreviewHR({
         </h2> */}
         <div className="space-y-2 text-sm">
           <p className="font-semibold">
-            {recipient?.company || "Entreprise XYZ"}
+            {getPlaceholder(
+              "recipient",
+              "company",
+              recipient?.company,
+              language
+            )}
           </p>
-          <p>{recipient?.name || "Responsable Recrutement"}</p>
-          <p>{recipient?.address || "456 Avenue Business"}</p>
           <p>
-            {recipient?.postalCode || "75001"} {recipient?.city || "Paris"}
+            {getPlaceholder("recipient", "name", recipient?.name, language)}
+          </p>
+          <p>
+            {getPlaceholder(
+              "recipient",
+              "address",
+              recipient?.address,
+              language
+            )}
+          </p>
+          <p>
+            {getPlaceholder(
+              "recipient",
+              "postalCode",
+              recipient?.postalCode,
+              language
+            )}{" "}
+            {getPlaceholder("recipient", "city", recipient?.city, language)}
           </p>
         </div>
       </div>
@@ -129,12 +197,25 @@ export default function CoverLetterPreviewHR({
         </h2> */}
         <div className="space-y-2 text-sm">
           <p className="flex items-end justify-end">
-            {dateAndSubject?.location || "Paris"}, le{" "}
-            {dateAndSubject?.date || "01/01/2023"}
+            {getPlaceholder(
+              "dateAndSubject",
+              "location",
+              dateAndSubject?.location,
+              language
+            )}
+            , le{" "}
+            {dateAndSubject?.date ||
+              new Date().toLocaleDateString(
+                language === "fr" ? "fr-FR" : "en-US"
+              )}
           </p>
           <p className="font-semibold">
-            {" "}
-            {dateAndSubject?.subject || "Candidature pour le poste de..."}
+            {getPlaceholder(
+              "dateAndSubject",
+              "subject",
+              dateAndSubject?.subject,
+              language
+            )}
           </p>
         </div>
       </div>
@@ -151,7 +232,14 @@ export default function CoverLetterPreviewHR({
           {getSectionTitle("introduction")}
         </h2> */}
         <div
-          dangerouslySetInnerHTML={{ __html: introduction || "" }}
+          dangerouslySetInnerHTML={{
+            __html: getPlaceholder(
+              "sections",
+              "introduction",
+              introduction,
+              language
+            ),
+          }}
           className="text-sm text-gray-700"
         />
       </div>
@@ -168,7 +256,14 @@ export default function CoverLetterPreviewHR({
           {getSectionTitle("situation-actuelle")}
         </h2> */}
         <div
-          dangerouslySetInnerHTML={{ __html: currentSituation || "" }}
+          dangerouslySetInnerHTML={{
+            __html: getPlaceholder(
+              "sections",
+              "currentSituation",
+              currentSituation,
+              language
+            ),
+          }}
           className="text-sm text-gray-700"
         />
       </div>
@@ -185,7 +280,14 @@ export default function CoverLetterPreviewHR({
           {getSectionTitle("motivation")}
         </h2> */}
         <div
-          dangerouslySetInnerHTML={{ __html: motivation || "" }}
+          dangerouslySetInnerHTML={{
+            __html: getPlaceholder(
+              "sections",
+              "motivation",
+              motivation,
+              language
+            ),
+          }}
           className="text-sm text-gray-700"
         />
       </div>
@@ -202,7 +304,14 @@ export default function CoverLetterPreviewHR({
           {getSectionTitle("conclusion")}
         </h2> */}
         <div
-          dangerouslySetInnerHTML={{ __html: conclusion || "" }}
+          dangerouslySetInnerHTML={{
+            __html: getPlaceholder(
+              "sections",
+              "conclusion",
+              conclusion,
+              language
+            ),
+          }}
           className="text-sm text-gray-700"
         />
       </div>

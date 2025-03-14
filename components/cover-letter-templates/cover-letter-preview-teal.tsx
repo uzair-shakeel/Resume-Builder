@@ -1,6 +1,7 @@
 import React from "react";
 import type { CoverLetterData } from "@/types";
 import Image from "next/image";
+import { getPlaceholder } from "@/lib/placeholder-data";
 
 interface CoverLetterPreviewTealProps {
   data: CoverLetterData;
@@ -10,6 +11,7 @@ interface CoverLetterPreviewTealProps {
   sectionPages: Record<string, number>;
   customSectionNames: Record<string, string>;
   customSections?: Record<string, string>;
+  language?: string;
 }
 
 export default function CoverLetterPreviewTeal({
@@ -20,6 +22,7 @@ export default function CoverLetterPreviewTeal({
   sectionPages = {},
   customSectionNames = {},
   customSections = {},
+  language = "fr",
 }: CoverLetterPreviewTealProps) {
   const {
     personalInfo,
@@ -79,11 +82,26 @@ export default function CoverLetterPreviewTeal({
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-4xl font-medium" style={{ color: accentColor }}>
-              {personalInfo?.firstName || "First"}{" "}
-              {personalInfo?.lastName || "Last"}
+              {getPlaceholder(
+                "personalInfo",
+                "firstName",
+                personalInfo?.firstName,
+                language
+              )}{" "}
+              {getPlaceholder(
+                "personalInfo",
+                "lastName",
+                personalInfo?.lastName,
+                language
+              )}
             </h1>
             <div className="text-xl text-gray-600 mt-1">
-              {personalInfo?.title || "Professional Title"}
+              {getPlaceholder(
+                "personalInfo",
+                "title",
+                personalInfo?.title,
+                language
+              )}
             </div>
           </div>
           {personalInfo?.photo && (
@@ -93,9 +111,17 @@ export default function CoverLetterPreviewTeal({
             >
               <Image
                 src={personalInfo.photo || "/placeholder-user.jpg"}
-                alt={`${personalInfo?.firstName || "First"} ${
-                  personalInfo?.lastName || "Last"
-                }`}
+                alt={`${getPlaceholder(
+                  "personalInfo",
+                  "firstName",
+                  personalInfo?.firstName,
+                  language
+                )} ${getPlaceholder(
+                  "personalInfo",
+                  "lastName",
+                  personalInfo?.lastName,
+                  language
+                )}`}
                 width={96}
                 height={96}
                 className="object-cover w-full h-full"
@@ -106,34 +132,59 @@ export default function CoverLetterPreviewTeal({
 
         {/* Contact information */}
         <div className="flex flex-wrap gap-y-2 mb-6">
-          {personalInfo?.email && (
-            <div className="flex items-center mr-6">
-              <span className="mr-2" style={{ color: accentColor }}>
-                ✉
-              </span>
-              <span>{personalInfo.email}</span>
-            </div>
-          )}
-          {personalInfo?.phone && (
-            <div className="flex items-center mr-6">
-              <span className="mr-2" style={{ color: accentColor }}>
-                ☏
-              </span>
-              <span>{personalInfo.phone}</span>
-            </div>
-          )}
-          {personalInfo?.address && (
-            <div className="flex items-center">
-              <span className="mr-2" style={{ color: accentColor }}>
-                ⌂
-              </span>
-              <span>
-                {personalInfo.address}
-                {personalInfo.city && `, ${personalInfo.city}`}
-                {personalInfo.postalCode && `, ${personalInfo.postalCode}`}
-              </span>
-            </div>
-          )}
+          <div className="flex items-center mr-6">
+            <span className="mr-2" style={{ color: accentColor }}>
+              ✉
+            </span>
+            <span>
+              {getPlaceholder(
+                "personalInfo",
+                "email",
+                personalInfo?.email,
+                language
+              )}
+            </span>
+          </div>
+          <div className="flex items-center mr-6">
+            <span className="mr-2" style={{ color: accentColor }}>
+              ☏
+            </span>
+            <span>
+              {getPlaceholder(
+                "personalInfo",
+                "phone",
+                personalInfo?.phone,
+                language
+              )}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <span className="mr-2" style={{ color: accentColor }}>
+              ⌂
+            </span>
+            <span>
+              {getPlaceholder(
+                "personalInfo",
+                "address",
+                personalInfo?.address,
+                language
+              )}
+              {personalInfo?.city &&
+                `, ${getPlaceholder(
+                  "personalInfo",
+                  "city",
+                  personalInfo?.city,
+                  language
+                )}`}
+              {personalInfo?.postalCode &&
+                `, ${getPlaceholder(
+                  "personalInfo",
+                  "postalCode",
+                  personalInfo?.postalCode,
+                  language
+                )}`}
+            </span>
+          </div>
         </div>
       </div>
     );
@@ -148,22 +199,52 @@ export default function CoverLetterPreviewTeal({
             <div className="flex justify-between mb-1">
               <div>
                 <h4 className=" text-gray-800">
-                  {recipient?.company || "Company Name"}
+                  {getPlaceholder(
+                    "recipient",
+                    "company",
+                    recipient?.company,
+                    language
+                  )}
                 </h4>
                 <p className="text-gray-600">
-                  {recipient?.name || "Recipient Name"}
+                  {getPlaceholder(
+                    "recipient",
+                    "name",
+                    recipient?.name,
+                    language
+                  )}
                 </p>
               </div>
               <div className="text-right" style={{ color: accentColor }}>
-                {dateAndSubject?.location || "Paris"},{" "}
-                {dateAndSubject?.date || "01/01/2023"}
+                {getPlaceholder(
+                  "dateAndSubject",
+                  "location",
+                  dateAndSubject?.location,
+                  language
+                )}
+                ,{" "}
+                {dateAndSubject?.date ||
+                  new Date().toLocaleDateString(
+                    language === "fr" ? "fr-FR" : "en-US"
+                  )}
               </div>
             </div>
             <p className="text-gray-600 mt-2">
-              {recipient?.address || "123 Business Street"}
+              {getPlaceholder(
+                "recipient",
+                "address",
+                recipient?.address,
+                language
+              )}
             </p>
             <p className="text-gray-600">
-              {recipient?.postalCode || "75000"} {recipient?.city || "Paris"}
+              {getPlaceholder(
+                "recipient",
+                "postalCode",
+                recipient?.postalCode,
+                language
+              )}{" "}
+              {getPlaceholder("recipient", "city", recipient?.city, language)}
             </p>
           </div>
         </div>
@@ -175,15 +256,14 @@ export default function CoverLetterPreviewTeal({
   const renderDateAndSubject = () => {
     return (
       <div className="pb-8">
-        {/* <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("date-et-objet")}
-        </h2> */}
         <div>
           <h4 className="font-semibold text-gray-800">
-            {dateAndSubject?.subject || "Job Application"}
+            {getPlaceholder(
+              "dateAndSubject",
+              "subject",
+              dateAndSubject?.subject,
+              language
+            )}
           </h4>
         </div>
       </div>
@@ -194,14 +274,15 @@ export default function CoverLetterPreviewTeal({
   const renderIntroduction = () => {
     return (
       <div className="mb-8">
-        {/* <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("introduction")}
-        </h2> */}
         <div
-          dangerouslySetInnerHTML={{ __html: introduction || "" }}
+          dangerouslySetInnerHTML={{
+            __html: getPlaceholder(
+              "sections",
+              "introduction",
+              introduction,
+              language
+            ),
+          }}
           className="text-gray-700"
         />
       </div>
@@ -212,14 +293,15 @@ export default function CoverLetterPreviewTeal({
   const renderCurrentSituation = () => {
     return (
       <div className="mb-8">
-        {/* <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("situation-actuelle")}
-        </h2> */}
         <div
-          dangerouslySetInnerHTML={{ __html: currentSituation || "" }}
+          dangerouslySetInnerHTML={{
+            __html: getPlaceholder(
+              "sections",
+              "currentSituation",
+              currentSituation,
+              language
+            ),
+          }}
           className="text-gray-700"
         />
       </div>
@@ -230,14 +312,15 @@ export default function CoverLetterPreviewTeal({
   const renderMotivation = () => {
     return (
       <div className="mb-8">
-        {/* <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("motivation")}
-        </h2> */}
         <div
-          dangerouslySetInnerHTML={{ __html: motivation || "" }}
+          dangerouslySetInnerHTML={{
+            __html: getPlaceholder(
+              "sections",
+              "motivation",
+              motivation,
+              language
+            ),
+          }}
           className="text-gray-700"
         />
       </div>
@@ -248,14 +331,15 @@ export default function CoverLetterPreviewTeal({
   const renderConclusion = () => {
     return (
       <div className="mb-8">
-        {/* <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("conclusion")}
-        </h2> */}
         <div
-          dangerouslySetInnerHTML={{ __html: conclusion || "" }}
+          dangerouslySetInnerHTML={{
+            __html: getPlaceholder(
+              "sections",
+              "conclusion",
+              conclusion,
+              language
+            ),
+          }}
           className="text-gray-700"
         />
       </div>
@@ -266,12 +350,6 @@ export default function CoverLetterPreviewTeal({
   const renderCustomSection = (section: string) => {
     return (
       <div className="mb-8">
-        {/* <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle(section)}
-        </h2> */}
         <div
           dangerouslySetInnerHTML={{
             __html: customSections?.[section] || "",
