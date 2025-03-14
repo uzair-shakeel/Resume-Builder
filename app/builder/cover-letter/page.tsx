@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import PersonalInfo from "@/components/sections/personal-info";
 import CoverLetterPreviewAlt from "@/components/cover-letter-templates/cover-letter-preview-alt";
 import CoverLetterPreviewSherlock from "@/components/cover-letter-templates/cover-letter-preview-sherlock";
@@ -31,12 +31,16 @@ import {
   Type,
   Palette,
   Maximize,
+  Cloud,
+  RefreshCw,
+  CloudOff,
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import RichTextEditor from "@/components/shared/rich-text-editor";
+import { useSearchParams } from "next/navigation";
 
 // Font families
 const fontFamilies = [
@@ -360,8 +364,168 @@ export default function CoverLetterBuilder() {
   const [showTemplateCarousel, setShowTemplateCarousel] = useState(false);
   const [activeTemplateIndex, setActiveTemplateIndex] = useState(0);
   const [showDownloadOptions, setShowDownloadOptions] = useState(false);
+  const searchParams = useSearchParams();
+  const coverId = searchParams.get("id");
+  const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "error">(
+    "saved"
+  );
+  const saveTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Handle input changes
+  useEffect(() => {
+    if (coverId) {
+      loadCoverLetter();
+    }
+  }, [coverId]);
+
+  const loadCoverLetter = async () => {
+    try {
+      const response = await fetch(`/api/cover-letter/load?coverId=${coverId}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setCoverLetterData(data.coverLetter.data);
+        setTemplate(data.coverLetter.template || "modern");
+        setSectionOrder(
+          data.coverLetter.sectionOrder || [
+            "personal-info",
+            "destinataire",
+            "date-et-objet",
+            "introduction",
+            "situation-actuelle",
+            "motivation",
+            "conclusion",
+          ]
+        );
+        setAccentColor(data.coverLetter.accentColor || colorThemes[0].value);
+        setFontFamily(data.coverLetter.fontFamily || fontFamilies[0].value);
+        setCustomSectionNames(data.coverLetter.customSectionNames || {});
+        setSectionPages(data.coverLetter.sectionPages || {});
+        setCustomSections(data.coverLetter.customSections || {});
+
+        const sectionsWithData = Object.entries(
+          data.coverLetter.data || {}
+        ).reduce((acc, [section, value]) => {
+          if (Array.isArray(value) && value.length > 0) {
+            acc[section] = true;
+          } else if (typeof value === "string" && value.trim() !== "") {
+            acc[section] = true;
+          } else if (
+            value &&
+            typeof value === "object" &&
+            Object.values(value).some((v) => v !== "")
+          ) {
+            acc[section] = true;
+          }
+          return acc;
+        }, {} as Record<string, boolean>);
+
+        setExpandedSections((prev) => ({
+          ...prev,
+          ...sectionsWithData,
+        }));
+      }
+    } catch (error) {
+      console.error("Error loading cover letter:", error);
+      setSaveStatus("error");
+    }
+  };
+
+  const saveCoverLetter = async () => {
+    setSaveStatus("saving");
+    console.log("Saving cover letter...");
+
+    try {
+      let preview;
+      if (previewRef.current) {
+        const firstPage = previewRef.current.querySelector(".cv-page");
+        if (firstPage) {
+          try {
+            await Promise.all(
+              Array.from(firstPage.getElementsByTagName("img")).map(
+                (img) =>
+                  new Promise((resolve) => {
+                    if (img.complete) resolve(null);
+                    else img.onload = () => resolve(null);
+                  })
+              )
+            );
+
+            const canvas = await html2canvas(firstPage as HTMLElement, {
+              scale: 2,
+              useCORS: true,
+              logging: false,
+              backgroundColor: "#ffffff",
+            });
+            preview = canvas.toDataURL("image/jpeg", 0.9);
+          } catch (error) {
+            console.error("Error generating preview:", error);
+          }
+        }
+      }
+
+      console.log("Saving cover letter with section pages:", sectionPages);
+
+      const payload = {
+        coverId,
+        title: coverLetterData.personalInfo?.firstName
+          ? `${coverLetterData.personalInfo.firstName}'s Cover Letter`
+          : "Untitled Cover Letter",
+        data: coverLetterData,
+        template,
+        sectionOrder,
+        accentColor,
+        fontFamily,
+        customSectionNames,
+        sectionPages,
+        customSections,
+        preview,
+        lastEdited: new Date().toISOString(),
+      };
+
+      console.log("Save payload:", payload);
+
+      const response = await fetch("/api/cover-letter/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log("Cover letter saved successfully:", data.coverLetter);
+        setSaveStatus("saved");
+        if (!coverId && data.coverLetter._id) {
+          window.history.replaceState(
+            {},
+            "",
+            `/builder/cover-letter?id=${data.coverLetter._id}`
+          );
+        }
+      } else {
+        console.error("Error saving cover letter:", data.error);
+        setSaveStatus("error");
+      }
+    } catch (error) {
+      console.error("Error saving cover letter:", error);
+      setSaveStatus("error");
+    }
+  };
+
+  const debouncedSave = (immediate = false) => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    if (immediate) {
+      saveCoverLetter();
+    } else {
+      saveTimeoutRef.current = setTimeout(saveCoverLetter, 1000);
+    }
+  };
+
   const updateCoverLetterData = (
     section: keyof CoverLetterData | "root",
     field: string,
@@ -375,10 +539,8 @@ export default function CoverLetterBuilder() {
         };
       }
 
-      // Create a new object for the updated state
       const newState = { ...prev };
 
-      // Handle the section update without using spread on the section
       if (section === "personalInfo") {
         newState.personalInfo = {
           ...newState.personalInfo,
@@ -395,13 +557,22 @@ export default function CoverLetterBuilder() {
           [field]: value,
         };
       } else {
-        // For other sections like introduction, motivation, etc.
         newState[section] = value as string;
       }
 
       return newState;
     });
+
+    debouncedSave(section === "personalInfo");
   };
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
@@ -435,11 +606,17 @@ export default function CoverLetterBuilder() {
   };
 
   const handleAssignSectionToPage = (section: string, page: number) => {
-    setSectionPages((prev) => ({
-      ...prev,
-      [section]: page,
-    }));
+    console.log(`Assigning section ${section} to page ${page}`);
+    setSectionPages((prev) => {
+      const newSectionPages = {
+        ...prev,
+        [section]: page,
+      };
+      console.log("Updated section pages:", newSectionPages);
+      return newSectionPages;
+    });
     setActiveSectionMenu(null);
+    debouncedSave(true); // Save immediately when section page is changed
   };
 
   const toggleSectionMenu = (section: string, e: React.MouseEvent) => {
@@ -495,7 +672,6 @@ export default function CoverLetterBuilder() {
     pdf.save("cover-letter.pdf");
   };
 
-  // Render personal info inputs
   const renderPersonalInfoInputs = () => (
     <div className="p-4">
       <PersonalInfo
@@ -508,7 +684,6 @@ export default function CoverLetterBuilder() {
     </div>
   );
 
-  // Render recipient inputs
   const renderDestinaireInputs = () => (
     <div className="p-4 space-y-4">
       <div>
@@ -587,7 +762,6 @@ export default function CoverLetterBuilder() {
     </div>
   );
 
-  // Render date and subject inputs
   const renderDateEtObjetInputs = () => (
     <div className="p-4 space-y-4">
       <div className="grid grid-cols-2 gap-4">
@@ -636,7 +810,6 @@ export default function CoverLetterBuilder() {
     </div>
   );
 
-  // Render introduction inputs
   const renderIntroductionInputs = () => {
     const currentTemplate =
       introductionOptions.find((option) => option.value === selectedIntroOption)
@@ -707,7 +880,6 @@ export default function CoverLetterBuilder() {
     );
   };
 
-  // Render current situation inputs
   const renderCurrentSituationInputs = () => {
     const currentTemplate =
       situationOptions.find(
@@ -814,7 +986,6 @@ export default function CoverLetterBuilder() {
     );
   };
 
-  // Render motivation inputs
   const renderMotivationInputs = () => {
     const currentTemplate =
       motivationOptions.find(
@@ -949,7 +1120,6 @@ export default function CoverLetterBuilder() {
     );
   };
 
-  // Render conclusion inputs
   const renderConclusionInputs = () => {
     const currentTemplate =
       conclusionOptions.find(
@@ -1042,7 +1212,6 @@ export default function CoverLetterBuilder() {
     );
   };
 
-  // Render active section inputs
   const renderActiveSectionInputs = (section: string) => {
     if (section.startsWith("custom-")) {
       return (
@@ -1125,7 +1294,6 @@ export default function CoverLetterBuilder() {
     setSectionOrder(newOrder);
   };
 
-  // Add template carousel navigation
   const prevTemplate = () => {
     setActiveTemplateIndex((prev) => {
       const newIndex = prev === 0 ? templateOptions.length - 1 : prev - 1;
@@ -1148,17 +1316,33 @@ export default function CoverLetterBuilder() {
     setShowTemplateCarousel(false);
   };
 
-  // Reset zoom function
   const resetZoom = () => {
     setZoom(0.8);
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Left Panel - Form */}
       <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4">
-          <h1 className="text-xl font-bold">Lettre de motivation</h1>
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold">Lettre de motivation</h1>
+            <div className="text-gray-500">
+              {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
+              {saveStatus === "saving" && (
+                <RefreshCw className="w-5 h-5 animate-spin" />
+              )}
+              {saveStatus === "error" && (
+                <CloudOff className="w-5 h-5 text-red-500" />
+              )}
+            </div>
+            <a
+              href="/builder"
+              className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
+            >
+              <FileText className="w-4 h-4" />
+              CV Builder
+            </a>
+          </div>
         </div>
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-4">
@@ -1273,7 +1457,6 @@ export default function CoverLetterBuilder() {
               </div>
             ))}
 
-            {/* Add Section Button */}
             <button
               onClick={handleAddNewSection}
               className="w-full py-3 px-4 border-2 border-dashed border-gray-300 rounded-md text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors flex items-center justify-center space-x-2"
@@ -1285,7 +1468,6 @@ export default function CoverLetterBuilder() {
         </div>
       </div>
 
-      {/* Right Panel - Preview */}
       <div className="w-1/2 bg-gray-50 flex flex-col">
         <div className="bg-white p-4 border-b border-gray-200 flex justify-between items-center">
           <div className="flex items-center space-x-2">
@@ -1460,7 +1642,6 @@ export default function CoverLetterBuilder() {
           </div>
         </div>
 
-        {/* Add bottom edit bar */}
         <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 p-3 shadow-md">
           {showTemplateCarousel ? (
             <div className="mb-4">
@@ -1535,7 +1716,6 @@ export default function CoverLetterBuilder() {
             </div>
           ) : (
             <div className="flex flex-wrap gap-4 justify-center items-center">
-              {/* Template selector */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowTemplateCarousel(true)}
@@ -1546,7 +1726,6 @@ export default function CoverLetterBuilder() {
                 </button>
               </div>
 
-              {/* Font family selector */}
               <div className="flex items-center gap-2">
                 <Type className="w-5 h-5 text-gray-700" />
                 <select
@@ -1567,7 +1746,6 @@ export default function CoverLetterBuilder() {
                 </select>
               </div>
 
-              {/* Color selector */}
               <div className="flex items-center gap-2">
                 <Palette className="w-5 h-5 text-gray-700" />
                 <div className="relative flex items-center gap-2">
@@ -1585,7 +1763,6 @@ export default function CoverLetterBuilder() {
                   </div>
                   <button
                     onClick={() => {
-                      // Reset to default color for this template
                       const defaultColor = templateOptions.find(
                         (t) => t.value === template
                       )?.defaultColor;
