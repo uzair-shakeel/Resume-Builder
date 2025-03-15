@@ -550,7 +550,7 @@ export default function Dashboard() {
                           </button>
                         </div>
                       ) : (
-                        <div className="flex justify-between items-center">
+                        <div className="flex flex-col justify-start items-start">
                           <h3 className="font-medium text-gray-900 truncate">
                             {cv.title}
                           </h3>
@@ -690,7 +690,7 @@ export default function Dashboard() {
                           </button>
                         </div>
                       ) : (
-                        <div className="flex justify-between items-center">
+                        <div className="flex flex-col justify-start items-start">
                           <h3 className="font-medium text-gray-900 truncate">
                             {coverLetter.title}
                           </h3>

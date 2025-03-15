@@ -508,8 +508,52 @@ export default function Builder() {
       }
     };
 
-    loadCV();
+    if (cvId) {
+      loadCV();
+    } else {
+      // Create a new CV immediately when the page loads without an ID
+      createNewCV();
+    }
   }, [cvId, initialTemplate]);
+
+  // Function to create a new CV
+  const createNewCV = async () => {
+    try {
+      setSaveStatus("saving");
+
+      const response = await fetch("/api/cv/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: "Untitled CV",
+          data: cvData,
+          template,
+          sectionOrder,
+          accentColor,
+          fontFamily,
+          customSectionNames,
+          sectionPages,
+          lastEdited: new Date().toISOString(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSaveStatus("saved");
+        // Update the URL with the new CV ID
+        window.history.replaceState({}, "", `/builder?id=${data.cv._id}`);
+      } else {
+        setSaveStatus("error");
+        console.error("Error creating new CV:", data.error);
+      }
+    } catch (error) {
+      console.error("Error creating new CV:", error);
+      setSaveStatus("error");
+    }
+  };
 
   // Auto-save functionality
   const saveCV = async () => {
@@ -546,13 +590,17 @@ export default function Builder() {
         }
       }
 
+      // Get the current CV ID from the URL, which might have been updated
+      const currentCvId =
+        new URLSearchParams(window.location.search).get("id") || cvId;
+
       const response = await fetch("/api/cv/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          cvId,
+          cvId: currentCvId,
           title: cvData.personalInfo.firstName
             ? `${cvData.personalInfo.firstName}'s CV`
             : "Untitled CV",
@@ -573,7 +621,7 @@ export default function Builder() {
       if (data.success) {
         setSaveStatus("saved");
         // If this is a new CV, update the URL with the new CV ID
-        if (!cvId && data.cv._id) {
+        if (!currentCvId && data.cv._id) {
           window.history.replaceState({}, "", `/builder?id=${data.cv._id}`);
         }
       } else {
@@ -594,8 +642,27 @@ export default function Builder() {
     if (immediate) {
       saveCV();
     } else {
-      saveTimeoutRef.current = setTimeout(saveCV, 1000);
+      // Increase debounce time to reduce save frequency
+      setSaveStatus("saving");
+      saveTimeoutRef.current = setTimeout(saveCV, 2000);
     }
+  };
+
+  // Batch update for multiple fields to reduce save frequency
+  const batchUpdateCVData = (updates: Record<string, any>) => {
+    setCVData((prev) => {
+      const newData = { ...prev };
+
+      // Apply all updates at once
+      Object.entries(updates).forEach(([section, data]) => {
+        newData[section] = data;
+      });
+
+      return newData;
+    });
+
+    // Use standard debounce for batch updates
+    debouncedSave(false);
   };
 
   // Update CV data with auto-save
@@ -608,8 +675,16 @@ export default function Builder() {
       return newData;
     });
 
-    // Save immediately for personal info changes, debounce for others
-    debouncedSave(section === "personalInfo");
+    // Only save immediately for completed personal info changes
+    // For all other changes, use the longer debounce
+    const shouldSaveImmediately =
+      section === "personalInfo" &&
+      data.firstName &&
+      data.firstName.length > 0 &&
+      data.lastName &&
+      data.lastName.length > 0;
+
+    debouncedSave(shouldSaveImmediately);
   };
 
   // Clean up timeout on unmount
@@ -1168,6 +1243,69 @@ export default function Builder() {
 
   const handleTopMarginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleMarginChange("top", Math.max(0, parseInt(e.target.value) || 0));
+  };
+
+  // Throttled input handler for text fields
+  const throttledInputRef = useRef<{
+    timeout: NodeJS.Timeout | null;
+    value: string;
+    section: string;
+    field: string;
+  }>({
+    timeout: null,
+    value: "",
+    section: "",
+    field: "",
+  });
+
+  const handleThrottledInput = (
+    section: string,
+    field: string,
+    value: string,
+    data: any
+  ) => {
+    // Clear any existing timeout
+    if (throttledInputRef.current.timeout) {
+      clearTimeout(throttledInputRef.current.timeout);
+    }
+
+    // Store the current value
+    throttledInputRef.current = {
+      timeout: null,
+      value,
+      section,
+      field,
+    };
+
+    // Update the UI immediately without saving
+    setCVData((prev) => {
+      const newData = { ...prev };
+      if (typeof data === "object" && field) {
+        newData[section] = {
+          ...newData[section],
+          [field]: value,
+        };
+      } else {
+        newData[section] = value;
+      }
+      return newData;
+    });
+
+    // Set a timeout to save after user stops typing
+    throttledInputRef.current.timeout = setTimeout(() => {
+      // Only save if the value is still the same
+      if (throttledInputRef.current.value === value) {
+        if (typeof data === "object" && field) {
+          const updatedData = {
+            ...data,
+            [field]: value,
+          };
+          updateCVData(section, updatedData);
+        } else {
+          updateCVData(section, value);
+        }
+      }
+    }, 1000);
   };
 
   return (

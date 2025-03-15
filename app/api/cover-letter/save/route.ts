@@ -20,24 +20,40 @@ export async function POST(req: Request) {
     // Ensure sectionPages is properly structured
     const sectionPages = coverLetterData.sectionPages || {};
 
-    console.log("Saving cover letter with data:", {
-      coverId,
-      title: coverLetterData.title,
-      template: coverLetterData.template,
-      sectionPages,
-      customSectionNames: coverLetterData.customSectionNames,
-      customSections: coverLetterData.customSections,
-    });
+    console.log(
+      `Saving cover letter ${coverId ? "update" : "creation"} with data:`,
+      {
+        coverId,
+        title: coverLetterData.title,
+        template: coverLetterData.template,
+        sectionPages,
+        customSectionNames: coverLetterData.customSectionNames,
+        customSections: coverLetterData.customSections,
+      }
+    );
 
     let coverLetter;
     if (coverId) {
+      // Check if cover letter exists and belongs to user before updating
+      const existingCoverLetter = await CoverLetter.findOne({
+        _id: coverId,
+        userId: session.user.id,
+      });
+
+      if (!existingCoverLetter) {
+        return NextResponse.json(
+          { error: "Cover letter not found or not owned by user" },
+          { status: 404 }
+        );
+      }
+
       // Update existing cover letter
       coverLetter = await CoverLetter.findOneAndUpdate(
         { _id: coverId, userId: session.user.id },
         {
           ...coverLetterData,
           sectionPages,
-          preview: preview || undefined, // Only update preview if provided
+          preview: preview || existingCoverLetter.preview, // Keep existing preview if not provided
           lastEdited: new Date(),
         },
         { new: true }
@@ -50,6 +66,8 @@ export async function POST(req: Request) {
         sectionPages,
         preview: preview || undefined,
         userId: session.user.id,
+        createdAt: new Date(),
+        lastEdited: new Date(),
       });
       console.log("Created new cover letter:", coverLetter._id);
     }
@@ -58,7 +76,11 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Error saving cover letter:", error);
     return NextResponse.json(
-      { error: "Failed to save cover letter" },
+      {
+        success: false,
+        error: "Failed to save cover letter",
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     );
   }
