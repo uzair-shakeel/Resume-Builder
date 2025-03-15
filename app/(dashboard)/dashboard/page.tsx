@@ -381,18 +381,6 @@ export default function Dashboard() {
   };
 
   const renderCoverLetterPreview = (coverLetter: CoverLetter) => {
-    if (coverLetter.preview) {
-      return (
-        <div className="aspect-[210/297] w-full bg-white">
-          <img
-            src={coverLetter.preview}
-            alt={coverLetter.title}
-            className="w-full h-full object-contain"
-          />
-        </div>
-      );
-    }
-
     // Fallback to template-based preview
     const commonProps = {
       data: coverLetter.data || {

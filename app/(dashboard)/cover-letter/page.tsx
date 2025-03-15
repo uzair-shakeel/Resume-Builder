@@ -134,14 +134,7 @@ export default function CoverLetterDashboard() {
   }, []);
 
   const handleResize = () => {
-    const width = window.innerWidth;
-    if (width < 640) {
-      setScale((0.8 + width) / 4600);
-    } else if (width < 1024) {
-      setScale((0.8 + width) / 4600);
-    } else {
-      setScale((0.8 + width) / 4600);
-    }
+    setScale((0.6 + window.innerWidth) / 4600);
   };
 
   const loadCoverLetters = async () => {
@@ -247,24 +240,16 @@ export default function CoverLetterDashboard() {
   };
 
   const renderCoverLetterPreview = (coverLetter: CoverLetter) => {
-    if (coverLetter.preview) {
-      return (
-        <div className="aspect-[210/297] w-full bg-white">
-          <img
-            src={coverLetter.preview}
-            alt={coverLetter.title}
-            className="w-full h-full object-contain"
-          />
-        </div>
-      );
-    }
-
     // Fallback to template-based preview
-    const previewProps = {
+    const commonProps = {
       data: coverLetter.data || {
         personalInfo: { firstName: "", lastName: "" },
         recipient: {},
         dateAndSubject: {},
+        introduction: "",
+        currentSituation: "",
+        motivation: "",
+        conclusion: "",
       },
       sectionOrder: coverLetter.sectionOrder || [],
       accentColor: coverLetter.accentColor || "#3498db",
@@ -274,68 +259,32 @@ export default function CoverLetterDashboard() {
       customSections: coverLetter.customSections || {},
     };
 
-    switch (coverLetter.template) {
-      case "modern":
-        return (
-          <div className="scale-[0.15] origin-top-left w-[210mm] h-[297mm] bg-white">
-            <CoverLetterPreviewModern {...previewProps} />
-          </div>
-        );
-      case "classic":
-        return (
-          <div className="scale-[0.15] origin-top-left w-[210mm] h-[297mm] bg-white">
-            <CoverLetterPreviewClassic {...previewProps} />
-          </div>
-        );
-      case "professional":
-        return (
-          <div className="scale-[0.15] origin-top-left w-[210mm] h-[297mm] bg-white">
-            <CoverLetterPreviewProfessional {...previewProps} />
-          </div>
-        );
-      case "minimal":
-        return (
-          <div className="scale-[0.15] origin-top-left w-[210mm] h-[297mm] bg-white">
-            <CoverLetterPreviewMinimal {...previewProps} />
-          </div>
-        );
-      case "circulaire":
-        return (
-          <div className="scale-[0.15] origin-top-left w-[210mm] h-[297mm] bg-white">
-            <CoverLetterPreviewCirculaire {...previewProps} />
-          </div>
-        );
-      case "sherlock":
-        return (
-          <div className="scale-[0.15] origin-top-left w-[210mm] h-[297mm] bg-white">
-            <CoverLetterPreviewSherlock {...previewProps} />
-          </div>
-        );
-      case "student":
-        return (
-          <div className="scale-[0.15] origin-top-left w-[210mm] h-[297mm] bg-white">
-            <CoverLetterPreviewStudent {...previewProps} />
-          </div>
-        );
-      case "hr":
-        return (
-          <div className="scale-[0.15] origin-top-left w-[210mm] h-[297mm] bg-white">
-            <CoverLetterPreviewHR {...previewProps} />
-          </div>
-        );
-      case "teal":
-        return (
-          <div className="scale-[0.15] origin-top-left w-[210mm] h-[297mm] bg-white">
-            <CoverLetterPreviewTeal {...previewProps} />
-          </div>
-        );
-      default:
-        return (
-          <div className="scale-[0.15] origin-top-left w-[210mm] h-[297mm] bg-white">
-            <CoverLetterPreviewModern {...previewProps} />
-          </div>
-        );
-    }
+    const preview = (() => {
+      switch (coverLetter.template) {
+        case "modern":
+          return <CoverLetterPreviewModern {...commonProps} />;
+        case "classic":
+          return <CoverLetterPreviewClassic {...commonProps} />;
+        case "professional":
+          return <CoverLetterPreviewProfessional {...commonProps} />;
+        case "minimal":
+          return <CoverLetterPreviewMinimal {...commonProps} />;
+        case "circulaire":
+          return <CoverLetterPreviewCirculaire {...commonProps} />;
+        case "sherlock":
+          return <CoverLetterPreviewSherlock {...commonProps} />;
+        case "student":
+          return <CoverLetterPreviewStudent {...commonProps} />;
+        case "hr":
+          return <CoverLetterPreviewHR {...commonProps} />;
+        case "teal":
+          return <CoverLetterPreviewTeal {...commonProps} />;
+        default:
+          return <CoverLetterPreviewModern {...commonProps} />;
+      }
+    })();
+
+    return <CoverLetterPreviewWrapper>{preview}</CoverLetterPreviewWrapper>;
   };
 
   return (
@@ -460,7 +409,7 @@ export default function CoverLetterDashboard() {
                         </button>
                       </div>
                     ) : (
-                      <div className="flex justify-between items-center">
+                      <div className="flex flex-col justify-start items-start">
                         <h3 className="font-medium text-gray-900 truncate">
                           {coverLetter.title}
                         </h3>

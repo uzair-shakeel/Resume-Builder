@@ -112,14 +112,7 @@ export default function CVDashboard() {
   }, []);
 
   const handleResize = () => {
-    const width = window.innerWidth;
-    if (width < 640) {
-      setScale((0.6 + width) / 4600);
-    } else if (width < 1024) {
-      setScale((0.6 + width) / 4600);
-    } else {
-      setScale((0.6 + width) / 4600);
-    }
+    setScale((0.6 + window.innerWidth) / 4600);
   };
 
   const loadCVs = async () => {
@@ -217,27 +210,41 @@ export default function CVDashboard() {
   };
 
   const renderCVPreview = (cv: CV) => {
-    if (cv.preview) {
-      return (
-        <div className="aspect-[210/297] w-full bg-white">
-          <img
-            src={cv.preview}
-            alt={cv.title}
-            className="w-full h-full object-contain"
-          />
-        </div>
-      );
-    }
-
-    // Fallback to template-based preview
-    const commonProps = {
-      data: cv.data || {
-        personalInfo: { firstName: "", lastName: "" },
-        education: [],
-        experience: [],
+    // Default data structure
+    const defaultData = {
+      personalInfo: {
+        firstName: "",
+        lastName: "",
+        title: "",
+        email: "",
+        phone: "",
+        address: "",
+        postalCode: "",
+        city: "",
+        photo: "/placeholder-user.jpg",
       },
-      sectionOrder: cv.sectionOrder || [],
-      accentColor: cv.accentColor || "#3498db",
+      profile: "",
+      education: [],
+      experience: [],
+      skills: [],
+      languages: [],
+      interests: [],
+      references: [],
+      socials: [],
+    };
+
+    const commonProps = {
+      data: cv.data || defaultData,
+      sectionOrder: cv.sectionOrder || [
+        "personal-info",
+        "profile",
+        "education",
+        "experience",
+        "skills",
+        "languages",
+        "interests",
+      ],
+      accentColor: cv.accentColor || "#3b82f6",
       fontFamily: cv.fontFamily || "'DejaVu Sans', sans-serif",
       sectionPages: cv.sectionPages || {},
       customSectionNames: cv.customSectionNames || {},
@@ -391,7 +398,7 @@ export default function CVDashboard() {
                         </button>
                       </div>
                     ) : (
-                      <div className="flex justify-between items-center">
+                      <div className="flex flex-col justify-start items-start">
                         <h3 className="font-medium text-gray-900 truncate">
                           {cv.title}
                         </h3>
