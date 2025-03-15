@@ -110,7 +110,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-1">
               {footerLinks.ressources.links.map((link) => (
-                <li key={link.href}>
+                <li key={link.href} className="list-none before:content-none">
                   <Link
                     href={link.href}
                     className="text-base focus-visible:ring-4 ring-brand-200 rounded-sm font-normal text-gray-500 md:text-gray-500 hover:text-gray-700 md:pb-1 py-2 md:py-0"
@@ -129,7 +129,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-1">
               {footerLinks.produit.links.map((link) => (
-                <li key={link.href}>
+                <li key={link.href} className="list-none before:content-none">
                   <Link
                     href={link.href}
                     className="text-base focus-visible:ring-4 ring-brand-200 rounded-sm font-normal text-gray-500 md:text-gray-500 hover:text-gray-700 md:pb-1 py-2 md:py-0"
@@ -148,7 +148,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-1">
               {footerLinks.service.links.map((link) => (
-                <li key={link.href}>
+                <li key={link.href} className="list-none before:content-none">
                   <Link
                     href={link.href}
                     className="text-base focus-visible:ring-4 ring-brand-200 rounded-sm font-normal text-gray-500 md:text-gray-500 hover:text-gray-700 md:pb-1 py-2 md:py-0"

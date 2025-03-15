@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col">
       <Header />
-      <FAQ faqs={faqs} page={true} />
+      <FAQ faqs={faqs} page={true} title={"Foire aux questions"} />
       <Footer />
     </main>
   );
@@ -340,7 +340,7 @@ const faqs = [
           curriculum vitae. deux solutions s’offrent à vous :&nbsp;
         </p>
         <ol>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>Utiliser un générateur de CV</strong>. L’avantage de ces
             outils est qu’ils vous offrent un document clef en main. Le
             curriculum vitae est préconçu et vous n’avez qu’à choisir le design
@@ -349,7 +349,7 @@ const faqs = [
             designer est idéal pour faire créer un Cv rapidement et s’assurer de
             la qualité de sa mise en page.&nbsp;
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>Créer votre CV de A à Z</strong> en partant d’une feuille
             blanche. Pour cela, vous pouvez utiliser un logiciel de traitement
             de texte. Vous devrez gérer votre propre mise en page, avec
@@ -429,7 +429,7 @@ const faqs = [
           Voici quelques règles à suivre pour vous y aider :
         </p>
         <ul className="ms-[1rem] ps-[1.25rem] mt-[.4rem] list-disc">
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>organiser votre CV :</strong> les différentes rubriques d’un
             CV (état civil, coordonnées, formations, expériences
             professionnelles…) permettent d’organiser votre CV et de rendre sa
@@ -437,7 +437,7 @@ const faqs = [
             différentes rubriques et de ne pas mettre toutes les informations en
             un seul bloc.
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>
               rédiger chaque information de façon claire et concise :
             </strong>{" "}
@@ -447,7 +447,7 @@ const faqs = [
             des mots simples et évitez les acronymes sauf s’ils sont vraiment
             incontournables.
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>évitez le trop plein d’informations :</strong> pour bien
             faire un CV, il faut éviter de le surcharger. Effectuez un tri dans
             les informations que vous voulez mentionner afin de ne faire
@@ -456,7 +456,7 @@ const faqs = [
             formations, expériences professionnelles et centres d’intérêts, mais
             seulement ceux qui sont un atout pour votre candidature.
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>deux pages maximum :</strong> concernant la{" "}
             <Link
               className="text-brand-500 font-[500]"
@@ -469,7 +469,7 @@ const faqs = [
             son intégralité. Ils en reçoivent en général beaucoup et n’ont pas
             le temps de se lancer dans la lecture d’un roman !
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>soyez positif :</strong> ne mettez en avant sur votre CV que
             des informations qui jouent en votre faveur et donnent une bonne
             image de vous. Parlez donc de vos points forts, vos qualités et vos
@@ -482,18 +482,18 @@ const faqs = [
           rêves. Voici quelques unes des plus courantes :
         </p>
         <ul>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>ne pas mettre son CV régulièrement à jour :</strong>{" "}
             assurez-vous de toujours mettre à jour votre CV avant de l’envoyer
             aux recruteurs, afin qu’il reflète votre situation actuelle.
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>les fautes d’orthographe :</strong> sur un CV, l’orthographe
             doit être irréprochable afin de donner la meilleure image aux
             recruteurs. On relit donc son CV plusieurs fois, voire on le fait
             relire par un proche !
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>une mise en page bâclée :</strong> la forme compte autant
             que le fond ! Il est donc important de soigner la{" "}
             <Link href="/conseils/mise-en-page-cv">
@@ -503,7 +503,7 @@ const faqs = [
             police de caractère agréable à lire afin de donner envie aux
             recruteurs de se plonger dans sa lecture.
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>donner trop d’informations personnelles :</strong> ne
             mentionnez sur votre CV que les informations qui ont un véritable
             intérêt pour le poste convoité. Ainsi évitez de donner trop
@@ -523,7 +523,7 @@ const faqs = [
             </Link>
             …) si cela n’est pas nécessaire.
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>des “trous” dans son CV :</strong> évitez à tout prix de
             laisser des “
             <Link
@@ -538,19 +538,19 @@ const faqs = [
             recruteurs. Si vous avez pris du temps pour vous occuper de votre
             famille ou si vous avez voyagé, dites-le.
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>une photo qui n’est pas professionnelle :</strong> si vous
             choisissez d’ajouter une photo sur votre CV, n’utilisez pas celle de
             vos dernières vacances ! La photo de votre CV se doit d’être
             professionnelle.
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>éviter les formules toutes faites :</strong> lors de la
             rédaction de votre CV, bannissez les tournures du type “Je suis le
             candidat qu’il vous faut” ou “j’aime sortir des sentiers battus” qui
             la plupart du temps exaspèrent les recruteurs.
           </li>
-          <li className="my-[.5rem]">
+          <li className="my-[.5rem]  before:content-none">
             <strong>indiquer vos prétentions salariales :</strong> le CV n’est
             pas le lieu pour indiquer le salaire que vous visez. Vous aurez tout
             le temps d’aborder le sujet au moment de l’entretien d’embauche !
