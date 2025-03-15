@@ -101,19 +101,44 @@ export default function CVDashboard() {
   const [loading, setLoading] = useState(true);
   const [renamingCV, setRenamingCV] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState("");
-  const [scale, setScale] = useState((0.6 + window.innerWidth) / 4600);
   const router = useRouter();
+  const [scale, setScale] = useState<number>(1);
 
   useEffect(() => {
-    loadCVs();
+    const getScale = (width: number): number => {
+      if (width >= 1500) {
+        return (0.8 + width) / 5400;
+      } else if (width >= 1280) {
+        return (0.6 + width) / 4800;
+      } else if (width >= 1024) {
+        return (0.6 + width) / 4000;
+      } else if (width >= 840) {
+        return (0.9 + width) / 2300;
+      } else if (width >= 768) {
+        return (0.9 + width) / 2000;
+      } else if (width >= 500) {
+        return (1 + width) / 1000;
+      } else if (width >= 350) {
+        return (1 + width) / 1150;
+      } else {
+        return (1 + width) / 1250;
+      }
+    };
+
+    const handleResize = () => {
+      setScale(getScale(window.innerWidth));
+    };
+
+    // Set scale on mount
     handleResize();
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleResize = () => {
-    setScale((0.6 + window.innerWidth) / 4600);
-  };
+  useEffect(() => {
+    loadCVs();
+  }, []);
 
   const loadCVs = async () => {
     try {
