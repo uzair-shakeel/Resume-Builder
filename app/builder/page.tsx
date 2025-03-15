@@ -98,7 +98,7 @@ const templateOptions = [
   {
     name: "Pro",
     value: "pro",
-    image: "/assets/resume3.png",
+    image: "/assets/professional.png",
     defaultColor: "#3498db",
   },
   {
@@ -131,12 +131,12 @@ const templateOptions = [
     image: "/assets/teal-resume.jpg",
     defaultColor: "#2BCBBA",
   },
-  {
-    name: "Simple Classic",
-    value: "simple-classic",
-    image: "/assets/classic-resume.jpg",
-    defaultColor: "#3498db",
-  },
+  // {
+  //   name: "Simple Classic",
+  //   value: "simple-classic",
+  //   image: "/assets/classic-resume.jpg",
+  //   defaultColor: "#3498db",
+  // },
   {
     name: "Student",
     value: "student",
@@ -688,7 +688,7 @@ export default function Builder() {
     setZoomLevel(100);
   };
 
-  const handleDownload = async (format: "pdf" | "jpeg" | "png") => {
+  const handleDownload = async (format: "pdf") => {
     if (!previewRef.current) return;
 
     try {
@@ -740,6 +740,7 @@ export default function Builder() {
           clone.style.padding = "0";
           clone.style.width = "210mm";
           clone.style.height = "297mm";
+          clone.style.setProperty("--accent-color", accentColor);
           document.body.appendChild(clone);
 
           // Capture the page as canvas with improved settings
@@ -765,62 +766,13 @@ export default function Builder() {
           // Remove the clone after capture
           document.body.removeChild(clone);
 
-          // Add to PDF with better quality settings
-          const imgData = canvas.toDataURL("image/jpeg", 1.0);
-          pdf.addImage(imgData, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+          // Add to PDF with maximum quality settings
+          const imgData = canvas.toDataURL("image/png", 1.0); // Using PNG for lossless quality
+          pdf.addImage(imgData, "PNG", 0, 0, 210, 297, undefined, "SLOW"); // Using SLOW for better quality
         }
 
         // Save the PDF
         pdf.save(`resume.pdf`);
-      } else {
-        // For image formats, only capture the first page
-        const firstPage = pages[0] as HTMLElement;
-
-        // Wait for all images to load
-        await Promise.all(
-          Array.from(firstPage.getElementsByTagName("img")).map(
-            (img) =>
-              new Promise((resolve) => {
-                if (img.complete) {
-                  resolve(null);
-                } else {
-                  img.onload = () => resolve(null);
-                  img.onerror = () => resolve(null);
-                }
-              })
-          )
-        );
-
-        // Clone and prepare the page for capture
-        const clone = firstPage.cloneNode(true) as HTMLElement;
-        clone.style.transform = "none";
-        clone.style.position = "fixed";
-        clone.style.top = "0";
-        clone.style.left = "0";
-        clone.style.margin = "0";
-        clone.style.padding = "0";
-        clone.style.width = "210mm";
-        clone.style.height = "297mm";
-        document.body.appendChild(clone);
-
-        const canvas = await html2canvas(clone, {
-          scale: 3,
-          useCORS: true,
-          allowTaint: true,
-          foreignObjectRendering: true,
-          logging: false,
-          backgroundColor: "#ffffff",
-          imageTimeout: 15000,
-        });
-
-        // Remove the clone after capture
-        document.body.removeChild(clone);
-
-        // Download as image
-        const link = document.createElement("a");
-        link.download = `cv-${new Date().toISOString().slice(0, 10)}.${format}`;
-        link.href = canvas.toDataURL(`image/${format}`, 1.0);
-        link.click();
       }
     } catch (error) {
       console.error("Error generating CV:", error);
@@ -1172,6 +1124,21 @@ export default function Builder() {
 
   return (
     <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
+      {/* Loading Overlay */}
+      {isDownloading && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
+            <RefreshCw className="w-10 h-10 text-blue-600 animate-spin mb-4" />
+            <p className="text-lg font-medium text-gray-800">
+              Generating PDF...
+            </p>
+            <p className="text-sm text-gray-600 mt-2">
+              This may take a few moments.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-1 overflow-hidden">
         {/* Left Panel - Form */}
         <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
@@ -1214,18 +1181,6 @@ export default function Builder() {
                         className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
                       >
                         Download as PDF
-                      </button>
-                      <button
-                        onClick={() => handleDownload("jpeg")}
-                        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                      >
-                        Download as JPEG
-                      </button>
-                      <button
-                        onClick={() => handleDownload("png")}
-                        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                      >
-                        Download as PNG
                       </button>
                     </div>
                   </div>
@@ -1415,7 +1370,7 @@ export default function Builder() {
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowPageBreakControls(!showPageBreakControls)}
                 className={`flex items-center gap-1 p-1 rounded-md ${
@@ -1428,7 +1383,7 @@ export default function Builder() {
                 <Ruler className="w-5 h-5" />
                 <span className="text-xs font-medium">Page Layout</span>
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Page break controls panel */}

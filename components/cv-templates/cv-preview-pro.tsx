@@ -8,11 +8,13 @@ interface CVPreviewProps {
   sectionOrder: string[];
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
+  accentColor: string;
 }
 
 export default function CVPreviewPro({
   data,
   sectionOrder,
+  accentColor,
   sectionPages = {},
   customSectionNames = {},
 }: CVPreviewProps) {
@@ -63,7 +65,10 @@ export default function CVPreviewPro({
   };
 
   const renderHeader = () => (
-    <div className="bg-teal-600 text-white p-6 flex items-center gap-6">
+    <div
+      style={{ backgroundColor: accentColor }}
+      className=" text-white p-6 flex items-center gap-6"
+    >
       <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white">
         <Image
           src={personalInfo?.photo || placeholderData.personalInfo.photo}
@@ -136,8 +141,11 @@ export default function CVPreviewPro({
               <div className="text-sm mb-1">{skill.name}</div>
               <div className="h-2 bg-gray-700 rounded-full">
                 <div
-                  className="h-full bg-teal-500 rounded-full"
-                  style={{ width: `${(skill.level / 5) * 100}%` }}
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${(skill.level / 5) * 100}%`,
+                    backgroundColor: accentColor,
+                  }}
                 />
               </div>
             </div>
@@ -180,7 +188,10 @@ export default function CVPreviewPro({
         <div className="space-y-2">
           {interestItems.map((interest, index) => (
             <div key={index} className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-teal-500 rounded-full" />
+              <div
+                style={{ backgroundColor: accentColor }}
+                className="w-1.5 h-1.5  rounded-full"
+              />
               <span className="text-sm">{interest.name}</span>
             </div>
           ))}
@@ -194,7 +205,10 @@ export default function CVPreviewPro({
     if (!profileText) return null;
     return (
       <section className="mb-8">
-        <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+        <h2
+          style={{ color: accentColor }}
+          className="text-xl font-medium mb-4 uppercase tracking-wider"
+        >
           {getSectionTitle("profile")}
         </h2>
         <p className="text-gray-600 leading-relaxed">{profileText}</p>
@@ -208,7 +222,10 @@ export default function CVPreviewPro({
       : placeholderData.education;
     return (
       <section className="mb-8">
-        <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+        <h2
+          style={{ color: accentColor }}
+          className="text-xl  font-medium mb-4 uppercase tracking-wider"
+        >
           {getSectionTitle("education")}
         </h2>
         {educationItems.map((edu, index) => (
@@ -218,7 +235,7 @@ export default function CVPreviewPro({
                 <p className="font-medium text-gray-800">{edu.school}</p>
                 <p className="text-gray-600">{edu.degree}</p>
               </div>
-              <p className="text-sm text-teal-600 font-medium">
+              <p style={{ color: accentColor }} className="text-sm font-medium">
                 {edu.startDate} - {edu.current ? "Present" : edu.endDate}
               </p>
             </div>
@@ -234,7 +251,10 @@ export default function CVPreviewPro({
       : placeholderData.experience;
     return (
       <section className="mb-8">
-        <h2 className="text-xl text-teal-600 font-medium mb-4 uppercase tracking-wider">
+        <h2
+          style={{ color: accentColor }}
+          className="text-xl  font-medium mb-4 uppercase tracking-wider"
+        >
           {getSectionTitle("experience")}
         </h2>
         {experienceItems.map((exp, index) => (
@@ -244,7 +264,7 @@ export default function CVPreviewPro({
                 <p className="font-medium text-gray-800">{exp.position}</p>
                 <p className="text-gray-600">{exp.company}</p>
               </div>
-              <p className="text-sm text-teal-600 font-medium">
+              <p style={{ color: accentColor }} className="text-sm font-medium">
                 {exp.startDate} - {exp.current ? "Present" : exp.endDate}
               </p>
             </div>
@@ -280,31 +300,37 @@ export default function CVPreviewPro({
     }
   };
 
-  const renderSidebar = (sections: string[]) => (
-    <div className="w-[240px] bg-gray-900 text-white p-6 h-[800px]">
-      {sections.includes("skills") && renderSkills()}
-      {sections.includes("languages") && renderLanguages()}
-      {sections.includes("interests") && renderInterests()}
-    </div>
-  );
-
-  const renderMainContent = (sections: string[]) => (
-    <div className="flex-1 p-8">
-      {sections.map(
-        (section) =>
-          ["profile", "education", "experience"].includes(section) &&
-          renderSection(section)
-      )}
-    </div>
-  );
-
   const renderPage = (sections: string[]) => (
-    <div className="cv-page">
-      <div className="cv-page-content flex flex-col h-full">
-        {renderHeader()}
-        <div className="flex flex-1">
-          {renderSidebar(sections)}
-          {renderMainContent(sections)}
+    <div 
+      className="cv-page bg-white"
+      style={{
+        width: "210mm",
+        minHeight: "297mm",
+        padding: "20mm",
+        boxSizing: "border-box",
+        margin: "0 auto",
+      }}
+    >
+      {renderHeader()}
+      <div className="flex" style={{ marginTop: "2rem" }}>
+        <div 
+          style={{ 
+            width: "240px",
+            backgroundColor: "#111827",
+            padding: "1.5rem",
+          }}
+          className="text-white"
+        >
+          {sections.includes("skills") && renderSkills()}
+          {sections.includes("languages") && renderLanguages()}
+          {sections.includes("interests") && renderInterests()}
+        </div>
+        <div style={{ paddingLeft: "2rem" }}>
+          {sections.map(
+            (section) =>
+              ["profile", "education", "experience"].includes(section) &&
+              renderSection(section)
+          )}
         </div>
       </div>
     </div>
@@ -312,42 +338,25 @@ export default function CVPreviewPro({
 
   return (
     <div className="cv-container">
-      {/* Page 1 */}
-      {renderPage(page1Sections)}
-
-      {/* Page 2 (if needed) */}
-      {hasPage2 && (
-        <div className="mt-8 print:mt-0">{renderPage(page2Sections)}</div>
-      )}
-
-      <style jsx>{`
-        .cv-page {
-          width: 210mm;
-          min-height: 297mm;
-          position: relative;
-          margin: 0 auto;
-          background: white;
-        }
-        .cv-page-content {
-          min-height: 297mm;
-        }
-        .cv-sidebar {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 240px;
-          height: 100%;
-          background-color: #111827; /* Tailwind's gray-900 */
-          color: white;
-          padding: 1.5rem;
-          overflow-y: auto;
-        }
+      <style jsx global>{`
         @media print {
-          .cv-page + .cv-page {
-            page-break-before: always;
+          @page {
+            size: A4;
+            margin: 0;
+          }
+          body {
+            -webkit-print-color-adjust: exact;
           }
         }
       `}</style>
+      
+      {renderPage(page1Sections)}
+
+      {hasPage2 && (
+        <div className="mt-8 print:mt-0">
+          {renderPage(page2Sections)}
+        </div>
+      )}
     </div>
   );
 }

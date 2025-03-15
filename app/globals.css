@@ -447,7 +447,7 @@ ul {
   list-style-type: disc !important;
 }
 li::before {
-  content: "• "; /* Ensures bullet rendering */
+  content: "•"; /* Ensures bullet rendering */
   font-size: 14px;
 }
 

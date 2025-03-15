@@ -21,8 +21,8 @@ const resumeTemplates = [
   },
   {
     id: 3,
-    name: "Template Teal",
-    image: "/assets/resume3.png",
+    name: "Professional",
+    image: "/assets/professional.png",
     type: "pro",
   },
   {
@@ -49,12 +49,12 @@ const resumeTemplates = [
     image: "/assets/resume6.png",
     type: "teal",
   },
-  {
-    id: 8,
-    name: "Simple Classic",
-    image: "/assets/resume3.png",
-    type: "simple-classic",
-  },
+  // {
+  //   id: 8,
+  //   name: "Simple Classic",
+  //   image: "/assets/resume3.png",
+  //   type: "simple-classic",
+  // },
   {
     id: 9,
     name: "Template Modern",

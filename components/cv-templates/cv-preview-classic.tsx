@@ -292,9 +292,12 @@ export default function CVPreviewClassic({
                     ? interests
                     : placeholderData.interests
                   ).map((interest, index) => (
-                    <li key={index}>
-                      <span className="cv-bullet">•</span> {interest.name}
-                    </li>
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-gray-700 rounded-full" />
+                      <span className="text-sm text-gray-900">
+                        {interest.name}
+                      </span>
+                    </div>
                   ))}
                 </ul>
               </div>
