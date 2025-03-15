@@ -371,9 +371,25 @@ export default function CoverLetterBuilder() {
   );
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
 
+  // Throttled input handler for text fields
+  const throttledInputRef = useRef<{
+    timeout: NodeJS.Timeout | null;
+    value: string;
+    section: keyof CoverLetterData | "root";
+    field: string;
+  }>({
+    timeout: null,
+    value: "",
+    section: "root",
+    field: "",
+  });
+
   useEffect(() => {
     if (coverId) {
       loadCoverLetter();
+    } else {
+      // Create a new Cover Letter immediately when the page loads without an ID
+      createNewCoverLetter();
     }
   }, [coverId]);
 
@@ -465,8 +481,12 @@ export default function CoverLetterBuilder() {
 
       console.log("Saving cover letter with section pages:", sectionPages);
 
+      // Get the current Cover Letter ID from the URL, which might have been updated
+      const currentCoverId =
+        new URLSearchParams(window.location.search).get("id") || coverId;
+
       const payload = {
-        coverId,
+        coverId: currentCoverId,
         title: coverLetterData.personalInfo?.firstName
           ? `${coverLetterData.personalInfo.firstName}'s Cover Letter`
           : "Untitled Cover Letter",
@@ -497,7 +517,7 @@ export default function CoverLetterBuilder() {
       if (data.success) {
         console.log("Cover letter saved successfully:", data.coverLetter);
         setSaveStatus("saved");
-        if (!coverId && data.coverLetter._id) {
+        if (!currentCoverId && data.coverLetter._id) {
           window.history.replaceState(
             {},
             "",
@@ -522,8 +542,108 @@ export default function CoverLetterBuilder() {
     if (immediate) {
       saveCoverLetter();
     } else {
-      saveTimeoutRef.current = setTimeout(saveCoverLetter, 1000);
+      setSaveStatus("saving");
+      saveTimeoutRef.current = setTimeout(saveCoverLetter, 2000);
     }
+  };
+
+  // Batch update for multiple fields to reduce save frequency
+  const batchUpdateCoverLetterData = (updates: Record<string, any>) => {
+    setCoverLetterData((prev) => {
+      const newState = { ...prev } as typeof prev;
+
+      // Apply all updates at once
+      Object.entries(updates).forEach(([key, value]) => {
+        const [section, field] = key.split(".");
+
+        if (field) {
+          // Handle nested updates (e.g., "personalInfo.firstName")
+          if (
+            section === "personalInfo" ||
+            section === "recipient" ||
+            section === "dateAndSubject"
+          ) {
+            if (!newState[section as keyof typeof newState]) {
+              newState[section as keyof typeof newState] = {} as any;
+            }
+
+            // Type-safe update for known sections
+            const sectionObj = newState[
+              section as keyof typeof newState
+            ] as Record<string, any>;
+            sectionObj[field] = value;
+          }
+        } else if (key in newState) {
+          // Handle direct section updates for known keys
+          (newState as any)[key] = value;
+        }
+      });
+
+      return newState;
+    });
+
+    // Use standard debounce for batch updates
+    debouncedSave(false);
+  };
+
+  const handleThrottledInput = (
+    section: keyof CoverLetterData | "root",
+    field: string,
+    value: string
+  ) => {
+    // Clear any existing timeout
+    if (throttledInputRef.current.timeout) {
+      clearTimeout(throttledInputRef.current.timeout);
+    }
+
+    // Store the current value
+    throttledInputRef.current = {
+      timeout: null,
+      value,
+      section,
+      field,
+    };
+
+    // Update the UI immediately without saving
+    setCoverLetterData((prev) => {
+      if (section === "root") {
+        return {
+          ...prev,
+          [field]: value,
+        };
+      }
+
+      const newState = { ...prev };
+
+      if (section === "personalInfo") {
+        newState.personalInfo = {
+          ...newState.personalInfo,
+          [field]: value,
+        };
+      } else if (section === "recipient") {
+        newState.recipient = {
+          ...newState.recipient,
+          [field]: value,
+        };
+      } else if (section === "dateAndSubject") {
+        newState.dateAndSubject = {
+          ...newState.dateAndSubject,
+          [field]: value,
+        };
+      } else {
+        newState[section] = value;
+      }
+
+      return newState;
+    });
+
+    // Set a timeout to save after user stops typing
+    throttledInputRef.current.timeout = setTimeout(() => {
+      // Only save if the value is still the same
+      if (throttledInputRef.current.value === value) {
+        updateCoverLetterData(section, field, value);
+      }
+    }, 1000);
   };
 
   const updateCoverLetterData = (
@@ -563,7 +683,16 @@ export default function CoverLetterBuilder() {
       return newState;
     });
 
-    debouncedSave(section === "personalInfo");
+    // Only save immediately for completed personal info changes
+    // For all other changes, use the longer debounce
+    const shouldSaveImmediately =
+      section === "personalInfo" &&
+      field === "firstName" &&
+      typeof value === "string" &&
+      value.length > 0 &&
+      !!coverLetterData.personalInfo?.lastName;
+
+    debouncedSave(shouldSaveImmediately);
   };
 
   useEffect(() => {
@@ -696,7 +825,7 @@ export default function CoverLetterBuilder() {
           placeholder="[Entreprise]"
           value={coverLetterData.recipient.company}
           onChange={(e) =>
-            updateCoverLetterData("recipient", "company", e.target.value)
+            handleThrottledInput("recipient", "company", e.target.value)
           }
         />
       </div>
@@ -710,7 +839,7 @@ export default function CoverLetterBuilder() {
           placeholder="[Contact]"
           value={coverLetterData.recipient.name}
           onChange={(e) =>
-            updateCoverLetterData("recipient", "name", e.target.value)
+            handleThrottledInput("recipient", "name", e.target.value)
           }
         />
       </div>
@@ -725,7 +854,7 @@ export default function CoverLetterBuilder() {
           placeholder="[Adresse]"
           value={coverLetterData.recipient.address}
           onChange={(e) =>
-            updateCoverLetterData("recipient", "address", e.target.value)
+            handleThrottledInput("recipient", "address", e.target.value)
           }
         />
       </div>
@@ -740,7 +869,7 @@ export default function CoverLetterBuilder() {
             placeholder="[Code postal]"
             value={coverLetterData.recipient.postalCode}
             onChange={(e) =>
-              updateCoverLetterData("recipient", "postalCode", e.target.value)
+              handleThrottledInput("recipient", "postalCode", e.target.value)
             }
           />
         </div>
@@ -754,7 +883,7 @@ export default function CoverLetterBuilder() {
             placeholder="[Ville]"
             value={coverLetterData.recipient.city}
             onChange={(e) =>
-              updateCoverLetterData("recipient", "city", e.target.value)
+              handleThrottledInput("recipient", "city", e.target.value)
             }
           />
         </div>
@@ -775,11 +904,7 @@ export default function CoverLetterBuilder() {
             placeholder="[Ville]"
             value={coverLetterData.dateAndSubject.location}
             onChange={(e) =>
-              updateCoverLetterData(
-                "dateAndSubject",
-                "location",
-                e.target.value
-              )
+              handleThrottledInput("dateAndSubject", "location", e.target.value)
             }
           />
         </div>
@@ -802,7 +927,7 @@ export default function CoverLetterBuilder() {
         <RichTextEditor
           value={coverLetterData.dateAndSubject.subject}
           onChange={(value) =>
-            updateCoverLetterData("dateAndSubject", "subject", value)
+            handleThrottledInput("dateAndSubject", "subject", value)
           }
           placeholder="[Type de candidature] [Emploi recherché]"
         />
@@ -831,7 +956,7 @@ export default function CoverLetterBuilder() {
                   introductionOptions.find(
                     (option) => option.value === e.target.value
                   )?.template || "";
-                updateCoverLetterData("root", "introduction", template);
+                handleThrottledInput("root", "introduction", template);
               }}
             >
               {introductionOptions.map((option) => (
@@ -850,7 +975,7 @@ export default function CoverLetterBuilder() {
             key={selectedIntroOption}
             value={coverLetterData.introduction || currentTemplate}
             onChange={(value) =>
-              updateCoverLetterData("root", "introduction", value)
+              handleThrottledInput("root", "introduction", value)
             }
             placeholder="Personnalisez votre introduction..."
           />
@@ -902,7 +1027,7 @@ export default function CoverLetterBuilder() {
                   situationOptions.find(
                     (option) => option.value === e.target.value
                   )?.template || "";
-                updateCoverLetterData("root", "currentSituation", template);
+                handleThrottledInput("root", "currentSituation", template);
               }}
             >
               {situationOptions.map((option) => (
@@ -921,7 +1046,7 @@ export default function CoverLetterBuilder() {
             key={selectedSituationOption}
             value={coverLetterData.currentSituation || currentTemplate}
             onChange={(value) =>
-              updateCoverLetterData("root", "currentSituation", value)
+              handleThrottledInput("root", "currentSituation", value)
             }
             placeholder="Personnalisez votre situation actuelle..."
           />
@@ -1008,7 +1133,7 @@ export default function CoverLetterBuilder() {
                   motivationOptions.find(
                     (option) => option.value === e.target.value
                   )?.template || "";
-                updateCoverLetterData("root", "motivation", template);
+                handleThrottledInput("root", "motivation", template);
               }}
             >
               {motivationOptions.map((option) => (
@@ -1027,7 +1152,7 @@ export default function CoverLetterBuilder() {
             key={selectedMotivationOption}
             value={coverLetterData.motivation || currentTemplate}
             onChange={(value) =>
-              updateCoverLetterData("root", "motivation", value)
+              handleThrottledInput("root", "motivation", value)
             }
             placeholder="Personnalisez votre motivation..."
           />
@@ -1142,7 +1267,7 @@ export default function CoverLetterBuilder() {
                   conclusionOptions.find(
                     (option) => option.value === e.target.value
                   )?.template || "";
-                updateCoverLetterData("root", "conclusion", template);
+                handleThrottledInput("root", "conclusion", template);
               }}
             >
               {conclusionOptions.map((option) => (
@@ -1161,7 +1286,7 @@ export default function CoverLetterBuilder() {
             key={selectedConclusionOption}
             value={coverLetterData.conclusion || currentTemplate}
             onChange={(value) =>
-              updateCoverLetterData("root", "conclusion", value)
+              handleThrottledInput("root", "conclusion", value)
             }
             placeholder="Personnalisez votre conclusion..."
           />
@@ -1254,7 +1379,7 @@ export default function CoverLetterBuilder() {
     const date = e.target.value
       ? new Date(e.target.value).toLocaleDateString("fr-FR")
       : "";
-    updateCoverLetterData("dateAndSubject", "date", date);
+    handleThrottledInput("dateAndSubject", "date", date);
   };
 
   const handleAddNewSection = () => {
@@ -1318,6 +1443,50 @@ export default function CoverLetterBuilder() {
 
   const resetZoom = () => {
     setZoom(0.8);
+  };
+
+  // Function to create a new Cover Letter
+  const createNewCoverLetter = async () => {
+    try {
+      setSaveStatus("saving");
+
+      const response = await fetch("/api/cover-letter/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: "Untitled Cover Letter",
+          data: coverLetterData,
+          template,
+          sectionOrder,
+          accentColor,
+          fontFamily,
+          customSectionNames,
+          sectionPages,
+          customSections,
+          lastEdited: new Date().toISOString(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSaveStatus("saved");
+        // Update the URL with the new Cover Letter ID
+        window.history.replaceState(
+          {},
+          "",
+          `/builder/cover-letter?id=${data.coverLetter._id}`
+        );
+      } else {
+        setSaveStatus("error");
+        console.error("Error creating new Cover Letter:", data.error);
+      }
+    } catch (error) {
+      console.error("Error creating new Cover Letter:", error);
+      setSaveStatus("error");
+    }
   };
 
   return (
