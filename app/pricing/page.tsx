@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
 import Link from "next/link";
+import { useState } from "react";
 
 const features = [
   "Créez des CV en illimité",
@@ -14,12 +15,31 @@ const features = [
   "Suivez vos candidatures",
 ];
 
-const periods = [
-  { label: "Mensuel", value: "monthly", price: "14,99" },
-  { label: "Annuel", value: "yearly", price: "149,99" },
-];
+const pricingOptions = {
+  month: {
+    price: "14,99",
+    trial: "0,99",
+    period: "mois",
+  },
+  quarter: {
+    price: "39,99",
+    trial: "0,99",
+    period: "trimestre",
+  },
+  year: {
+    price: "149,99",
+    trial: "0,99",
+    period: "an",
+  },
+};
 
 export default function Pricing() {
+  const [selectedPeriod, setSelectedPeriod] = useState("month");
+
+  const handlePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPeriod(e.target.value);
+  };
+
   return (
     <main>
       <Header />
@@ -35,50 +55,18 @@ export default function Pricing() {
           <div className="flex flex-start items-center">
             <div className="mt-12 flex flex-col bg-white shadow-md mx-auto w-full max-w-sm rounded-md mb-12">
               {/* Period Selector */}
-              {/* <Select.Root defaultValue="monthly">
-                <Select.Trigger
-                  className="w-full bg-gray-50 text-gray-900 px-4 py-3 rounded-lg flex items-center justify-between mb-8 hover:bg-gray-100 transition-colors"
-                  aria-label="Sélectionnez une période"
-                >
-                  <Select.Value placeholder="Sélectionnez une période" />
-                  <Select.Icon>
-                    <ChevronDown className="h-4 w-4 opacity-50" />
-                  </Select.Icon>
-                </Select.Trigger>
-
-                <Select.Portal>
-                  <Select.Content className="overflow-hidden bg-white rounded-md shadow-lg">
-                    <Select.Viewport className="p-1">
-                      {periods.map((period) => (
-                        <Select.Item
-                          key={period.value}
-                          value={period.value}
-                          className={cn(
-                            "relative flex items-center px-8 py-2 rounded-md text-sm text-gray-900",
-                            "hover:bg-gray-100 cursor-default outline-none"
-                          )}
-                        >
-                          <Select.ItemText>{period.label}</Select.ItemText>
-                        </Select.Item>
-                      ))}
-                    </Select.Viewport>
-                  </Select.Content>
-                </Select.Portal>
-              </Select.Root> */}
               <div className="mt-2 px-4 w-full">
                 <div className="py-2">
                   <div className="relative">
                     <select
-                      data-value="month"
+                      data-value={selectedPeriod}
                       id="pricing-recurring-period-select"
                       className="w-full appearance-none outline-none border focus:border-brand-400 focus:bg-brand-50 rounded py-2 px-3 text-base text-base text-gray-400 border-transparent bg-gray-100"
                       required
+                      value={selectedPeriod}
+                      onChange={handlePeriodChange}
                     >
-                      <option
-                        value="month"
-                        className="bg-white text-gray-800"
-                        selected
-                      >
+                      <option value="month" className="bg-white text-gray-800">
                         Mensuel
                       </option>
                       <option
@@ -118,9 +106,21 @@ export default function Pricing() {
                         id="pricing-recurring-fee"
                         className="text-4xl leading-normal sm:text-5xl font-medium text-gray-900"
                       >
-                        14,99&nbsp;US$
+                        {
+                          pricingOptions[
+                            selectedPeriod as keyof typeof pricingOptions
+                          ].price
+                        }
+                        &nbsp;US$
                       </span>{" "}
-                      <span id="pricing-per-period">/ mois</span>
+                      <span id="pricing-per-period">
+                        /{" "}
+                        {
+                          pricingOptions[
+                            selectedPeriod as keyof typeof pricingOptions
+                          ].period
+                        }
+                      </span>
                     </span>
                   </div>
                   <p className="text-gray-500">(renouvellement automatique)</p>
@@ -134,7 +134,14 @@ export default function Pricing() {
                     >
                       <div className="   ">
                         Essayez 14 jours pour{" "}
-                        <span id="pricing-trial-fee">0,99&nbsp;US$</span>
+                        <span id="pricing-trial-fee">
+                          {
+                            pricingOptions[
+                              selectedPeriod as keyof typeof pricingOptions
+                            ].trial
+                          }
+                          &nbsp;US$
+                        </span>
                       </div>
                     </Link>
                   </div>
@@ -142,74 +149,28 @@ export default function Pricing() {
               </div>
 
               {/* Features List */}
-              <div className="w-full py-4 border-t border-gray-200 flex justify-center text-sm text-gray-700 px-6 relative">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-4 h-4 absolute start-5 top-5 text-gray-300"
+              {features.map((feature, index) => (
+                <div
+                  key={index}
+                  className="w-full py-4 border-t border-gray-200 flex justify-center text-sm text-gray-700 px-6 relative"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 13l4 4L19 7"
-                  ></path>
-                </svg>
-                Créez des CV en illimité
-              </div>
-              <div className="w-full py-4 border-t border-gray-200 flex justify-center text-sm text-gray-700 px-6 relative">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-4 h-4 absolute start-5 top-5 text-gray-300"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 13l4 4L19 7"
-                  ></path>
-                </svg>
-                Générez des lettres de motivation
-              </div>
-              <div className="w-full py-4 border-t border-gray-200 flex justify-center text-sm text-gray-700 px-6 relative">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-4 h-4 absolute start-5 top-5 text-gray-300"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 13l4 4L19 7"
-                  ></path>
-                </svg>
-                Alertes pour les offres d’emplois
-              </div>
-              <div className="w-full py-4 border-t border-gray-200 flex justify-center text-sm text-gray-700 px-6 relative">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-4 h-4 absolute start-5 top-5 text-gray-300"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 13l4 4L19 7"
-                  ></path>
-                </svg>
-                Suivez vos candidatures
-              </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="w-4 h-4 absolute start-5 top-5 text-gray-300"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 13l4 4L19 7"
+                    ></path>
+                  </svg>
+                  {feature}
+                </div>
+              ))}
             </div>
           </div>
         </div>

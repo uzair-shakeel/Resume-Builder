@@ -57,25 +57,25 @@ const templates = [
     id: "classic",
     title: "Classic",
     description:
-      "Un design classique et élégant pour un CV professionnel et intemporel.",
-    image: "/assets/resume2.jpg",
-    color: "slate",
+      "Un modèle de CV intemporel qui mise sur une présentation claire et élégante.",
+    image: "/assets/classic.jpg",
+    color: "#2c3e50",
   },
   {
     id: "hr",
     title: "HR",
     description:
-      "Un modèle de CV conçu pour les professionnels des ressources humaines.",
-    image: "/assets/hr-resume.jpg",
-    color: "purple",
+      "Un modèle de CV optimisé pour les professionnels des ressources humaines.",
+    image: "/assets/hr.jpg",
+    color: "#9b59b6",
   },
   {
     id: "teal",
     title: "Teal",
     description:
-      "Un design moderne avec des accents de couleur teal pour un CV frais et dynamique.",
-    image: "/assets/teal-resume.jpg",
-    color: "teal",
+      "Un modèle de CV frais et moderne avec une touche de couleur distinctive.",
+    image: "/assets/teal.jpg",
+    color: "#2BCBBA",
   },
 ];
 

@@ -94,7 +94,7 @@ const templateOptions = [
   {
     name: "Classic",
     value: "classic",
-    image: "/assets/resume2.jpg",
+    image: "/assets/classic.jpg",
     defaultColor: "#2c3e50",
   },
   {
@@ -112,7 +112,7 @@ const templateOptions = [
   {
     name: "HR",
     value: "hr",
-    image: "/assets/hr-resume.jpg",
+    image: "/assets/hr.jpg",
     defaultColor: "#9b59b6",
   },
   {
@@ -130,7 +130,7 @@ const templateOptions = [
   {
     name: "Teal",
     value: "teal",
-    image: "/assets/teal-resume.jpg",
+    image: "/assets/teal.jpg",
     defaultColor: "#2BCBBA",
   },
   // {
