@@ -15,7 +15,7 @@ const footerLinks = {
     links: [
       { label: "Prix", href: "/pricing" },
       { label: "Modèles", href: "/modeles" },
-      { label: "Avis", href: "/avis" },
+      { label: "Avis", href: "https://www.trustpilot.com/review/cv.fr" },
     ],
   },
   service: {
