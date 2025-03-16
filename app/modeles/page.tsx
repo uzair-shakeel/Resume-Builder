@@ -50,8 +50,32 @@ const templates = [
     title: "Chrono",
     description:
       "Un design moderne empreint de dynamisme centré sur les étapes de votre carrière.",
-    image: "/assets/resume6.png",
+    image: "/assets/modern-cv.svg",
     color: "purple",
+  },
+  {
+    id: "classic",
+    title: "Classic",
+    description:
+      "Un modèle de CV intemporel qui mise sur une présentation claire et élégante.",
+    image: "/assets/classic.jpg",
+    color: "#2c3e50",
+  },
+  {
+    id: "hr",
+    title: "HR",
+    description:
+      "Un modèle de CV optimisé pour les professionnels des ressources humaines.",
+    image: "/assets/hr.jpg",
+    color: "#9b59b6",
+  },
+  {
+    id: "teal",
+    title: "Teal",
+    description:
+      "Un modèle de CV frais et moderne avec une touche de couleur distinctive.",
+    image: "/assets/teal.jpg",
+    color: "#2BCBBA",
   },
 ];
 
