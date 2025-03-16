@@ -423,6 +423,55 @@ export default function Builder() {
   const [customSectionNames, setCustomSectionNames] = useState<
     Record<string, string>
   >({});
+  const [scale, setScale] = useState<number>(1);
+  const [isZoomed, setIsZoomed] = useState<boolean>(false);
+  const [defaultScale, setDefaultScale] = useState<number>(1);
+  const [zoomFactor, setZoomFactor] = useState<number>(1.5);
+
+  useEffect(() => {
+    const getScale = (width: number): number => {
+      if (width >= 1500) {
+        return (0.8 + width) / 2800;
+      } else if (width >= 1280) {
+        return (0.6 + width) / 2500;
+      } else if (width >= 1024) {
+        return (0.6 + width) / 2400;
+      } else if (width >= 840) {
+        return (0.9 + width) / 2300;
+      } else if (width >= 768) {
+        return (0.9 + width) / 2500;
+      } else if (width >= 500) {
+        return (1 + width) / 2300;
+      } else if (width >= 350) {
+        return (1 + width) / 2050;
+      } else {
+        return (1 + width) / 1250;
+      }
+    };
+
+    const handleResize = () => {
+      const newScale = getScale(window.innerWidth);
+      setScale(newScale);
+      setDefaultScale(newScale);
+
+      // Calculate appropriate zoom factor based on screen width
+      if (window.innerWidth >= 1500) {
+        setZoomFactor(1.3);
+      } else if (window.innerWidth >= 1024) {
+        setZoomFactor(1.4);
+      } else if (window.innerWidth >= 768) {
+        setZoomFactor(1.5);
+      } else {
+        setZoomFactor(1.25);
+      }
+    };
+
+    // Set scale on mount
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Replace the displayData with just cvData
   const displayData = cvData;
@@ -1759,18 +1808,34 @@ export default function Builder() {
           )}
 
           {/* Scrollable preview container */}
-          <div className="flex-1 overflow-y-auto flex justify-center">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden flex justify-center">
             <div
               ref={previewRef}
-              className="my-8 transform-gpu transition-transform duration-200 w-full"
+              className="my-8 transform-gpu transition-transform duration-200 w-[210mm]"
               style={
                 {
-                  transform: `scale(${zoomLevel / 100})`,
+                  transform: `scale(${scale})`,
                   transformOrigin: "top center",
                   fontFamily: fontFamily,
                   "--accent-color": accentColor,
+                  cursor: isZoomed ? "zoom-out" : "zoom-in",
                 } as React.CSSProperties
               }
+              onClick={() => {
+                if (isZoomed) {
+                  setScale(defaultScale);
+                  setIsZoomed(false);
+                } else {
+                  setScale(scale * zoomFactor);
+                  setIsZoomed(true);
+                }
+              }}
+              onMouseEnter={() => {
+                document.body.style.cursor = isZoomed ? "zoom-out" : "zoom-in";
+              }}
+              onMouseLeave={() => {
+                document.body.style.cursor = "default";
+              }}
             >
               {renderTemplate()}
             </div>
