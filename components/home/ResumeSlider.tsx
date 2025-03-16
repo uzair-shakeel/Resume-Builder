@@ -103,7 +103,7 @@ export default function ResumeSlider() {
   }, [emblaApi]);
 
   const handleTemplateSelect = (template: (typeof resumeTemplates)[0]) => {
-    router.push(`/builder?template=${template.type}`);
+    router.push(`/builder?template=${template.value}`);
   };
 
   return (

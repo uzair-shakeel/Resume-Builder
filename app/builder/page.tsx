@@ -714,9 +714,16 @@ export default function Builder() {
       | "simple-classic"
       | "circulaire"
       | "student";
+
+    console.log(`Template param from URL: ${templateParam}`);
+
     if (templateParam) {
       setTemplate(templateParam);
       const index = templateOptions.findIndex((t) => t.value === templateParam);
+      console.log(
+        `Found template index: ${index}, value: ${templateOptions[index]?.value}`
+      );
+
       if (index !== -1) {
         setActiveTemplateIndex(index);
         // Set the default color for the selected template if no custom color is set
@@ -897,6 +904,8 @@ export default function Builder() {
       const selectedTemplateValue = templateOptions[newIndex].value as any;
       setTemplate(selectedTemplateValue);
 
+      console.log(`Selected previous template: ${selectedTemplateValue}`);
+
       // Update the URL with the selected template
       const currentUrl = new URL(window.location.href);
       currentUrl.searchParams.set("template", selectedTemplateValue);
@@ -919,6 +928,8 @@ export default function Builder() {
       const selectedTemplateValue = templateOptions[newIndex].value as any;
       setTemplate(selectedTemplateValue);
 
+      console.log(`Selected next template: ${selectedTemplateValue}`);
+
       // Update the URL with the selected template
       const currentUrl = new URL(window.location.href);
       currentUrl.searchParams.set("template", selectedTemplateValue);
@@ -940,6 +951,8 @@ export default function Builder() {
     const selectedTemplateValue = templateOptions[index].value as any;
     setTemplate(selectedTemplateValue);
     setShowTemplateCarousel(false);
+
+    console.log(`Selected template: ${selectedTemplateValue}`);
 
     // Update the URL with the selected template
     const currentUrl = new URL(window.location.href);
@@ -1323,7 +1336,7 @@ export default function Builder() {
     // Save the CV before navigating
     saveCV()
       .then(() => {
-        // Use window.location for a hard navigation if router.push doesn't work
+        // Use window.location.href for a hard navigation
         window.location.href = "/dashboard";
       })
       .catch((error) => {
