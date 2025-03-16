@@ -23,15 +23,19 @@ export default function FAQ({
   title = "Foire aux questions",
 }: FAQProps) {
   return (
-    <section className="bg-white py-20">
-      <div className="max-w-[864px] mx-auto px-[20px]">
-        <h2
-          className={`font-medium text-3xl leading-normal md:text-5xl text-gray-900 text-center ${
-            page ? "pt-20 pb-32 mb-12" : "mb-20"
-          }`}
-        >
+    <section className={`bg-white ${page ? "" : "pb-20"}`}>
+      <div
+        className={`${
+          page
+            ? "pt-40 pb-32 bg-background w-full"
+            : "max-w-[864px] mx-auto px-[20px] mb-12 pt-20"
+        }`}
+      >
+        <h1 className="text-3xl md:text-5xl font-medium font-header leading-tight md:leading-tight text-gray-900 text-center mb-12">
           {title}
-        </h2>
+        </h1>
+      </div>
+      <div className="max-w-[864px] mx-auto px-[20px] pt-20">
         <Accordion type="single" collapsible className="w-full">
           {faqs.map((faq, index) => (
             <AccordionItem

@@ -42,7 +42,10 @@ export default function Sidebar({ user }: SidebarProps) {
         {/* Header */}
         <div className="p-3 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center text-gray-900 h-8 ps-2">
+          <Link
+            href="/dashboard"
+            className="flex items-center text-gray-900 h-8 ps-2"
+          >
             <Image
               src="/assets/logo-white-text.svg"
               alt="logo"
