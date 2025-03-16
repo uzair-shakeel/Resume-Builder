@@ -717,6 +717,14 @@ export default function Builder() {
         if (!localStorage.getItem(`cv-color-${templateParam}`)) {
           setAccentColor(templateOptions[index].defaultColor);
         }
+
+        // Save the template change to the database immediately
+        if (cvId) {
+          // Small delay to ensure state updates have completed
+          setTimeout(() => {
+            saveCV();
+          }, 500);
+        }
       }
     }
   }, [searchParams]);
@@ -880,7 +888,21 @@ export default function Builder() {
   const prevTemplate = () => {
     setActiveTemplateIndex((prev) => {
       const newIndex = prev === 0 ? templateOptions.length - 1 : prev - 1;
-      setTemplate(templateOptions[newIndex].value as any);
+      const selectedTemplateValue = templateOptions[newIndex].value as any;
+      setTemplate(selectedTemplateValue);
+
+      // Update the URL with the selected template
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("template", selectedTemplateValue);
+      window.history.replaceState({}, "", currentUrl.toString());
+
+      // Save the template change to the database immediately
+      if (cvId) {
+        setTimeout(() => {
+          saveCV();
+        }, 500);
+      }
+
       return newIndex;
     });
   };
@@ -888,15 +910,43 @@ export default function Builder() {
   const nextTemplate = () => {
     setActiveTemplateIndex((prev) => {
       const newIndex = prev === templateOptions.length - 1 ? 0 : prev + 1;
-      setTemplate(templateOptions[newIndex].value as any);
+      const selectedTemplateValue = templateOptions[newIndex].value as any;
+      setTemplate(selectedTemplateValue);
+
+      // Update the URL with the selected template
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("template", selectedTemplateValue);
+      window.history.replaceState({}, "", currentUrl.toString());
+
+      // Save the template change to the database immediately
+      if (cvId) {
+        setTimeout(() => {
+          saveCV();
+        }, 500);
+      }
+
       return newIndex;
     });
   };
 
   const selectTemplate = (index: number) => {
     setActiveTemplateIndex(index);
-    setTemplate(templateOptions[index].value as any);
+    const selectedTemplateValue = templateOptions[index].value as any;
+    setTemplate(selectedTemplateValue);
     setShowTemplateCarousel(false);
+
+    // Update the URL with the selected template
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set("template", selectedTemplateValue);
+    window.history.replaceState({}, "", currentUrl.toString());
+
+    // Save the template change to the database immediately
+    if (cvId) {
+      // Only trigger save if we have a CV ID (meaning the CV exists)
+      setTimeout(() => {
+        saveCV();
+      }, 500); // Small delay to ensure state updates have completed
+    }
   };
 
   // Function to handle margin changes

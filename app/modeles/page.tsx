@@ -15,43 +15,67 @@ const templates = [
     color: "teal",
   },
   {
-    id: "professionnel",
+    id: "pro",
     title: "Professionnel",
     description: "Modèle de CV évocateur de tradition et de précision.",
     image: "/assets/professional.png",
     color: "navy",
   },
   {
-    id: "vertical",
-    title: "Vertical",
+    id: "student",
+    title: "Student",
     description:
       "Combinaison de contraste et structure pour un modèle de CV qui attire l'attention.",
     image: "/assets/student-resume.jpg",
     color: "purple",
   },
   {
-    id: "horizontal",
-    title: "Horizontal",
+    id: "minimal",
+    title: "Minimal",
     description:
       "La simplicité et la mise en valeur du contenu caractérisent ce modèle de CV.",
     image: "/assets/minimal-resume.jpg",
     color: "teal",
   },
   {
-    id: "moderne",
-    title: "Moderne",
+    id: "sherlock",
+    title: "Sherlock",
     description:
-      "Un modèle de CV accrocheur pour souligner votre candidature au moyen de la couleur.",
+      "Les blocs de couleur mêlent graphisme franc et sobriété dans ce modèle de CV créatif.",
     image: "/assets/resume3.png",
     color: "navy",
   },
   {
-    id: "chrono",
-    title: "Chrono",
+    id: "modern",
+    title: "Moderne",
     description:
-      "Un design moderne empreint de dynamisme centré sur les étapes de votre carrière.",
-    image: "/assets/resume6.png",
+      "Un modèle de CV accrocheur pour souligner votre candidature au moyen de la couleur.",
+    image: "/assets/modern-cv.svg",
+    color: "brown",
+  },
+  {
+    id: "classic",
+    title: "Classic",
+    description:
+      "Un design classique et élégant pour un CV professionnel et intemporel.",
+    image: "/assets/resume2.jpg",
+    color: "slate",
+  },
+  {
+    id: "hr",
+    title: "HR",
+    description:
+      "Un modèle de CV conçu pour les professionnels des ressources humaines.",
+    image: "/assets/hr-resume.jpg",
     color: "purple",
+  },
+  {
+    id: "teal",
+    title: "Teal",
+    description:
+      "Un design moderne avec des accents de couleur teal pour un CV frais et dynamique.",
+    image: "/assets/teal-resume.jpg",
+    color: "teal",
   },
 ];
 
@@ -80,7 +104,7 @@ export default function CVTemplates() {
               <p>
                 Tirez avantage de nos modèles de CV pour vous démarquer des
                 autres candidats. Design contemporain, graphisme marqué ou
-                encore choix du minimalisme, de nombreuses options s’offrent à
+                encore choix du minimalisme, de nombreuses options s'offrent à
                 vous pour créer un CV de qualité qui attirera l'attention des
                 recruteurs, tout en soulignant vos compétences.
               </p>
@@ -90,9 +114,9 @@ export default function CVTemplates() {
           {/* templates Section */}
           <div className="flex flex-wrap justify-center md:justify-between -mx-5 py-8">
             {templates.map((template) => (
-              <a
+              <Link
                 key={template.id}
-                href="#"
+                href={`/builder?template=${template.id}`}
                 className="block w-full md:w-1/2 lg:w-1/3 focus-visible:ring-4 ring-brand-200 rounded group px-5 mb-12"
               >
                 <div className="relative">
@@ -105,12 +129,12 @@ export default function CVTemplates() {
                     />
                   </div>
                   <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 py-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <button
+                    <div
                       className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 can-hover:active:bg-brand-300 text-white border-transparent can-hover:hover:bg-brand-400 font-medium py-1 ps-3 pe-3 text-base"
                       style={{ outline: "none" }}
                     >
                       <div className="truncate h-6">Utiliser ce modèle</div>
-                    </button>
+                    </div>
                   </div>
                 </div>
                 <p className="font-bold mt-4 text-gray-800 group-hover:text-brand-500 text-base">
@@ -119,7 +143,7 @@ export default function CVTemplates() {
                 <p className="w-full text-sm text-gray-500 leading-7 mt-3">
                   {template.description}
                 </p>
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -137,10 +161,10 @@ export default function CVTemplates() {
                 pour le poste, tout en proposant une lecture agréable.
               </p>
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
-                Choisir le bon modèle de CV, c’est vous donner l’opportunité de
-                susciter l’intérêt pour votre candidature grâce à un design
-                original. En vous démarquant, vous augmentez vos chances d’être
-                présélectionné, et d’être considéré pour un entretien puis pour
+                Choisir le bon modèle de CV, c'est vous donner l'opportunité de
+                susciter l'intérêt pour votre candidature grâce à un design
+                original. En vous démarquant, vous augmentez vos chances d'être
+                présélectionné, et d'être considéré pour un entretien puis pour
                 un emploi.
               </p>
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
@@ -150,14 +174,14 @@ export default function CVTemplates() {
                 </a>
                 , ce qui facilite le processus et vous fait gagner du temps.
                 Autre avantage, un modèle pré-conçu vous permet également
-                d’adapter votre CV en quelques clics seulement à toute offre
-                d’emploi qui pourrait vous intéresser.
+                d'adapter votre CV en quelques clics seulement à toute offre
+                d'emploi qui pourrait vous intéresser.
               </p>
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
                 Grâce à notre large sélection de couleurs et de styles
                 différents, vous pouvez concevoir un CV correspondant aussi bien
-                au secteur d’activité dans lequel vous souhaitez travailler,
-                qu’au poste que vous visez. Nos{" "}
+                au secteur d'activité dans lequel vous souhaitez travailler,
+                qu'au poste que vous visez. Nos{" "}
                 <a
                   href="/exemples-cv"
                   className="text-brand-500 font-medium underline"
@@ -175,13 +199,13 @@ export default function CVTemplates() {
               </h2>
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
                 Bien que le contenu de chaque CV varie selon les profils, le
-                format et la structure de ce document s’appliquent à tous les
+                format et la structure de ce document s'appliquent à tous les
                 candidats. On peut distinguer deux grandes catégories : le CV
                 chronologique inversé et le CV fonctionnel.
               </p>
               <h3
                 className="text-xl font-medium leading-tight text-gray-900 mb-3 mt-6"
-                id="cv-chronologique-invers%C3%A9"
+                id="cv-chronologique-inversé"
               >
                 CV chronologique inversé
               </h3>
@@ -200,7 +224,7 @@ export default function CVTemplates() {
               </p>
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
                 Dans celles-ci, les entrées sont énumérées de la plus récente à
-                la plus ancienne. C’est un CV qui convient aux candidats ayant
+                la plus ancienne. C'est un CV qui convient aux candidats ayant
                 un parcours classique.&nbsp;&nbsp;
               </p>
               <h3
@@ -212,15 +236,15 @@ export default function CVTemplates() {
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
                 Ce type de CV convient aux candidats qui présentent un parcours
                 moins classique. Cela peut être dû à un changement de carrière,
-                ou à des périodes d’inactivité. Quoi qu’il en soit, dans ces cas
+                ou à des périodes d'inactivité. Quoi qu'il en soit, dans ces cas
                 présenter la trajectoire de façon chronologique ne met pas
-                forcément en valeur l’expérience ou les qualifications du
+                forcément en valeur l'expérience ou les qualifications du
                 candidat.&nbsp;
               </p>
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
                 Un CV fonctionnel repose sur les compétences. En ce sens,
                 celles-ci sont placées juste en dessous du profil personnel ou
-                de l’en-tête du CV, avant l’expérience professionnelle et la
+                de l'en-tête du CV, avant l'expérience professionnelle et la
                 formation. En utilisant un{" "}
                 <a
                   rel="nofollow"
