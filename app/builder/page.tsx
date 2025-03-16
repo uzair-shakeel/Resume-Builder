@@ -431,7 +431,7 @@ export default function Builder() {
   useEffect(() => {
     const getScale = (width: number): number => {
       if (width >= 1500) {
-        return (0.8 + width) / 2800;
+        return (0.8 + width) / 2500;
       } else if (width >= 1280) {
         return (0.6 + width) / 2500;
       } else if (width >= 1024) {
