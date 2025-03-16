@@ -33,7 +33,12 @@ export default async function DashboardLayout({
         <main className="p-8 max-w-[1200px] mx-auto">{children}</main>
       </div>
 
-      <Footer />
+      <Footer
+        user={{
+          name: session.user.name || "",
+          email: session.user.email || "",
+        }}
+      />
 
       {/* Floating Action Button - Mobile only */}
       <FloatingButton />

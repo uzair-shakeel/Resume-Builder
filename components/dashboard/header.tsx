@@ -1,4 +1,3 @@
-import { HelpCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -20,9 +19,6 @@ const header = () => {
           />
         </Link>
       </div>
-      <button className="p-2 hover:bg-gray-100 rounded-full">
-        <HelpCircle className="w-6 h-6" />
-      </button>
     </header>
   );
 };
