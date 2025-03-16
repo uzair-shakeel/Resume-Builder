@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState, useRef, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import PersonalInfo from "@/components/sections/personal-info";
 import Profile from "@/components/sections/profile";
 import Education from "@/components/sections/education";
@@ -35,6 +35,7 @@ import {
   Cloud,
   CloudOff,
   RefreshCw,
+  MoveLeft,
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -50,6 +51,7 @@ import CVPreviewCirculaire from "@/components/cv-templates/cv-preview-circulaire
 import Image from "next/image";
 import References from "@/components/sections/references";
 import Socials from "@/components/sections/socials";
+import Link from "next/link";
 
 // Font families
 const fontFamilies = [
@@ -298,6 +300,7 @@ function CustomSection({
 
 export default function Builder() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const cvId = searchParams.get("id");
   const initialTemplate =
     (searchParams.get("template") as
@@ -624,12 +627,15 @@ export default function Builder() {
         if (!currentCvId && data.cv._id) {
           window.history.replaceState({}, "", `/builder?id=${data.cv._id}`);
         }
+        return true; // Return true to indicate success
       } else {
         setSaveStatus("error");
+        return false; // Return false to indicate failure
       }
     } catch (error) {
       console.error("Error saving CV:", error);
       setSaveStatus("error");
+      return false; // Return false to indicate failure
     }
   };
 
@@ -1310,6 +1316,23 @@ export default function Builder() {
     }, 1000);
   };
 
+  const handleBackToDashboard = () => {
+    // Set saving status immediately
+    setSaveStatus("saving");
+
+    // Save the CV before navigating
+    saveCV()
+      .then(() => {
+        // Use window.location for a hard navigation if router.push doesn't work
+        window.location.href = "/dashboard";
+      })
+      .catch((error) => {
+        console.error("Error saving before navigation:", error);
+        // Navigate anyway even if save fails
+        window.location.href = "/dashboard";
+      });
+  };
+
   return (
     <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
       {/* Loading Overlay */}
@@ -1332,6 +1355,12 @@ export default function Builder() {
         <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
+              <button
+                onClick={handleBackToDashboard}
+                className="min-w-[30px] min-h-[30px] flex items-center justify-center rounded-[5px] bg-gray-100 hover:bg-gray-200"
+              >
+                <MoveLeft size={18} />
+              </button>
               <h1 className="text-xl font-bold">CV Builder</h1>
               {/* Save status indicator */}
               <div className="text-gray-500">
