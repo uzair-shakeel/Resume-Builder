@@ -78,7 +78,7 @@ export default function Sidebar({ user }: SidebarProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="mt-6 px-3 space-y-1">
+          <nav className="mt-6 px-3 space-y-3">
             <Link
               href="/dashboard"
               className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
