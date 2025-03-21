@@ -413,69 +413,27 @@ export default function CVPreviewHR({
 
   return (
     <div className="cv-container">
-      <style jsx global>{`
-        @media print {
-          @page {
-            size: A4;
-            margin: 0;
-            padding: 0;
-          }
-          
-          body {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-          
-          .cv-page {
-            padding: 20mm !important;
-            box-sizing: border-box !important;
-            width: 210mm !important;
-            min-height: 297mm !important;
-            margin: 0 !important;
-            break-after: page !important;
-            page-break-after: always !important;
-          }
-        }
-        
-        /* Non-print styles */
-        .cv-page {
-          width: 210mm;
-          min-height: 297mm;
-          padding: 20mm;
-          box-sizing: border-box;
-          margin: 0 auto;
-          background: white;
-        }
-        
-        .cv-page + .cv-page {
-          margin-top: 2rem;
-        }
-        
-        @media screen {
-          .cv-container {
-            padding: 2rem 0;
-          }
-        }
-      `}</style>
-
       {/* Page 1 */}
       <div className="cv-page">
-        {page1Sections.map((section) => (
-          <div key={section}>{renderSection(section)}</div>
-        ))}
+        <div className="px-[50px] py-[30px]">
+          {page1Sections.map((section) => (
+            <div key={section}>{renderSection(section)}</div>
+          ))}
+        </div>
       </div>
 
       {/* Page 2 (if needed) */}
       {hasPage2 && (
         <div className="cv-page">
-          {/* Always include personal info at the top of page 2 */}
-          {renderPersonalInfo()}
+          <div className="px-[50px] py-[30px]">
+            {/* Always include personal info at the top of page 2 */}
+            {renderPersonalInfo()}
 
-          {/* Render sections for page 2 */}
-          {page2Sections.map((section) => (
-            <div key={section}>{renderSection(section)}</div>
-          ))}
+            {/* Render sections for page 2 */}
+            {page2Sections.map((section) => (
+              <div key={section}>{renderSection(section)}</div>
+            ))}
+          </div>
         </div>
       )}
     </div>

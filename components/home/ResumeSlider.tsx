@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const resumeTemplates = [
   {
@@ -88,11 +88,32 @@ const resumeTemplates = [
 
 export default function ResumeSlider() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "center",
     containScroll: "trimSnaps",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingTemplate, setLoadingTemplate] = useState<number | null>(null);
+
+  // Current CV ID if editing an existing CV
+  const cvId = searchParams.get("id");
+
+  // Current template if one is selected
+  const currentTemplate = searchParams.get("template");
+
+  // Initialize the slider position based on URL template
+  useEffect(() => {
+    if (emblaApi && currentTemplate) {
+      const templateIndex = resumeTemplates.findIndex(
+        (t) => t.value === currentTemplate
+      );
+      if (templateIndex !== -1) {
+        emblaApi.scrollTo(templateIndex);
+      }
+    }
+  }, [emblaApi, currentTemplate]);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -103,7 +124,23 @@ export default function ResumeSlider() {
   }, [emblaApi]);
 
   const handleTemplateSelect = (template: (typeof resumeTemplates)[0]) => {
-    router.push(`/builder?template=${template.value}`);
+    if (isLoading) return; // Prevent multiple clicks
+
+    setIsLoading(true);
+    setLoadingTemplate(template.id);
+    console.log(`Selected template from slider: ${template.value}`);
+
+    // Force a hard navigation to ensure the template is loaded correctly
+    // Include the CV ID if present to maintain editing state
+    const url = cvId
+      ? `/builder?id=${cvId}&template=${template.value}`
+      : `/builder?template=${template.value}`;
+
+    // Log the navigation for debugging
+    console.log(`Navigating to: ${url}`);
+
+    // Force a hard navigation
+    window.location.href = url;
   };
 
   return (
@@ -114,6 +151,7 @@ export default function ResumeSlider() {
           className="flex justify-center items-center shadow-md rounded-full opacity-90 p-1.5 md:p-3 bg-gray-800 hover:bg-gray-900 active:bg-gray-700 absolute top-1/2 -translate-y-1/2  left-1 md:left-8 z-10"
           onClick={scrollPrev}
           aria-label="Previous slide"
+          disabled={isLoading}
         >
           <ChevronLeft className="w-6 h-6 text-white" />
         </button>
@@ -122,6 +160,7 @@ export default function ResumeSlider() {
           className="flex justify-center items-center shadow-md rounded-full opacity-90 p-1.5 md:p-3 bg-gray-800 hover:bg-gray-900 active:bg-gray-700 absolute top-1/2 -translate-y-1/2 right-1 md:right-8 z-10"
           onClick={scrollNext}
           aria-label="Next slide"
+          disabled={isLoading}
         >
           <ChevronRight className="w-6 h-6 text-white" />
         </button>
@@ -132,7 +171,11 @@ export default function ResumeSlider() {
             {resumeTemplates.map((template) => (
               <div
                 key={template.id}
-                className="relative flex-none w-[289.8px] h-[408.61px] md:w-[464px] md:h-[654.23px] rounded-md box-border group mr-5"
+                className={`relative flex-none w-[289.8px] h-[408.61px] md:w-[464px] md:h-[654.23px] rounded-md box-border group mr-5 ${
+                  currentTemplate === template.value
+                    ? "ring-4 ring-brand-500"
+                    : ""
+                }`}
               >
                 <Image
                   src={template.image || "/placeholder.svg"}
@@ -147,8 +190,16 @@ export default function ResumeSlider() {
                   <button
                     onClick={() => handleTemplateSelect(template)}
                     className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 active:bg-brand-300 text-white border-transparent hover:bg-brand-400 font-medium py-1 ps-3 pe-3 text-base"
+                    disabled={isLoading}
                   >
-                    Utiliser ce modèle
+                    {isLoading && loadingTemplate === template.id ? (
+                      <span className="flex items-center">
+                        <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                        Chargement...
+                      </span>
+                    ) : (
+                      "Utiliser ce modèle"
+                    )}
                   </button>
                 </div>
               </div>

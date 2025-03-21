@@ -81,7 +81,7 @@
 
 /* Page layout and margins */
 .cv-container {
-  width: 100%;
+  width: 210mm;
   display: flex;
   flex-direction: column;
   align-items: center;

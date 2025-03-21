@@ -294,9 +294,7 @@ export default function CVPreviewAlt({
               <div key={index}>
                 <div className="flex justify-between mb-1">
                   <span className="text-sm text-gray-900">{skill.name}</span>
-                  <span className="text-xs text-gray-700">
-                    {skill.level}/5
-                  </span>
+                  <span className="text-xs text-gray-700">{skill.level}/5</span>
                 </div>
                 <div className="w-full bg-purple-200 rounded-full h-1.5">
                   <div
@@ -357,7 +355,7 @@ export default function CVPreviewAlt({
     >
       {/* Page 1 */}
       <div className="cv-page">
-        <div className="cv-page-content flex">
+        <div className="flex">
           {/* Sidebar */}
           {renderSidebar()}
 

@@ -396,7 +396,7 @@ export default function CVPreviewCirculaire({
 
   const renderPage = (sections: string[]) => (
     <div className="cv-page bg-white shadow-lg">
-      <div className="cv-page-content flex h-full">
+      <div className="flex h-full">
         {/* Left sidebar */}
         <div className="w-1/3 relative bg-[#e6eaeb]  min-h-[297mm]">
           {/* Top teal curved section */}
@@ -499,25 +499,6 @@ export default function CVPreviewCirculaire({
       {hasPage2 && (
         <div className="mt-8 print:mt-0">{renderPage(page2Sections)}</div>
       )}
-
-      <style jsx>{`
-        .cv-page {
-          width: 210mm;
-          min-height: 297mm;
-          position: relative;
-          margin: 0 auto;
-          background: white;
-        }
-
-        .cv-page-content {
-          min-height: 297mm;
-        }
-        @media print {
-          .cv-page + .cv-page {
-            page-break-before: always;
-          }
-        }
-      `}</style>
     </div>
   );
 }

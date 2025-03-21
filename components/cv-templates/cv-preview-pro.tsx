@@ -301,20 +301,11 @@ export default function CVPreviewPro({
   };
 
   const renderPage = (sections: string[]) => (
-    <div 
-      className="cv-page bg-white"
-      style={{
-        width: "210mm",
-        minHeight: "297mm",
-        padding: "20mm",
-        boxSizing: "border-box",
-        margin: "0 auto",
-      }}
-    >
+    <div className="cv-page bg-white">
       {renderHeader()}
-      <div className="flex" style={{ marginTop: "2rem" }}>
-        <div 
-          style={{ 
+      <div className="flex">
+        <div
+          style={{
             width: "240px",
             backgroundColor: "#111827",
             padding: "1.5rem",
@@ -325,7 +316,7 @@ export default function CVPreviewPro({
           {sections.includes("languages") && renderLanguages()}
           {sections.includes("interests") && renderInterests()}
         </div>
-        <div style={{ paddingLeft: "2rem" }}>
+        <div className="pt-[2rem] pl-[2rem]">
           {sections.map(
             (section) =>
               ["profile", "education", "experience"].includes(section) &&
@@ -349,13 +340,11 @@ export default function CVPreviewPro({
           }
         }
       `}</style>
-      
+
       {renderPage(page1Sections)}
 
       {hasPage2 && (
-        <div className="mt-8 print:mt-0">
-          {renderPage(page2Sections)}
-        </div>
+        <div className="mt-8 print:mt-0">{renderPage(page2Sections)}</div>
       )}
     </div>
   );
