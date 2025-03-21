@@ -298,6 +298,22 @@ function CustomSection({
   );
 }
 
+// Add this helper function before the Builder component
+const getMobileScale = (windowWidth: number) => {
+  if (windowWidth < 600) {
+    const baseWidth = 600;
+    const containerWidth = windowWidth * 0.75; // Since preview takes up half the screen
+    const scale = Math.min(containerWidth / baseWidth, 1); // Don't scale up, only down
+    // md breakpoint
+    return scale; // For small devices
+  } else if (windowWidth < 1024) {
+    // sm breakpoint
+    return 0.75; // For extra small devices
+  } else {
+    return 0.8;
+  }
+};
+
 export default function Builder() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -1242,6 +1258,27 @@ export default function Builder() {
       );
     }
   }, [template, sectionOrder]);
+
+  // Add these state and effect after other state declarations
+  const [screenBasedScale, setScreenBasedScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      // Base width is 800px (typical CV width)
+      const baseWidth = 800;
+      const containerWidth = window.innerWidth * 0.5; // Since preview takes up half the screen
+      const scale = Math.min(containerWidth / baseWidth, 1); // Don't scale up, only down
+      setScreenBasedScale(scale);
+    };
+
+    // Initial calculation
+    updateScale();
+
+    // Update on resize
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
+
   // Add margin change handlers
   const handleRightMarginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleMarginChange("right", Math.max(0, parseInt(e.target.value) || 0));
@@ -1346,6 +1383,32 @@ export default function Builder() {
       });
   };
 
+  // Add this new state near other state declarations
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // Add this handler near other handlers
+  const handleDrawerClose = () => {
+    setIsDrawerOpen(false);
+  };
+
+  // Add this new state
+  const [mobileScale, setMobileScale] = useState(0.8);
+
+  // Add this effect to handle mobile scaling
+  useEffect(() => {
+    const handleResize = () => {
+      const scale = getMobileScale(window.innerWidth);
+      setMobileScale(scale);
+    };
+
+    // Initial calculation
+    handleResize();
+
+    // Update on resize
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
       {/* Loading Overlay */}
@@ -1365,9 +1428,9 @@ export default function Builder() {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Left Panel - Form */}
-        <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
+        <div className="w-full lg:w-1/2 flex flex-col border-r border-gray-200 bg-white">
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center lg:gap-4 gap-2">
               <button
                 onClick={handleBackToDashboard}
                 className="min-w-[30px] min-h-[30px] flex items-center justify-center rounded-[5px] bg-gray-100 hover:bg-gray-200"
@@ -1386,13 +1449,15 @@ export default function Builder() {
                 )}
               </div>
               {/* Link to Cover Letter Builder */}
-              <a
-                href="/builder/cover-letter"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
-              >
-                <FileText className="w-4 h-4" />
-                Lettre de motivation
-              </a>
+              <div className="lg:ps-0 ps-2 sm:block hidden">
+                <a
+                  href="/builder/cover-letter"
+                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
+                >
+                  <FileText className="w-4 h-4" />
+                  Lettre de motivation
+                </a>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -1418,7 +1483,7 @@ export default function Builder() {
               </div>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto lg:max-w-full max-w-[700px] mx-auto">
             <div className="p-4 space-y-4">
               {sectionOrder.map((section, index) => (
                 <div
@@ -1571,8 +1636,8 @@ export default function Builder() {
           </div>
         </div>
 
-        {/* Right Panel - Preview */}
-        <div className="w-1/2 bg-gray-50 flex flex-col">
+        {/* Modified Right Panel with Drawer functionality */}
+        <div className="w-1/2 bg-gray-50 hidden lg:flex flex-col">
           {/* Zoom and page controls */}
           <div className="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 p-2 flex justify-between items-center">
             <div className="flex items-center gap-2">
@@ -1599,266 +1664,17 @@ export default function Builder() {
                 <Maximize className="w-5 h-5 text-gray-700" />
               </button>
             </div>
-
-            {/* <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowPageBreakControls(!showPageBreakControls)}
-                className={`flex items-center gap-1 p-1 rounded-md ${
-                  showPageBreakControls
-                    ? "bg-blue-50 text-blue-700"
-                    : "hover:bg-gray-100 text-gray-700"
-                }`}
-                title="Page Layout Settings"
-              >
-                <Ruler className="w-5 h-5" />
-                <span className="text-xs font-medium">Page Layout</span>
-              </button>
-            </div> */}
           </div>
-
-          {/* Page break controls panel */}
-          {showPageBreakControls && (
-            <div className="bg-white border-b border-gray-200 p-3 shadow-sm">
-              <h3 className="font-medium text-gray-800 mb-2">
-                Page Layout Settings
-              </h3>
-
-              <div className="space-y-4">
-                {/* Margin controls */}
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    Page Margins (mm)
-                  </h4>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">Top</label>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            handleMarginChange(
-                              "top",
-                              Math.max(pageMargins.top - 5, 0)
-                            )
-                          }
-                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowDown className="w-3 h-3" />
-                        </button>
-                        <input
-                          type="number"
-                          value={pageMargins.top}
-                          onChange={handleTopMarginChange}
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
-                        />
-                        <button
-                          onClick={() =>
-                            handleMarginChange("top", pageMargins.top + 5)
-                          }
-                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowUp className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">Right</label>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            handleMarginChange(
-                              "right",
-                              Math.max(pageMargins.right - 5, 0)
-                            )
-                          }
-                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowDown className="w-3 h-3" />
-                        </button>
-                        <input
-                          type="number"
-                          value={pageMargins.right}
-                          onChange={handleRightMarginChange}
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
-                        />
-                        <button
-                          onClick={() =>
-                            handleMarginChange("right", pageMargins.right + 5)
-                          }
-                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowUp className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">Bottom</label>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            handleMarginChange(
-                              "bottom",
-                              Math.max(pageMargins.bottom - 5, 0)
-                            )
-                          }
-                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowDown className="w-3 h-3" />
-                        </button>
-                        <input
-                          type="number"
-                          value={pageMargins.bottom}
-                          onChange={handleBottomMarginChange}
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
-                        />
-                        <button
-                          onClick={() =>
-                            handleMarginChange("bottom", pageMargins.bottom + 5)
-                          }
-                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowUp className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">Left</label>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            handleMarginChange(
-                              "left",
-                              Math.max(pageMargins.left - 5, 0)
-                            )
-                          }
-                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowDown className="w-3 h-3" />
-                        </button>
-                        <input
-                          type="number"
-                          value={pageMargins.left}
-                          onChange={handleLeftMarginChange}
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
-                        />
-                        <button
-                          onClick={() =>
-                            handleMarginChange("left", pageMargins.left + 5)
-                          }
-                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowUp className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Page break controls */}
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    Page Break Rules
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="keepHeadings"
-                        checked={pageBreakSettings.keepHeadingsWithContent}
-                        onChange={(e) =>
-                          handlePageBreakSettingChange(
-                            "keepHeadingsWithContent",
-                            e.target.checked
-                          )
-                        }
-                        className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                      />
-                      <label
-                        htmlFor="keepHeadings"
-                        className="text-xs text-gray-600"
-                      >
-                        Keep headings with content
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="avoidOrphans"
-                        checked={pageBreakSettings.avoidOrphanedHeadings}
-                        onChange={(e) =>
-                          handlePageBreakSettingChange(
-                            "avoidOrphanedHeadings",
-                            e.target.checked
-                          )
-                        }
-                        className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                      />
-                      <label
-                        htmlFor="avoidOrphans"
-                        className="text-xs text-gray-600"
-                      >
-                        Avoid orphaned headings at page bottom
-                      </label>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">
-                        Min lines before break
-                      </label>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            handlePageBreakSettingChange(
-                              "minLinesBeforeBreak",
-                              Math.max(
-                                1,
-                                (pageBreakSettings.minLinesBeforeBreak as number) -
-                                  1
-                              )
-                            )
-                          }
-                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowDown className="w-3 h-3" />
-                        </button>
-                        <input
-                          type="number"
-                          value={pageBreakSettings.minLinesBeforeBreak}
-                          onChange={handleMinLinesChange}
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
-                        />
-                        <button
-                          onClick={() =>
-                            handlePageBreakSettingChange(
-                              "minLinesBeforeBreak",
-                              (pageBreakSettings.minLinesBeforeBreak as number) +
-                                1
-                            )
-                          }
-                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowUp className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Scrollable preview container */}
           <div className="flex-1 overflow-y-auto flex justify-center">
             <div
               ref={previewRef}
-              className="my-8 transform-gpu transition-transform duration-200 w-full"
+              className="my-4 transform-gpu transition-transform duration-200 w-full"
               style={
                 {
-                  transform: `scale(${zoomLevel / 100})`,
-                  transformOrigin: "top center",
+                  transform: `scale(${(zoomLevel / 100) * screenBasedScale})`,
+                  transformOrigin: "left top",
                   fontFamily: fontFamily,
                   "--accent-color": accentColor,
                 } as React.CSSProperties
@@ -2003,6 +1819,256 @@ export default function Builder() {
             )}
           </div>
         </div>
+
+        {/* Mobile Preview Drawer */}
+        <div className={`lg:hidden ${isDrawerOpen ? "block" : "hidden"}`}>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+            onClick={handleDrawerClose}
+          />
+
+          {/* Drawer */}
+          <div className="fixed inset-y-0 right-0 w-full sm:w-[90%] max-w-[600px] bg-gray-50 z-50 transform transition-transform duration-300 ease-in-out flex flex-col">
+            {/* Drawer Content - Copy the content from the desktop right panel */}
+            {/* Zoom controls */}
+            <div className="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 p-2 flex justify-between items-center">
+              {/* ...existing zoom controls code... */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={zoomOut}
+                  className="p-1 rounded-md hover:bg-gray-200"
+                  title="Zoom Out"
+                >
+                  <ZoomOut className="w-5 h-5 text-gray-700" />
+                </button>
+                <span className="text-sm font-medium">{zoomLevel}%</span>
+                <button
+                  onClick={zoomIn}
+                  className="p-1 rounded-md hover:bg-gray-200"
+                  title="Zoom In"
+                >
+                  <ZoomIn className="w-5 h-5 text-gray-700" />
+                </button>
+                <button
+                  onClick={resetZoom}
+                  className="p-1 rounded-md hover:bg-gray-200 ml-2"
+                  title="Fit to Page"
+                >
+                  <Maximize className="w-5 h-5 text-gray-700" />
+                </button>
+              </div>
+              <button
+                onClick={handleDrawerClose}
+                className="p-2 rounded-full hover:bg-gray-200"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* Preview content */}
+            <div className="flex-1 overflow-y-auto flex justify-center lg:max-w-full max-w-[700px]">
+              {/* ...existing preview code... */}
+              <div
+                ref={previewRef}
+                className="my-4 transform-gpu transition-transform duration-200 min-w-full"
+                style={
+                  {
+                    transform: `scale(${
+                      (zoomLevel / 100) *
+                      (window.innerWidth >= 1024
+                        ? screenBasedScale
+                        : mobileScale)
+                    })`,
+                    transformOrigin: "left top",
+                    fontFamily: fontFamily,
+                    "--accent-color": accentColor,
+                  } as React.CSSProperties
+                }
+              >
+                {renderTemplate()}
+              </div>
+            </div>
+
+            {/* Edit bar */}
+            <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 p-3 shadow-md">
+              {/* ...existing edit bar code... */}
+              {showTemplateCarousel ? (
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-medium text-gray-800">
+                      Select Template
+                    </h3>
+                    <button
+                      onClick={() => setShowTemplateCarousel(false)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <button
+                      onClick={prevTemplate}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
+                      aria-label="Previous template"
+                    >
+                      <ChevronLeft className="w-5 h-5 text-gray-700" />
+                    </button>
+
+                    <div className="flex overflow-x-auto py-2 px-8 gap-4 snap-x">
+                      {templateOptions.map((option, index) => (
+                        <div
+                          key={option.value}
+                          className={`flex-none w-32 cursor-pointer transition-all duration-200 ${
+                            index === activeTemplateIndex
+                              ? "ring-2 ring-blue-500 scale-105"
+                              : "hover:scale-105"
+                          }`}
+                          onClick={() => selectTemplate(index)}
+                        >
+                          <div className="bg-white rounded-md shadow-sm overflow-hidden">
+                            <div className="relative aspect-[0.7]">
+                              <Image
+                                src={option.image}
+                                alt={option.name}
+                                fill
+                                className="object-cover"
+                                sizes="128px"
+                              />
+                              <div
+                                className="absolute bottom-0 left-0 right-0 h-1"
+                                style={{ backgroundColor: option.defaultColor }}
+                              ></div>
+                            </div>
+                            <div className="p-2 text-center text-xs font-medium truncate">
+                              {option.name}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={nextTemplate}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
+                      aria-label="Next template"
+                    >
+                      <ChevronRight className="w-5 h-5 text-gray-700" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-wrap md:gap-4 gap-2 justify-center items-center">
+                  {/* Template selector */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setShowTemplateCarousel(true)}
+                      className="flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <Layout className="w-5 h-5 text-gray-700" />
+                      <span>Templates</span>
+                    </button>
+                  </div>
+
+                  {/* Font family selector */}
+                  <div className="flex items-center gap-2">
+                    <Type className="w-5 h-5 text-gray-700" />
+                    <select
+                      value={fontFamily}
+                      onChange={(e) => setFontFamily(e.target.value)}
+                      className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      style={{ fontFamily: fontFamily }}
+                    >
+                      {fontFamilies.map((font) => (
+                        <option
+                          key={font.name}
+                          value={font.value}
+                          style={{ fontFamily: font.value }}
+                        >
+                          {font.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Color selector */}
+                  <div className="flex items-center gap-2">
+                    <Palette className="w-5 h-5 text-gray-700" />
+                    <div className="relative flex items-center gap-2">
+                      <div className="flex items-center border border-gray-300 rounded-md px-2 py-1.5">
+                        <div
+                          className="w-4 h-4 rounded-full mr-2"
+                          style={{ backgroundColor: accentColor }}
+                        />
+                        <input
+                          type="color"
+                          value={accentColor}
+                          onChange={(e) => setAccentColor(e.target.value)}
+                          className="w-20 h-8 cursor-pointer bg-transparent border-0"
+                        />
+                      </div>
+                      <button
+                        onClick={() => {
+                          // Reset to default color for this template
+                          const defaultColor = templateOptions.find(
+                            (t) => t.value === template
+                          )?.defaultColor;
+                          if (defaultColor) {
+                            setAccentColor(defaultColor);
+                          }
+                        }}
+                        className="p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
+                        title="Reset to default color"
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Preview Toggle Button for Mobile */}
+        <button
+          onClick={() => setIsDrawerOpen(true)}
+          className="lg:hidden fixed right-4 bottom-4 z-30 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            />
+          </svg>
+        </button>
       </div>
     </main>
   );
