@@ -3,36 +3,14 @@
 import { useState, useEffect } from "react";
 import StepCard from "./SetpCard";
 import Image from "next/image";
-
-const steps = [
-  {
-    number: 1,
-    title: "Remplissez vos infos",
-    description:
-      "Vous commencez par saisir vos infos qui constituent le contenu de votre CV.",
-    image: "/assets/how-it-works-step-1.svg",
-  },
-  {
-    number: 2,
-    title: "Choisissez un modèle",
-    description:
-      "Choisissez un modèle de CV et personnalisez-le en fonction de votre personnalité et style.",
-    image: "/assets/how-it-works-step-2.svg",
-  },
-  {
-    number: 3,
-    title: "Télécharger le CV",
-    description:
-      "Téléchargez votre CV immédiatement et modifiez-le à tout moment. Simplissime !",
-    image: "/assets/how-it-works-step-3.svg",
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const STEP_ORDER = [0, 1, 2]; // Explicit step order
 const PROGRESS_INCREMENT = 1; // Speed of progress
 const INTERVAL_DELAY = 100; // Milliseconds between progress updates
 
 export default function StepSlider() {
+  const { t } = useLanguage();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 
@@ -60,17 +38,38 @@ export default function StepSlider() {
     }
   };
 
+  const steps = [
+    {
+      id: 1,
+      title: t("home.steps.items.step1.title"),
+      description: t("home.steps.items.step1.description"),
+      icon: "/assets/how-it-works-step-1.svg",
+    },
+    {
+      id: 2,
+      title: t("home.steps.items.step2.title"),
+      description: t("home.steps.items.step2.description"),
+      icon: "/assets/how-it-works-step-2.svg",
+    },
+    {
+      id: 3,
+      title: t("home.steps.items.step3.title"),
+      description: t("home.steps.items.step3.description"),
+      icon: "/assets/how-it-works-step-3.svg",
+    },
+  ];
+
   return (
     <section className="max-w-[1150px] mx-auto px-[20px] py-20 w-full flex flex-col items-center">
       <h1 className="text-gray-900 font-medium text-3xl md:text-5xl mb-12">
-        Comment ça marche ?
+        {t("home.steps.title")}
       </h1>
       <div className="flex flex-col space-y-8">
         <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6">
           {steps.map((step, index) => (
             <StepCard
-              key={step.number}
-              number={step.number}
+              key={step.id}
+              number={step.id}
               title={step.title}
               description={step.description}
               isActive={index === currentStepIndex}
@@ -93,8 +92,8 @@ export default function StepSlider() {
                 }`}
               >
                 <Image
-                  src={step.image || `/placeholder.svg?text=Step${step.number}`}
-                  alt={`CV template ${step.number}`}
+                  src={step.icon || `/placeholder.svg?text=Step${step.id}`}
+                  alt={`CV template ${step.id}`}
                   width={1100}
                   height={555}
                   className="max-w-full h-auto mx-auto"

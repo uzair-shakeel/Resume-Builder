@@ -6,6 +6,7 @@ import { useState, useRef, type ChangeEvent, useEffect } from "react";
 import type { PersonalInfoData } from "@/types";
 import { PencilIcon } from "lucide-react";
 import Image from "next/image";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PersonalInfoProps {
   data: PersonalInfoData;
@@ -20,6 +21,7 @@ export default function PersonalInfo({
 }: PersonalInfoProps) {
   const [localData, setLocalData] = useState<PersonalInfoData>(data);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useLanguage();
 
   // Check if the current template is HR (which doesn't use a photo)
   const isHRTemplate = template === "hr";
@@ -66,7 +68,7 @@ export default function PersonalInfo({
         {!isHRTemplate && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Photo
+              {t("personal_info_form.photo")}
             </label>
             <div
               className="relative w-24 h-24 bg-gray-100 rounded-md overflow-hidden cursor-pointer"
@@ -103,7 +105,7 @@ export default function PersonalInfo({
               htmlFor="firstName"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Prénom
+              {t("personal_info_form.first_name")}
             </label>
             <input
               type="text"
@@ -119,7 +121,7 @@ export default function PersonalInfo({
               htmlFor="lastName"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Nom de famille
+              {t("personal_info_form.last_name")}
             </label>
             <input
               type="text"
@@ -138,7 +140,7 @@ export default function PersonalInfo({
           htmlFor="email"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          Adresse e-mail
+          {t("personal_info_form.email")}
         </label>
         <input
           type="email"
@@ -155,7 +157,7 @@ export default function PersonalInfo({
           htmlFor="phone"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          Numéro de téléphone
+          {t("personal_info_form.phone")}
         </label>
         <input
           type="tel"
@@ -172,7 +174,7 @@ export default function PersonalInfo({
           htmlFor="address"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          Adresse
+          {t("personal_info_form.address")}
         </label>
         <input
           type="text"
@@ -190,7 +192,7 @@ export default function PersonalInfo({
             htmlFor="postalCode"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Code postal
+            {t("personal_info_form.zip_code")}
           </label>
           <input
             type="text"
@@ -206,7 +208,7 @@ export default function PersonalInfo({
             htmlFor="city"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Ville
+            {t("personal_info_form.city")}
           </label>
           <input
             type="text"

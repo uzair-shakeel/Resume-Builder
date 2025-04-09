@@ -7,21 +7,66 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-export interface FAQProps {
-  faqs: {
+interface FAQProps {
+  faqs?: {
     question: string;
     answer: React.ReactNode;
   }[];
-  page?: boolean;
-  title: string;
+  page?: boolean; // Optional page prop if you need it
+  useTrans?: boolean; // Whether to use translations or provided faqs
 }
 
 export default function FAQ({
-  faqs,
+  faqs = [],
   page = false,
-  title = "Foire aux questions",
+  useTrans = false,
 }: FAQProps) {
+  const { t } = useLanguage();
+
+  // If useTrans is true, use translations instead of provided faqs
+  const faqItems = useTrans
+    ? [
+        {
+          question: t("home.faqs.items.faq1.question"),
+          answer: (
+            <p className="pb-[1.25rem]">{t("home.faqs.items.faq1.answer")}</p>
+          ),
+        },
+        {
+          question: t("home.faqs.items.faq2.question"),
+          answer: (
+            <p className="pb-[1.25rem]">{t("home.faqs.items.faq2.answer")}</p>
+          ),
+        },
+        {
+          question: t("home.faqs.items.faq3.question"),
+          answer: (
+            <p className="pb-[1.25rem]">{t("home.faqs.items.faq3.answer")}</p>
+          ),
+        },
+        {
+          question: t("home.faqs.items.faq4.question"),
+          answer: (
+            <p className="pb-[1.25rem]">{t("home.faqs.items.faq4.answer")}</p>
+          ),
+        },
+        {
+          question: t("home.faqs.items.faq5.question"),
+          answer: (
+            <p className="pb-[1.25rem]">{t("home.faqs.items.faq5.answer")}</p>
+          ),
+        },
+        {
+          question: t("home.faqs.items.faq6.question"),
+          answer: (
+            <p className="pb-[1.25rem]">{t("home.faqs.items.faq6.answer")}</p>
+          ),
+        },
+      ]
+    : faqs;
+
   return (
     <section className="bg-white py-20">
       <div className="max-w-[864px] mx-auto px-[20px]">
@@ -30,10 +75,10 @@ export default function FAQ({
             page ? "pt-20 pb-32 mb-12" : "mb-20"
           }`}
         >
-          {title}
+          {t("home.faqs.title")}
         </h2>
         <Accordion type="single" collapsible className="w-full">
-          {faqs.map((faq, index) => (
+          {faqItems.map((faq, index) => (
             <AccordionItem
               key={index}
               value={`item-${index}`}
@@ -51,7 +96,7 @@ export default function FAQ({
 
         <div className="prose mt-5">
           <p className="text-gray-600">
-            Vous avez des questions ? Consultez notre{" "}
+            {t("home.faqs.moreQuestions")}{" "}
             <Link
               href="/faq"
               className="inline-flex items-center text-[#173dff] font-[500]"

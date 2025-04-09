@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import type { LanguageItem } from "@/types";
 import { Trash2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface LanguagesProps {
   data: LanguageItem[];
@@ -11,6 +12,7 @@ interface LanguagesProps {
 
 export default function Languages({ data, updateData }: LanguagesProps) {
   const [localData, setLocalData] = useState<LanguageItem[]>(data);
+  const { t } = useLanguage();
 
   // Update local state when parent data changes
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function Languages({ data, updateData }: LanguagesProps) {
   const addLanguage = () => {
     const newItem: LanguageItem = {
       name: "",
-      level: "Débutant",
+      level: t("languages_form.elementary"),
     };
     const newData = [...localData, newItem];
     setLocalData(newData);
@@ -51,7 +53,7 @@ export default function Languages({ data, updateData }: LanguagesProps) {
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Langue
+                {t("languages_form.language_name")}
               </label>
               <input
                 type="text"
@@ -70,18 +72,28 @@ export default function Languages({ data, updateData }: LanguagesProps) {
 
           <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Niveau
+              {t("languages_form.language_level")}
             </label>
             <select
               value={item.level}
               onChange={(e) => handleChange(index, "level", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="Débutant">Débutant</option>
-              <option value="Intermédiaire">Intermédiaire</option>
-              <option value="Avancé">Avancé</option>
-              <option value="Bilingue">Bilingue</option>
-              <option value="Langue maternelle">Langue maternelle</option>
+              <option value={t("languages_form.elementary")}>
+                {t("languages_form.elementary")}
+              </option>
+              <option value={t("languages_form.limited_working")}>
+                {t("languages_form.limited_working")}
+              </option>
+              <option value={t("languages_form.professional_working")}>
+                {t("languages_form.professional_working")}
+              </option>
+              <option value={t("languages_form.full_professional")}>
+                {t("languages_form.full_professional")}
+              </option>
+              <option value={t("languages_form.native")}>
+                {t("languages_form.native")}
+              </option>
             </select>
           </div>
         </div>
@@ -91,7 +103,7 @@ export default function Languages({ data, updateData }: LanguagesProps) {
         onClick={addLanguage}
         className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
       >
-        + Ajouter une langue
+        + {t("languages_form.add_language")}
       </button>
     </div>
   );

@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SidebarProps {
   user: {
@@ -21,6 +22,7 @@ interface SidebarProps {
 
 export default function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   const isActive = (path: string) => {
     return pathname === path || pathname.startsWith(`${path}/`);
@@ -55,13 +57,13 @@ export default function Sidebar({ user }: SidebarProps) {
             <DropdownMenu>
               <DropdownMenuTrigger className="w-full bg-transparent hover:bg-gray-800 text-white border border-gray-700 rounded-lg p-3 flex items-center justify-center space-x-2 transition-colors">
                 <Plus size={20} />
-                <span>Nouveau</span>
+                <span>{t("site.dashboard.sidebar.new")}</span>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem asChild>
                   <Link href="/cv/create" className="flex items-center">
                     <FileText className="mr-2 h-4 w-4" />
-                    <span>Créer un CV</span>
+                    <span>{t("site.dashboard.sidebar.create_resume")}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -70,7 +72,7 @@ export default function Sidebar({ user }: SidebarProps) {
                     className="flex items-center"
                   >
                     <Mail className="mr-2 h-4 w-4" />
-                    <span>Créer une lettre de motivation</span>
+                    <span>{t("site.dashboard.sidebar.create_cover_letter")}</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -88,7 +90,7 @@ export default function Sidebar({ user }: SidebarProps) {
               }`}
             >
               <Home size={20} />
-              <span>Tableau de bord</span>
+              <span>{t("site.dashboard.sidebar.dashboard")}</span>
             </Link>
 
             <Link
@@ -100,7 +102,7 @@ export default function Sidebar({ user }: SidebarProps) {
               }`}
             >
               <FileText size={20} />
-              <span>Curriculum vitae</span>
+              <span>{t("site.dashboard.sidebar.resumes")}</span>
             </Link>
 
             <Link
@@ -112,7 +114,7 @@ export default function Sidebar({ user }: SidebarProps) {
               }`}
             >
               <Mail size={20} />
-              <span>Lettres de motivation</span>
+              <span>{t("site.dashboard.sidebar.cover_letters")}</span>
             </Link>
           </nav>
         </div>
@@ -135,7 +137,7 @@ export default function Sidebar({ user }: SidebarProps) {
             className="mt-4 w-full flex items-center justify-center space-x-2 px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-lg transition-colors"
           >
             <LogOut size={18} />
-            <span>Déconnexion</span>
+            <span>{t("site.dashboard.sidebar.sign_out")}</span>
           </button>
         </div>
       </div>

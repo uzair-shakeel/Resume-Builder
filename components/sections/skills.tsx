@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import type { SkillItem } from "@/types";
 import { MoreVertical, ChevronUp, Trash2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SkillsProps {
   data: SkillItem[];
@@ -12,6 +13,7 @@ interface SkillsProps {
 export default function Skills({ data, updateData }: SkillsProps) {
   const [localData, setLocalData] = useState<SkillItem[]>(data);
   const [newSkill, setNewSkill] = useState<string>("");
+  const { t } = useLanguage();
 
   // Update local state when parent data changes
   useEffect(() => {
@@ -68,7 +70,7 @@ export default function Skills({ data, updateData }: SkillsProps) {
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Compétence
+                  {t("skills_form.skill_name")}
                 </label>
                 <input
                   type="text"
@@ -87,7 +89,7 @@ export default function Skills({ data, updateData }: SkillsProps) {
 
             <div className="mt-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Niveau
+                {t("skills_form.skill_level")}
               </label>
               <input
                 type="range"
@@ -100,9 +102,9 @@ export default function Skills({ data, updateData }: SkillsProps) {
                 className="w-full"
               />
               <div className="flex justify-between text-xs text-gray-500">
-                <span>Débutant</span>
-                <span>Intermédiaire</span>
-                <span>Expert</span>
+                <span>{t("skills_form.beginner")}</span>
+                <span>{t("skills_form.intermediate")}</span>
+                <span>{t("skills_form.expert")}</span>
               </div>
             </div>
           </div>
@@ -112,7 +114,7 @@ export default function Skills({ data, updateData }: SkillsProps) {
           onClick={addSkill}
           className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
         >
-          + Ajouter une compétence
+          + {t("skills_form.add_skill")}
         </button>
       </div>
     </div>

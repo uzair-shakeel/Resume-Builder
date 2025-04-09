@@ -301,9 +301,18 @@ export default function CVPreviewPro({
   };
 
   const renderPage = (sections: string[]) => (
-    <div className="cv-page bg-white">
+    <div
+      className="cv-page bg-white"
+      style={{
+        width: "210mm",
+        minHeight: "297mm",
+        padding: "20mm",
+        boxSizing: "border-box",
+        margin: "0 auto",
+      }}
+    >
       {renderHeader()}
-      <div className="flex">
+      <div className="flex" style={{ marginTop: "2rem" }}>
         <div
           style={{
             width: "240px",

@@ -41,6 +41,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import RichTextEditor from "@/components/shared/rich-text-editor";
 import { useSearchParams } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Font families
 const fontFamilies = [
@@ -285,6 +286,7 @@ const getMobileScale = (windowWidth: number) => {
 };
 
 export default function CoverLetterBuilder() {
+  const { t, language } = useLanguage();
   const previewRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState(1);
   const [showSidebar, setShowSidebar] = useState(true);
@@ -1142,27 +1144,27 @@ export default function CoverLetterBuilder() {
   };
 
   const getSectionTitle = (section: string): string => {
-    if (customSectionNames[section]) {
-      return customSectionNames[section];
-    }
-
+    // Base section names
     switch (section) {
       case "personal-info":
-        return "Informations personnelles";
+        return t(
+          "site.builder_cover_letter.sections.personal_info"
+        );
       case "destinataire":
-        return "Destinataire";
+        return t("site.builder_cover_letter.sections.recipient");
       case "date-et-objet":
-        return "Date et objet";
+        return t("site.builder_cover_letter.sections.date_subject");
       case "introduction":
-        return "Introduction";
+        return t("site.builder_cover_letter.sections.introduction");
       case "situation-actuelle":
-        return "Situation actuelle";
+        return t("site.builder_cover_letter.sections.current_situation");
       case "motivation":
-        return "Motivation";
+        return t("site.builder_cover_letter.sections.motivation");
       case "conclusion":
-        return "Conclusion";
+        return t("site.builder_cover_letter.sections.conclusion");
       default:
-        return section;
+        // For custom renamed sections
+        return customSectionNames[section] || section;
     }
   };
 
@@ -1895,10 +1897,19 @@ export default function CoverLetterBuilder() {
 
   return (
     <div className="flex h-screen bg-gray-100">
+<<<<<<< HEAD
+      <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold">
+              {t("site.builder.header.cover_letter")}
+            </h1>
+=======
       <div className="w-full lg:w-1/2 flex flex-col border-r border-gray-200 bg-white">
         <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center gap-2">
           <div className="flex items-center md:gap-4 gap-2">
             <h1 className="text-xl font-bold">Lettre de motivation</h1>
+>>>>>>> 37fa46e1ea44b1995a5a7a0d34d07fe824d0e014
             <div className="text-gray-500">
               {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
               {saveStatus === "saving" && (
@@ -1984,7 +1995,9 @@ export default function CoverLetterBuilder() {
                         {getSectionTitle(section)}
                         {sectionPages[section] === 2 && (
                           <span className="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
-                            Page 2
+                            {t(
+                              "site.builder.sections.actions.page_2_indicator"
+                            )}
                           </span>
                         )}
                       </h2>
@@ -2011,14 +2024,18 @@ export default function CoverLetterBuilder() {
                               onClick={() => handleRenameSection(section)}
                             >
                               <Pencil className="w-4 h-4 mr-2" />
-                              Rename section
+                              {t(
+                                "site.builder.sections.actions.rename_section"
+                              )}
                             </button>
                             <button
                               className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                               onClick={() => handleDeleteSection(section)}
                             >
                               <Trash2 className="w-4 h-4 mr-2" />
-                              Delete section
+                              {t(
+                                "site.builder.sections.actions.delete_section"
+                              )}
                             </button>
                             <button
                               className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
@@ -2029,10 +2046,14 @@ export default function CoverLetterBuilder() {
                                 )
                               }
                             >
-                              <FileText className="w-4 h-4 mr-2" />
+                              <Layout className="w-4 h-4 mr-2" />
                               {sectionPages[section] === 2
-                                ? "Move to page 1"
-                                : "Move to page 2"}
+                                ? t(
+                                    "site.builder.sections.actions.move_to_page_1"
+                                  )
+                                : t(
+                                    "site.builder.sections.actions.move_to_page_2"
+                                  )}
                             </button>
                           </div>
                         </div>
@@ -2060,7 +2081,7 @@ export default function CoverLetterBuilder() {
               className="w-full py-3 px-4 border-2 border-dashed border-gray-300 rounded-md text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors flex items-center justify-center space-x-2"
             >
               <Plus className="w-5 h-5" />
-              <span>Ajouter une section</span>
+              <span>{t("site.builder.sections.actions.add_section")}</span>
             </button>
           </div>
         </div>
@@ -2071,6 +2092,20 @@ export default function CoverLetterBuilder() {
           <div className="flex items-center space-x-2">
             <button
               className="p-2 rounded hover:bg-gray-100"
+<<<<<<< HEAD
+              onClick={() => setShowSidebar(!showSidebar)}
+            >
+              {showSidebar ? <ChevronLeft /> : <ChevronRight />}
+            </button>
+            <h2 className="text-lg font-semibold">
+              {t("site.builder.preview")}
+            </h2>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              className="p-2 rounded hover:bg-gray-100"
+=======
+>>>>>>> 37fa46e1ea44b1995a5a7a0d34d07fe824d0e014
               onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
             >
               <ZoomOut size={18} />
@@ -2089,6 +2124,32 @@ export default function CoverLetterBuilder() {
             >
               <Maximize size={18} />
             </button>
+<<<<<<< HEAD
+            <div className="relative">
+              <button
+                className="p-2 rounded hover:bg-gray-100"
+                onClick={() => setShowDownloadOptions(!showDownloadOptions)}
+              >
+                <Download size={18} />
+              </button>
+              {showDownloadOptions && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        generatePDF();
+                        setShowDownloadOptions(false);
+                      }}
+                      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+                    >
+                      {t("site.builder.header.download")}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+=======
+>>>>>>> 37fa46e1ea44b1995a5a7a0d34d07fe824d0e014
           </div>
         </div>
         <div className="flex-1 overflow-auto bg-gray-200 flex justify-center p-8">

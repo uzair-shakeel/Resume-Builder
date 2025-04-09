@@ -6,10 +6,13 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   // Handle scroll
   useEffect(() => {
@@ -68,6 +71,13 @@ export default function Header() {
           >
             FAQ
           </Link>
+          <Link
+            href="/cover-letter"
+            className="text-gray-500 focus-visible:ring-4 ring-[#b0bdff] hover:text-gray-900 rounded lg:text-lg py-1 px-2 lg:py-2 lg:px-4"
+          >
+            Lettre de motivation
+          </Link>
+          <LanguageSwitcher />
         </nav>
 
         <div className="flex items-center justify-end gap-2">

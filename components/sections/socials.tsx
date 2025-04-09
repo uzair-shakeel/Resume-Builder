@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import type { Social } from "@/types";
+import type { Social } from "@/types/index";
 import { MoreVertical, ChevronUp, Trash2, Plus } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SocialsProps {
   data: Social[];
@@ -11,6 +12,7 @@ interface SocialsProps {
 
 export default function Socials({ data, updateData }: SocialsProps) {
   const [localData, setLocalData] = useState<Social[]>(data || []);
+  const { t } = useLanguage();
 
   const platformOptions = [
     "LinkedIn",
@@ -51,7 +53,7 @@ export default function Socials({ data, updateData }: SocialsProps) {
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center">
           <span className="text-gray-400 mr-2">:</span>
-          <h2 className="text-lg font-medium">Social Links</h2>
+          <h2 className="text-lg font-medium">{t("sections.socials")}</h2>
         </div>
         <div className="flex space-x-2">
           <button className="p-2 rounded-md hover:bg-gray-100">
@@ -92,7 +94,7 @@ export default function Socials({ data, updateData }: SocialsProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                URL
+                {t("socials_form.url")}
               </label>
               <input
                 type="url"
@@ -122,7 +124,7 @@ export default function Socials({ data, updateData }: SocialsProps) {
           className="flex items-center justify-center w-full px-4 py-2 border border-dashed border-gray-300 rounded-md hover:bg-gray-50"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Add Social Link
+          {t("socials_form.add_social")}
         </button>
       </div>
     </div>

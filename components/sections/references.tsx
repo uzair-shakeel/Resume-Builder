@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import type { Reference } from "@/types";
+import type { Reference } from "@/types/index";
 import { MoreVertical, ChevronUp, Trash2, Plus } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ReferencesProps {
   data: Reference[];
@@ -11,6 +12,7 @@ interface ReferencesProps {
 
 export default function References({ data, updateData }: ReferencesProps) {
   const [localData, setLocalData] = useState<Reference[]>(data || []);
+  const { t } = useLanguage();
 
   const addReference = () => {
     const newItem: Reference = {
@@ -45,7 +47,7 @@ export default function References({ data, updateData }: ReferencesProps) {
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center">
           <span className="text-gray-400 mr-2">:</span>
-          <h2 className="text-lg font-medium">References</h2>
+          <h2 className="text-lg font-medium">{t("sections.references")}</h2>
         </div>
         <div className="flex space-x-2">
           <button className="p-2 rounded-md hover:bg-gray-100">
@@ -61,7 +63,9 @@ export default function References({ data, updateData }: ReferencesProps) {
         {localData.map((item, index) => (
           <div key={index} className="p-4 border rounded-md">
             <div className="flex justify-between mb-2">
-              <h3 className="font-medium">Reference {index + 1}</h3>
+              <h3 className="font-medium">
+                {t("references_form.reference_text")} {index + 1}
+              </h3>
               <button
                 onClick={() => removeReference(index)}
                 className="p-1 text-gray-400 hover:text-gray-600"
@@ -73,7 +77,7 @@ export default function References({ data, updateData }: ReferencesProps) {
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Name
+                  {t("references_form.name")}
                 </label>
                 <input
                   type="text"
@@ -88,7 +92,7 @@ export default function References({ data, updateData }: ReferencesProps) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Company
+                  {t("references_form.company")}
                 </label>
                 <input
                   type="text"
@@ -103,7 +107,7 @@ export default function References({ data, updateData }: ReferencesProps) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone
+                  {t("references_form.phone")}
                 </label>
                 <input
                   type="text"
@@ -118,7 +122,7 @@ export default function References({ data, updateData }: ReferencesProps) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
+                  {t("references_form.email")}
                 </label>
                 <input
                   type="email"
@@ -139,7 +143,7 @@ export default function References({ data, updateData }: ReferencesProps) {
           className="flex items-center justify-center w-full px-4 py-2 border border-dashed border-gray-300 rounded-md hover:bg-gray-50"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Add Reference
+          {t("references_form.add_reference")}
         </button>
       </div>
     </div>

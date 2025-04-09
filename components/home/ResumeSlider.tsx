@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const resumeTemplates = [
   {
@@ -88,6 +89,7 @@ const resumeTemplates = [
 
 export default function ResumeSlider() {
   const router = useRouter();
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
@@ -198,7 +200,7 @@ export default function ResumeSlider() {
                         Chargement...
                       </span>
                     ) : (
-                      "Utiliser ce modèle"
+                      t("hero.cta.secondary")
                     )}
                   </button>
                 </div>

@@ -10,6 +10,7 @@ import {
   ListOrdered,
   AlignLeft,
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ProfileProps {
   data: string;
@@ -18,6 +19,7 @@ interface ProfileProps {
 
 export default function Profile({ data, updateData }: ProfileProps) {
   const [localData, setLocalData] = useState<string>(data);
+  const { t } = useLanguage();
 
   // Update local state when parent data changes
   useEffect(() => {
@@ -33,7 +35,7 @@ export default function Profile({ data, updateData }: ProfileProps) {
   return (
     <div className="p-4">
       <label className="block text-sm font-medium text-gray-700 mb-1">
-        Profil professionnel
+        {t("profile_form.summary")}
       </label>
       <div className="border border-gray-300 rounded-md overflow-hidden">
         <textarea
@@ -41,7 +43,7 @@ export default function Profile({ data, updateData }: ProfileProps) {
           onChange={handleChange}
           rows={6}
           className="w-full p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Décrivez votre profil professionnel..."
+          placeholder={t("profile_form.summary_placeholder")}
         />
         <div className="flex border-t p-2 bg-gray-50">
           <div className="flex space-x-1">

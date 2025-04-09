@@ -413,6 +413,52 @@ export default function CVPreviewHR({
 
   return (
     <div className="cv-container">
+      <style jsx global>{`
+        @media print {
+          @page {
+            size: A4;
+            margin: 0;
+            padding: 0;
+          }
+
+          body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+
+          .cv-page {
+            padding: 20mm !important;
+            box-sizing: border-box !important;
+            width: 210mm !important;
+            min-height: 297mm !important;
+            margin: 0 !important;
+            break-after: page !important;
+            page-break-after: always !important;
+          }
+        }
+
+        /* Non-print styles */
+        .cv-page {
+          width: 210mm;
+          min-height: 297mm;
+          padding: 20mm;
+          box-sizing: border-box;
+          margin: 0 auto;
+          background: white;
+        }
+
+        .cv-page + .cv-page {
+          margin-top: 2rem;
+        }
+
+        @media screen {
+          .cv-container {
+            padding: 2rem 0;
+          }
+        }
+      `}</style>
+
       {/* Page 1 */}
       <div className="cv-page">
         <div className="px-[50px] py-[30px]">

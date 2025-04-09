@@ -289,7 +289,7 @@ export default function CVPreviewAlt({
           {getSectionTitle("skills")}
         </h2>
         <div className="space-y-3">
-          {(skills?.length ? skills : placeholderData.skills).map(
+          {(skills?.length ? skills : placeholderData.skills)?.map(
             (skill, index) => (
               <div key={index}>
                 <div className="flex justify-between mb-1">
