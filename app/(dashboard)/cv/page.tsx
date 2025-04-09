@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import dynamic from "next/dynamic";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Dynamically import all CV preview components
 const CVPreviewAlt = dynamic(
@@ -70,6 +71,7 @@ const CVPreviewWrapper = ({ children }: { children: React.ReactNode }) => {
 
 // Add formatRelativeTime function
 const formatRelativeTime = (dateString: string) => {
+  const { t } = useLanguage();
   const date = new Date(dateString);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
@@ -80,23 +82,32 @@ const formatRelativeTime = (dateString: string) => {
   const diffInYears = Math.floor(diffInDays / 365);
 
   if (diffInSeconds < 60) {
-    return "Modifié à l'instant";
+    return t("site.dashboard.common.just_now");
   } else if (diffInMinutes < 60) {
-    return `Modifié il y a ${diffInMinutes} minute${
-      diffInMinutes > 1 ? "s" : ""
-    }`;
+    return `${t("site.dashboard.common.modified_prefix")} ${diffInMinutes} ${t(
+      "site.dashboard.common.minutes_ago"
+    )}`;
   } else if (diffInHours < 24) {
-    return `Modifié il y a ${diffInHours} heure${diffInHours > 1 ? "s" : ""}`;
+    return `${t("site.dashboard.common.modified_prefix")} ${diffInHours} ${t(
+      "site.dashboard.common.hours_ago"
+    )}`;
   } else if (diffInDays < 30) {
-    return `Modifié il y a ${diffInDays} jour${diffInDays > 1 ? "s" : ""}`;
+    return `${t("site.dashboard.common.modified_prefix")} ${diffInDays} ${t(
+      "site.dashboard.common.days_ago"
+    )}`;
   } else if (diffInMonths < 12) {
-    return `Modifié il y a ${diffInMonths} mois`;
+    return `${t("site.dashboard.common.modified_prefix")} ${diffInMonths} ${t(
+      "site.dashboard.common.months_ago"
+    )}`;
   } else {
-    return `Modifié il y a ${diffInYears} an${diffInYears > 1 ? "s" : ""}`;
+    return `${t("site.dashboard.common.modified_prefix")} ${diffInYears} ${t(
+      "site.dashboard.common.years_ago"
+    )}`;
   }
 };
 
 export default function CVDashboard() {
+  const { t } = useLanguage();
   const [cvs, setCVs] = useState<CV[]>([]);
   const [loading, setLoading] = useState(true);
   const [renamingCV, setRenamingCV] = useState<string | null>(null);
@@ -162,7 +173,7 @@ export default function CVDashboard() {
   };
 
   const handleDelete = async (cvId: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer ce CV ?")) {
+    if (!confirm(t("site.dashboard.common.confirm_delete"))) {
       return;
     }
 
@@ -309,13 +320,15 @@ export default function CVDashboard() {
       <main className="flex-1 pt-20 lg:pt-5 pb-24">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-2xl font-bold">Mes CV</h1>
+            <h1 className="text-2xl font-bold">
+              {t("site.dashboard.resumes.title")}
+            </h1>
             <button
               onClick={() => router.push("/builder")}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
-              Créer un CV
+              {t("site.dashboard.resumes.create_resume")}
             </button>
           </div>
 
@@ -328,17 +341,17 @@ export default function CVDashboard() {
             <div className="text-center py-12">
               <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h2 className="text-xl font-semibold text-gray-700 mb-2">
-                Aucun CV
+                {t("site.dashboard.resumes.empty_state.title")}
               </h2>
               <p className="text-gray-500 mb-4">
-                Créez votre premier CV pour commencer
+                {t("site.dashboard.resumes.empty_state.description")}
               </p>
               <button
                 onClick={() => router.push("/builder")}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                Créer un CV
+                {t("site.dashboard.resumes.create_resume")}
               </button>
             </div>
           ) : (
@@ -351,7 +364,9 @@ export default function CVDashboard() {
                 >
                   <div className="flex flex-col items-center gap-2 text-gray-500 group-hover:text-blue-500">
                     <Plus className="w-8 h-8" />
-                    <span className="font-medium">Créer un CV</span>
+                    <span className="font-medium">
+                      {t("site.dashboard.resumes.create_resume")}
+                    </span>
                   </div>
                 </Link>
               </div>
@@ -384,14 +399,14 @@ export default function CVDashboard() {
                       <DropdownMenuContent align="end" className="z-50">
                         <DropdownMenuItem onClick={() => startRenaming(cv)}>
                           <Pencil className="w-4 h-4 mr-2" />
-                          Renommer
+                          {t("site.dashboard.common.rename")}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDelete(cv._id)}
                           className="text-red-600"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
-                          Supprimer
+                          {t("site.dashboard.common.delete")}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -419,7 +434,7 @@ export default function CVDashboard() {
                           onClick={() => handleRename(cv._id)}
                           className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
                         >
-                          Enregistrer
+                          {t("site.dashboard.common.save")}
                         </button>
                       </div>
                     ) : (

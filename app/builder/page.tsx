@@ -12,6 +12,7 @@ import Languages from "@/components/sections/languages";
 import Interests from "@/components/sections/interests";
 import CVPreview from "@/components/cv-templates/cv-preview";
 import type { CVData, CustomSectionItem } from "@/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   ChevronDown,
   ChevronUp,
@@ -240,6 +241,7 @@ function CustomSection({
   updateData: (data: CustomSectionItem[]) => void;
 }) {
   const [items, setItems] = useState(data);
+  const { t } = useLanguage();
 
   useEffect(() => {
     updateData(items);
@@ -268,7 +270,7 @@ function CustomSection({
               type="text"
               value={item.title || ""}
               onChange={(e) => updateItem(index, "title", e.target.value)}
-              placeholder="Title"
+              placeholder={t("custom_section_editor.title_placeholder")}
               className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
             />
             <button
@@ -281,7 +283,7 @@ function CustomSection({
           <textarea
             value={item.description || ""}
             onChange={(e) => updateItem(index, "description", e.target.value)}
-            placeholder="Description"
+            placeholder={t("custom_section_editor.description_placeholder")}
             className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:border-blue-500 min-h-[80px] text-gray-900 bg-white"
           />
         </div>
@@ -290,7 +292,7 @@ function CustomSection({
         onClick={addItem}
         className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
       >
-        + Add Item
+        {t("custom_section_editor.add_item")}
       </button>
     </div>
   );
@@ -311,6 +313,7 @@ export default function Builder() {
       | "simple-classic"
       | "circulaire"
       | "student") || "modern";
+  const { t } = useLanguage();
 
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
@@ -981,25 +984,29 @@ export default function Builder() {
 
     // Otherwise use the default name
     switch (section) {
-      case "personal-info":
-        return "Personal Information";
+      case "personal_info":
+        return t("sections.personal_info");
       case "profile":
-        return "Profile";
+        return t("sections.profile");
       case "education":
-        return "Education";
+        return t("sections.education");
       case "experience":
-        return "Professional Experience";
+        return t("sections.experience");
       case "skills":
-        return "Skills";
+        return t("sections.skills");
       case "languages":
-        return "Languages";
+        return t("sections.languages");
       case "interests":
-        return "Interests";
+        return t("sections.interests");
       case "references":
-        return "References";
+        return t("sections.references");
       case "socials":
-        return "Social Links";
+        return t("sections.socials");
       default:
+        // For custom sections, use the custom name if available
+        if (section.startsWith("custom-") && customSectionNames[section]) {
+          return customSectionNames[section];
+        }
         return "";
     }
   };
@@ -1268,10 +1275,10 @@ export default function Builder() {
           <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
             <RefreshCw className="w-10 h-10 text-blue-600 animate-spin mb-4" />
             <p className="text-lg font-medium text-gray-800">
-              Generating PDF...
+              {t("pdf_generation.generating_pdf")}
             </p>
             <p className="text-sm text-gray-600 mt-2">
-              This may take a few moments.
+              {t("pdf_generation.may_take_moments")}
             </p>
           </div>
         </div>
@@ -1282,7 +1289,7 @@ export default function Builder() {
         <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold">CV Builder</h1>
+              <h1 className="text-xl font-bold">{t("header.title")}</h1>
               {/* Save status indicator */}
               <div className="text-gray-500">
                 {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
@@ -1299,7 +1306,7 @@ export default function Builder() {
                 className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
               >
                 <FileText className="w-4 h-4" />
-                Lettre de motivation
+                {t("header.cover_letter")}
               </a>
             </div>
             <div className="flex items-center gap-2">
@@ -1309,7 +1316,7 @@ export default function Builder() {
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  Download
+                  {t("header.download")}
                 </button>
                 {showDownloadOptions && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
@@ -1318,7 +1325,7 @@ export default function Builder() {
                         onClick={() => handleDownload("pdf")}
                         className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
                       >
-                        Download as PDF
+                        {t("header.download_as_pdf")}
                       </button>
                     </div>
                   </div>
@@ -1397,14 +1404,14 @@ export default function Builder() {
                                 onClick={() => handleRenameSection(section)}
                               >
                                 <Pencil className="w-4 h-4 mr-2" />
-                                Rename section
+                                {t("sections.rename_section")}
                               </button>
                               <button
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                                 onClick={() => handleDeleteSection(section)}
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
-                                Delete section
+                                {t("sections.delete_section")}
                               </button>
                               <button
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
@@ -1417,8 +1424,8 @@ export default function Builder() {
                               >
                                 <FileText className="w-4 h-4 mr-2" />
                                 {sectionPages[section] === 2
-                                  ? "Move to page 1"
-                                  : "Move to page 2"}
+                                  ? t("sections.move_to_page_1")
+                                  : t("sections.move_to_page_2")}
                               </button>
                             </div>
                           </div>
@@ -1446,7 +1453,7 @@ export default function Builder() {
               {/* Add Section Button */}
               <div className="mt-4">
                 <h3 className="text-sm font-medium text-gray-700 mb-2">
-                  Add Section
+                  {t("sections.add_section")}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {[
@@ -1470,7 +1477,12 @@ export default function Builder() {
                       onClick={() => addCustomSection(sectionName)}
                       className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
                     >
-                      <span className="mr-1">+</span> {sectionName}
+                      <span className="mr-1">+</span>{" "}
+                      {t(
+                        `custom_sections.${sectionName
+                          .toLowerCase()
+                          .replace(/\s+/g, "_")}`
+                      )}
                     </button>
                   ))}
                 </div>
@@ -1487,7 +1499,7 @@ export default function Builder() {
               <button
                 onClick={zoomOut}
                 className="p-1 rounded-md hover:bg-gray-200"
-                title="Zoom Out"
+                title={t("tooltips.zoom_out")}
               >
                 <ZoomOut className="w-5 h-5 text-gray-700" />
               </button>
@@ -1495,14 +1507,14 @@ export default function Builder() {
               <button
                 onClick={zoomIn}
                 className="p-1 rounded-md hover:bg-gray-200"
-                title="Zoom In"
+                title={t("tooltips.zoom_in")}
               >
                 <ZoomIn className="w-5 h-5 text-gray-700" />
               </button>
               <button
                 onClick={resetZoom}
                 className="p-1 rounded-md hover:bg-gray-200 ml-2"
-                title="Fit to Page"
+                title={t("tooltips.fit_to_page")}
               >
                 <Maximize className="w-5 h-5 text-gray-700" />
               </button>
@@ -1528,18 +1540,20 @@ export default function Builder() {
           {showPageBreakControls && (
             <div className="bg-white border-b border-gray-200 p-3 shadow-sm">
               <h3 className="font-medium text-gray-800 mb-2">
-                Page Layout Settings
+                {t("page_layout.page_layout_settings")}
               </h3>
 
               <div className="space-y-4">
                 {/* Margin controls */}
                 <div>
                   <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    Page Margins (mm)
+                    {t("page_layout.page_margins")}
                   </h4>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">Top</label>
+                      <label className="text-xs text-gray-600">
+                        {t("page_layout.top")}
+                      </label>
                       <div className="flex items-center">
                         <button
                           onClick={() =>
@@ -1570,7 +1584,9 @@ export default function Builder() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">Right</label>
+                      <label className="text-xs text-gray-600">
+                        {t("page_layout.right")}
+                      </label>
                       <div className="flex items-center">
                         <button
                           onClick={() =>
@@ -1601,7 +1617,9 @@ export default function Builder() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">Bottom</label>
+                      <label className="text-xs text-gray-600">
+                        {t("page_layout.bottom")}
+                      </label>
                       <div className="flex items-center">
                         <button
                           onClick={() =>
@@ -1632,7 +1650,9 @@ export default function Builder() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">Left</label>
+                      <label className="text-xs text-gray-600">
+                        {t("page_layout.left")}
+                      </label>
                       <div className="flex items-center">
                         <button
                           onClick={() =>
@@ -1667,7 +1687,7 @@ export default function Builder() {
                 {/* Page break controls */}
                 <div>
                   <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    Page Break Rules
+                    {t("page_layout.page_break_rules")}
                   </h4>
                   <div className="space-y-2">
                     <div className="flex items-center">
@@ -1687,7 +1707,7 @@ export default function Builder() {
                         htmlFor="keepHeadings"
                         className="text-xs text-gray-600"
                       >
-                        Keep headings with content
+                        {t("page_layout.keep_headings")}
                       </label>
                     </div>
 
@@ -1708,13 +1728,13 @@ export default function Builder() {
                         htmlFor="avoidOrphans"
                         className="text-xs text-gray-600"
                       >
-                        Avoid orphaned headings at page bottom
+                        {t("page_layout.avoid_orphans")}
                       </label>
                     </div>
 
                     <div className="flex items-center justify-between">
                       <label className="text-xs text-gray-600">
-                        Min lines before break
+                        {t("page_layout.min_lines")}
                       </label>
                       <div className="flex items-center">
                         <button
@@ -1781,19 +1801,21 @@ export default function Builder() {
             {showTemplateCarousel ? (
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-medium text-gray-800">Select Template</h3>
+                  <h3 className="font-medium text-gray-800">
+                    {t("templates.select_template")}
+                  </h3>
                   <button
                     onClick={() => setShowTemplateCarousel(false)}
                     className="text-gray-500 hover:text-gray-700"
                   >
-                    Close
+                    {t("templates.close")}
                   </button>
                 </div>
                 <div className="relative">
                   <button
                     onClick={prevTemplate}
                     className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
-                    aria-label="Previous template"
+                    aria-label={t("tooltips.previous_template")}
                   >
                     <ChevronLeft className="w-5 h-5 text-gray-700" />
                   </button>
@@ -1834,7 +1856,7 @@ export default function Builder() {
                   <button
                     onClick={nextTemplate}
                     className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
-                    aria-label="Next template"
+                    aria-label={t("tooltips.next_template")}
                   >
                     <ChevronRight className="w-5 h-5 text-gray-700" />
                   </button>
@@ -1849,7 +1871,7 @@ export default function Builder() {
                     className="flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <Layout className="w-5 h-5 text-gray-700" />
-                    <span>Templates</span>
+                    <span>{t("templates.templates")}</span>
                   </button>
                 </div>
 
@@ -1901,9 +1923,9 @@ export default function Builder() {
                         }
                       }}
                       className="p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
-                      title="Reset to default color"
+                      title={t("templates.reset_to_default_color")}
                     >
-                      Reset
+                      {t("templates.reset")}
                     </button>
                   </div>
                 </div>

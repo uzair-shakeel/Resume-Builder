@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import dynamic from "next/dynamic";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Dynamically import all CV preview components
 const CVPreviewAlt = dynamic(
@@ -116,8 +117,9 @@ const PreviewWrapper = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// Add formatRelativeTime function
+// Update formatRelativeTime function to use translations
 const formatRelativeTime = (dateString: string) => {
+  const { t } = useLanguage();
   const date = new Date(dateString);
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
@@ -128,23 +130,32 @@ const formatRelativeTime = (dateString: string) => {
   const diffInYears = Math.floor(diffInDays / 365);
 
   if (diffInSeconds < 60) {
-    return "Modifié à l'instant";
+    return t("site.dashboard.common.just_now");
   } else if (diffInMinutes < 60) {
-    return `Modifié il y a ${diffInMinutes} minute${
-      diffInMinutes > 1 ? "s" : ""
-    }`;
+    return `${t("site.dashboard.common.modified_prefix")} ${diffInMinutes} ${t(
+      "site.dashboard.common.minutes_ago"
+    )}`;
   } else if (diffInHours < 24) {
-    return `Modifié il y a ${diffInHours} heure${diffInHours > 1 ? "s" : ""}`;
+    return `${t("site.dashboard.common.modified_prefix")} ${diffInHours} ${t(
+      "site.dashboard.common.hours_ago"
+    )}`;
   } else if (diffInDays < 30) {
-    return `Modifié il y a ${diffInDays} jour${diffInDays > 1 ? "s" : ""}`;
+    return `${t("site.dashboard.common.modified_prefix")} ${diffInDays} ${t(
+      "site.dashboard.common.days_ago"
+    )}`;
   } else if (diffInMonths < 12) {
-    return `Modifié il y a ${diffInMonths} mois`;
+    return `${t("site.dashboard.common.modified_prefix")} ${diffInMonths} ${t(
+      "site.dashboard.common.months_ago"
+    )}`;
   } else {
-    return `Modifié il y a ${diffInYears} an${diffInYears > 1 ? "s" : ""}`;
+    return `${t("site.dashboard.common.modified_prefix")} ${diffInYears} ${t(
+      "site.dashboard.common.years_ago"
+    )}`;
   }
 };
 
 export default function Dashboard() {
+  const { t } = useLanguage();
   const [cvs, setCVs] = useState<CV[]>([]);
   const [coverLetters, setCoverLetters] = useState<CoverLetter[]>([]);
   const [loadingCVs, setLoadingCVs] = useState(true);
@@ -460,12 +471,14 @@ export default function Dashboard() {
           {/* CV Section */}
           <div className="mb-12">
             <div className="flex justify-between items-center mb-8">
-              <h1 className="text-2xl font-bold">Mes CV</h1>
+              <h1 className="text-2xl font-bold">
+                {t("site.dashboard.resumes.title")}
+              </h1>
               <Link
                 href="/cv"
                 className="text-blue-600 hover:text-blue-800 font-medium"
               >
-                Voir tous
+                {t("site.dashboard.resumes.view_all")}
               </Link>
             </div>
 
@@ -478,17 +491,17 @@ export default function Dashboard() {
               <div className="text-center py-12">
                 <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h2 className="text-xl font-semibold text-gray-700 mb-2">
-                  Aucun CV
+                  {t("site.dashboard.resumes.empty_state.title")}
                 </h2>
                 <p className="text-gray-500 mb-4">
-                  Créez votre premier CV pour commencer
+                  {t("site.dashboard.resumes.empty_state.description")}
                 </p>
                 <button
                   onClick={() => router.push("/builder")}
                   className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
-                  Créer un CV
+                  {t("site.dashboard.resumes.create_resume")}
                 </button>
               </div>
             ) : (
@@ -569,7 +582,7 @@ export default function Dashboard() {
                             onClick={() => handleRenameCV(cv._id)}
                             className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
                           >
-                            Enregistrer
+                            {t("site.dashboard.common.save")}
                           </button>
                         </div>
                       ) : (
@@ -592,12 +605,14 @@ export default function Dashboard() {
           {/* Cover Letter Section */}
           <div>
             <div className="flex justify-between items-center mb-8">
-              <h1 className="text-2xl font-bold">Mes lettres de motivation</h1>
+              <h1 className="text-2xl font-bold">
+                {t("site.dashboard.cover_letters.title")}
+              </h1>
               <Link
                 href="/cover-letter"
                 className="text-blue-600 hover:text-blue-800 font-medium"
               >
-                Voir tous
+                {t("site.dashboard.cover_letters.view_all")}
               </Link>
             </div>
 
@@ -610,17 +625,17 @@ export default function Dashboard() {
               <div className="text-center py-12">
                 <Mail className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h2 className="text-xl font-semibold text-gray-700 mb-2">
-                  Aucune lettre de motivation
+                  {t("site.dashboard.cover_letters.empty_state.title")}
                 </h2>
                 <p className="text-gray-500 mb-4">
-                  Créez votre première lettre de motivation pour commencer
+                  {t("site.dashboard.cover_letters.empty_state.description")}
                 </p>
                 <button
                   onClick={() => router.push("/builder/cover-letter")}
                   className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
-                  Créer une lettre
+                  {t("site.dashboard.cover_letters.create_letter")}
                 </button>
               </div>
             ) : (
@@ -633,7 +648,9 @@ export default function Dashboard() {
                   >
                     <div className="flex flex-col items-center gap-2 text-gray-500 group-hover:text-blue-500">
                       <Plus className="w-8 h-8" />
-                      <span className="font-medium">Créer une lettre</span>
+                      <span className="font-medium">
+                        {t("site.dashboard.cover_letters.create_letter")}
+                      </span>
                     </div>
                   </Link>
                 </div>
@@ -709,7 +726,7 @@ export default function Dashboard() {
                             }
                             className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
                           >
-                            Enregistrer
+                            {t("site.dashboard.common.save")}
                           </button>
                         </div>
                       ) : (

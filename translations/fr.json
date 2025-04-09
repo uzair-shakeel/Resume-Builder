@@ -1,0 +1,540 @@
+{
+  "site": {
+    "home": {
+      "hero": {
+        "description": "Section principale - Bannière de la page d'accueil",
+        "title": "Créez Votre CV Professionnel en Quelques Minutes",
+        "subtitle": "Un générateur de CV puissant pour vous aider à décrocher le travail de vos rêves",
+        "cta": {
+          "primary": "Commencer",
+          "secondary": "Voir les modèles"
+        }
+      },
+      "steps": {
+        "description": "Section Comment ça marche",
+        "title": "Comment ça marche",
+        "items": {
+          "step1": {
+            "title": "Choisir un modèle",
+            "description": "Parcourez notre bibliothèque de modèles de CV professionnels adaptés à votre secteur."
+          },
+          "step2": {
+            "title": "Remplissez vos informations",
+            "description": "Complétez les sections avec vos données personnelles, votre expérience, votre éducation et vos compétences."
+          },
+          "step3": {
+            "title": "Téléchargez Votre CV",
+            "description": "Téléchargez votre CV professionnel sous forme de fichier PDF, prêt à être partagé avec les employeurs."
+          }
+        }
+      },
+      "features": {
+        "description": "Section des caractéristiques - Nos outils",
+        "title": "Nos outils",
+        "items": {
+          "feature1": {
+            "title": "CV",
+            "description": "Créez des CV en illimité et modifiez-les à tout moment."
+          },
+          "feature2": {
+            "title": "Lettre de Motivation",
+            "description": "Écrivez facilement des lettres de motivation professionnelles."
+          },
+          "feature3": {
+            "title": "Offres d'emploi",
+            "description": "Soyez  informé des opportunités d'emploi pertinentes pour vous. Automatiquement"
+          },
+          "feature4": {
+            "title": "Applications",
+            "description": "Organisez clairement toutes vos demandes d'emploi."
+          }
+        }
+      },
+      "reviews": {
+        "description": "Section des avis - Témoignages des utilisateurs",
+        "title": "Ce que disent nos utilisateurs",
+        "metadata": {
+          "average_rating": "Note moyenne",
+          "out_of_five": "sur 5",
+          "view_all": "Voir tous les avis",
+          "based_on": "Basé sur",
+          "reviews_count": "avis"
+        },
+        "items": [
+          {
+            "name": "Tulin Cosgun",
+            "text": "Grâce à cette application, j'ai pu créer mon CV sans fautes d'orthographe et bien structuré. Cela m'a permis de postuler à plusieurs postes.",
+            "rating": 5
+          },
+          {
+            "name": "Moumen",
+            "text": "CV.fr m'a aidé à rédiger un CV à l'apparence professionnelle. De plus, il a de nombreuses fonctionnalités qui ont facilité son écriture. Il m'a également permis de mettre en évidence les points essentiels. Il offre également de nombreux modèles parmi lesquels choisir selon vos goûts. Il propose aussi un modèle de lettre de motivation, des offres d'emploi et le suivi de votre candidature. En bref, cet outil est complet et je le recommande vivement.",
+            "rating": 5
+          },
+          {
+            "name": "Jean-Philippe Becking",
+            "text": "Facile à utiliser, très bonne sélection de CV et en conséquence j'ai pu valider un stage.",
+            "rating": 5
+          },
+          {
+            "name": "Marie Laurent",
+            "text": "Une excellente plateforme pour créer votre CV professionnel. Interface intuitive et résultats impressionnants.",
+            "rating": 4
+          },
+          {
+            "name": "Thomas Dubois",
+            "text": "Très satisfait du service. Les modèles sont modernes et faciles à personnaliser.",
+            "rating": 5
+          }
+        ]
+      },
+      "makecv": {
+        "description": "Créer une rubrique de CV en ligne - Appel à l'action",
+        "title": "Créer un CV en ligne",
+        "subtitle": "Téléchargez facilement un CV professionnel en quelques minutes seulement.",
+        "cta": "Créer un CV"
+      },
+      "faqs": {
+        "description": "Section FAQ - Questions Fréquemment Posées",
+        "title": "Questions Fréquemment Posées",
+        "moreQuestions": "Avez-vous des questions ? Consultez notre",
+        "items": {
+          "faq1": {
+            "question": "Qu'est-ce qu'un CV ?",
+            "answer": "CV (Curriculum Vitae) signifie \"cours de la vie\" en latin. C'est une manière poétique de décrire \"le fichier contenant toutes les informations sur l'état civil, les diplômes, l'expérience professionnelle, etc. d'un candidat\", selon la définition du dictionnaire Larousse français."
+          },
+          "faq2": {
+            "question": "Que faut-il inclure dans un CV ?",
+            "answer": "Un CV doit contenir vos coordonnées personnelles et vos informations de contact, votre profil personnel, votre éducation, votre expérience de travail, vos compétences, les langues étrangères, et vos centres d'intérêt. Vous pouvez également ajouter des activités parascolaires, des cours, des stages, des objectifs et des références."
+          },
+          "faq3": {
+            "question": "Comment créer un CV ?",
+            "answer": "Pour créer un CV, vous avez deux options : utiliser un générateur de CV qui vous offre un document prêt à l'emploi avec un modèle préconçu, ou créer votre CV à partir de zéro en commençant par une page blanche à l'aide d'un traitement de texte."
+          },
+          "faq4": {
+            "question": "Comment créer un CV en utilisant un générateur?",
+            "answer": "Parcourez simplement les différents modèles disponibles, choisissez-en un qui correspond à l'image que vous souhaitez projeter, puis utilisez le concepteur de CV pour compléter les différentes sections en fonction de votre profil."
+          },
+          "faq5": {
+            "question": "Quels sont les avantages d'un générateur de CV?",
+            "answer": "Les avantages d'un générateur de CV incluent les économies de temps, s'assurer que vous n'omettez aucune section importante, maintenir l'intégrité de la mise en page, la facilité de mise à jour, et la possibilité de sauvegarder au format PDF."
+          },
+          "faq6": {
+            "question": "Conseils pour créer un bon CV",
+            "answer": "Pour créer un bon CV, organisez-le en sections claires, écrivez de manière concise, évitez trop d'informations, limitez-le à deux pages maximum, et restez positif en mettant en avant vos points forts."
+          }
+        }
+      },
+      "footer": {
+        "resources": "Ressources",
+        "advice": "Conseil",
+        "examples": "Exemples",
+        "product": "Produit",
+        "pricing": "Tarification",
+        "models": "Modèles",
+        "reviews": "Critiques",
+        "faq": "FAQ",
+        "contact": "Contact",
+        "terms": "Termes",
+        "privacy": "Confidentialité",
+        "about": "À propos",
+        "customerService": "Service Clientèle",
+        "languages": {
+          "french": "Français",
+          "dutch": "Néerlandais",
+          "finnish": "Finlandais",
+          "swedish": "Suédois"
+        },
+        "copyright": "© 2025 CV.ci. Tous droits réservés."
+      }
+    },
+    "builder": {
+      "header": {
+        "description": "Section d'en-tête de la page du créateur de CV",
+        "title": "Générateur de CV",
+        "cover_letter": "Lettre de Motivation",
+        "download": "Télécharger",
+        "download_as_pdf": "Télécharger en PDF"
+      },
+      "preview": "Aperçu",
+      "tabs": {
+        "design": "Conception",
+        "content": "Contenu"
+      },
+      "sections": {
+        "description": "Noms de sections dans le créateur de CV",
+        "names": {
+          "personal_info": "Informations personnelles",
+          "profile": "Profil",
+          "education": "Éducation",
+          "experience": "Expérience Professionnelle",
+          "skills": "Compétences",
+          "languages": "Langues",
+          "interests": "Intérêts",
+          "references": "Références",
+          "socials": "Liens Sociaux"
+        },
+        "actions": {
+          "add_section": "Ajouter une section",
+          "rename_section": "Renommer la section",
+          "delete_section": "Supprimer la section",
+          "move_to_page_1": "Aller à la page 1",
+          "move_to_page_2": "Passer à la page 2",
+          "page_2_indicator": "Page 2"
+        }
+      },
+      "custom_sections": {
+        "description": "Noms de sections personnalisés qui peuvent être ajoutés",
+        "options": {
+          "certifications": "Certifications",
+          "projects": "Projets",
+          "publications": "Publications",
+          "awards": "Prix",
+          "references": "Références",
+          "volunteer_work": "Travail bénévole",
+          "custom_section": "Section personnalisée"
+        }
+      },
+      "forms": {
+        "custom_section_editor": {
+          "description": "Éléments d'interface utilisateur pour l'éditeur de section personnalisé",
+          "title_placeholder": "Titre",
+          "description_placeholder": "Description",
+          "add_item": "+ Ajouter un article"
+        },
+        "personal_info": {
+          "description": "Champs et étiquettes du formulaire d'informations personnelles",
+          "fields": {
+            "first_name": "Prénom",
+            "last_name": "Nom de famille",
+            "job_title": "Intitulé du poste",
+            "email": "Email",
+            "phone": "Téléphone",
+            "address": "Adresse",
+            "city": "Ville",
+            "state": "État/Province",
+            "zip_code": "Code postal",
+            "country": "Pays",
+            "website": "Site web",
+            "linkedin": "LinkedIn",
+            "photo": "Photo",
+            "upload_photo": "Télécharger une photo",
+            "remove_photo": "Supprimer la photo"
+          }
+        },
+        "profile": {
+          "description": "Section de profil des champs de formulaire et des étiquettes",
+          "fields": {
+            "summary": "Résumé Professionnel",
+            "summary_placeholder": "Rédigez un bref résumé de votre parcours professionnel, de vos compétences et de vos objectifs de carrière...",
+            "objective": "Objectif de carrière",
+            "objective_placeholder": "Décrivez vos objectifs de carrière et ce que vous recherchez dans votre prochain rôle..."
+          }
+        },
+        "education": {
+          "description": "Champs et étiquettes de la section Éducation",
+          "fields": {
+            "add_education": "Ajouter Éducation",
+            "school": "École/Université",
+            "degree": "Degré",
+            "field_of_study": "Domaine d'étude",
+            "start_date": "Date de début",
+            "end_date": "Date de fin",
+            "present": "Présent",
+            "location": "Emplacement",
+            "description": "Description",
+            "description_placeholder": "Décrivez vos réalisations académiques, cours pertinents, ou activités parascolaires...",
+            "remove_education": "Supprimer l'éducation"
+          }
+        },
+        "experience": {
+          "description": "Section d'expérience, champs de formulaire et étiquettes",
+          "fields": {
+            "add_experience": "Ajouter une expérience",
+            "company": "Entreprise",
+            "position": "Position",
+            "start_date": "Date de début",
+            "end_date": "Date de fin",
+            "present": "Présent",
+            "location": "Emplacement",
+            "description": "Description",
+            "description_placeholder": "Décrivez vos responsabilités, vos réalisations et les compétences que vous avez développées...",
+            "remove_experience": "Supprimer l'expérience"
+          }
+        },
+        "skills": {
+          "description": "Champs et étiquettes de la section Compétences",
+          "fields": {
+            "add_skill": "Ajouter une compétence",
+            "skill_name": "Compétence",
+            "skill_level": "Niveau",
+            "beginner": "Débutant",
+            "intermediate": "Intermédiaire",
+            "advanced": "Avancé",
+            "expert": "Expert",
+            "remove_skill": "Supprimer la compétence"
+          }
+        },
+        "languages": {
+          "description": "Section des champs et des étiquettes de formulaire de langues",
+          "fields": {
+            "add_language": "Ajouter la langue",
+            "language_name": "Langue",
+            "language_level": "Niveau",
+            "elementary": "Élémentaire",
+            "limited_working": "Travail Limité",
+            "professional_working": "Professionnel Travailleur",
+            "full_professional": "Professionnel Complet",
+            "native": "Autochtone",
+            "remove_language": "Supprimer la langue"
+          }
+        },
+        "interests": {
+          "description": "Section des centres d'intérêt champs de formulaire et étiquettes",
+          "fields": {
+            "add_interest": "Ajouter un intérêt",
+            "interest_name": "Intérêt",
+            "remove_interest": "Supprimer l'intérêt"
+          }
+        },
+        "references": {
+          "description": "Section des références, champs de formulaire et étiquettes",
+          "fields": {
+            "add_reference": "Ajouter une référence",
+            "name": "Nom",
+            "position": "Position",
+            "company": "Compagnie",
+            "email": "Email",
+            "phone": "Téléphone",
+            "reference_text": "Référence",
+            "remove_reference": "Supprimer la référence"
+          }
+        },
+        "socials": {
+          "description": "Section des liens sociaux, champs de formulaire et étiquettes",
+          "fields": {
+            "add_social": "Ajouter un lien social",
+            "platform": "Plateforme",
+            "url": "URL",
+            "linkedin": "LinkedIn",
+            "twitter": "Twitter",
+            "facebook": "Facebook",
+            "instagram": "Instagram",
+            "github": "GitHub",
+            "dribbble": "Dribbble",
+            "behance": "Behance",
+            "other": "Autre",
+            "remove_social": "Supprimer le lien social"
+          }
+        }
+      },
+      "templates": {
+        "description": "Sélection de modèle UI",
+        "ui": {
+          "select_template": "Sélectionner le modèle",
+          "close": "Fermer",
+          "templates": "Modèles"
+        },
+        "options": {
+          "modern": "Moderne",
+          "classic": "Classique",
+          "pro": "Pro",
+          "sherlock": "Sherlock",
+          "hr": "RH",
+          "minimal": "Minimal",
+          "teal": "Sarcelle",
+          "circulaire": "Circulaire",
+          "student": "Étudiant"
+        }
+      },
+      "styling": {
+        "description": "Options de style pour le CV",
+        "font_families": {
+          "dejavu_sans": "DejaVu Sans",
+          "arial": "Arial",
+          "times_new_roman": "Times New Roman",
+          "calibri": "Calibri",
+          "georgia": "Géorgie",
+          "verdana": "Verdana"
+        },
+        "font_sizes": {
+          "small": "Petit",
+          "medium": "Moyen",
+          "large": "Grand",
+          "x_large": "X-Large"
+        },
+        "colors": {
+          "blue": "Bleu",
+          "red": "Rouge",
+          "green": "Vert",
+          "purple": "Violet",
+          "orange": "Orange",
+          "teal": "Sarcelle",
+          "pink": "Rose",
+          "slate": "Ardoise",
+          "reset": "Réinitialiser"
+        }
+      },
+      "page_layout": {
+        "description": "Paramètres de mise en page",
+        "settings": {
+          "page_layout_settings": "Paramètres de Mise en Page",
+          "page_margins": "Marges de page (mm)",
+          "top": "Top",
+          "right": "Droite",
+          "bottom": "Bas",
+          "left": "Gauche"
+        },
+        "page_break_rules": {
+          "title": "Règles de Saut de Page",
+          "keep_headings": "Gardez les en-têtes avec le contenu",
+          "avoid_orphans": "Évitez les titres orphelins en bas de page",
+          "min_lines": "Min lignes avant la pause"
+        }
+      },
+      "pdf": {
+        "description": "Messages de génération de PDF",
+        "generating_pdf": "Génération de PDF...",
+        "may_take_moments": "Cela peut prendre quelques instants."
+      },
+      "tooltips": {
+        "description": "Infobulles et étiquettes d'accessibilité",
+        "labels": {
+          "zoom_out": "Zoom arrière",
+          "zoom_in": "Zoomer",
+          "fit_to_page": "Ajuster à la Page",
+          "page_layout": "Paramètres de Mise en Page",
+          "previous_template": "Modèle précédent",
+          "next_template": "Modèle suivant"
+        }
+      },
+      "save_status": {
+        "description": "Enregistrer les messages de statut",
+        "messages": {
+          "saved": "Enregistré",
+          "saving": "Enregistrement...",
+          "error": "Erreur d'enregistrement",
+          "autosave": "Autosave activé"
+        }
+      },
+      "actions": {
+        "description": "Boutons d'action et messages",
+        "buttons": {
+          "save": "Sauvegarder",
+          "cancel": "Annuler",
+          "delete": "Supprimer",
+          "edit": "Modifier",
+          "add": "Ajouter",
+          "remove": "Supprimer",
+          "confirm": "Confirmer",
+          "back": "Dos",
+          "next": "Suivant",
+          "finish": "Terminer",
+          "preview": "Aperçu",
+          "drag_to_reorder": "Faites glisser pour réorganiser"
+        }
+      },
+      "notifications": {
+        "description": "Messages de notification",
+        "messages": {
+          "changes_saved": "Modifications enregistrées avec succès",
+          "error_saving": "Erreur lors de l'enregistrement des modifications",
+          "confirm_delete": "Êtes-vous sûr de vouloir supprimer cela?",
+          "cannot_undo": "Cette action ne peut pas être annulée"
+        }
+      }
+    },
+    "builder_cover_letter": {
+      "sections": {
+        "personal_info": "Informations personnelles",
+        "recipient": "Destinataire",
+        "date_subject": "Date et Sujet",
+        "introduction": "Introduction",
+        "current_situation": "Situation Actuelle",
+        "motivation": "Motivation",
+        "conclusion": "Conclusion"
+      }
+    },
+    "placeholder_cv": {
+      "personalInfo": {
+        "firstName": "Sherlock",
+        "lastName": "Holmes",
+        "title": "Détective Consultant",
+        "email": "sh.holmes@dt.com",
+        "phone": "+44 20 7946 0123",
+        "address": "221B Rue Baker",
+        "postalCode": "NW1 6XE",
+        "city": "Londres"
+      },
+      "recipient": {
+        "company": "Société XYZ",
+        "name": "Responsable des Ressources Humaines",
+        "address": "456 Avenue des Affaires",
+        "postalCode": "10002",
+        "city": "New York"
+      },
+      "dateAndSubject": {
+        "location": "New York",
+        "subject": "Candidature pour [Poste]"
+      },
+      "sections": {
+        "introduction": "Je vous écris pour exprimer mon intérêt pour le poste de [Position] au sein de votre entreprise. Ayant découvert votre offre d'emploi sur [Platform], j'aimerais soumettre ma candidature.",
+        "currentSituation": "Actuellement en poste en tant que [Current Position] chez [Company] à [City], je suis responsable de [Responsibilities]. Cette expérience m'a permis de développer des compétences solides en [Key Skills].",
+        "motivation": "Votre entreprise m'intéresse particulièrement en raison de [Aspect spécifique]. Mes compétences en [Compétences clés] et mon expertise en [Domaine d'expertise] seraient des atouts précieux pour contribuer à [Projets/Objectifs de l'entreprise].",
+        "conclusion": "Je serais ravi d'avoir l'occasion de discuter de ma candidature plus en détail lors d'un entretien. Merci d'avoir pris en compte ma candidature. J'attends votre réponse avec impatience."
+      }
+    },
+    "dashboard": {
+      "common": {
+        "loading": "Chargement...",
+        "no_items": "Aucun article",
+        "create_new": "Créer Nouveau",
+        "rename": "Renommer",
+        "delete": "Supprimer",
+        "save": "Enregistrer",
+        "edit": "Modifier",
+        "cancel": "Annuler",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer cela?",
+        "last_edited": "Dernière modification",
+        "just_now": "Modifié juste maintenant",
+        "minutes_ago": "il y a minute(s)",
+        "hours_ago": "il y a heure(s)",
+        "days_ago": "il y a jour(s)",
+        "months_ago": "il y a mois(s)",
+        "years_ago": "il y a an(s)",
+        "modified_prefix": "Modifié"
+      },
+      "resumes": {
+        "title": "Mes CV",
+        "view_all": "Voir tout",
+        "create_resume": "Créer un CV",
+        "empty_state": {
+          "title": "Pas de CV",
+          "description": "Créez votre premier CV pour commencer",
+          "button": "Créer un CV"
+        }
+      },
+      "cover_letters": {
+        "title": "Mes Lettres de Motivation",
+        "view_all": "Voir tout",
+        "create_letter": "Créer une lettre",
+        "empty_state": {
+          "title": "Pas de lettres de motivation",
+          "description": "Créez votre première lettre de motivation pour commencer",
+          "button": "Créer une lettre"
+        }
+      },
+      "sidebar": {
+        "new": "Nouveau",
+        "create_resume": "Créer un CV",
+        "create_cover_letter": "Créer une Lettre de Motivation",
+        "add_application": "Ajouter une Application",
+        "dashboard": "Tableau de bord",
+        "resumes": "CV",
+        "cover_letters": "Lettres de motivation",
+        "help": "Aide",
+        "sign_out": "Se déconnecter"
+      }
+    }
+  }
+}

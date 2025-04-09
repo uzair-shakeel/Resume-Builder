@@ -420,13 +420,13 @@ export default function CVPreviewHR({
             margin: 0;
             padding: 0;
           }
-          
+
           body {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
             color-adjust: exact !important;
           }
-          
+
           .cv-page {
             padding: 20mm !important;
             box-sizing: border-box !important;
@@ -437,7 +437,7 @@ export default function CVPreviewHR({
             page-break-after: always !important;
           }
         }
-        
+
         /* Non-print styles */
         .cv-page {
           width: 210mm;
@@ -447,11 +447,11 @@ export default function CVPreviewHR({
           margin: 0 auto;
           background: white;
         }
-        
+
         .cv-page + .cv-page {
           margin-top: 2rem;
         }
-        
+
         @media screen {
           .cv-container {
             padding: 2rem 0;

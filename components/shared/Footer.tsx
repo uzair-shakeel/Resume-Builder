@@ -1,41 +1,8 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
-
-const footerLinks = {
-  ressources: {
-    title: "Ressources",
-    links: [
-      { label: "Conseils", href: "/conseils" },
-      { label: "Exemples", href: "/exemples" },
-    ],
-  },
-  produit: {
-    title: "Produit",
-    links: [
-      { label: "Prix", href: "/pricing" },
-      { label: "Modèles", href: "/modeles" },
-      { label: "Avis", href: "/avis" },
-    ],
-  },
-  service: {
-    title: "Service client",
-    links: [
-      { label: "FAQ", href: "/faq" },
-      { label: "Contact", href: "/contact" },
-      { label: "Conditions générales", href: "/conditions" },
-      { label: "Politique de confidentialité", href: "/confidentialite" },
-      { label: "À propos", href: "/about" },
-    ],
-  },
-};
-
-const languages = [
-  { label: "Français", code: "fr" },
-  { label: "Nederlands", code: "nl" },
-  { label: "Suomi", code: "fi" },
-  { label: "Svenska", code: "sv" },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const socialLinks = [
   {
@@ -99,6 +66,45 @@ const socialLinks = [
 ];
 
 export default function Footer() {
+  const { t } = useLanguage();
+
+  // Define footerLinks using translations
+  const footerLinks = {
+    ressources: {
+      title: t("home.footer.resources"),
+      links: [
+        { label: t("home.footer.advice"), href: "/conseils" },
+        { label: t("home.footer.examples"), href: "/exemples" },
+      ],
+    },
+    produit: {
+      title: t("home.footer.product"),
+      links: [
+        { label: t("home.footer.pricing"), href: "/pricing" },
+        { label: t("home.footer.models"), href: "/modeles" },
+        { label: t("home.footer.reviews"), href: "/avis" },
+      ],
+    },
+    service: {
+      title: t("home.footer.customerService"),
+      links: [
+        { label: t("home.footer.faq"), href: "/faq" },
+        { label: t("home.footer.contact"), href: "/contact" },
+        { label: t("home.footer.terms"), href: "/conditions" },
+        { label: t("home.footer.privacy"), href: "/confidentialite" },
+        { label: t("home.footer.about"), href: "/about" },
+      ],
+    },
+  };
+
+  // Define languages using translations
+  const languages = [
+    { label: t("home.footer.languages.french"), code: "fr" },
+    { label: t("home.footer.languages.dutch"), code: "nl" },
+    { label: t("home.footer.languages.finnish"), code: "fi" },
+    { label: t("home.footer.languages.swedish"), code: "sv" },
+  ];
+
   return (
     <footer className="w-full bg-white flex flex-col items-center pt-6 md:pt-20 pb-8">
       <div className="max-w-[864px] mx-auto px-[20px]">
@@ -165,7 +171,7 @@ export default function Footer() {
             <Link href="https://apps.apple.com" className="block">
               <Image
                 src="/assets/app-store-badge-fr.svg"
-                alt="Download on the App Store"
+                alt={t("footer.downloadAppStore")}
                 width={132.82}
                 height={42}
                 className="h-auto w-[132.82px]"
@@ -174,7 +180,7 @@ export default function Footer() {
             <Link href="https://play.google.com" className="block">
               <Image
                 src="/assets/google-play-badge-fr.png"
-                alt="Get it on Google Play"
+                alt={t("footer.getItGooglePlay")}
                 width={141.53}
                 height={42}
                 className="h-auto w-[141.53px]"
@@ -207,17 +213,16 @@ export default function Footer() {
             rel="noopener noreferrer"
           >
             {social.svg}
-
-            <span className="sr-only">Social Link {index + 1}</span>
+            <span className="sr-only">
+              {t("home.footer.socialLink")} {index + 1}
+            </span>
           </Link>
         ))}
       </div>
 
       {/* Copyright */}
       <div className="text-xs md:text-base text-gray-500 mt-5 md:mt-8 text-center mx-5">
-        <span>
-          © 2025 <Link href="/">CV.fr</Link>
-        </span>
+        <span>{t("home.footer.copyright")}</span>
       </div>
     </footer>
   );

@@ -301,7 +301,7 @@ export default function CVPreviewPro({
   };
 
   const renderPage = (sections: string[]) => (
-    <div 
+    <div
       className="cv-page bg-white"
       style={{
         width: "210mm",
@@ -313,8 +313,8 @@ export default function CVPreviewPro({
     >
       {renderHeader()}
       <div className="flex" style={{ marginTop: "2rem" }}>
-        <div 
-          style={{ 
+        <div
+          style={{
             width: "240px",
             backgroundColor: "#111827",
             padding: "1.5rem",
@@ -349,13 +349,11 @@ export default function CVPreviewPro({
           }
         }
       `}</style>
-      
+
       {renderPage(page1Sections)}
 
       {hasPage2 && (
-        <div className="mt-8 print:mt-0">
-          {renderPage(page2Sections)}
-        </div>
+        <div className="mt-8 print:mt-0">{renderPage(page2Sections)}</div>
       )}
     </div>
   );

@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const resumeTemplates = [
   {
@@ -71,6 +72,7 @@ const resumeTemplates = [
 
 export default function ResumeSlider() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: "center",
@@ -131,7 +133,7 @@ export default function ResumeSlider() {
                     onClick={() => handleTemplateSelect(template)}
                     className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 active:bg-brand-300 text-white border-transparent hover:bg-brand-400 font-medium py-1 ps-3 pe-3 text-base"
                   >
-                    Utiliser ce modèle
+                    {t("hero.cta.secondary")}{" "}
                   </button>
                 </div>
               </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import type { InterestItem } from "@/types";
 import { MoreVertical, ChevronUp, Trash2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface InterestsProps {
   data: InterestItem[];
@@ -11,6 +12,7 @@ interface InterestsProps {
 
 export default function Interests({ data, updateData }: InterestsProps) {
   const [localData, setLocalData] = useState<InterestItem[]>(data);
+  const { t } = useLanguage();
 
   // Update local state when parent data changes
   useEffect(() => {
@@ -43,16 +45,17 @@ export default function Interests({ data, updateData }: InterestsProps) {
     updateData(newData);
   };
 
+  // Use hardcoded options for now since the translation keys for options aren't in the file
   const interestOptions = [
-    "Cours",
-    "Stages",
-    "Activités extra-scolaires",
-    "Références",
-    "Qualités",
-    "Certificats",
-    "Réalisations",
+    "Courses",
+    "Internships",
+    "Extracurricular Activities",
+    "References",
+    "Qualities",
+    "Certificates",
+    "Achievements",
     "Signature",
-    "Bas de page",
+    "Footer",
   ];
 
   return (
@@ -78,7 +81,7 @@ export default function Interests({ data, updateData }: InterestsProps) {
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Centre d'intérêt
+                  {t("interests_form.interest_name")}
                 </label>
                 <input
                   type="text"
@@ -113,7 +116,7 @@ export default function Interests({ data, updateData }: InterestsProps) {
           onClick={addInterest}
           className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
         >
-          + Ajouter un centre d'intérêt
+          + {t("interests_form.add_interest")}
         </button>
       </div>
     </div>

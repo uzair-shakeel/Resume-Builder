@@ -1,0 +1,540 @@
+{
+  "site": {
+    "home": {
+      "hero": {
+        "description": "Main section - Homepage banner",
+        "title": "Create Your Professional Resume in Minutes",
+        "subtitle": "A powerful resume builder to help you land your dream job",
+        "cta": {
+          "primary": "Get Started",
+          "secondary": "View Templates"
+        }
+      },
+      "steps": {
+        "description": "How it works section",
+        "title": "How It Works",
+        "items": {
+          "step1": {
+            "title": "Choose a Template",
+            "description": "Browse through our library of professional resume templates tailored to your industry."
+          },
+          "step2": {
+            "title": "Fill in Your Information",
+            "description": "Complete the sections with your personal data, experience, education, and skills."
+          },
+          "step3": {
+            "title": "Download Your Resume",
+            "description": "Download your professional resume as a PDF file, ready to be shared with employers."
+          }
+        }
+      },
+      "features": {
+        "description": "Features section - Our tools",
+        "title": "Our Tools",
+        "items": {
+          "feature1": {
+            "title": "Resume",
+            "description": "Create unlimited resumes and edit them anytime."
+          },
+          "feature2": {
+            "title": "Cover Letter",
+            "description": "Easily write professional cover letters."
+          },
+          "feature3": {
+            "title": "Job Offers",
+            "description": "Be automatically informed of relevant job opportunities for you."
+          },
+          "feature4": {
+            "title": "Applications",
+            "description": "Organize all your job applications clearly."
+          }
+        }
+      },
+      "reviews": {
+        "description": "Reviews section - User testimonials",
+        "title": "What Our Users Say",
+        "metadata": {
+          "average_rating": "Average rating",
+          "out_of_five": "out of 5",
+          "view_all": "View all reviews",
+          "based_on": "Based on",
+          "reviews_count": "reviews"
+        },
+        "items": [
+          {
+            "name": "Tulin Cosgun",
+            "text": "Thanks to this application I was able to create my resume without spelling mistakes and well structured. This allowed me to apply for several positions.",
+            "rating": 5
+          },
+          {
+            "name": "Moumen",
+            "text": "CV.fr helped me write a professional-looking resume. In addition, it has many features that made writing it easier. It also allowed me to highlight the essential points. It also has many templates to choose from to suit your taste. It also offers a cover letter template, job offers, and tracking of your application. In short, this tool is complete and I highly recommend it.",
+            "rating": 5
+          },
+          {
+            "name": "Jean-Philippe Becking",
+            "text": "Easy to use, very good CV selection and as a result I was able to validate a training course.",
+            "rating": 5
+          },
+          {
+            "name": "Marie Laurent",
+            "text": "An excellent platform for creating your professional resume. Intuitive interface and impressive results.",
+            "rating": 4
+          },
+          {
+            "name": "Thomas Dubois",
+            "text": "Very satisfied with the service. The templates are modern and easy to customize.",
+            "rating": 5
+          }
+        ]
+      },
+      "makecv": {
+        "description": "Create a Resume Online section - Call to action",
+        "title": "Create a Resume Online",
+        "subtitle": "Download a professional resume easily in just a few minutes.",
+        "cta": "Create a Resume"
+      },
+      "faqs": {
+        "description": "FAQ section - Frequently Asked Questions",
+        "title": "Frequently Asked Questions",
+        "moreQuestions": "Do you have questions? Check our",
+        "items": {
+          "faq1": {
+            "question": "What is a CV?",
+            "answer": "CV (Curriculum Vitae) means \"course of life\" in Latin. It's a poetic way to describe \"the file containing all the information about a candidate's civil status, diplomas, professional experience, etc.\", according to the definition of the French Larousse dictionary."
+          },
+          "faq2": {
+            "question": "What to include in a CV?",
+            "answer": "A CV should contain your personal details and contact information, personal profile, education, work experience, skills, foreign languages, and interests. You can also add extracurricular activities, courses, internships, objectives, and references."
+          },
+          "faq3": {
+            "question": "How to create a CV?",
+            "answer": "To create a CV, you have two options: use a CV generator that offers you a ready-made document with a pre-designed template, or create your CV from scratch starting with a blank page using a word processor."
+          },
+          "faq4": {
+            "question": "How to create a CV using a generator?",
+            "answer": "Simply browse through the different templates available, choose one that corresponds to the image you want to project, then use the CV designer to complete the different sections according to your profile."
+          },
+          "faq5": {
+            "question": "What are the advantages of a CV generator?",
+            "answer": "The advantages of a CV generator include time savings, ensuring you don't omit any important sections, maintaining layout integrity, ease of updating, and the ability to save in PDF format."
+          },
+          "faq6": {
+            "question": "Tips for creating a good CV",
+            "answer": "To create a good CV, organize it into clear sections, write concisely, avoid too much information, limit it to two pages maximum, and stay positive by highlighting your strengths."
+          }
+        }
+      },
+      "footer": {
+        "resources": "Resources",
+        "advice": "Advice",
+        "examples": "Examples",
+        "product": "Product",
+        "pricing": "Pricing",
+        "models": "Models",
+        "reviews": "Reviews",
+        "faq": "FAQ",
+        "contact": "Contact",
+        "terms": "Terms",
+        "privacy": "Privacy",
+        "about": "About",
+        "customerService": "Customer Service",
+        "languages": {
+          "french": "French",
+          "dutch": "Dutch",
+          "finnish": "Finnish",
+          "swedish": "Swedish"
+        },
+        "copyright": "© 2025 CV.fr. All rights reserved."
+      }
+    },
+    "builder": {
+      "header": {
+        "description": "Header section of the CV builder page",
+        "title": "CV Builder",
+        "cover_letter": "Cover Letter",
+        "download": "Download",
+        "download_as_pdf": "Download as PDF"
+      },
+      "preview": "Preview",
+      "tabs": {
+        "design": "Design",
+        "content": "Content"
+      },
+      "sections": {
+        "description": "Section names in the CV builder",
+        "names": {
+          "personal_info": "Personal Information",
+          "profile": "Profile",
+          "education": "Education",
+          "experience": "Professional Experience",
+          "skills": "Skills",
+          "languages": "Languages",
+          "interests": "Interests",
+          "references": "References",
+          "socials": "Social Links"
+        },
+        "actions": {
+          "add_section": "Add Section",
+          "rename_section": "Rename section",
+          "delete_section": "Delete section",
+          "move_to_page_1": "Move to page 1",
+          "move_to_page_2": "Move to page 2",
+          "page_2_indicator": "Page 2"
+        }
+      },
+      "custom_sections": {
+        "description": "Custom section names that can be added",
+        "options": {
+          "certifications": "Certifications",
+          "projects": "Projects",
+          "publications": "Publications",
+          "awards": "Awards",
+          "references": "References",
+          "volunteer_work": "Volunteer Work",
+          "custom_section": "Custom Section"
+        }
+      },
+      "forms": {
+        "custom_section_editor": {
+          "description": "UI elements for the custom section editor",
+          "title_placeholder": "Title",
+          "description_placeholder": "Description",
+          "add_item": "+ Add Item"
+        },
+        "personal_info": {
+          "description": "Personal information form fields and labels",
+          "fields": {
+            "first_name": "First Name",
+            "last_name": "Last Name",
+            "job_title": "Job Title",
+            "email": "Email",
+            "phone": "Phone",
+            "address": "Address",
+            "city": "City",
+            "state": "State/Province",
+            "zip_code": "Zip/Postal Code",
+            "country": "Country",
+            "website": "Website",
+            "linkedin": "LinkedIn",
+            "photo": "Photo",
+            "upload_photo": "Upload Photo",
+            "remove_photo": "Remove Photo"
+          }
+        },
+        "profile": {
+          "description": "Profile section form fields and labels",
+          "fields": {
+            "summary": "Professional Summary",
+            "summary_placeholder": "Write a brief summary of your professional background, skills, and career goals...",
+            "objective": "Career Objective",
+            "objective_placeholder": "Describe your career goals and what you're looking for in your next role..."
+          }
+        },
+        "education": {
+          "description": "Education section form fields and labels",
+          "fields": {
+            "add_education": "Add Education",
+            "school": "School/University",
+            "degree": "Degree",
+            "field_of_study": "Field of Study",
+            "start_date": "Start Date",
+            "end_date": "End Date",
+            "present": "Present",
+            "location": "Location",
+            "description": "Description",
+            "description_placeholder": "Describe your academic achievements, relevant coursework, or extracurricular activities...",
+            "remove_education": "Remove Education"
+          }
+        },
+        "experience": {
+          "description": "Experience section form fields and labels",
+          "fields": {
+            "add_experience": "Add Experience",
+            "company": "Company",
+            "position": "Position",
+            "start_date": "Start Date",
+            "end_date": "End Date",
+            "present": "Present",
+            "location": "Location",
+            "description": "Description",
+            "description_placeholder": "Describe your responsibilities, achievements, and the skills you developed...",
+            "remove_experience": "Remove Experience"
+          }
+        },
+        "skills": {
+          "description": "Skills section form fields and labels",
+          "fields": {
+            "add_skill": "Add Skill",
+            "skill_name": "Skill",
+            "skill_level": "Level",
+            "beginner": "Beginner",
+            "intermediate": "Intermediate",
+            "advanced": "Advanced",
+            "expert": "Expert",
+            "remove_skill": "Remove Skill"
+          }
+        },
+        "languages": {
+          "description": "Languages section form fields and labels",
+          "fields": {
+            "add_language": "Add Language",
+            "language_name": "Language",
+            "language_level": "Level",
+            "elementary": "Elementary",
+            "limited_working": "Limited Working",
+            "professional_working": "Professional Working",
+            "full_professional": "Full Professional",
+            "native": "Native",
+            "remove_language": "Remove Language"
+          }
+        },
+        "interests": {
+          "description": "Interests section form fields and labels",
+          "fields": {
+            "add_interest": "Add Interest",
+            "interest_name": "Interest",
+            "remove_interest": "Remove Interest"
+          }
+        },
+        "references": {
+          "description": "References section form fields and labels",
+          "fields": {
+            "add_reference": "Add Reference",
+            "name": "Name",
+            "position": "Position",
+            "company": "Company",
+            "email": "Email",
+            "phone": "Phone",
+            "reference_text": "Reference",
+            "remove_reference": "Remove Reference"
+          }
+        },
+        "socials": {
+          "description": "Social links section form fields and labels",
+          "fields": {
+            "add_social": "Add Social Link",
+            "platform": "Platform",
+            "url": "URL",
+            "linkedin": "LinkedIn",
+            "twitter": "Twitter",
+            "facebook": "Facebook",
+            "instagram": "Instagram",
+            "github": "GitHub",
+            "dribbble": "Dribbble",
+            "behance": "Behance",
+            "other": "Other",
+            "remove_social": "Remove Social Link"
+          }
+        }
+      },
+      "templates": {
+        "description": "Template selection UI",
+        "ui": {
+          "select_template": "Select Template",
+          "close": "Close",
+          "templates": "Templates"
+        },
+        "options": {
+          "modern": "Modern",
+          "classic": "Classic",
+          "pro": "Pro",
+          "sherlock": "Sherlock",
+          "hr": "HR",
+          "minimal": "Minimal",
+          "teal": "Teal",
+          "circulaire": "Circulaire",
+          "student": "Student"
+        }
+      },
+      "styling": {
+        "description": "Styling options for the CV",
+        "font_families": {
+          "dejavu_sans": "DejaVu Sans",
+          "arial": "Arial",
+          "times_new_roman": "Times New Roman",
+          "calibri": "Calibri",
+          "georgia": "Georgia",
+          "verdana": "Verdana"
+        },
+        "font_sizes": {
+          "small": "Small",
+          "medium": "Medium",
+          "large": "Large",
+          "x_large": "X-Large"
+        },
+        "colors": {
+          "blue": "Blue",
+          "red": "Red",
+          "green": "Green",
+          "purple": "Purple",
+          "orange": "Orange",
+          "teal": "Teal",
+          "pink": "Pink",
+          "slate": "Slate",
+          "reset": "Reset"
+        }
+      },
+      "page_layout": {
+        "description": "Page layout settings",
+        "settings": {
+          "page_layout_settings": "Page Layout Settings",
+          "page_margins": "Page Margins (mm)",
+          "top": "Top",
+          "right": "Right",
+          "bottom": "Bottom",
+          "left": "Left"
+        },
+        "page_break_rules": {
+          "title": "Page Break Rules",
+          "keep_headings": "Keep headings with content",
+          "avoid_orphans": "Avoid orphaned headings at page bottom",
+          "min_lines": "Min lines before break"
+        }
+      },
+      "pdf": {
+        "description": "PDF generation messages",
+        "generating_pdf": "Generating PDF...",
+        "may_take_moments": "This may take a few moments."
+      },
+      "tooltips": {
+        "description": "Tooltips and accessibility labels",
+        "labels": {
+          "zoom_out": "Zoom Out",
+          "zoom_in": "Zoom In",
+          "fit_to_page": "Fit to Page",
+          "page_layout": "Page Layout Settings",
+          "previous_template": "Previous template",
+          "next_template": "Next template"
+        }
+      },
+      "save_status": {
+        "description": "Save status messages",
+        "messages": {
+          "saved": "Saved",
+          "saving": "Saving...",
+          "error": "Error saving",
+          "autosave": "Autosave enabled"
+        }
+      },
+      "actions": {
+        "description": "Action buttons and messages",
+        "buttons": {
+          "save": "Save",
+          "cancel": "Cancel",
+          "delete": "Delete",
+          "edit": "Edit",
+          "add": "Add",
+          "remove": "Remove",
+          "confirm": "Confirm",
+          "back": "Back",
+          "next": "Next",
+          "finish": "Finish",
+          "preview": "Preview",
+          "drag_to_reorder": "Drag to reorder"
+        }
+      },
+      "notifications": {
+        "description": "Notification messages",
+        "messages": {
+          "changes_saved": "Changes saved successfully",
+          "error_saving": "Error saving changes",
+          "confirm_delete": "Are you sure you want to delete this?",
+          "cannot_undo": "This action cannot be undone"
+        }
+      }
+    },
+    "builder_cover_letter": {
+      "sections": {
+        "personal_info": "Personal Information",
+        "recipient": "Recipient",
+        "date_subject": "Date and Subject",
+        "introduction": "Introduction",
+        "current_situation": "Current Situation",
+        "motivation": "Motivation",
+        "conclusion": "Conclusion"
+      }
+    },
+    "placeholder_cv": {
+      "personalInfo": {
+        "firstName": "Sherlock",
+        "lastName": "Holmes",
+        "title": "Consulting Detective",
+        "email": "sh.holmes@dt.com",
+        "phone": "+44 20 7946 0123",
+        "address": "221B Baker Street",
+        "postalCode": "NW1 6XE",
+        "city": "London"
+      },
+      "recipient": {
+        "company": "XYZ Company",
+        "name": "HR Manager",
+        "address": "456 Business Avenue",
+        "postalCode": "10002",
+        "city": "New York"
+      },
+      "dateAndSubject": {
+        "location": "New York",
+        "subject": "Application for [Position]"
+      },
+      "sections": {
+        "introduction": "I am writing to express my interest in the [Position] position at your company. Having discovered your job posting on [Platform], I would like to submit my application.",
+        "currentSituation": "Currently working as a [Current Position] at [Company] in [City], I am responsible for [Responsibilities]. This experience has allowed me to develop strong skills in [Key Skills].",
+        "motivation": "Your company particularly interests me because of [Specific Aspect]. My skills in [Key Skills] and expertise in [Field of Expertise] would be valuable assets in contributing to [Company Projects/Goals].",
+        "conclusion": "I would welcome the opportunity to discuss my application in more detail during an interview. Thank you for considering my application. I look forward to your response."
+      }
+    },
+    "dashboard": {
+      "common": {
+        "loading": "Loading...",
+        "no_items": "No items",
+        "create_new": "Create New",
+        "rename": "Rename",
+        "delete": "Delete",
+        "save": "Save",
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "confirm_delete": "Are you sure you want to delete this?",
+        "last_edited": "Last edited",
+        "just_now": "Modified just now",
+        "minutes_ago": "minute(s) ago",
+        "hours_ago": "hour(s) ago",
+        "days_ago": "day(s) ago",
+        "months_ago": "month(s) ago",
+        "years_ago": "year(s) ago",
+        "modified_prefix": "Modified"
+      },
+      "resumes": {
+        "title": "My Resumes",
+        "view_all": "View all",
+        "create_resume": "Create Resume",
+        "empty_state": {
+          "title": "No resumes",
+          "description": "Create your first resume to get started",
+          "button": "Create Resume"
+        }
+      },
+      "cover_letters": {
+        "title": "My Cover Letters",
+        "view_all": "View all",
+        "create_letter": "Create Letter",
+        "empty_state": {
+          "title": "No cover letters",
+          "description": "Create your first cover letter to get started",
+          "button": "Create Letter"
+        }
+      },
+      "sidebar": {
+        "new": "New",
+        "create_resume": "Create a Resume",
+        "create_cover_letter": "Create a Cover Letter",
+        "add_application": "Add an Application",
+        "dashboard": "Dashboard",
+        "resumes": "Resumes",
+        "cover_letters": "Cover Letters",
+        "help": "Help",
+        "sign_out": "Sign Out"
+      }
+    }
+  }
+}

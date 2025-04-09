@@ -6,10 +6,13 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   // Handle scroll
   useEffect(() => {
@@ -74,6 +77,7 @@ export default function Header() {
           >
             Lettre de motivation
           </Link>
+          <LanguageSwitcher />
         </nav>
 
         <div className="flex items-center justify-end gap-2">
