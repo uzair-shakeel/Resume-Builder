@@ -1928,7 +1928,6 @@ export default function Builder() {
         {/* Left Panel - Form */}
         <div className="w-full lg:w-1/2 flex flex-col border-r border-gray-200 bg-white">
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-            
             <div className="flex items-center lg:gap-4 gap-2">
               <button
                 onClick={handleBackToDashboard}
@@ -2450,14 +2449,12 @@ export default function Builder() {
                 <div className="relative">
                   <button
                     onClick={prevTemplate}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
                     aria-label={t("tooltips.previous_template")}
                     className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
                       isTemplateLoading
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:bg-gray-100"
                     }`}
-                    aria-label="Previous template"
                     disabled={isTemplateLoading}
                   >
                     <ChevronLeft className="w-5 h-5 text-gray-700" />
@@ -2503,18 +2500,13 @@ export default function Builder() {
 
                   <button
                     onClick={nextTemplate}
-<<<<<<< HEAD
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
-                    aria-label={t("tooltips.next_template")}
-=======
                     className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
                       isTemplateLoading
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:bg-gray-100"
                     }`}
-                    aria-label="Next template"
+                    aria-label={t("tooltips.next_template")}
                     disabled={isTemplateLoading}
->>>>>>> 37fa46e1ea44b1995a5a7a0d34d07fe824d0e014
                   >
                     <ChevronRight className="w-5 h-5 text-gray-700" />
                   </button>

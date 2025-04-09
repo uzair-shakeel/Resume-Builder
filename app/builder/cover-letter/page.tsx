@@ -73,145 +73,6 @@ const colorThemes = [
   { name: "Slate", value: "#64748b" }, // slate-500
 ];
 
-// Add this after the colorThemes constant
-const introductionOptions = [
-  {
-    label: "Réponse à une annonce publiée en ligne",
-    value: "online",
-    template:
-      "En réponse à votre annonce publiée sur [Site] concernant le poste de [Poste], je vous soumets ma candidature avec grand intérêt.",
-  },
-  {
-    label: "Candidature spontanée",
-    value: "spontaneous",
-    template:
-      "Je me permets de vous adresser ma candidature spontanée pour un poste de [Poste] au sein de votre entreprise.",
-  },
-  {
-    label: "Réponse à une annonce publiée dans un journal ou un magazine",
-    value: "print",
-    template:
-      "Suite à votre annonce parue dans [Journal/Magazine] du [Date] pour le poste de [Poste], je vous présente ma candidature.",
-  },
-  {
-    label: "Autre",
-    value: "other",
-    template: "",
-  },
-];
-
-// Add this after the introductionOptions constant
-const situationOptions = [
-  {
-    label: "Je suis actuellement en poste",
-    value: "employed",
-    template:
-      "Je travaille actuellement en tant que [Poste actuel] chez [Entreprise] à [Ville]. Dans ce poste, je suis responsable de [Responsabilités].",
-  },
-  {
-    label: "Je suis actuellement en poste et j'ai récemment terminé mes études",
-    value: "employed_graduate",
-    template:
-      "Je travaille actuellement en tant que [Poste actuel] chez [Entreprise] à [Ville]. Dans ce poste, je suis responsable de [Responsabilités]. J'ai terminé mes études de [Formation] à [Établissement].",
-  },
-  {
-    label: "Je suis actuellement en poste et je dispose d'une large expérience",
-    value: "employed_experienced",
-    template:
-      "Je travaille actuellement en tant que [Poste actuel] chez [Entreprise] à [Ville]. Avec [X] années d'expérience dans [Domaine], j'ai développé une expertise solide en [Compétences clés].",
-  },
-  {
-    label: "J'ai terminé mes études",
-    value: "graduate",
-    template:
-      "Je viens de terminer mes études de [Formation] à [Établissement], où j'ai acquis de solides connaissances en [Domaines d'expertise].",
-  },
-  {
-    label: "Je suis étudiant(e)",
-    value: "student",
-    template:
-      "Je suis actuellement en [Année/Niveau] de [Formation] à [Établissement], où je me spécialise en [Spécialisation].",
-  },
-  {
-    label: "Je suis actuellement sans emploi",
-    value: "unemployed",
-    template:
-      "Suite à [Raison], je suis actuellement en recherche active d'un nouveau défi professionnel qui me permettra de mettre à profit mes compétences en [Compétences].",
-  },
-];
-
-// Add this after the situationOptions constant
-const motivationOptions = [
-  {
-    label: "Axé sur la carrière",
-    value: "career",
-    template:
-      "Votre entreprise représente pour moi une opportunité unique de développement professionnel. Je suis particulièrement intéressé(e) par [Aspect spécifique] et je souhaite mettre à profit mes compétences en [Compétences clés] au sein de votre équipe. Mon expérience en [Domaine d'expertise] me permettra d'apporter une contribution significative à [Projets/Objectifs de l'entreprise].",
-  },
-  {
-    label: "Axé sur la formation",
-    value: "education",
-    template:
-      "Ma formation en [Formation] m'a permis d'acquérir de solides connaissances en [Domaines d'expertise], que je souhaite mettre en pratique au sein de votre entreprise. Les projets que j'ai réalisés durant mes études, notamment [Projet clé], m'ont préparé(e) aux défis que représente ce poste.",
-  },
-  {
-    label: "Axé sur l'expérience",
-    value: "experience",
-    template:
-      "Fort(e) de mon expérience de [X] années dans [Secteur], j'ai développé une expertise approfondie en [Compétences spécifiques]. Ces compétences, associées à ma connaissance du secteur [Secteur d'activité], seront des atouts précieux pour contribuer à [Objectifs/Projets de l'entreprise].",
-  },
-  {
-    label: "Axé sur l'entreprise",
-    value: "company",
-    template:
-      "Votre entreprise se distingue par [Caractéristique/Valeur de l'entreprise], ce qui correspond parfaitement à ma vision professionnelle. Je suis particulièrement impressionné(e) par [Réalisation/Projet de l'entreprise] et je souhaite contribuer activement à vos futurs succès en apportant [Compétences/Expertise].",
-  },
-  {
-    label: "Axé sur l'innovation",
-    value: "innovation",
-    template:
-      "L'innovation étant au cœur de mes préoccupations, je suis enthousiasmé(e) par [Projet/Technologie innovante] développé(e) par votre entreprise. Mon expérience en [Domaine technique/Innovation] et ma capacité à [Compétence spécifique] me permettront de contribuer efficacement à vos projets innovants.",
-  },
-  {
-    label: "Autre",
-    value: "other",
-    template: "",
-  },
-];
-
-// Add this after the motivationOptions constant
-const conclusionOptions = [
-  {
-    label: "Réponse à une offre d'emploi",
-    value: "job_offer",
-    template:
-      "Je souhaiterais vous expliquer plus précisément ma motivation pour le poste de [Emploi recherché] lors d'un entretien. Vous pouvez me joindre par téléphone au [Téléphone], ou par e-mail à l'adresse suivante : [Adresse e-mail].<br/><br/>Je vous remercie par avance de la considération que vous portez à ma candidature.<br/><br/>Cordialement,<br/><br/>[Prénom] [Nom]<br/><br/>Pièce jointe : CV",
-  },
-  {
-    label: "Candidature spontanée",
-    value: "spontaneous",
-    template:
-      "Je reste à votre disposition pour vous rencontrer lors d'un entretien et vous exposer plus en détail mes motivations. Vous pouvez me joindre par téléphone au [Téléphone], ou par e-mail à l'adresse suivante : [Adresse e-mail].<br/><br/>Je vous remercie de l'attention que vous porterez à ma candidature.<br/><br/>Cordialement,<br/><br/>[Prénom] [Nom]<br/><br/>Pièce jointe : CV",
-  },
-  {
-    label: "Stage/Alternance",
-    value: "internship",
-    template:
-      "Je suis disponible pour un entretien afin d'échanger sur les modalités du [Type de contrat] et vous présenter plus en détail mon parcours. Vous pouvez me joindre par téléphone au [Téléphone], ou par e-mail à l'adresse suivante : [Adresse e-mail].<br/><br/>Je vous remercie par avance de l'attention que vous porterez à ma candidature.<br/><br/>Cordialement,<br/><br/>[Prénom] [Nom]<br/><br/>Pièce jointe : CV",
-  },
-  {
-    label: "Recommandation",
-    value: "referral",
-    template:
-      "Je me tiens à votre disposition pour un entretien où je pourrai vous exposer plus en détail mes motivations. Comme suggéré par [Contact], vous pouvez me joindre par téléphone au [Téléphone], ou par e-mail à l'adresse suivante : [Adresse e-mail].<br/><br/>Je vous remercie par avance de l'attention que vous porterez à ma candidature.<br/><br/>Cordialement,<br/><br/>[Prénom] [Nom]<br/><br/>Pièce jointe : CV",
-  },
-  {
-    label: "Autre",
-    value: "other",
-    template: "",
-  },
-];
-
 // Add template options
 const templateOptions = [
   {
@@ -419,6 +280,131 @@ export default function CoverLetterBuilder() {
       templateLoadingTimeoutRef.current = null;
     }
   }, []);
+
+  // introductionOptions
+  const introductionOptions = [
+    {
+      label: t("builder_cover_letter.introduction.onlinead"),
+      value: "online",
+      template: t("builder_cover_letter.introduction.onlinead_template"),
+    },
+    {
+      label: t("builder_cover_letter.introduction.spontaneous_application"),
+      value: "spontaneous",
+      template: t("builder_cover_letter.introduction.spontaneous_template"),
+    },
+    {
+      label: t("builder_cover_letter.introduction.printad"),
+      value: "print",
+      template: t("builder_cover_letter.introduction.printad_template"),
+    },
+    {
+      label: t("builder_cover_letter.introduction.other"),
+      value: "other",
+      template: t("builder_cover_letter.introduction.other_template"),
+    },
+  ];
+
+  // situationOptions
+  const situationOptions = [
+    {
+      label: t("builder_cover_letter.current_situation.currently_employed"),
+      value: "employed",
+      template: t("builder_cover_letter.current_situation.employed_template"),
+    },
+    {
+      label: t("builder_cover_letter.current_situation.employed_graduated"),
+      value: "employed_graduate",
+      template: t(
+        "builder_cover_letter.current_situation.employed_graduate_template"
+      ),
+    },
+    {
+      label: t("builder_cover_letter.current_situation.employed_experience"),
+      value: "employed_experienced",
+      template: t(
+        "builder_cover_letter.current_situation.employed_experienced_template"
+      ),
+    },
+    {
+      label: t("builder_cover_letter.current_situation.graduated"),
+      value: "graduate",
+      template: t("builder_cover_letter.current_situation.graduate_template"),
+    },
+    {
+      label: t("builder_cover_letter.current_situation.is_student"),
+      value: "student",
+      template: t("builder_cover_letter.current_situation.student_template"),
+    },
+    {
+      label: t("builder_cover_letter.current_situation.is_unemployed"),
+      value: "unemployed",
+      template: t("builder_cover_letter.current_situation.unemployed_template"),
+    },
+  ];
+
+  // motivationOptions
+  const motivationOptions = [
+    {
+      label: t("builder_cover_letter.motivation.my_career"),
+      value: "career",
+      template: t("builder_cover_letter.motivation.career_template"),
+    },
+    {
+      label: t("builder_cover_letter.motivation.my_education"),
+      value: "education",
+      template: t("builder_cover_letter.motivation.education_template"),
+    },
+    {
+      label: t("builder_cover_letter.motivation.my_experience"),
+      value: "experience",
+      template: t("builder_cover_letter.motivation.experience_template"),
+    },
+    {
+      label: t("builder_cover_letter.motivation.my_company"),
+      value: "company",
+      template: t("builder_cover_letter.motivation.company_template"),
+    },
+    {
+      label: t("builder_cover_letter.motivation.my_innovation"),
+      value: "innovation",
+      template: t("builder_cover_letter.motivation.innovation_template"),
+    },
+    {
+      label: t("builder_cover_letter.motivation.other"),
+      value: "other",
+      template: t("builder_cover_letter.motivation.other_template"),
+    },
+  ];
+
+  // conclusionOptions
+  const conclusionOptions = [
+    {
+      label: t("builder_cover_letter.conclusion.my_job_offer"),
+      value: "job_offer",
+      template: t("builder_cover_letter.conclusion.job_offer_template"),
+    },
+    {
+      label: t("builder_cover_letter.conclusion.my_spontaneous"),
+      value: "spontaneous",
+      template: t("builder_cover_letter.conclusion.spontaneous_template"),
+    },
+    {
+      label: t("builder_cover_letter.conclusion.my_internship"),
+      value: "internship",
+      template: t("builder_cover_letter.conclusion.internship_template"),
+    },
+    {
+      label: t("builder_cover_letter.conclusion.my_referral"),
+      value: "referral",
+      template: t("builder_cover_letter.conclusion.referral_template"),
+    },
+    {
+      label: t("builder_cover_letter.conclusion.other"),
+      value: "other",
+      template: t("builder_cover_letter.conclusion.other_template"),
+    },
+  ];
 
   // Verify template consistency with URL
   const verifyTemplateConsistency = useCallback(() => {
@@ -1147,9 +1133,7 @@ export default function CoverLetterBuilder() {
     // Base section names
     switch (section) {
       case "personal-info":
-        return t(
-          "site.builder_cover_letter.sections.personal_info"
-        );
+        return t("site.builder_cover_letter.sections.personal_info");
       case "destinataire":
         return t("site.builder_cover_letter.sections.recipient");
       case "date-et-objet":
@@ -1207,12 +1191,12 @@ export default function CoverLetterBuilder() {
     <div className="p-4 space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Entreprise
+          {t("builder_cover_letter.recipient.company")}
         </label>
         <input
           type="text"
           className="w-full p-2 border rounded-md"
-          placeholder="[Entreprise]"
+          placeholder={t("builder_cover_letter.recipient.company_placeholder")}
           value={coverLetterData.recipient.company}
           onChange={(e) =>
             handleThrottledInput("recipient", "company", e.target.value)
@@ -1221,27 +1205,26 @@ export default function CoverLetterBuilder() {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Contact
+          {t("builder_cover_letter.recipient.contact")}
         </label>
         <input
           type="text"
           className="w-full p-2 border rounded-md"
-          placeholder="[Contact]"
+          placeholder={t("builder_cover_letter.recipient.contact_placeholder")}
           value={coverLetterData.recipient.name}
           onChange={(e) =>
             handleThrottledInput("recipient", "name", e.target.value)
           }
         />
       </div>
-
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Adresse
+          {t("builder_cover_letter.recipient.address")}
         </label>
         <input
           type="text"
           className="w-full p-2 border rounded-md"
-          placeholder="[Adresse]"
+          placeholder={t("builder_cover_letter.recipient.address_placeholder")}
           value={coverLetterData.recipient.address}
           onChange={(e) =>
             handleThrottledInput("recipient", "address", e.target.value)
@@ -1251,12 +1234,14 @@ export default function CoverLetterBuilder() {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Code postal
+            {t("builder_cover_letter.recipient.postal_code")}
           </label>
           <input
             type="text"
             className="w-full p-2 border rounded-md"
-            placeholder="[Code postal]"
+            placeholder={t(
+              "builder_cover_letter.recipient.postal_code_placeholder"
+            )}
             value={coverLetterData.recipient.postalCode}
             onChange={(e) =>
               handleThrottledInput("recipient", "postalCode", e.target.value)
@@ -1265,12 +1250,12 @@ export default function CoverLetterBuilder() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ville
+            {t("builder_cover_letter.recipient.city")}
           </label>
           <input
             type="text"
             className="w-full p-2 border rounded-md"
-            placeholder="[Ville]"
+            placeholder={t("builder_cover_letter.recipient.city_placeholder")}
             value={coverLetterData.recipient.city}
             onChange={(e) =>
               handleThrottledInput("recipient", "city", e.target.value)
@@ -1286,12 +1271,14 @@ export default function CoverLetterBuilder() {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ville
+            {t("builder_cover_letter.date_subject.city")}
           </label>
           <input
             type="text"
             className="w-full p-2 border rounded-md"
-            placeholder="[Ville]"
+            placeholder={t(
+              "builder_cover_letter.date_subject.city_placeholder"
+            )}
             value={coverLetterData.dateAndSubject.location}
             onChange={(e) =>
               handleThrottledInput("dateAndSubject", "location", e.target.value)
@@ -1300,7 +1287,7 @@ export default function CoverLetterBuilder() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Date
+            {t("builder_cover_letter.date_subject.date")}
           </label>
           <input
             type="date"
@@ -1312,14 +1299,16 @@ export default function CoverLetterBuilder() {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Objet
+          {t("builder_cover_letter.date_subject.subject")}
         </label>
         <RichTextEditor
           value={coverLetterData.dateAndSubject.subject}
           onChange={(value) =>
             handleThrottledInput("dateAndSubject", "subject", value)
           }
-          placeholder="[Type de candidature] [Emploi recherché]"
+          placeholder={t(
+            "builder_cover_letter.date_subject.subject_placeholder"
+          )}
         />
       </div>
     </div>
@@ -1334,7 +1323,7 @@ export default function CoverLetterBuilder() {
       <div className="p-4 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Sélectionnez le contenu
+            {t("builder_cover_letter.introduction.select_content")}
           </label>
           <div className="relative">
             <select
@@ -1367,25 +1356,33 @@ export default function CoverLetterBuilder() {
             onChange={(value) =>
               handleThrottledInput("root", "introduction", value)
             }
-            placeholder="Personnalisez votre introduction..."
+            placeholder={t(
+              "builder_cover_letter.introduction.customize_placeholder"
+            )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
-            <p>Remplacez les éléments entre crochets par vos informations :</p>
+            <p>{t("builder_cover_letter.introduction.replace_instruction")}</p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedIntroOption === "online" && (
                 <>
-                  <li>[Site] : Le site web où l'annonce a été publiée</li>
-                  <li>[Poste] : L'intitulé du poste</li>
+                  <li>{t("builder_cover_letter.introduction.online.site")}</li>
+                  <li>{t("builder_cover_letter.introduction.online.poste")}</li>
                 </>
               )}
               {selectedIntroOption === "spontaneous" && (
-                <li>[Poste] : Le poste que vous visez</li>
+                <li>
+                  {t("builder_cover_letter.introduction.spontaneous.poste")}
+                </li>
               )}
               {selectedIntroOption === "print" && (
                 <>
-                  <li>[Journal/Magazine] : Le nom du support de publication</li>
-                  <li>[Date] : La date de parution</li>
-                  <li>[Poste] : L'intitulé du poste</li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.introduction.print.journal_magazine"
+                    )}
+                  </li>
+                  <li>{t("builder_cover_letter.introduction.print.date")}</li>
+                  <li>{t("builder_cover_letter.introduction.print.poste")}</li>
                 </>
               )}
             </ul>
@@ -1405,7 +1402,7 @@ export default function CoverLetterBuilder() {
       <div className="p-4 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Sélectionnez le contenu
+            {t("builder_cover_letter.current_situation.select_content")}
           </label>
           <div className="relative">
             <select
@@ -1438,60 +1435,160 @@ export default function CoverLetterBuilder() {
             onChange={(value) =>
               handleThrottledInput("root", "currentSituation", value)
             }
-            placeholder="Personnalisez votre situation actuelle..."
+            placeholder={t(
+              "builder_cover_letter.current_situation.customize_placeholder"
+            )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
-            <p>Remplacez les éléments entre crochets par vos informations :</p>
+            <p>
+              {t("builder_cover_letter.current_situation.replace_instruction")}
+            </p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedSituationOption === "employed" && (
                 <>
-                  <li>[Poste actuel] : Votre poste actuel</li>
-                  <li>[Entreprise] : Nom de votre entreprise actuelle</li>
-                  <li>[Ville] : Ville où vous travaillez</li>
-                  <li>[Responsabilités] : Vos principales responsabilités</li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed.poste_actuel"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed.entreprise"
+                    )}
+                  </li>
+                  <li>
+                    {t("builder_cover_letter.current_situation.employed.ville")}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed.responsabilites"
+                    )}
+                  </li>
                 </>
               )}
               {selectedSituationOption === "employed_graduate" && (
                 <>
-                  <li>[Poste actuel] : Votre poste actuel</li>
-                  <li>[Entreprise] : Nom de votre entreprise actuelle</li>
-                  <li>[Ville] : Ville où vous travaillez</li>
-                  <li>[Responsabilités] : Vos principales responsabilités</li>
-                  <li>[Formation] : Votre diplôme ou formation</li>
-                  <li>[Établissement] : Nom de votre école/université</li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_graduate.poste_actuel"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_graduate.entreprise"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_graduate.ville"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_graduate.responsabilites"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_graduate.formation"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_graduate.etablissement"
+                    )}
+                  </li>
                 </>
               )}
               {selectedSituationOption === "employed_experienced" && (
                 <>
-                  <li>[Poste actuel] : Votre poste actuel</li>
-                  <li>[Entreprise] : Nom de votre entreprise actuelle</li>
-                  <li>[Ville] : Ville où vous travaillez</li>
-                  <li>[X] : Nombre d'années d'expérience</li>
-                  <li>[Domaine] : Votre domaine d'expertise</li>
-                  <li>[Compétences clés] : Vos principales compétences</li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_experienced.poste_actuel"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_experienced.entreprise"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_experienced.ville"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_experienced.x"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_experienced.domaine"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.employed_experienced.competences_cles"
+                    )}
+                  </li>
                 </>
               )}
               {selectedSituationOption === "graduate" && (
                 <>
-                  <li>[Formation] : Votre diplôme ou formation</li>
-                  <li>[Établissement] : Nom de votre école/université</li>
                   <li>
-                    [Domaines d'expertise] : Vos domaines de spécialisation
+                    {t(
+                      "builder_cover_letter.current_situation.graduate.formation"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.graduate.etablissement"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.graduate.domaines_expertise"
+                    )}
                   </li>
                 </>
               )}
               {selectedSituationOption === "student" && (
                 <>
-                  <li>[Année/Niveau] : Votre niveau d'études actuel</li>
-                  <li>[Formation] : Votre formation en cours</li>
-                  <li>[Établissement] : Nom de votre école/université</li>
-                  <li>[Spécialisation] : Votre domaine de spécialisation</li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.student.annee_niveau"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.student.formation"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.student.etablissement"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.student.specialisation"
+                    )}
+                  </li>
                 </>
               )}
               {selectedSituationOption === "unemployed" && (
                 <>
-                  <li>[Raison] : Contexte de votre recherche</li>
-                  <li>[Compétences] : Vos principales compétences</li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.unemployed.raison"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.current_situation.unemployed.competences"
+                    )}
+                  </li>
                 </>
               )}
             </ul>
@@ -1511,7 +1608,7 @@ export default function CoverLetterBuilder() {
       <div className="p-4 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Sélectionnez le contenu
+            {t("builder_cover_letter.motivation.select_content")}
           </label>
           <div className="relative">
             <select
@@ -1544,87 +1641,110 @@ export default function CoverLetterBuilder() {
             onChange={(value) =>
               handleThrottledInput("root", "motivation", value)
             }
-            placeholder="Personnalisez votre motivation..."
+            placeholder={t(
+              "builder_cover_letter.motivation.customize_placeholder"
+            )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
-            <p>Remplacez les éléments entre crochets par vos informations :</p>
+            <p>{t("builder_cover_letter.motivation.replace_instruction")}</p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedMotivationOption === "career" && (
                 <>
                   <li>
-                    [Aspect spécifique] : Un aspect particulier de l'entreprise
-                    qui vous intéresse
+                    {t(
+                      "builder_cover_letter.motivation.career.aspect_specifique"
+                    )}
                   </li>
                   <li>
-                    [Compétences clés] : Vos principales compétences pertinentes
+                    {t(
+                      "builder_cover_letter.motivation.career.competences_cles"
+                    )}
                   </li>
                   <li>
-                    [Domaine d'expertise] : Votre domaine de spécialisation
+                    {t(
+                      "builder_cover_letter.motivation.career.domaine_expertise"
+                    )}
                   </li>
                   <li>
-                    [Projets/Objectifs de l'entreprise] : Les projets ou
-                    objectifs de l'entreprise auxquels vous souhaitez contribuer
+                    {t(
+                      "builder_cover_letter.motivation.career.projets_objectifs"
+                    )}
                   </li>
                 </>
               )}
               {selectedMotivationOption === "education" && (
                 <>
-                  <li>[Formation] : Votre diplôme ou formation</li>
                   <li>
-                    [Domaines d'expertise] : Vos domaines de spécialisation
+                    {t("builder_cover_letter.motivation.education.formation")}
                   </li>
                   <li>
-                    [Projet clé] : Un projet significatif réalisé pendant vos
-                    études
+                    {t(
+                      "builder_cover_letter.motivation.education.domaines_expertise"
+                    )}
+                  </li>
+                  <li>
+                    {t("builder_cover_letter.motivation.education.projet_cle")}
                   </li>
                 </>
               )}
               {selectedMotivationOption === "experience" && (
                 <>
-                  <li>[X] : Nombre d'années d'expérience</li>
-                  <li>[Secteur] : Votre secteur d'activité</li>
+                  <li>{t("builder_cover_letter.motivation.experience.x")}</li>
                   <li>
-                    [Compétences spécifiques] : Vos compétences techniques ou
-                    professionnelles
+                    {t("builder_cover_letter.motivation.experience.secteur")}
                   </li>
                   <li>
-                    [Secteur d'activité] : Le secteur d'activité de l'entreprise
+                    {t(
+                      "builder_cover_letter.motivation.experience.competences_specifiques"
+                    )}
                   </li>
                   <li>
-                    [Objectifs/Projets de l'entreprise] : Les objectifs ou
-                    projets de l'entreprise
+                    {t(
+                      "builder_cover_letter.motivation.experience.secteur_activite"
+                    )}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.motivation.experience.objectifs_projets"
+                    )}
                   </li>
                 </>
               )}
               {selectedMotivationOption === "company" && (
                 <>
                   <li>
-                    [Caractéristique/Valeur de l'entreprise] : Un aspect
-                    distinctif ou une valeur de l'entreprise
+                    {t(
+                      "builder_cover_letter.motivation.company.caracteristique_valeur"
+                    )}
                   </li>
                   <li>
-                    [Réalisation/Projet de l'entreprise] : Une réalisation ou un
-                    projet de l'entreprise
+                    {t(
+                      "builder_cover_letter.motivation.company.realisation_projet"
+                    )}
                   </li>
                   <li>
-                    [Compétences/Expertise] : Vos compétences ou expertise
-                    pertinentes
+                    {t(
+                      "builder_cover_letter.motivation.company.competences_expertise"
+                    )}
                   </li>
                 </>
               )}
               {selectedMotivationOption === "innovation" && (
                 <>
                   <li>
-                    [Projet/Technologie innovante] : Un projet ou une
-                    technologie de l'entreprise
+                    {t(
+                      "builder_cover_letter.motivation.innovation.projet_technologie"
+                    )}
                   </li>
                   <li>
-                    [Domaine technique/Innovation] : Votre domaine technique ou
-                    d'innovation
+                    {t(
+                      "builder_cover_letter.motivation.innovation.domaine_technique"
+                    )}
                   </li>
                   <li>
-                    [Compétence spécifique] : Une compétence technique
-                    spécifique
+                    {t(
+                      "builder_cover_letter.motivation.innovation.competence_specifique"
+                    )}
                   </li>
                 </>
               )}
@@ -1645,7 +1765,7 @@ export default function CoverLetterBuilder() {
       <div className="p-4 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Sélectionnez le contenu
+            {t("builder_cover_letter.conclusion.select_content")}
           </label>
           <div className="relative">
             <select
@@ -1678,46 +1798,90 @@ export default function CoverLetterBuilder() {
             onChange={(value) =>
               handleThrottledInput("root", "conclusion", value)
             }
-            placeholder="Personnalisez votre conclusion..."
+            placeholder={t(
+              "builder_cover_letter.conclusion.customize_placeholder"
+            )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
-            <p>Remplacez les éléments entre crochets par vos informations :</p>
+            <p>{t("builder_cover_letter.conclusion.replace_instruction")}</p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedConclusionOption === "job_offer" && (
                 <>
                   <li>
-                    [Emploi recherché] : Le poste pour lequel vous postulez
+                    {t(
+                      "builder_cover_letter.conclusion.job_offer.emploi_recherche"
+                    )}
                   </li>
-                  <li>[Téléphone] : Votre numéro de téléphone</li>
-                  <li>[Adresse e-mail] : Votre adresse e-mail</li>
-                  <li>[Prénom] : Votre prénom</li>
-                  <li>[Nom] : Votre nom</li>
+                  <li>
+                    {t("builder_cover_letter.conclusion.job_offer.telephone")}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.conclusion.job_offer.adresse_email"
+                    )}
+                  </li>
+                  <li>
+                    {t("builder_cover_letter.conclusion.job_offer.prenom")}
+                  </li>
+                  <li>{t("builder_cover_letter.conclusion.job_offer.nom")}</li>
                 </>
               )}
               {selectedConclusionOption === "spontaneous" && (
                 <>
-                  <li>[Téléphone] : Votre numéro de téléphone</li>
-                  <li>[Adresse e-mail] : Votre adresse e-mail</li>
-                  <li>[Prénom] : Votre prénom</li>
-                  <li>[Nom] : Votre nom</li>
+                  <li>
+                    {t("builder_cover_letter.conclusion.spontaneous.telephone")}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.conclusion.spontaneous.adresse_email"
+                    )}
+                  </li>
+                  <li>
+                    {t("builder_cover_letter.conclusion.spontaneous.prenom")}
+                  </li>
+                  <li>
+                    {t("builder_cover_letter.conclusion.spontaneous.nom")}
+                  </li>
                 </>
               )}
               {selectedConclusionOption === "internship" && (
                 <>
-                  <li>[Type de contrat] : Stage ou Alternance</li>
-                  <li>[Téléphone] : Votre numéro de téléphone</li>
-                  <li>[Adresse e-mail] : Votre adresse e-mail</li>
-                  <li>[Prénom] : Votre prénom</li>
-                  <li>[Nom] : Votre nom</li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.conclusion.internship.type_contrat"
+                    )}
+                  </li>
+                  <li>
+                    {t("builder_cover_letter.conclusion.internship.telephone")}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.conclusion.internship.adresse_email"
+                    )}
+                  </li>
+                  <li>
+                    {t("builder_cover_letter.conclusion.internship.prenom")}
+                  </li>
+                  <li>{t("builder_cover_letter.conclusion.internship.nom")}</li>
                 </>
               )}
               {selectedConclusionOption === "referral" && (
                 <>
-                  <li>[Contact] : La personne qui vous a recommandé</li>
-                  <li>[Téléphone] : Votre numéro de téléphone</li>
-                  <li>[Adresse e-mail] : Votre adresse e-mail</li>
-                  <li>[Prénom] : Votre prénom</li>
-                  <li>[Nom] : Votre nom</li>
+                  <li>
+                    {t("builder_cover_letter.conclusion.referral.contact")}
+                  </li>
+                  <li>
+                    {t("builder_cover_letter.conclusion.referral.telephone")}
+                  </li>
+                  <li>
+                    {t(
+                      "builder_cover_letter.conclusion.referral.adresse_email"
+                    )}
+                  </li>
+                  <li>
+                    {t("builder_cover_letter.conclusion.referral.prenom")}
+                  </li>
+                  <li>{t("builder_cover_letter.conclusion.referral.nom")}</li>
                 </>
               )}
             </ul>
@@ -1897,19 +2061,12 @@ export default function CoverLetterBuilder() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-<<<<<<< HEAD
       <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
         <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-bold">
               {t("site.builder.header.cover_letter")}
             </h1>
-=======
-      <div className="w-full lg:w-1/2 flex flex-col border-r border-gray-200 bg-white">
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center gap-2">
-          <div className="flex items-center md:gap-4 gap-2">
-            <h1 className="text-xl font-bold">Lettre de motivation</h1>
->>>>>>> 37fa46e1ea44b1995a5a7a0d34d07fe824d0e014
             <div className="text-gray-500">
               {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
               {saveStatus === "saving" && (
@@ -2092,7 +2249,6 @@ export default function CoverLetterBuilder() {
           <div className="flex items-center space-x-2">
             <button
               className="p-2 rounded hover:bg-gray-100"
-<<<<<<< HEAD
               onClick={() => setShowSidebar(!showSidebar)}
             >
               {showSidebar ? <ChevronLeft /> : <ChevronRight />}
@@ -2104,8 +2260,6 @@ export default function CoverLetterBuilder() {
           <div className="flex items-center space-x-2">
             <button
               className="p-2 rounded hover:bg-gray-100"
-=======
->>>>>>> 37fa46e1ea44b1995a5a7a0d34d07fe824d0e014
               onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
             >
               <ZoomOut size={18} />
@@ -2124,7 +2278,6 @@ export default function CoverLetterBuilder() {
             >
               <Maximize size={18} />
             </button>
-<<<<<<< HEAD
             <div className="relative">
               <button
                 className="p-2 rounded hover:bg-gray-100"
@@ -2148,8 +2301,6 @@ export default function CoverLetterBuilder() {
                 </div>
               )}
             </div>
-=======
->>>>>>> 37fa46e1ea44b1995a5a7a0d34d07fe824d0e014
           </div>
         </div>
         <div className="flex-1 overflow-auto bg-gray-200 flex justify-center p-8">

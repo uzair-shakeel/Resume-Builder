@@ -35,10 +35,7 @@ export default function Sidebar({ user }: SidebarProps) {
           {/* Header */}
           <div className="p-3 flex items-center justify-between">
             {/* Logo */}
-            <Link
-              href="/dashboard"
-              className="flex items-center text-gray-900 h-8 ps-2"
-            >
+            <Link href="/" className="flex items-center text-gray-900 h-8 ps-2">
               <Image
                 src="/assets/logo-white-text.svg"
                 alt="logo"
@@ -72,7 +69,9 @@ export default function Sidebar({ user }: SidebarProps) {
                     className="flex items-center"
                   >
                     <Mail className="mr-2 h-4 w-4" />
-                    <span>{t("site.dashboard.sidebar.create_cover_letter")}</span>
+                    <span>
+                      {t("site.dashboard.sidebar.create_cover_letter")}
+                    </span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>

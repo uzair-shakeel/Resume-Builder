@@ -68,7 +68,7 @@ export default function PersonalInfo({
         {!isHRTemplate && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t("personal_info_form.photo")}
+              {t("builder_cover_letter.personal_info_form.photo")}
             </label>
             <div
               className="relative w-24 h-24 bg-gray-100 rounded-md overflow-hidden cursor-pointer"
@@ -105,7 +105,7 @@ export default function PersonalInfo({
               htmlFor="firstName"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              {t("personal_info_form.first_name")}
+              {t("builder_cover_letter.personal_info_form.first_name")}
             </label>
             <input
               type="text"
@@ -121,7 +121,7 @@ export default function PersonalInfo({
               htmlFor="lastName"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              {t("personal_info_form.last_name")}
+              {t("builder_cover_letter.personal_info_form.last_name")}
             </label>
             <input
               type="text"
@@ -140,7 +140,7 @@ export default function PersonalInfo({
           htmlFor="email"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          {t("personal_info_form.email")}
+          {t("builder_cover_letter.personal_info_form.email")}
         </label>
         <input
           type="email"
@@ -157,7 +157,7 @@ export default function PersonalInfo({
           htmlFor="phone"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          {t("personal_info_form.phone")}
+          {t("builder_cover_letter.personal_info_form.phone")}
         </label>
         <input
           type="tel"
@@ -174,7 +174,7 @@ export default function PersonalInfo({
           htmlFor="address"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          {t("personal_info_form.address")}
+          {t("builder_cover_letter.personal_info_form.address")}
         </label>
         <input
           type="text"
@@ -192,7 +192,7 @@ export default function PersonalInfo({
             htmlFor="postalCode"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            {t("personal_info_form.zip_code")}
+            {t("builder_cover_letter.personal_info_form.zip_code")}
           </label>
           <input
             type="text"
@@ -208,7 +208,7 @@ export default function PersonalInfo({
             htmlFor="city"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            {t("personal_info_form.city")}
+            {t("builder_cover_letter.personal_info_form.city")}
           </label>
           <input
             type="text"

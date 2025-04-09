@@ -444,15 +444,221 @@
         }
       }
     },
+
     "builder_cover_letter": {
       "sections": {
         "personal_info": "Informations personnelles",
         "recipient": "Destinataire",
-        "date_subject": "Date et Sujet",
+        "date_subject": "Date et objet",
         "introduction": "Introduction",
-        "current_situation": "Situation Actuelle",
+        "current_situation": "Situation actuelle",
         "motivation": "Motivation",
         "conclusion": "Conclusion"
+      },
+
+      "personal_info_form": {
+        "photo": "Photo",
+        "first_name": "Prénom",
+        "last_name": "Nom",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "address": "Adresse",
+        "zip_code": "Code postal",
+        "city": "Ville",
+        "birth_date": "Date de naissance",
+        "birth_place": "Lieu de naissance",
+        "driving_license": "Permis de conduire",
+        "gender": "Sexe",
+        "nationality": "Nationalité",
+        "marital_status": "État civil",
+        "website": "Site internet",
+        "linkedin": "LinkedIn",
+        "custom_field": "Champ personnalisé"
+      },
+      "recipient": {
+        "company": "Entreprise",
+        "company_placeholder": "[Entreprise]",
+        "contact": "Contact",
+        "contact_placeholder": "[Contact]",
+        "address": "Adresse",
+        "address_placeholder": "[Adresse]",
+        "postal_code": "Code postal",
+        "postal_code_placeholder": "[Code postal]",
+        "city": "Ville",
+        "city_placeholder": "[Ville]"
+      },
+      "date_subject": {
+        "city": "Ville",
+        "city_placeholder": "[Ville]",
+        "date": "Date",
+        "subject": "Objet",
+        "subject_placeholder": "[Type de candidature] [Emploi recherché]"
+      },
+      "introduction": {
+        "onlinead": "Réponse à une annonce publiée en ligne",
+        "onlinead_template": "En réponse à votre annonce publiée sur [Site] concernant le poste de [Poste], je vous soumets ma candidature avec grand intérêt.",
+        "spontaneous_application": "Candidature spontanée",
+        "spontaneous_template": "Je me permets de vous adresser ma candidature spontanée pour un poste de [Poste] au sein de votre entreprise.",
+        "printad": "Réponse à une annonce publiée dans un journal ou un magazine",
+        "printad_template": "Suite à votre annonce parue dans [Journal/Magazine] du [Date] pour le poste de [Poste], je vous présente ma candidature.",
+        "other": "Autre",
+        "other_template": "",
+        "select_content": "Sélectionnez le contenu",
+        "customize_placeholder": "Personnalisez votre introduction...",
+        "replace_instruction": "Remplacez les éléments entre crochets par vos informations :",
+        "online": {
+          "site": "[Site] : Le site web où l'annonce a été publiée",
+          "poste": "[Poste] : L'intitulé du poste"
+        },
+        "spontaneous": {
+          "poste": "[Poste] : Le poste que vous visez"
+        },
+        "print": {
+          "journal_magazine": "[Journal/Magazine] : Le nom du support de publication",
+          "date": "[Date] : La date de parution",
+          "poste": "[Poste] : L'intitulé du poste"
+        }
+      },
+      "current_situation": {
+        "currently_employed": "Je suis actuellement en poste",
+        "employed_template": "Je travaille actuellement en tant que [Poste actuel] chez [Entreprise] à [Ville]. Dans ce poste, je suis responsable de [Responsabilités].",
+        "employed_graduated": "Je suis actuellement en poste et j'ai récemment terminé mes études",
+        "employed_graduate_template": "Je travaille actuellement en tant que [Poste actuel] chez [Entreprise] à [Ville]. Dans ce poste, je suis responsable de [Responsabilités]. J'ai terminé mes études de [Formation] à [Établissement].",
+        "employed_experience": "Je suis actuellement en poste et je dispose d'une large expérience",
+        "employed_experienced_template": "Je travaille actuellement en tant que [Poste actuel] chez [Entreprise] à [Ville]. Avec [X] années d'expérience dans [Domaine], j'ai développé une expertise solide en [Compétences clés].",
+        "graduated": "J'ai terminé mes études",
+        "graduate_template": "Je viens de terminer mes études de [Formation] à [Établissement], où j'ai acquis de solides connaissances en [Domaines d'expertise].",
+        "is_student": "Je suis étudiant(e)",
+        "student_template": "Je suis actuellement en [Année/Niveau] de [Formation] à [Établissement], où je me spécialise en [Spécialisation].",
+        "is_unemployed": "Je suis actuellement sans emploi",
+        "unemployed_template": "Suite à [Raison], je suis actuellement en recherche active d'un nouveau défi professionnel qui me permettra de mettre à profit mes compétences en [Compétences].",
+        "select_content": "Sélectionnez le contenu",
+        "customize_placeholder": "Personnalisez votre situation actuelle...",
+        "replace_instruction": "Remplacez les éléments entre crochets par vos informations :",
+        "employed": {
+          "poste_actuel": "[Poste actuel] : Votre poste actuel",
+          "entreprise": "[Entreprise] : Nom de votre entreprise actuelle",
+          "ville": "[Ville] : Ville où vous travaillez",
+          "responsabilites": "[Responsabilités] : Vos principales responsabilités"
+        },
+        "employed_graduate": {
+          "poste_actuel": "[Poste actuel] : Votre poste actuel",
+          "entreprise": "[Entreprise] : Nom de votre entreprise actuelle",
+          "ville": "[Ville] : Ville où vous travaillez",
+          "responsabilites": "[Responsabilités] : Vos principales responsabilités",
+          "formation": "[Formation] : Votre diplôme ou formation",
+          "etablissement": "[Établissement] : Nom de votre école/université"
+        },
+        "employed_experienced": {
+          "poste_actuel": "[Poste actuel] : Votre poste actuel",
+          "entreprise": "[Entreprise] : Nom de votre entreprise actuelle",
+          "ville": "[Ville] : Ville où vous travaillez",
+          "x": "[X] : Nombre d'années d'expérience",
+          "domaine": "[Domaine] : Votre domaine d'expertise",
+          "competences_cles": "[Compétences clés] : Vos principales compétences"
+        },
+        "graduate": {
+          "formation": "[Formation] : Votre diplôme ou formation",
+          "etablissement": "[Établissement] : Nom de votre école/université",
+          "domaines_expertise": "[Domaines d'expertise] : Vos domaines de spécialisation"
+        },
+        "student": {
+          "annee_niveau": "[Année/Niveau] : Votre niveau d'études actuel",
+          "formation": "[Formation] : Votre formation en cours",
+          "etablissement": "[Établissement] : Nom de votre école/université",
+          "specialisation": "[Spécialisation] : Votre domaine de spécialisation"
+        },
+        "unemployed": {
+          "raison": "[Raison] : Contexte de votre recherche",
+          "competences": "[Compétences] : Vos principales compétences"
+        }
+      },
+      "motivation": {
+        "my_career": "Axé sur la carrière",
+        "career_template": "Votre entreprise représente pour moi une opportunité unique de développement professionnel. Je suis particulièrement intéressé(e) par [Aspect spécifique] et je souhaite mettre à profit mes compétences en [Compétences clés] au sein de votre équipe. Mon expérience en [Domaine d'expertise] me permettra d'apporter une contribution significative à [Projets/Objectifs de l'entreprise].",
+        "my_education": "Axé sur la formation",
+        "education_template": "Ma formation en [Formation] m'a permis d'acquérir de solides connaissances en [Domaines d'expertise], que je souhaite mettre en pratique au sein de votre entreprise. Les projets que j'ai réalisés durant mes études, notamment [Projet clé], m'ont préparé(e) aux défis que représente ce poste.",
+        "my_experience": "Axé sur l'expérience",
+        "experience_template": "Fort(e) de mon expérience de [X] années dans [Secteur], j'ai développé une expertise approfondie en [Compétences spécifiques]. Ces compétences, associées à ma connaissance du secteur [Secteur d'activité], seront des atouts précieux pour contribuer à [Objectifs/Projets de l'entreprise].",
+        "my_company": "Axé sur l'entreprise",
+        "company_template": "Votre entreprise se distingue par [Caractéristique/Valeur de l'entreprise], ce qui correspond parfaitement à ma vision professionnelle. Je suis particulièrement impressionné(e) par [Réalisation/Projet de l'entreprise] et je souhaite contribuer activement à vos futurs succès en apportant [Compétences/Expertise].",
+        "my_innovation": "Axé sur l'innovation",
+        "innovation_template": "L'innovation étant au cœur de mes préoccupations, je suis enthousiasmé(e) par [Projet/Technologie innovante] développé(e) par votre entreprise. Mon expérience en [Domaine technique/Innovation] et ma capacité à [Compétence spécifique] me permettront de contribuer efficacement à vos projets innovants.",
+        "other": "Autre",
+        "other_template": "",
+        "select_content": "Sélectionnez le contenu",
+        "customize_placeholder": "Personnalisez votre motivation...",
+        "replace_instruction": "Remplacez les éléments entre crochets par vos informations :",
+        "career": {
+          "aspect_specifique": "[Aspect spécifique] : Un aspect particulier de l'entreprise qui vous intéresse",
+          "competences_cles": "[Compétences clés] : Vos principales compétences pertinentes",
+          "domaine_expertise": "[Domaine d'expertise] : Votre domaine de spécialisation",
+          "projets_objectifs": "[Projets/Objectifs de l'entreprise] : Les projets ou objectifs de l'entreprise auxquels vous souhaitez contribuer"
+        },
+        "education": {
+          "formation": "[Formation] : Votre diplôme ou formation",
+          "domaines_expertise": "[Domaines d'expertise] : Vos domaines de spécialisation",
+          "projet_cle": "[Projet clé] : Un projet significatif réalisé pendant vos études"
+        },
+        "experience": {
+          "x": "[X] : Nombre d'années d'expérience",
+          "secteur": "[Secteur] : Votre secteur d'activité",
+          "competences_specifiques": "[Compétences spécifiques] : Vos compétences techniques ou professionnelles",
+          "secteur_activite": "[Secteur d'activité] : Le secteur d'activité de l'entreprise",
+          "objectifs_projets": "[Objectifs/Projets de l'entreprise] : Les objectifs ou projets de l'entreprise"
+        },
+        "company": {
+          "caracteristique_valeur": "[Caractéristique/Valeur de l'entreprise] : Un aspect distinctif ou une valeur de l'entreprise",
+          "realisation_projet": "[Réalisation/Projet de l'entreprise] : Une réalisation ou un projet de l'entreprise",
+          "competences_expertise": "[Compétences/Expertise] : Vos compétences ou expertise pertinentes"
+        },
+        "innovation": {
+          "projet_technologie": "[Projet/Technologie innovante] : Un projet ou une technologie de l'entreprise",
+          "domaine_technique": "[Domaine technique/Innovation] : Votre domaine technique ou d'innovation",
+          "competence_specifique": "[Compétence spécifique] : Une compétence technique spécifique"
+        }
+      },
+      "conclusion": {
+        "my_job_offer": "Réponse à une offre d'emploi",
+        "job_offer_template": "Je souhaiterais vous expliquer plus précisément ma motivation pour le poste de [Emploi recherché] lors d'un entretien. Vous pouvez me joindre par téléphone au [Téléphone], ou par e-mail à l'adresse suivante : [Adresse e-mail].<br/><br/>Je vous remercie par avance de la considération que vous portez à ma candidature.<br/><br/>Cordialement,<br/><br/>[Prénom] [Nom]<br/><br/>Pièce jointe : CV",
+        "my_spontaneous": "Candidature spontanée",
+        "spontaneous_template": "Je reste à votre disposition pour vous rencontrer lors d'un entretien et vous exposer plus en détail mes motivations. Vous pouvez me joindre par téléphone au [Téléphone], ou par e-mail à l'adresse suivante : [Adresse e-mail].<br/><br/>Je vous remercie de l'attention que vous porterez à ma candidature.<br/><br/>Cordialement,<br/><br/>[Prénom] [Nom]<br/><br/>Pièce jointe : CV",
+        "my_internship": "Stage/Alternance",
+        "internship_template": "Je suis disponible pour un entretien afin d'échanger sur les modalités du [Type de contrat] et vous présenter plus en détail mon parcours. Vous pouvez me joindre par téléphone au [Téléphone], ou par e-mail à l'adresse suivante : [Adresse e-mail].<br/><br/>Je vous remercie par avance de l'attention que vous porterez à ma candidature.<br/><br/>Cordialement,<br/><br/>[Prénom] [Nom]<br/><br/>Pièce jointe : CV",
+        "my_referral": "Recommandation",
+        "referral_template": "Je me tiens à votre disposition pour un entretien où je pourrai vous exposer plus en détail mes motivations. Comme suggéré par [Contact], vous pouvez me joindre par téléphone au [Téléphone], ou par e-mail à l'adresse suivante : [Adresse e-mail].<br/><br/>Je vous remercie par avance de l'attention que vous porterez à ma candidature.<br/><br/>Cordialement,<br/><br/>[Prénom] [Nom]<br/><br/>Pièce jointe : CV",
+        "other": "Autre",
+        "other_template": "",
+        "select_content": "Sélectionnez le contenu",
+        "customize_placeholder": "Personnalisez votre conclusion...",
+        "replace_instruction": "Remplacez les éléments entre crochets par vos informations :",
+        "job_offer": {
+          "emploi_recherche": "[Emploi recherché] : Le poste pour lequel vous postulez",
+          "telephone": "[Téléphone] : Votre numéro de téléphone",
+          "adresse_email": "[Adresse e-mail] : Votre adresse e-mail",
+          "prenom": "[Prénom] : Votre prénom",
+          "nom": "[Nom] : Votre nom"
+        },
+        "spontaneous": {
+          "telephone": "[Téléphone] : Votre numéro de téléphone",
+          "adresse_email": "[Adresse e-mail] : Votre adresse e-mail",
+          "prenom": "[Prénom] : Votre prénom",
+          "nom": "[Nom] : Votre nom"
+        },
+        "internship": {
+          "type_contrat": "[Type de contrat] : Stage ou Alternance",
+          "telephone": "[Téléphone] : Votre numéro de téléphone",
+          "adresse_email": "[Adresse e-mail] : Votre adresse e-mail",
+          "prenom": "[Prénom] : Votre prénom",
+          "nom": "[Nom] : Votre nom"
+        },
+        "referral": {
+          "contact": "[Contact] : La personne qui vous a recommandé",
+          "telephone": "[Téléphone] : Votre numéro de téléphone",
+          "adresse_email": "[Adresse e-mail] : Votre adresse e-mail",
+          "prenom": "[Prénom] : Votre prénom",
+          "nom": "[Nom] : Votre nom"
+        }
       }
     },
     "placeholder_cv": {

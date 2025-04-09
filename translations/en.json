@@ -444,6 +444,7 @@
         }
       }
     },
+
     "builder_cover_letter": {
       "sections": {
         "personal_info": "Personal Information",
@@ -453,8 +454,215 @@
         "current_situation": "Current Situation",
         "motivation": "Motivation",
         "conclusion": "Conclusion"
+      },
+
+      "personal_info_form": {
+        "photo": "Photo",
+        "first_name": "First Name",
+        "last_name": "Last Name",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "zip_code": "Zip Code",
+        "city": "City",
+        "birth_date": "Date of Birth",
+        "birth_place": "Place of Birth",
+        "driving_license": "Driving License",
+        "gender": "Gender",
+        "nationality": "Nationality",
+        "marital_status": "Marital Status",
+        "website": "Website",
+        "linkedin": "LinkedIn",
+        "custom_field": "Custom Field"
+      },
+
+      "recipient": {
+        "company": "Company",
+        "company_placeholder": "[Company]",
+        "contact": "Contact",
+        "contact_placeholder": "[Contact]",
+        "address": "Address",
+        "address_placeholder": "[Address]",
+        "postal_code": "Postal Code",
+        "postal_code_placeholder": "[Postal Code]",
+        "city": "City",
+        "city_placeholder": "[City]"
+      },
+      "date_subject": {
+        "city": "City",
+        "city_placeholder": "[City]",
+        "date": "Date",
+        "subject": "Subject",
+        "subject_placeholder": "[Application Type] [Desired Position]"
+      },
+      "introduction": {
+        "onlinead": "Response to an online job posting",
+        "onlinead_template": "In response to your advertisement posted on [Site] for the position of [Poste], I am submitting my application with great interest.",
+        "spontaneous_application": "Spontaneous application",
+        "spontaneous_template": "I am pleased to submit my spontaneous application for a [Poste] position within your company.",
+        "printad": "Response to an advertisement in a newspaper or magazine",
+        "printad_template": "Following your advertisement published in [Journal/Magazine] on [Date] for the position of [Poste], I am presenting my application.",
+        "other": "Other",
+        "other_template": "",
+        "select_content": "Select content",
+        "customize_placeholder": "Customize your introduction...",
+        "replace_instruction": "Replace the elements in brackets with your information:",
+        "online": {
+          "site": "[Site]: The website where the ad was posted",
+          "poste": "[Poste]: The job title"
+        },
+        "spontaneous": {
+          "poste": "[Poste]: The position you are targeting"
+        },
+        "print": {
+          "journal_magazine": "[Journal/Magazine]: The name of the publication",
+          "date": "[Date]: The publication date",
+          "poste": "[Poste]: The job title"
+        }
+      },
+      "current_situation": {
+        "currently_employed": "I am currently employed",
+        "employed_template": "I am currently working as [Poste actuel] at [Entreprise] in [Ville]. In this role, I am responsible for [Responsabilités].",
+        "employed_graduated": "I am currently employed and recently completed my studies",
+        "employed_graduate_template": "I am currently working as [Poste actuel] at [Entreprise] in [Ville]. In this role, I am responsible for [Responsabilités]. I completed my studies in [Formation] at [Établissement].",
+        "employed_experience": "I am currently employed with extensive experience",
+        "employed_experienced_template": "I am currently working as [Poste actuel] at [Entreprise] in [Ville]. With [X] years of experience in [Domaine], I have developed strong expertise in [Compétences clés].",
+        "graduated": "I have completed my studies",
+        "graduate_template": "I recently completed my studies in [Formation] at [Établissement], where I gained solid knowledge in [Domaines d'expertise].",
+        "is_student": "I am a student",
+        "student_template": "I am currently in [Année/Niveau] of [Formation] at [Établissement], specializing in [Spécialisation].",
+        "is_unemployed": "I am currently unemployed",
+        "unemployed_template": "Following [Raison], I am actively seeking a new professional challenge where I can leverage my skills in [Compétences].",
+        "select_content": "Select content",
+        "customize_placeholder": "Customize your current situation...",
+        "replace_instruction": "Replace the elements in brackets with your information:",
+        "employed": {
+          "poste_actuel": "[Poste actuel]: Your current position",
+          "entreprise": "[Entreprise]: Name of your current company",
+          "ville": "[Ville]: City where you work",
+          "responsabilites": "[Responsabilités]: Your main responsibilities"
+        },
+        "employed_graduate": {
+          "poste_actuel": "[Poste actuel]: Your current position",
+          "entreprise": "[Entreprise]: Name of your current company",
+          "ville": "[Ville]: City where you work",
+          "responsabilites": "[Responsabilités]: Your main responsibilities",
+          "formation": "[Formation]: Your degree or training",
+          "etablissement": "[Établissement]: Name of your school/university"
+        },
+        "employed_experienced": {
+          "poste_actuel": "[Poste actuel]: Your current position",
+          "entreprise": "[Entreprise]: Name of your current company",
+          "ville": "[Ville]: City where you work",
+          "x": "[X]: Number of years of experience",
+          "domaine": "[Domaine]: Your field of expertise",
+          "competences_cles": "[Compétences clés]: Your key skills"
+        },
+        "graduate": {
+          "formation": "[Formation]: Your degree or training",
+          "etablissement": "[Établissement]: Name of your school/university",
+          "domaines_expertise": "[Domaines d'expertise]: Your areas of expertise"
+        },
+        "student": {
+          "annee_niveau": "[Année/Niveau]: Your current year/level of study",
+          "formation": "[Formation]: Your current training",
+          "etablissement": "[Établissement]: Name of your school/university",
+          "specialisation": "[Spécialisation]: Your field of specialization"
+        },
+        "unemployed": {
+          "raison": "[Raison]: Context of your job search",
+          "competences": "[Compétences]: Your main skills"
+        }
+      },
+      "motivation": {
+        "my_career": "Career-focused",
+        "career_template": "Your company represents a unique opportunity for my professional development. I am particularly interested in [Aspect spécifique] and wish to contribute my skills in [Compétences clés] to your team. My experience in [Domaine d'expertise] will enable me to make a significant contribution to [Projets/Objectifs de l'entreprise].",
+        "my_education": "Education-focused",
+        "education_template": "My training in [Formation] has equipped me with strong knowledge in [Domaines d'expertise], which I am eager to apply within your company. The projects I completed during my studies, notably [Projet clé], have prepared me for the challenges of this position.",
+        "my_experience": "Experience-focused",
+        "experience_template": "With [X] years of experience in [Secteur], I have developed deep expertise in [Compétences spécifiques]. These skills, combined with my knowledge of [Secteur d'activité], will be valuable assets in contributing to [Objectifs/Projets de l'entreprise].",
+        "my_company": "Company-focused",
+        "company_template": "Your company stands out for [Caractéristique/Valeur de l'entreprise], which aligns perfectly with my professional vision. I am particularly impressed by [Réalisation/Projet de l'entreprise] and wish to actively contribute to your future successes by bringing [Compétences/Expertise].",
+        "my_innovation": "Innovation-focused",
+        "innovation_template": "With innovation at the core of my interests, I am excited by [Projet/Technologie innovante] developed by your company. My experience in [Domaine technique/Innovation] and my ability to [Compétence spécifique] will allow me to effectively contribute to your innovative projects.",
+        "other": "Other",
+        "other_template": "",
+        "select_content": "Select content",
+        "customize_placeholder": "Customize your motivation...",
+        "replace_instruction": "Replace the elements in brackets with your information:",
+        "career": {
+          "aspect_specifique": "[Aspect spécifique]: A specific aspect of the company that interests you",
+          "competences_cles": "[Compétences clés]: Your key relevant skills",
+          "domaine_expertise": "[Domaine d'expertise]: Your field of expertise",
+          "projets_objectifs": "[Projets/Objectifs de l'entreprise]: The company’s projects or goals you wish to contribute to"
+        },
+        "education": {
+          "formation": "[Formation]: Your degree or training",
+          "domaines_expertise": "[Domaines d'expertise]: Your areas of expertise",
+          "projet_cle": "[Projet clé]: A significant project from your studies"
+        },
+        "experience": {
+          "x": "[X]: Number of years of experience",
+          "secteur": "[Secteur]: Your industry",
+          "competences_specifiques": "[Compétences spécifiques]: Your technical or professional skills",
+          "secteur_activite": "[Secteur d'activité]: The company’s industry",
+          "objectifs_projets": "[Objectifs/Projets de l'entreprise]: The company’s goals or projects"
+        },
+        "company": {
+          "caracteristique_valeur": "[Caractéristique/Valeur de l'entreprise]: A distinctive feature or value of the company",
+          "realisation_projet": "[Réalisation/Projet de l'entreprise]: An achievement or project of the company",
+          "competences_expertise": "[Compétences/Expertise]: Your relevant skills or expertise"
+        },
+        "innovation": {
+          "projet_technologie": "[Projet/Technologie innovante]: A project or innovative technology of the company",
+          "domaine_technique": "[Domaine technique/Innovation]: Your technical or innovation field",
+          "competence_specifique": "[Compétence spécifique]: A specific technical skill"
+        }
+      },
+      "conclusion": {
+        "my_job_offer": "Response to a job offer",
+        "job_offer_template": "I would like to further explain my motivation for the [Emploi recherché] position during an interview. You can reach me by phone at [Téléphone] or by email at [Adresse e-mail].<br/><br/>Thank you in advance for considering my application.<br/><br/>Sincerely,<br/><br/>[Prénom] [Nom]<br/><br/>Attachment: CV",
+        "my_spontaneous": "Spontaneous application",
+        "spontaneous_template": "I am available to meet with you for an interview to discuss my motivations in more detail. You can reach me by phone at [Téléphone] or by email at [Adresse e-mail].<br/><br/>Thank you for the attention you will give to my application.<br/><br/>Sincerely,<br/><br/>[Prénom] [Nom]<br/><br/>Attachment: CV",
+        "my_internship": "Internship/Apprenticeship",
+        "internship_template": "I am available for an interview to discuss the terms of the [Type de contrat] and to present my background in more detail. You can reach me by phone at [Téléphone] or by email at [Adresse e-mail].<br/><br/>Thank you in advance for considering my application.<br/><br/>Sincerely,<br/><br/>[Prénom] [Nom]<br/><br/>Attachment: CV",
+        "my_referral": "Referral",
+        "referral_template": "I am available for an interview to discuss my motivations in more detail. As suggested by [Contact], you can reach me by phone at [Téléphone] or by email at [Adresse e-mail].<br/><br/>Thank you in advance for considering my application.<br/><br/>Sincerely,<br/><br/>[Prénom] [Nom]<br/><br/>Attachment: CV",
+        "other": "Other",
+        "other_template": "",
+        "select_content": "Select content",
+        "customize_placeholder": "Customize your conclusion...",
+        "replace_instruction": "Replace the elements in brackets with your information:",
+        "job_offer": {
+          "emploi_recherche": "[Emploi recherché]: The position you are applying for",
+          "telephone": "[Téléphone]: Your phone number",
+          "adresse_email": "[Adresse e-mail]: Your email address",
+          "prenom": "[Prénom]: Your first name",
+          "nom": "[Nom]: Your last name"
+        },
+        "spontaneous": {
+          "telephone": "[Téléphone]: Your phone number",
+          "adresse_email": "[Adresse e-mail]: Your email address",
+          "prenom": "[Prénom]: Your first name",
+          "nom": "[Nom]: Your last name"
+        },
+        "internship": {
+          "type_contrat": "[Type de contrat]: Internship or Apprenticeship",
+          "telephone": "[Téléphone]: Your phone number",
+          "adresse_email": "[Adresse e-mail]: Your email address",
+          "prenom": "[Prénom]: Your first name",
+          "nom": "[Nom]: Your last name"
+        },
+        "referral": {
+          "contact": "[Contact]: The person who referred you",
+          "telephone": "[Téléphone]: Your phone number",
+          "adresse_email": "[Adresse e-mail]: Your email address",
+          "prenom": "[Prénom]: Your first name",
+          "nom": "[Nom]: Your last name"
+        }
       }
     },
+
     "placeholder_cv": {
       "personalInfo": {
         "firstName": "Sherlock",
