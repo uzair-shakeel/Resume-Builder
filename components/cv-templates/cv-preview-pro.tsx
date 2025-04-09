@@ -325,7 +325,7 @@ export default function CVPreviewPro({
           {sections.includes("languages") && renderLanguages()}
           {sections.includes("interests") && renderInterests()}
         </div>
-        <div style={{ paddingLeft: "2rem" }}>
+        <div className="pt-[2rem] pl-[2rem]">
           {sections.map(
             (section) =>
               ["profile", "education", "experience"].includes(section) &&

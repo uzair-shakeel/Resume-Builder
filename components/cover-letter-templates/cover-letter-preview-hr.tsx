@@ -381,43 +381,26 @@ export default function CoverLetterPreviewHR({
       `}</style>
 
       {/* Page 1 */}
-      <div
-        className="cv-page bg-white"
-        style={{
-          width: "210mm",
-          minHeight: "297mm",
-          padding: "20mm",
-          boxSizing: "border-box",
-          margin: "0 auto",
-          fontFamily: fontFamily,
-        }}
-      >
-        {page1Sections.map((section) => (
-          <div key={section}>{renderSection(section)}</div>
-        ))}
+      <div className="cv-page">
+        <div className="px-[50px] py-[30px]">
+          {page1Sections.map((section) => (
+            <div key={section}>{renderSection(section)}</div>
+          ))}
+        </div>
       </div>
 
       {/* Page 2 (if needed) */}
       {hasPage2 && (
-        <div
-          className="cv-page bg-white"
-          style={{
-            width: "210mm",
-            minHeight: "297mm",
-            padding: "20mm",
-            boxSizing: "border-box",
-            margin: "2rem auto 0",
-            pageBreakBefore: "always",
-            fontFamily: fontFamily,
-          }}
-        >
-          {/* Always include personal info at the top of page 2 */}
-          {renderPersonalInfo()}
+        <div className="cv-page">
+          <div className="px-[50px] py-[30px]">
+            {/* Always include personal info at the top of page 2 */}
+            {renderPersonalInfo()}
 
-          {/* Render sections for page 2 */}
-          {page2Sections.map((section) => (
-            <div key={section}>{renderSection(section)}</div>
-          ))}
+            {/* Render sections for page 2 */}
+            {page2Sections.map((section) => (
+              <div key={section}>{renderSection(section)}</div>
+            ))}
+          </div>
         </div>
       )}
     </div>

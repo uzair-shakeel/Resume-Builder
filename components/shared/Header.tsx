@@ -82,13 +82,13 @@ export default function Header() {
 
         <div className="flex items-center justify-end gap-2">
           <Link
-            href="/login"
+            href="/auth/signin"
             className="hidden md:inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-transparent active:bg-brand-100 active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
           >
             Connexion
           </Link>
           <Link
-            href="/creer-un-cv"
+            href="/builder"
             className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-[#173dff] active:bg-brand-300 active:bg-brand-300 text-white border-transparent hover:bg-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
           >
             Créer un CV
@@ -126,7 +126,7 @@ export default function Header() {
             </Link>
             <div className="flex items-center gap-2">
               <Link
-                href="/creer-un-cv"
+                href="/builder"
                 className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-[#173dff] active:bg-brand-300 active:bg-brand-300 text-white border-transparent hover:bg-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -166,13 +166,6 @@ export default function Header() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               FAQ
-            </Link>
-            <Link
-              href="/cover-letter"
-              className="active:text-[#4a68ff] py-1 focus-visible:ring-4 hover:text-[#173dff] rounded ring-[#b0bdff] inline-flex items-center text-lg"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Lettre de motivation
             </Link>
             <div>
               <Link

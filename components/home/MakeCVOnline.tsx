@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import ResumeShowcase from "./ResumeShowcase";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -17,12 +18,12 @@ export default function MakeCVOnline() {
           <p className="text-lg text-gray-500 mb-10">
             {t("home.makecv.subtitle")}
           </p>
-          <Button
-            size="lg"
-            className="inline-flex border justify-center rounded-brand relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 can-hover:active:bg-brand-300 text-white border-transparent can-hover:hover:bg-brand-400 font-medium py-3 ps-7 pe-7 text-lg"
+          <Link
+            href="/builder"
+            className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 can-hover:active:bg-brand-300 text-white border-transparent can-hover:hover:bg-brand-400 font-medium py-3 ps-7 pe-7 text-lg"
           >
             {t("home.makecv.cta")}
-          </Button>
+          </Link>
         </div>
 
         {/* Right side with animated resume templates */}

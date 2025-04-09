@@ -461,21 +461,25 @@ export default function CVPreviewHR({
 
       {/* Page 1 */}
       <div className="cv-page">
-        {page1Sections.map((section) => (
-          <div key={section}>{renderSection(section)}</div>
-        ))}
+        <div className="px-[50px] py-[30px]">
+          {page1Sections.map((section) => (
+            <div key={section}>{renderSection(section)}</div>
+          ))}
+        </div>
       </div>
 
       {/* Page 2 (if needed) */}
       {hasPage2 && (
         <div className="cv-page">
-          {/* Always include personal info at the top of page 2 */}
-          {renderPersonalInfo()}
+          <div className="px-[50px] py-[30px]">
+            {/* Always include personal info at the top of page 2 */}
+            {renderPersonalInfo()}
 
-          {/* Render sections for page 2 */}
-          {page2Sections.map((section) => (
-            <div key={section}>{renderSection(section)}</div>
-          ))}
+            {/* Render sections for page 2 */}
+            {page2Sections.map((section) => (
+              <div key={section}>{renderSection(section)}</div>
+            ))}
+          </div>
         </div>
       )}
     </div>

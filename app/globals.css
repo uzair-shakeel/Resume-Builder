@@ -81,7 +81,7 @@
 
 /* Page layout and margins */
 .cv-container {
-  width: 100%;
+  width: 210mm;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -453,4 +453,22 @@ li::before {
 
 .underline {
   border-bottom: 1px solid black !important;
+}
+
+.custom-counter {
+  counter-reset: item;
+}
+.custom-counter li {
+  counter-increment: item;
+}
+.custom-counter li::before {
+  content: counter(item);
+  display: inline-block;
+  width: 1.2rem;
+  margin-right: 0.5rem;
+  color: #173dff;
+  text-align: right;
+  position: relative;
+  top: 0.033rem;
+  left: 0.1rem;
 }

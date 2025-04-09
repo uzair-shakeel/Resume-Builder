@@ -7,7 +7,6 @@ import ReviewsSection from "@/components/home/ReviewsSection";
 import FAQ from "@/components/shared/FAQ";
 import MakeCVOnline from "@/components/home/MakeCVOnline";
 import Footer from "@/components/shared/Footer";
-import Link from "next/link";
 
 export default function Home() {
   return (

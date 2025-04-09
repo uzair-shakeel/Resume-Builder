@@ -355,7 +355,7 @@ export default function CVPreviewAlt({
     >
       {/* Page 1 */}
       <div className="cv-page">
-        <div className="cv-page-content flex">
+        <div className="flex">
           {/* Sidebar */}
           {renderSidebar()}
 

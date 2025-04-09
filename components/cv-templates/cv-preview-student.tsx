@@ -10,6 +10,7 @@ interface Education {
   endDate: string;
   current: boolean;
   description?: string;
+  location?: string;
 }
 
 interface Experience {
@@ -39,6 +40,9 @@ interface Interest {
 interface CVPreviewStudentProps {
   data: CVData;
   sectionOrder: string[];
+  sectionPages?: Record<string, number>;
+  customSectionNames?: Record<string, string>;
+  customSections?: Record<string, string>;
   pageBreakSettings?: {
     keepHeadingsWithContent: boolean;
     avoidOrphanedHeadings: boolean;
@@ -52,6 +56,9 @@ interface CVPreviewStudentProps {
 export default function CVPreviewStudent({
   data,
   sectionOrder,
+  sectionPages = {},
+  customSectionNames = {},
+  customSections = {},
   pageBreakSettings,
   template = "modern",
   accentColor = "#a5d8ff",
@@ -72,6 +79,57 @@ export default function CVPreviewStudent({
     keepHeadingsWithContent: true,
     avoidOrphanedHeadings: true,
     minLinesBeforeBreak: 3,
+  };
+
+  // Filter sections for page 1 and page 2
+  const page1Sections = sectionOrder.filter(
+    (section) => !sectionPages[section] || sectionPages[section] === 1
+  );
+  const page2Sections = sectionOrder.filter(
+    (section) => sectionPages[section] === 2
+  );
+
+  const hasPage2 = page2Sections.length > 0;
+
+  // Helper function to get section title with custom names
+  const getSectionTitle = (section: string): string => {
+    // If there's a custom name for this section, use it
+    if (customSectionNames && customSectionNames[section]) {
+      return customSectionNames[section];
+    }
+
+    // Otherwise use the default name
+    switch (section) {
+      case "profile":
+        return "Summary";
+      case "education":
+        return "Education";
+      case "experience":
+        return "Experience";
+      case "skills":
+        return "Skills";
+      case "languages":
+        return "Languages";
+      case "interests":
+        return "Interests";
+      case "achievements":
+        return "Achievements";
+      case "technical-skills":
+        return "Technical Skills";
+      case "activities":
+        return "Activities";
+      case "key-skills":
+        return "Key Skills";
+      case "volunteer-work":
+        return "Volunteer Work";
+      default:
+        if (section.startsWith("custom-")) {
+          return section.replace("custom-", "Custom Section ");
+        }
+        return (
+          section.charAt(0).toUpperCase() + section.slice(1).replace(/-/g, " ")
+        );
+    }
   };
 
   const renderSection = (section: string) => {
@@ -101,8 +159,32 @@ export default function CVPreviewStudent({
       case "volunteer-work":
         return renderVolunteerWork();
       default:
+        if (section.startsWith("custom-") && customSections[section]) {
+          return renderCustomSection(section);
+        }
         return null;
     }
+  };
+
+  const renderCustomSection = (sectionKey: string) => {
+    const content = customSections[sectionKey] || "";
+    const title =
+      customSectionNames[sectionKey] ||
+      sectionKey.replace("custom-", "Custom Section ");
+
+    return (
+      <div className="mb-8">
+        <h3 className="text-xl font-bold mb-4 uppercase">{title}</h3>
+        <div className="space-y-1 text-base">
+          {content.split("\n").map((item, i) => (
+            <p key={i} className="flex items-start">
+              <span className="mr-2">•</span>
+              <span>{item.replace(/^• /, "")}</span>
+            </p>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   const renderHeader = () => {
@@ -173,7 +255,9 @@ export default function CVPreviewStudent({
 
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Contact</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("personal-info") || "Contact"}
+        </h3>
         <div className="space-y-3 text-base">
           <div className="flex items-center gap-3">
             <span className="inline-block">
@@ -206,7 +290,9 @@ export default function CVPreviewStudent({
   const renderProfile = () => {
     return data.profile ? (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Summary</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("profile")}
+        </h3>
         <p className="text-base">
           {getPlaceholderOrValue("profile", "profile", data.profile)}
         </p>
@@ -217,7 +303,9 @@ export default function CVPreviewStudent({
   const renderEducation = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Education</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("education")}
+        </h3>
         <div className="space-y-2">
           {(data.education?.length
             ? data.education
@@ -225,7 +313,8 @@ export default function CVPreviewStudent({
           ).map((edu: Education, index: number) => (
             <div key={index} className="text-base">
               <p className="font-bold uppercase">
-                {edu.school}, {edu.location || ""}
+                {edu.school}
+                {edu.location ? `, ${edu.location}` : ""}
               </p>
               <p>
                 {edu.startDate} - {edu.current ? "Present" : edu.endDate} | GPA:
@@ -245,7 +334,9 @@ export default function CVPreviewStudent({
   const renderExperience = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Experience</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("experience")}
+        </h3>
         <div className="space-y-6">
           {(data.experience?.length
             ? data.experience
@@ -280,7 +371,9 @@ export default function CVPreviewStudent({
   const renderSkills = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Skills</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("skills")}
+        </h3>
         <div className="space-y-2">
           {(data.skills?.length ? data.skills : placeholderData.skills).map(
             (skill: Skill, index: number) => (
@@ -299,7 +392,9 @@ export default function CVPreviewStudent({
   const renderLanguages = () => {
     return data.languages?.length || placeholderData.languages ? (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Languages</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("languages")}
+        </h3>
         <div className="space-y-2">
           {(data.languages?.length
             ? data.languages
@@ -318,7 +413,9 @@ export default function CVPreviewStudent({
   const renderInterests = () => {
     return data.interests?.length || placeholderData.interests ? (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Interests</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("interests")}
+        </h3>
         <div className="space-y-1">
           {(data.interests?.length
             ? data.interests
@@ -337,7 +434,9 @@ export default function CVPreviewStudent({
   const renderAchievements = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Achievements</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("achievements")}
+        </h3>
         <div className="space-y-1 text-base">
           <p className="flex items-start">
             <span className="mr-2">•</span>
@@ -363,7 +462,9 @@ export default function CVPreviewStudent({
   const renderTechnicalSkills = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Technical Skills</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("technical-skills")}
+        </h3>
         <div className="space-y-1 text-base">
           <p className="flex items-start">
             <span className="mr-2">•</span>
@@ -385,7 +486,9 @@ export default function CVPreviewStudent({
   const renderActivities = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Activities</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("activities")}
+        </h3>
         <div className="text-base">
           <p className="font-bold">VELIT BIBENDUM</p>
           <p className="font-bold">HIGH SCHOOL TENNIS TEAM</p>
@@ -398,7 +501,9 @@ export default function CVPreviewStudent({
   const renderKeySkills = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Key Skills</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("key-skills")}
+        </h3>
         <div className="space-y-1 text-base">
           <p className="flex items-start">
             <span className="mr-2">•</span>
@@ -440,7 +545,9 @@ export default function CVPreviewStudent({
   const renderVolunteerWork = () => {
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">Volunteer Work</h3>
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("volunteer-work")}
+        </h3>
         <div className="space-y-6 text-base">
           <div>
             <p className="font-bold uppercase">SUSPENDISSE UT JUSTO COACH</p>
@@ -455,43 +562,109 @@ export default function CVPreviewStudent({
     );
   };
 
-  return (
+  // Render a single page with the given sections
+  const renderPage = (sections: string[], isFirstPage: boolean = true) => (
     <div className="cv-page max-w-[1000px] mx-auto font-sans bg-white">
-      <div className="p-8 pb-0">{renderHeader()}</div>
-      <div className="cv-page-content flex relative">
+      {isFirstPage && <div className="p-8 pb-0">{renderHeader()}</div>}
+      <div className="flex relative">
         {/* Left sidebar with curved bottom */}
         <div className="w-1/3 p-8 pt-0 relative">
-          {renderPersonalInfo()}
-          <div className="custom-shape-divider-top-1741392645">
-            <svg
-              data-name="Layer 1"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 1200 120"
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
-                className="shape-fill"
-              ></path>
-            </svg>
-          </div>
-          <div className="absolute top-[220px] left-0 w-full h-full cv-sidebar"></div>
-          <div className="relative z-10 mt-[100px]">
-            {renderAchievements()}
-            {renderTechnicalSkills()}
-            {renderActivities()}
-            {renderKeySkills()}
-          </div>
+          {isFirstPage ? (
+            <>
+              {sections.includes("personal-info") && renderPersonalInfo()}
+              <div className="custom-shape-divider-top-1741392645">
+                <svg
+                  data-name="Layer 1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 1200 120"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"
+                    className="shape-fill"
+                  ></path>
+                </svg>
+              </div>
+              <div className="absolute top-[220px] left-0 w-full h-full cv-sidebar"></div>
+              <div className="relative z-10 mt-[100px]">
+                {sections
+                  .filter(
+                    (section) =>
+                      section !== "personal-info" &&
+                      section !== "profile" &&
+                      section !== "education" &&
+                      section !== "experience" &&
+                      section !== "volunteer-work"
+                  )
+                  .map((section) => renderSection(section))}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="absolute top-0 left-0 w-full h-full cv-sidebar"></div>
+              <div className="relative z-10 py-[40px]">
+                {sections
+                  .filter(
+                    (section) =>
+                      section !== "profile" &&
+                      section !== "education" &&
+                      section !== "experience" &&
+                      section !== "volunteer-work"
+                  )
+                  .map((section) => renderSection(section))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Main content */}
-        <div className="w-2/3 p-8 pt-0">
-          {renderProfile()}
-          {renderEducation()}
-          {renderExperience()}
-          {renderVolunteerWork()}
+        <div className={`w-2/3 p-8 ${isFirstPage ? "pt-0" : "pt-[40px]"}`}>
+          {sections
+            .filter(
+              (section) =>
+                section === "profile" ||
+                section === "education" ||
+                section === "experience" ||
+                section === "volunteer-work"
+            )
+            .map((section) => renderSection(section))}
         </div>
       </div>
+    </div>
+  );
+
+  return (
+    <div className="py-[40px]">
+      {/* Page 1 */}
+      {renderPage(page1Sections, true)}
+
+      {/* Page 2 (if needed) */}
+      {hasPage2 && (
+        <div className="mt-8 print:mt-0">
+          {renderPage(page2Sections, false)}
+        </div>
+      )}
+
+      <style jsx>{`
+        .cv-page {
+          width: 210mm;
+          min-height: 297mm;
+          position: relative;
+          margin: 0 auto;
+          background: white;
+        }
+        @media print {
+          .cv-page + .cv-page {
+            page-break-before: always;
+          }
+        }
+        .cv-sidebar {
+          background-color: ${accentColor}20;
+        }
+        .shape-fill {
+          fill: ${accentColor}20;
+        }
+      `}</style>
     </div>
   );
 }

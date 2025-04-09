@@ -63,7 +63,7 @@ export default function PersonalInfo({
 
   return (
     <div className="p-4 space-y-4">
-      <div className="flex items-start space-x-4">
+      <div className="flex flex-wrap items-start gap-4">
         {/* Only show photo field if not using HR template */}
         {!isHRTemplate && (
           <div>
@@ -96,7 +96,7 @@ export default function PersonalInfo({
         )}
 
         <div
-          className={`flex-1 grid grid-cols-2 gap-4 ${
+          className={`flex-1 grid md:grid-cols-2 min-w-[200px] gap-4 ${
             isHRTemplate ? "col-span-2" : ""
           }`}
         >
