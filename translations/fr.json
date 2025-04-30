@@ -692,43 +692,41 @@
     },
     "dashboard": {
       "common": {
+        "locale": "fr-FR",
         "loading": "Chargement...",
-        "no_items": "Aucun article",
-        "create_new": "Créer Nouveau",
-        "rename": "Renommer",
-        "delete": "Supprimer",
-        "save": "Enregistrer",
-        "edit": "Modifier",
+        "noItems": "Aucun élément",
+        "justNow": "À l'instant",
+        "minutesAgo": "minutes",
+        "hoursAgo": "heures",
+        "daysAgo": "jours",
+        "monthsAgo": "mois",
+        "yearsAgo": "ans",
         "cancel": "Annuler",
-        "confirm_delete": "Êtes-vous sûr de vouloir supprimer cela?",
-        "last_edited": "Dernière modification",
-        "just_now": "Modifié juste maintenant",
-        "minutes_ago": "il y a minute(s)",
-        "hours_ago": "il y a heure(s)",
-        "days_ago": "il y a jour(s)",
-        "months_ago": "il y a mois(s)",
-        "years_ago": "il y a an(s)",
-        "modified_prefix": "Modifié"
+        "save": "Enregistrer",
+        "delete": "Supprimer",
+        "rename": "Renommer"
       },
       "resumes": {
         "title": "Mes CV",
-        "view_all": "Voir tout",
-        "create_resume": "Créer un CV",
-        "empty_state": {
-          "title": "Pas de CV",
-          "description": "Créez votre premier CV pour commencer",
-          "button": "Créer un CV"
-        }
+        "createButton": "Créer un CV",
+        "createFirstButton": "Créer mon premier CV",
+        "noResumes": "Vous n'avez pas encore de CV",
+        "renameTitle": "Renommer le CV",
+        "newTitleLabel": "Nouveau titre",
+        "newTitlePlaceholder": "Mon super CV",
+        "deleteTitle": "Supprimer le CV",
+        "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer ce CV ? Cette action est irréversible."
       },
-      "cover_letters": {
+      "coverLetters": {
         "title": "Mes Lettres de Motivation",
-        "view_all": "Voir tout",
-        "create_letter": "Créer une lettre",
-        "empty_state": {
-          "title": "Pas de lettres de motivation",
-          "description": "Créez votre première lettre de motivation pour commencer",
-          "button": "Créer une lettre"
-        }
+        "createButton": "Créer une lettre",
+        "createFirstButton": "Créer ma première lettre",
+        "noCoverLetters": "Vous n'avez pas encore de lettre de motivation",
+        "renameTitle": "Renommer la lettre",
+        "newTitleLabel": "Nouveau titre",
+        "newTitlePlaceholder": "Ma lettre pour l'entreprise X",
+        "deleteTitle": "Supprimer la lettre",
+        "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer cette lettre ? Cette action est irréversible."
       },
       "sidebar": {
         "new": "Nouveau",

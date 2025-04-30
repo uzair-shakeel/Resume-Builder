@@ -393,20 +393,15 @@
         }
       },
       "pdf": {
-        "description": "PDF generation messages",
-        "generating_pdf": "Generating PDF...",
+        "generating_pdf": "Generating your PDF...",
         "may_take_moments": "This may take a few moments."
       },
       "tooltips": {
-        "description": "Tooltips and accessibility labels",
-        "labels": {
-          "zoom_out": "Zoom Out",
-          "zoom_in": "Zoom In",
-          "fit_to_page": "Fit to Page",
-          "page_layout": "Page Layout Settings",
-          "previous_template": "Previous template",
-          "next_template": "Next template"
-        }
+        "zoom_in": "Zoom In",
+        "zoom_out": "Zoom Out",
+        "fit_to_page": "Fit to Page",
+        "previous_template": "Previous Template",
+        "next_template": "Next Template"
       },
       "save_status": {
         "description": "Save status messages",
@@ -594,7 +589,7 @@
           "aspect_specifique": "[Aspect spécifique]: A specific aspect of the company that interests you",
           "competences_cles": "[Compétences clés]: Your key relevant skills",
           "domaine_expertise": "[Domaine d'expertise]: Your field of expertise",
-          "projets_objectifs": "[Projets/Objectifs de l'entreprise]: The company’s projects or goals you wish to contribute to"
+          "projets_objectifs": "[Projets/Objectifs de l'entreprise]: The company's projects or goals you wish to contribute to"
         },
         "education": {
           "formation": "[Formation]: Your degree or training",
@@ -605,8 +600,8 @@
           "x": "[X]: Number of years of experience",
           "secteur": "[Secteur]: Your industry",
           "competences_specifiques": "[Compétences spécifiques]: Your technical or professional skills",
-          "secteur_activite": "[Secteur d'activité]: The company’s industry",
-          "objectifs_projets": "[Objectifs/Projets de l'entreprise]: The company’s goals or projects"
+          "secteur_activite": "[Secteur d'activité]: The company's industry",
+          "objectifs_projets": "[Objectifs/Projets de l'entreprise]: The company's goals or projects"
         },
         "company": {
           "caracteristique_valeur": "[Caractéristique/Valeur de l'entreprise]: A distinctive feature or value of the company",
@@ -694,43 +689,41 @@
     },
     "dashboard": {
       "common": {
+        "locale": "en-US",
         "loading": "Loading...",
-        "no_items": "No items",
-        "create_new": "Create New",
-        "rename": "Rename",
-        "delete": "Delete",
-        "save": "Save",
-        "edit": "Edit",
+        "noItems": "No items",
+        "justNow": "Just now",
+        "minutesAgo": "minutes ago",
+        "hoursAgo": "hours ago",
+        "daysAgo": "days ago",
+        "monthsAgo": "months ago",
+        "yearsAgo": "years ago",
         "cancel": "Cancel",
-        "confirm_delete": "Are you sure you want to delete this?",
-        "last_edited": "Last edited",
-        "just_now": "Modified just now",
-        "minutes_ago": "minute(s) ago",
-        "hours_ago": "hour(s) ago",
-        "days_ago": "day(s) ago",
-        "months_ago": "month(s) ago",
-        "years_ago": "year(s) ago",
-        "modified_prefix": "Modified"
+        "save": "Save",
+        "delete": "Delete",
+        "rename": "Rename"
       },
       "resumes": {
         "title": "My Resumes",
-        "view_all": "View all",
-        "create_resume": "Create Resume",
-        "empty_state": {
-          "title": "No resumes",
-          "description": "Create your first resume to get started",
-          "button": "Create Resume"
-        }
+        "createButton": "Create Resume",
+        "createFirstButton": "Create my first resume",
+        "noResumes": "You don't have any resumes yet",
+        "renameTitle": "Rename Resume",
+        "newTitleLabel": "New title",
+        "newTitlePlaceholder": "My awesome resume",
+        "deleteTitle": "Delete Resume",
+        "deleteConfirmation": "Are you sure you want to delete this resume? This action cannot be undone."
       },
-      "cover_letters": {
+      "coverLetters": {
         "title": "My Cover Letters",
-        "view_all": "View all",
-        "create_letter": "Create Letter",
-        "empty_state": {
-          "title": "No cover letters",
-          "description": "Create your first cover letter to get started",
-          "button": "Create Letter"
-        }
+        "createButton": "Create Cover Letter",
+        "createFirstButton": "Create my first cover letter",
+        "noCoverLetters": "You don't have any cover letters yet",
+        "renameTitle": "Rename Cover Letter",
+        "newTitleLabel": "New title",
+        "newTitlePlaceholder": "My letter for company X",
+        "deleteTitle": "Delete Cover Letter",
+        "deleteConfirmation": "Are you sure you want to delete this cover letter? This action cannot be undone."
       },
       "sidebar": {
         "new": "New",
