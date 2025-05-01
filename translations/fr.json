@@ -60,6 +60,16 @@
           "based_on": "Basé sur",
           "reviews_count": "avis"
         },
+        "stars": {
+          "full": "étoile pleine",
+          "half": "demi-étoile",
+          "empty": "étoile vide"
+        },
+        "navigation": {
+          "previous": "Avis précédent",
+          "next": "Avis suivant"
+        },
+        "no_reviews": "Aucun avis disponible pour le moment.",
         "items": [
           {
             "name": "Tulin Cosgun",
@@ -145,7 +155,10 @@
           "finnish": "Finlandais",
           "swedish": "Suédois"
         },
-        "copyright": "© 2025 CV.ci. Tous droits réservés."
+        "copyright": "© 2025 CV.ci. Tous droits réservés.",
+        "downloadAppStore": "Télécharger sur l'App Store",
+        "getItGooglePlay": "Disponible sur Google Play",
+        "socialLink": "Lien Réseau Social"
       }
     },
     "builder": {
@@ -194,13 +207,13 @@
           "volunteer_work": "Travail bénévole",
           "custom_section": "Section personnalisée"
         }
-      },
+      }, 
       "forms": {
         "custom_section_editor": {
           "description": "Éléments d'interface utilisateur pour l'éditeur de section personnalisé",
           "title_placeholder": "Titre",
           "description_placeholder": "Description",
-          "add_item": "+ Ajouter un article"
+          "add_item": "+ Ajouter un élément"
         },
         "personal_info": {
           "description": "Champs et étiquettes du formulaire d'informations personnelles",
@@ -272,7 +285,10 @@
             "intermediate": "Intermédiaire",
             "advanced": "Avancé",
             "expert": "Expert",
-            "remove_skill": "Supprimer la compétence"
+            "remove_skill": "Supprimer la compétence",
+            "name": "Nom de la compétence",
+            "name_placeholder": "Entrez une compétence (ex: Gestion de projet)",
+            "level": "Niveau de compétence"
           }
         },
         "languages": {
@@ -286,7 +302,17 @@
             "professional_working": "Professionnel Travailleur",
             "full_professional": "Professionnel Complet",
             "native": "Autochtone",
-            "remove_language": "Supprimer la langue"
+            "remove_language": "Supprimer la langue",
+            "name": "Langue",
+            "name_placeholder": "Entrez une langue (ex: Anglais)",
+            "level": "Niveau de maîtrise"
+          },
+          "levels": {
+            "elementary": "Élémentaire",
+            "limited_working": "Connaissances limitées",
+            "professional_working": "Connaissances professionnelles",
+            "full_professional": "Maîtrise professionnelle",
+            "native_bilingual": "Langue maternelle/Bilingue"
           }
         },
         "interests": {
@@ -294,7 +320,20 @@
           "fields": {
             "add_interest": "Ajouter un intérêt",
             "interest_name": "Intérêt",
-            "remove_interest": "Supprimer l'intérêt"
+            "remove_interest": "Supprimer l'intérêt",
+            "interest": "Centre d'intérêt",
+            "interest_placeholder": "Entrez un centre d'intérêt (ex: Photographie)"
+          },
+          "options": {
+            "courses": "Cours",
+            "internships": "Stages",
+            "extracurricular": "Activités Extrascolaires",
+            "references": "Références",
+            "qualities": "Qualités",
+            "certificates": "Certificats",
+            "achievements": "Réalisations",
+            "signature": "Signature",
+            "footer": "Pied de page"
           }
         },
         "references": {
@@ -307,7 +346,12 @@
             "email": "Email",
             "phone": "Téléphone",
             "reference_text": "Référence",
-            "remove_reference": "Supprimer la référence"
+            "remove_reference": "Supprimer la référence",
+            "name_placeholder": "Dr. John Watson",
+            "position_placeholder": "Directeur du développement",
+            "company_placeholder": "Solutions Technologiques Inc.",
+            "email_placeholder": "john.watson@exemple.com",
+            "phone_placeholder": "+33 6 12 34 56 78"
           }
         },
         "socials": {
@@ -324,17 +368,20 @@
             "dribbble": "Dribbble",
             "behance": "Behance",
             "other": "Autre",
-            "remove_social": "Supprimer le lien social"
+            "remove_social": "Supprimer le lien social",
+            "network": "Réseau",
+            "select_network": "Sélectionner un réseau",
+            "username": "Nom d'utilisateur",
+            "username_placeholder": "johndoe",
+            "url_placeholder": "https://linkedin.com/in/johndoe"
           }
         }
       },
       "templates": {
-        "description": "Sélection de modèle UI",
-        "ui": {
-          "select_template": "Sélectionner le modèle",
-          "close": "Fermer",
-          "templates": "Modèles"
-        },
+        "description": "Interface de sélection de modèle",
+        "select_template": "Sélectionner un modèle",
+        "close": "Fermer",
+        "templates": "Modèles",
         "options": {
           "modern": "Moderne",
           "classic": "Classique",
@@ -342,9 +389,20 @@
           "sherlock": "Sherlock",
           "hr": "RH",
           "minimal": "Minimal",
-          "teal": "Sarcelle",
+          "teal": "Turquoise",
           "circulaire": "Circulaire",
           "student": "Étudiant"
+        },
+        "descriptions": {
+          "modern": "Mise en page propre et contemporaine avec un aspect professionnel",
+          "classic": "Design traditionnel et raffiné pour les candidatures formelles",
+          "pro": "Style audacieux et élégant pour mettre en valeur vos réalisations",
+          "sherlock": "Style innovant et analytique pour les professionnels soucieux du détail",
+          "hr": "Format simplifié préféré par les professionnels des RH",
+          "minimal": "Design simple mettant l'accent sur les informations essentielles",
+          "teal": "Mise en page fraîche et dynamique avec une touche créative",
+          "circulaire": "Éléments circulaires uniques pour un CV distinctif",
+          "student": "Parfait pour les jeunes diplômés et les professionnels en début de carrière"
         }
       },
       "styling": {
@@ -354,14 +412,14 @@
           "arial": "Arial",
           "times_new_roman": "Times New Roman",
           "calibri": "Calibri",
-          "georgia": "Géorgie",
+          "georgia": "Georgia",
           "verdana": "Verdana"
         },
         "font_sizes": {
           "small": "Petit",
           "medium": "Moyen",
           "large": "Grand",
-          "x_large": "X-Large"
+          "x_large": "Très grand"
         },
         "colors": {
           "blue": "Bleu",
@@ -369,7 +427,7 @@
           "green": "Vert",
           "purple": "Violet",
           "orange": "Orange",
-          "teal": "Sarcelle",
+          "teal": "Turquoise",
           "pink": "Rose",
           "slate": "Ardoise",
           "reset": "Réinitialiser"
@@ -377,36 +435,27 @@
       },
       "page_layout": {
         "description": "Paramètres de mise en page",
-        "settings": {
-          "page_layout_settings": "Paramètres de Mise en Page",
-          "page_margins": "Marges de page (mm)",
-          "top": "Top",
-          "right": "Droite",
-          "bottom": "Bas",
-          "left": "Gauche"
-        },
-        "page_break_rules": {
-          "title": "Règles de Saut de Page",
-          "keep_headings": "Gardez les en-têtes avec le contenu",
-          "avoid_orphans": "Évitez les titres orphelins en bas de page",
-          "min_lines": "Min lignes avant la pause"
-        }
+        "page_layout_settings": "Paramètres de mise en page",
+        "page_margins": "Marges de page (mm)",
+        "top": "Haut",
+        "right": "Droite",
+        "bottom": "Bas",
+        "left": "Gauche",
+        "page_break_rules": "Règles de saut de page",
+        "keep_headings": "Garder les titres avec le contenu",
+        "avoid_orphans": "Éviter les titres orphelins en bas de page",
+        "min_lines": "Lignes minimales avant saut"
       },
-      "pdf": {
+      "pdf_generation": {
         "description": "Messages de génération de PDF",
-        "generating_pdf": "Génération de PDF...",
-        "may_take_moments": "Cela peut prendre quelques instants."
+        "generating_pdf": "Génération de votre PDF",
+        "may_take_moments": "Cela peut prendre quelques instants"
       },
       "tooltips": {
-        "description": "Infobulles et étiquettes d'accessibilité",
-        "labels": {
-          "zoom_out": "Zoom arrière",
-          "zoom_in": "Zoomer",
-          "fit_to_page": "Ajuster à la Page",
-          "page_layout": "Paramètres de Mise en Page",
-          "previous_template": "Modèle précédent",
-          "next_template": "Modèle suivant"
-        }
+        "description": "Info-bulles et étiquettes d'accessibilité",
+        "zoom_in": "Zoom avant",
+        "zoom_out": "Zoom arrière",
+        "fit_to_page": "Adapter à la page"
       },
       "save_status": {
         "description": "Enregistrer les messages de statut",
@@ -442,9 +491,13 @@
           "confirm_delete": "Êtes-vous sûr de vouloir supprimer cela?",
           "cannot_undo": "Cette action ne peut pas être annulée"
         }
+      },
+      "language": {
+        "name": "Français",
+        "english": "Anglais",
+        "french": "Français"
       }
     },
-
     "builder_cover_letter": {
       "sections": {
         "personal_info": "Informations personnelles",
@@ -455,7 +508,6 @@
         "motivation": "Motivation",
         "conclusion": "Conclusion"
       },
-
       "personal_info_form": {
         "photo": "Photo",
         "first_name": "Prénom",
@@ -739,6 +791,50 @@
         "help": "Aide",
         "sign_out": "Se déconnecter"
       }
+    },
+    "locale": "fr-FR",
+    "language": {
+      "name": "Français",
+      "selector": "Langue",
+      "english": "Anglais",
+      "french": "Français"
+    },
+    "pricing": {
+      "title": "Prix",
+      "subtitle": "Un prix unique, toutes les fonctionnalités, en illimité.",
+      "options": {
+        "monthly": "Mensuel",
+        "quarterly": "Trimestriel",
+        "yearly": "Annuel"
+      },
+      "period": {
+        "month": "mois",
+        "quarter": "trimestre",
+        "year": "an"
+      },
+      "auto_renewal": "(renouvellement automatique)",
+      "try_for_days": "Essayez 14 jours pour",
+      "features": {
+        "unlimited_cv": "Créez des CV en illimité",
+        "cover_letters": "Générez des lettres de motivation",
+        "job_alerts": "Alertes pour les offres d'emplois",
+        "track_applications": "Suivez vos candidatures"
+      }
+    },
+    "common": {
+      "logo_alt": "Logo du Générateur de CV"
+    },
+    "header": {
+      "models": "Modèles",
+      "pricing": "Prix",
+      "faq": "FAQ",
+      "cover_letter": "Lettre de motivation",
+      "login": "Connexion",
+      "create_resume": "Créer un CV",
+      "register": "S'inscrire",
+      "my_account": "Mon Compte",
+      "dashboard": "Tableau de Bord",
+      "logout": "Déconnexion"
     }
   }
 }

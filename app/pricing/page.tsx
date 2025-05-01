@@ -7,38 +7,40 @@ import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
 import Link from "next/link";
 import { useState } from "react";
-
-const features = [
-  "Créez des CV en illimité",
-  "Générez des lettres de motivation",
-  "Alertes pour les offres d'emplois",
-  "Suivez vos candidatures",
-];
-
-const pricingOptions = {
-  month: {
-    price: "14,99",
-    trial: "0,99",
-    period: "mois",
-  },
-  quarter: {
-    price: "39,99",
-    trial: "0,99",
-    period: "trimestre",
-  },
-  year: {
-    price: "149,99",
-    trial: "0,99",
-    period: "an",
-  },
-};
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Pricing() {
+  const { t } = useLanguage();
   const [selectedPeriod, setSelectedPeriod] = useState("month");
 
   const handlePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedPeriod(e.target.value);
   };
+
+  const pricingOptions = {
+    month: {
+      price: "14,99",
+      trial: "0,99",
+      period: t("site.pricing.period.month"),
+    },
+    quarter: {
+      price: "39,99",
+      trial: "0,99",
+      period: t("site.pricing.period.quarter"),
+    },
+    year: {
+      price: "149,99",
+      trial: "0,99",
+      period: t("site.pricing.period.year"),
+    },
+  };
+
+  const features = [
+    t("site.pricing.features.unlimited_cv"),
+    t("site.pricing.features.cover_letters"),
+    t("site.pricing.features.job_alerts"),
+    t("site.pricing.features.track_applications"),
+  ];
 
   return (
     <main>
@@ -46,10 +48,10 @@ export default function Pricing() {
       <section className="w-full bg-background pt-40 pb-32">
         <div className="max-w-[864px] mx-auto px-5 text-center">
           <h1 className="text-3xl md:text-5xl font-medium font-header mb-6 leading-tight md:leading-tight text-gray-900">
-            Prix
+            {t("site.pricing.title")}
           </h1>
           <p className="text-gray-500 text-sm md:text-base">
-            Un prix unique, toutes les fonctionnalités, en illimité.
+            {t("site.pricing.subtitle")}
           </p>
 
           <div className="flex flex-start items-center">
@@ -67,16 +69,16 @@ export default function Pricing() {
                       onChange={handlePeriodChange}
                     >
                       <option value="month" className="bg-white text-gray-800">
-                        Mensuel
+                        {t("site.pricing.options.monthly")}
                       </option>
                       <option
                         value="quarter"
                         className="bg-white text-gray-800"
                       >
-                        Trimestriel
+                        {t("site.pricing.options.quarterly")}
                       </option>
                       <option value="year" className="bg-white text-gray-800">
-                        Annuel
+                        {t("site.pricing.options.yearly")}
                       </option>
                     </select>
                     <div className="absolute flex top-0 end-0 bottom-0 px-2 pointer-events-none transform rotate-180">
@@ -123,7 +125,9 @@ export default function Pricing() {
                       </span>
                     </span>
                   </div>
-                  <p className="text-gray-500">(renouvellement automatique)</p>
+                  <p className="text-gray-500">
+                    {t("site.pricing.auto_renewal")}
+                  </p>
                 </div>
                 <div className="mt-2">
                   <div className="flex w-full">
@@ -133,7 +137,7 @@ export default function Pricing() {
                       href="#"
                     >
                       <div className="   ">
-                        Essayez 14 jours pour{" "}
+                        {t("site.pricing.try_for_days", { days: 14 })}{" "}
                         <span id="pricing-trial-fee">
                           {
                             pricingOptions[

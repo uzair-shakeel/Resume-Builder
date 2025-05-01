@@ -70,7 +70,7 @@ export default function ReviewsSection() {
         <Image
           key={`full-${i}`}
           src="/assets/star-light.svg"
-          alt={language === "fr" ? "étoile pleine" : "full star"}
+          alt={t("site.home.reviews.stars.full")}
           width={32}
           height={32}
         />
@@ -82,7 +82,7 @@ export default function ReviewsSection() {
         <Image
           key="half"
           src="/assets/halfstar-light.svg"
-          alt={language === "fr" ? "demi-étoile" : "half star"}
+          alt={t("site.home.reviews.stars.half")}
           width={32}
           height={32}
         />
@@ -95,7 +95,7 @@ export default function ReviewsSection() {
         <Image
           key={`empty-${i}`}
           src="/assets/star-dark.svg"
-          alt={language === "fr" ? "étoile vide" : "empty star"}
+          alt={t("site.home.reviews.stars.empty")}
           width={32}
           height={32}
         />
@@ -146,9 +146,7 @@ export default function ReviewsSection() {
               ))
             ) : (
               <div className="text-center text-gray-400">
-                {language === "fr"
-                  ? "Aucun avis disponible pour le moment."
-                  : "No reviews available at the moment."}
+                {t("site.home.reviews.no_reviews")}
               </div>
             )}
           </div>
@@ -160,16 +158,14 @@ export default function ReviewsSection() {
             <button
               onClick={scrollPrev}
               className="flex justify-center items-center shadow-md rounded-full opacity-90 p-1.5 md:p-3 bg-gray-50 hover:bg-gray-100 active:bg-brand-50 absolute top-1/2 -translate-y-1/2 -scale-x-100 left-1 md:left-8"
-              aria-label={
-                language === "fr" ? "Avis précédent" : "Previous review"
-              }
+              aria-label={t("site.home.reviews.navigation.previous")}
             >
               <ChevronRight className="w-6 h-6 text-gray-800" />
             </button>
             <button
               onClick={scrollNext}
               className="flex justify-center items-center shadow-md rounded-full opacity-90 p-1.5 md:p-3 bg-gray-50 hover:bg-gray-100 active:bg-brand-50 absolute top-1/2 -translate-y-1/2 right-1 md:right-8"
-              aria-label={language === "fr" ? "Avis suivant" : "Next review"}
+              aria-label={t("site.home.reviews.navigation.next")}
             >
               <ChevronRight className="w-6 h-6 text-gray-800" />
             </button>

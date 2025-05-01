@@ -272,7 +272,9 @@ function CustomSection({
               type="text"
               value={item.title || ""}
               onChange={(e) => updateItem(index, "title", e.target.value)}
-              placeholder={t("custom_section_editor.title_placeholder")}
+              placeholder={t(
+                "site.builder.forms.custom_section_editor.title_placeholder"
+              )}
               className="w-full border-b border-gray-300 focus:outline-none focus:border-blue-500 text-gray-800 font-medium"
             />
             <button
@@ -285,7 +287,9 @@ function CustomSection({
           <textarea
             value={item.description || ""}
             onChange={(e) => updateItem(index, "description", e.target.value)}
-            placeholder={t("custom_section_editor.description_placeholder")}
+            placeholder={t(
+              "site.builder.forms.custom_section_editor.description_placeholder"
+            )}
             className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:border-blue-500 min-h-[80px] text-gray-900 bg-white"
           />
         </div>
@@ -294,7 +298,7 @@ function CustomSection({
         onClick={addItem}
         className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
       >
-        {t("custom_section_editor.add_item")}
+        {t("site.builder.forms.custom_section_editor.add_item")}
       </button>
     </div>
   );
@@ -1146,24 +1150,24 @@ export default function Builder() {
 
     // Otherwise use the default name
     switch (section) {
-      case "personal_info":
-        return t("sections.personal_info");
+      case "personal-info":
+        return t("site.builder.sections.names.personal_info");
       case "profile":
-        return t("sections.profile");
+        return t("site.builder.sections.names.profile");
       case "education":
-        return t("sections.education");
+        return t("site.builder.sections.names.education");
       case "experience":
-        return t("sections.experience");
+        return t("site.builder.sections.names.experience");
       case "skills":
-        return t("sections.skills");
+        return t("site.builder.sections.names.skills");
       case "languages":
-        return t("sections.languages");
+        return t("site.builder.sections.names.languages");
       case "interests":
-        return t("sections.interests");
+        return t("site.builder.sections.names.interests");
       case "references":
-        return t("sections.references");
+        return t("site.builder.sections.names.references");
       case "socials":
-        return t("sections.socials");
+        return t("site.builder.sections.names.socials");
       default:
         // For custom sections, use the custom name if available
         if (section.startsWith("custom-") && customSectionNames[section]) {
@@ -1915,10 +1919,10 @@ export default function Builder() {
           <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
             <RefreshCw className="w-10 h-10 text-blue-600 animate-spin mb-4" />
             <p className="text-lg font-medium text-gray-800">
-              {t("pdf_generation.generating_pdf")}
+              {t("site.builder.pdf_generation.generating_pdf")}
             </p>
             <p className="text-sm text-gray-600 mt-2">
-              {t("pdf_generation.may_take_moments")}
+              {t("site.builder.pdf_generation.may_take_moments")}
             </p>
           </div>
         </div>
@@ -1935,7 +1939,9 @@ export default function Builder() {
               >
                 <MoveLeft size={18} />
               </button>
-              <h1 className="text-xl font-bold">{t("header.title")}</h1>
+              <h1 className="text-xl font-bold">
+                {t("site.builder.header.title")}
+              </h1>
               {/* Save status indicator */}
               <div className="text-gray-500">
                 {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
@@ -1952,7 +1958,7 @@ export default function Builder() {
                 className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
               >
                 <FileText className="w-4 h-4" />
-                {t("header.cover_letter")}
+                {t("site.builder.header.cover_letter")}
               </a>
             </div>
             <div className="flex items-center gap-2">
@@ -1962,7 +1968,7 @@ export default function Builder() {
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {t("header.download")}
+                  {t("site.builder.header.download")}
                 </button>
                 {showDownloadOptions && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
@@ -1971,7 +1977,7 @@ export default function Builder() {
                         onClick={() => handleDownload("pdf")}
                         className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
                       >
-                        {t("header.download_as_pdf")}
+                        {t("site.builder.header.download_as_pdf")}
                       </button>
                     </div>
                   </div>
@@ -2050,14 +2056,18 @@ export default function Builder() {
                                 onClick={() => handleRenameSection(section)}
                               >
                                 <Pencil className="w-4 h-4 mr-2" />
-                                {t("sections.rename_section")}
+                                {t(
+                                  "site.builder.sections.actions.rename_section"
+                                )}
                               </button>
                               <button
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                                 onClick={() => handleDeleteSection(section)}
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
-                                {t("sections.delete_section")}
+                                {t(
+                                  "site.builder.sections.actions.delete_section"
+                                )}
                               </button>
                               <button
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
@@ -2070,8 +2080,12 @@ export default function Builder() {
                               >
                                 <FileText className="w-4 h-4 mr-2" />
                                 {sectionPages[section] === 2
-                                  ? t("sections.move_to_page_1")
-                                  : t("sections.move_to_page_2")}
+                                  ? t(
+                                      "site.builder.sections.actions.move_to_page_1"
+                                    )
+                                  : t(
+                                      "site.builder.sections.actions.move_to_page_2"
+                                    )}
                               </button>
                             </div>
                           </div>
@@ -2099,7 +2113,7 @@ export default function Builder() {
               {/* Add Section Button */}
               <div className="mt-4">
                 <h3 className="text-sm font-medium text-gray-700 mb-2">
-                  {t("sections.add_section")}
+                  {t("site.builder.sections.actions.add_section")}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {[
@@ -2125,7 +2139,7 @@ export default function Builder() {
                     >
                       <span className="mr-1">+</span>{" "}
                       {t(
-                        `custom_sections.${sectionName
+                        `site.builder.custom_sections.options.${sectionName
                           .toLowerCase()
                           .replace(/\s+/g, "_")}`
                       )}
@@ -2145,7 +2159,7 @@ export default function Builder() {
               <button
                 onClick={zoomOut}
                 className="p-1 rounded-md hover:bg-gray-200"
-                title={t("tooltips.zoom_out")}
+                title={t("site.builder.tooltips.zoom_out")}
               >
                 <ZoomOut className="w-5 h-5 text-gray-700" />
               </button>
@@ -2153,14 +2167,14 @@ export default function Builder() {
               <button
                 onClick={zoomIn}
                 className="p-1 rounded-md hover:bg-gray-200"
-                title={t("tooltips.zoom_in")}
+                title={t("site.builder.tooltips.zoom_in")}
               >
                 <ZoomIn className="w-5 h-5 text-gray-700" />
               </button>
               <button
                 onClick={resetZoom}
                 className="p-1 rounded-md hover:bg-gray-200 ml-2"
-                title={t("tooltips.fit_to_page")}
+                title={t("site.builder.tooltips.fit_to_page")}
               >
                 <Maximize className="w-5 h-5 text-gray-700" />
               </button>
@@ -2171,19 +2185,19 @@ export default function Builder() {
           {showPageBreakControls && (
             <div className="bg-white border-b border-gray-200 p-3 shadow-sm">
               <h3 className="font-medium text-gray-800 mb-2">
-                {t("page_layout.page_layout_settings")}
+                {t("site.builder.page_layout.page_layout_settings")}
               </h3>
 
               <div className="space-y-4">
                 {/* Margin controls */}
                 <div>
                   <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    {t("page_layout.page_margins")}
+                    {t("site.builder.page_layout.page_margins")}
                   </h4>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex items-center justify-between">
                       <label className="text-xs text-gray-600">
-                        {t("page_layout.top")}
+                        {t("site.builder.page_layout.top")}
                       </label>
                       <div className="flex items-center">
                         <button
@@ -2216,7 +2230,7 @@ export default function Builder() {
 
                     <div className="flex items-center justify-between">
                       <label className="text-xs text-gray-600">
-                        {t("page_layout.right")}
+                        {t("site.builder.page_layout.right")}
                       </label>
                       <div className="flex items-center">
                         <button
@@ -2249,7 +2263,7 @@ export default function Builder() {
 
                     <div className="flex items-center justify-between">
                       <label className="text-xs text-gray-600">
-                        {t("page_layout.bottom")}
+                        {t("site.builder.page_layout.bottom")}
                       </label>
                       <div className="flex items-center">
                         <button
@@ -2282,7 +2296,7 @@ export default function Builder() {
 
                     <div className="flex items-center justify-between">
                       <label className="text-xs text-gray-600">
-                        {t("page_layout.left")}
+                        {t("site.builder.page_layout.left")}
                       </label>
                       <div className="flex items-center">
                         <button
@@ -2318,7 +2332,7 @@ export default function Builder() {
                 {/* Page break controls */}
                 <div>
                   <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    {t("page_layout.page_break_rules")}
+                    {t("site.builder.page_layout.page_break_rules")}
                   </h4>
                   <div className="space-y-2">
                     <div className="flex items-center">
@@ -2338,7 +2352,7 @@ export default function Builder() {
                         htmlFor="keepHeadings"
                         className="text-xs text-gray-600"
                       >
-                        {t("page_layout.keep_headings")}
+                        {t("site.builder.page_layout.keep_headings")}
                       </label>
                     </div>
 
@@ -2359,13 +2373,13 @@ export default function Builder() {
                         htmlFor="avoidOrphans"
                         className="text-xs text-gray-600"
                       >
-                        {t("page_layout.avoid_orphans")}
+                        {t("site.builder.page_layout.avoid_orphans")}
                       </label>
                     </div>
 
                     <div className="flex items-center justify-between">
                       <label className="text-xs text-gray-600">
-                        {t("page_layout.min_lines")}
+                        {t("site.builder.page_layout.min_lines")}
                       </label>
                       <div className="flex items-center">
                         <button
@@ -2437,107 +2451,68 @@ export default function Builder() {
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-medium text-gray-800">
-                    {t("templates.select_template")}
+                    {t("site.builder.templates.select_template")}
                   </h3>
                   <button
                     onClick={() => setShowTemplateCarousel(false)}
                     className="text-gray-500 hover:text-gray-700"
                   >
-                    {t("templates.close")}
+                    {t("site.builder.templates.close")}
                   </button>
                 </div>
                 <div className="relative">
                   <button
                     onClick={prevTemplate}
-                    aria-label={t("tooltips.previous_template")}
-                    className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
-                      isTemplateLoading
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-100"
-                    }`}
-                    disabled={isTemplateLoading}
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow-md z-10 hover:bg-gray-100"
                   >
-                    <ChevronLeft className="w-5 h-5 text-gray-700" />
+                    <ChevronLeft className="w-5 h-5" />
                   </button>
-
-                  <div className="flex overflow-x-auto py-2 px-8 gap-4 snap-x">
-                    {templateOptions.map((option, index) => (
+                  <div className="flex overflow-x-auto space-x-4 px-8 pb-2 scrollbar-hide">
+                    {templateOptions.map((templateOption, index) => (
                       <div
-                        key={option.value}
-                        className={`flex-none w-32 transition-all duration-200 ${
+                        key={templateOption.value}
+                        className={`flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity ${
                           index === activeTemplateIndex
-                            ? "ring-2 ring-blue-500 scale-105"
-                            : "hover:scale-105"
-                        } ${
-                          isTemplateLoading
-                            ? "opacity-70 cursor-not-allowed"
-                            : "cursor-pointer"
+                            ? "ring-2 ring-blue-500"
+                            : ""
                         }`}
-                        onClick={() =>
-                          !isTemplateLoading && selectTemplate(index)
-                        }
+                        onClick={() => selectTemplate(index)}
                       >
-                        <div className="bg-white rounded-md shadow-sm overflow-hidden">
-                          <div className="relative aspect-[0.7]">
-                            <Image
-                              src={option.image}
-                              alt={option.name}
-                              fill
-                              className="object-cover"
-                            />
-                            <div
-                              className="absolute bottom-0 left-0 right-0 h-1"
-                              style={{ backgroundColor: option.defaultColor }}
-                            ></div>
-                          </div>
-                          <div className="p-2 text-center text-xs font-medium truncate">
-                            {option.name}
-                          </div>
+                        <div className="w-32 h-32 mb-1">
+                          <img
+                            src={templateOption.image}
+                            alt={templateOption.name}
+                            className="w-full h-full object-cover border border-gray-200 rounded-md"
+                          />
                         </div>
+                        <p className="text-xs text-center text-gray-600">
+                          {t(
+                            `site.builder.templates.options.${templateOption.value}`
+                          )}
+                        </p>
                       </div>
                     ))}
                   </div>
-
                   <button
                     onClick={nextTemplate}
-                    className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
-                      isTemplateLoading
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-100"
-                    }`}
-                    aria-label={t("tooltips.next_template")}
-                    disabled={isTemplateLoading}
+                    className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow-md z-10 hover:bg-gray-100"
                   >
-                    <ChevronRight className="w-5 h-5 text-gray-700" />
+                    <ChevronRight className="w-5 h-5" />
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="flex flex-wrap gap-4 justify-center items-center">
-                {/* Template selector */}
-                <div className="flex items-center gap-2">
+              <div className="grid grid-cols-3 gap-3">
+                {/* Template Selection */}
+                <div>
                   <button
-                    onClick={() =>
-                      !isTemplateLoading && setShowTemplateCarousel(true)
-                    }
-                    className={`flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm ${
-                      isTemplateLoading
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    }`}
-                    disabled={isTemplateLoading}
+                    onClick={() => setShowTemplateCarousel(true)}
+                    className="w-full flex flex-col items-center justify-center space-y-1 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
-                    {isTemplateLoading ? (
-                      <>
-                        <div className="animate-spin h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full"></div>
-                        <span>Changing...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Layout className="w-5 h-5 text-gray-700" />
-                        <span>{t("templates.templates")}</span>
-                      </>
-                    )}
+                    <Layout className="w-5 h-5 text-gray-500" />
+                    <span className="text-xs font-medium text-gray-600">
+                      {t("site.builder.templates.templates")}
+                    </span>
                   </button>
                 </div>
 
@@ -2759,7 +2734,7 @@ export default function Builder() {
                           ? "opacity-50 cursor-not-allowed"
                           : "hover:bg-gray-100"
                       }`}
-                      aria-label="Next template"
+                      aria-label={t("tooltips.next_template")}
                       disabled={isTemplateLoading}
                     >
                       <ChevronRight className="w-5 h-5 text-gray-700" />

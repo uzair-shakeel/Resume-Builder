@@ -171,7 +171,7 @@ export default function Footer() {
             <Link href="https://apps.apple.com" className="block">
               <Image
                 src="/assets/app-store-badge-fr.svg"
-                alt={t("footer.downloadAppStore")}
+                alt={t("site.home.footer.downloadAppStore")}
                 width={132.82}
                 height={42}
                 className="h-auto w-[132.82px]"
@@ -180,7 +180,7 @@ export default function Footer() {
             <Link href="https://play.google.com" className="block">
               <Image
                 src="/assets/google-play-badge-fr.png"
-                alt={t("footer.getItGooglePlay")}
+                alt={t("site.home.footer.getItGooglePlay")}
                 width={141.53}
                 height={42}
                 className="h-auto w-[141.53px]"
@@ -214,7 +214,7 @@ export default function Footer() {
           >
             {social.svg}
             <span className="sr-only">
-              {t("home.footer.socialLink")} {index + 1}
+              {t("site.home.footer.socialLink")} {index + 1}
             </span>
           </Link>
         ))}

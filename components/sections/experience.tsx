@@ -116,7 +116,7 @@ export default function Experience({ data, updateData }: ExperienceProps) {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("experience_form.position")}
+                {t("site.builder.forms.experience.fields.position")}
               </label>
               <input
                 type="text"
@@ -132,7 +132,7 @@ export default function Experience({ data, updateData }: ExperienceProps) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("experience_form.company")}
+                  {t("site.builder.forms.experience.fields.company")}
                 </label>
                 <input
                   type="text"
@@ -147,7 +147,7 @@ export default function Experience({ data, updateData }: ExperienceProps) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("experience_form.location")}
+                  {t("site.builder.forms.experience.fields.location")}
                 </label>
                 <input
                   type="text"
@@ -163,7 +163,7 @@ export default function Experience({ data, updateData }: ExperienceProps) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("experience_form.start_date")}
+                  {t("site.builder.forms.experience.fields.start_date")}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <select
@@ -219,7 +219,7 @@ export default function Experience({ data, updateData }: ExperienceProps) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("experience_form.end_date")}
+                  {t("site.builder.forms.experience.fields.end_date")}
                 </label>
                 <div className="flex items-center">
                   <div className="flex items-center mr-4">
@@ -233,7 +233,7 @@ export default function Experience({ data, updateData }: ExperienceProps) {
                       className="mr-2"
                     />
                     <label htmlFor={`current-exp-${index}`} className="text-sm">
-                      {t("experience_form.present")}
+                      {t("site.builder.forms.experience.fields.present")}
                     </label>
                   </div>
                   {!item.current && (
@@ -294,7 +294,7 @@ export default function Experience({ data, updateData }: ExperienceProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("experience_form.description")}
+                {t("site.builder.forms.experience.fields.description")}
               </label>
               <div className="border border-gray-300 rounded-md overflow-hidden">
                 <textarea
@@ -304,7 +304,9 @@ export default function Experience({ data, updateData }: ExperienceProps) {
                   }
                   rows={4}
                   className="w-full p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t("experience_form.description_placeholder")}
+                  placeholder={t(
+                    "site.builder.forms.experience.fields.description_placeholder"
+                  )}
                 />
                 <div className="flex border-t p-2 bg-gray-50">
                   <div className="flex space-x-1">
@@ -360,7 +362,8 @@ export default function Experience({ data, updateData }: ExperienceProps) {
         onClick={addExperience}
         className="flex items-center justify-center w-full px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
       >
-        <span className="mr-1">+</span> {t("experience_form.add_experience")}
+        <span className="mr-1">+</span>{" "}
+        {t("site.builder.forms.experience.fields.add_experience")}
       </button>
     </div>
   );

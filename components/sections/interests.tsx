@@ -32,11 +32,10 @@ export default function Interests({ data, updateData }: InterestsProps) {
 
   const addInterest = () => {
     const newItem: InterestItem = {
-      name: "",
+      interest: "",
     };
-    const newData = [...localData, newItem];
-    setLocalData(newData);
-    updateData(newData);
+    setLocalData([...localData, newItem]);
+    updateData([...localData, newItem]);
   };
 
   const removeInterest = (index: number) => {
@@ -45,17 +44,17 @@ export default function Interests({ data, updateData }: InterestsProps) {
     updateData(newData);
   };
 
-  // Use hardcoded options for now since the translation keys for options aren't in the file
+  // Use translations instead of hardcoded options
   const interestOptions = [
-    "Courses",
-    "Internships",
-    "Extracurricular Activities",
-    "References",
-    "Qualities",
-    "Certificates",
-    "Achievements",
-    "Signature",
-    "Footer",
+    { key: "courses", value: t("site.builder.forms.interests.options.courses") },
+    { key: "internships", value: t("site.builder.forms.interests.options.internships") },
+    { key: "extracurricular", value: t("site.builder.forms.interests.options.extracurricular") },
+    { key: "references", value: t("site.builder.forms.interests.options.references") },
+    { key: "qualities", value: t("site.builder.forms.interests.options.qualities") },
+    { key: "certificates", value: t("site.builder.forms.interests.options.certificates") },
+    { key: "achievements", value: t("site.builder.forms.interests.options.achievements") },
+    { key: "signature", value: t("site.builder.forms.interests.options.signature") },
+    { key: "footer", value: t("site.builder.forms.interests.options.footer") },
   ];
 
   return (
@@ -77,24 +76,36 @@ export default function Interests({ data, updateData }: InterestsProps) {
 
       <div className="p-4 space-y-4">
         {localData.map((item, index) => (
-          <div key={index} className="border border-gray-200 rounded-md p-4">
-            <div className="flex justify-between items-start">
+          <div
+            key={index}
+            className="border border-gray-200 rounded-md p-4 space-y-4"
+          >
+            <div className="flex justify-between items-center">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("interests_form.interest_name")}
+                  {t("site.builder.forms.interests.fields.interest")}
                 </label>
                 <input
                   type="text"
-                  value={item.name}
-                  onChange={(e) => handleChange(index, "name", e.target.value)}
+                  value={item.interest}
+                  onChange={(e) =>
+                    handleChange(index, "interest", e.target.value)
+                  }
+                  placeholder={t(
+                    "site.builder.forms.interests.fields.interest_placeholder"
+                  )}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <button
-                onClick={() => removeInterest(index)}
-                className="ml-4 text-gray-400 hover:text-red-500"
+                onClick={() => {
+                  const newData = localData.filter((_, i) => i !== index);
+                  setLocalData(newData);
+                  updateData(newData);
+                }}
+                className="ml-4 p-2 border border-gray-300 rounded-md hover:bg-gray-50"
               >
-                <Trash2 className="w-5 h-5" />
+                <Trash2 className="w-5 h-5 text-gray-500" />
               </button>
             </div>
           </div>
@@ -103,20 +114,27 @@ export default function Interests({ data, updateData }: InterestsProps) {
         <div className="flex flex-wrap gap-2">
           {interestOptions.map((interest) => (
             <button
-              key={interest}
-              onClick={() => handleChange(localData.length, "name", interest)}
+              key={interest.key}
+              onClick={() => {
+                const newItem: InterestItem = {
+                  interest: interest.value,
+                };
+                setLocalData([...localData, newItem]);
+                updateData([...localData, newItem]);
+              }}
               className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
             >
-              <span className="mr-1">+</span> {interest}
+              <span className="mr-1">+</span> {interest.value}
             </button>
           ))}
         </div>
 
         <button
           onClick={addInterest}
-          className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
+          className="flex items-center justify-center w-full px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
         >
-          + {t("interests_form.add_interest")}
+          <span className="mr-1">+</span>{" "}
+          {t("site.builder.forms.interests.fields.add_interest")}
         </button>
       </div>
     </div>

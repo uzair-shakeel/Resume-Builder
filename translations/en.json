@@ -60,6 +60,16 @@
           "based_on": "Based on",
           "reviews_count": "reviews"
         },
+        "stars": {
+          "full": "full star",
+          "half": "half star",
+          "empty": "empty star"
+        },
+        "navigation": {
+          "previous": "Previous review",
+          "next": "Next review"
+        },
+        "no_reviews": "No reviews available at the moment.",
         "items": [
           {
             "name": "Tulin Cosgun",
@@ -145,7 +155,10 @@
           "finnish": "Finnish",
           "swedish": "Swedish"
         },
-        "copyright": "© 2025 CV.fr. All rights reserved."
+        "copyright": "© 2025 CV.fr. All rights reserved.",
+        "downloadAppStore": "Download on the App Store",
+        "getItGooglePlay": "Get it on Google Play",
+        "socialLink": "Social Link"
       }
     },
     "builder": {
@@ -292,9 +305,20 @@
         "interests": {
           "description": "Interests section form fields and labels",
           "fields": {
-            "add_interest": "Add Interest",
-            "interest_name": "Interest",
-            "remove_interest": "Remove Interest"
+            "interest": "Interest",
+            "interest_placeholder": "Enter an interest (e.g. Photography)",
+            "add_interest": "Add Interest"
+          },
+          "options": {
+            "courses": "Courses",
+            "internships": "Internships",
+            "extracurricular": "Extracurricular Activities",
+            "references": "References",
+            "qualities": "Qualities",
+            "certificates": "Certificates",
+            "achievements": "Achievements",
+            "signature": "Signature",
+            "footer": "Footer"
           }
         },
         "references": {
@@ -330,11 +354,9 @@
       },
       "templates": {
         "description": "Template selection UI",
-        "ui": {
           "select_template": "Select Template",
           "close": "Close",
-          "templates": "Templates"
-        },
+        "templates": "Templates",
         "options": {
           "modern": "Modern",
           "classic": "Classic",
@@ -345,6 +367,17 @@
           "teal": "Teal",
           "circulaire": "Circulaire",
           "student": "Student"
+        },
+        "descriptions": {
+          "modern": "Clean and contemporary layout with a professional look",
+          "classic": "Traditional and refined design for formal applications",
+          "pro": "Bold and polished style to highlight your achievements",
+          "sherlock": "Innovative and analytical style for detail-oriented professionals",
+          "hr": "Streamlined format preferred by HR professionals",
+          "minimal": "Simple design focusing on essential information",
+          "teal": "Fresh and vibrant layout with a creative edge",
+          "circulaire": "Unique circular elements for a distinctive resume",
+          "student": "Perfect for recent graduates and early-career professionals"
         }
       },
       "styling": {
@@ -377,31 +410,27 @@
       },
       "page_layout": {
         "description": "Page layout settings",
-        "settings": {
           "page_layout_settings": "Page Layout Settings",
           "page_margins": "Page Margins (mm)",
           "top": "Top",
           "right": "Right",
           "bottom": "Bottom",
-          "left": "Left"
-        },
-        "page_break_rules": {
-          "title": "Page Break Rules",
+        "left": "Left",
+        "page_break_rules": "Page Break Rules",
           "keep_headings": "Keep headings with content",
           "avoid_orphans": "Avoid orphaned headings at page bottom",
           "min_lines": "Min lines before break"
-        }
       },
-      "pdf": {
-        "generating_pdf": "Generating your PDF...",
-        "may_take_moments": "This may take a few moments."
+      "pdf_generation": {
+        "description": "PDF generation messages",
+        "generating_pdf": "Generating your PDF",
+        "may_take_moments": "This may take a few moments"
       },
       "tooltips": {
-        "zoom_in": "Zoom In",
-        "zoom_out": "Zoom Out",
-        "fit_to_page": "Fit to Page",
-        "previous_template": "Previous Template",
-        "next_template": "Next Template"
+        "description": "Tooltips and accessibility labels",
+        "zoom_in": "Zoom in",
+        "zoom_out": "Zoom out",
+        "fit_to_page": "Fit to page"
       },
       "save_status": {
         "description": "Save status messages",
@@ -439,7 +468,6 @@
         }
       }
     },
-
     "builder_cover_letter": {
       "sections": {
         "personal_info": "Personal Information",
@@ -450,7 +478,6 @@
         "motivation": "Motivation",
         "conclusion": "Conclusion"
       },
-
       "personal_info_form": {
         "photo": "Photo",
         "first_name": "First Name",
@@ -470,7 +497,6 @@
         "linkedin": "LinkedIn",
         "custom_field": "Custom Field"
       },
-
       "recipient": {
         "company": "Company",
         "company_placeholder": "[Company]",
@@ -657,7 +683,6 @@
         }
       }
     },
-
     "placeholder_cv": {
       "personalInfo": {
         "firstName": "Sherlock",
@@ -735,6 +760,351 @@
         "cover_letters": "Cover Letters",
         "help": "Help",
         "sign_out": "Sign Out"
+      }
+    },
+    "locale": "en-US",
+    "language": {
+      "name": "English",
+      "selector": "Language",
+      "english": "English",
+      "french": "French"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "subtitle": "One price, all features, unlimited usage.",
+      "options": {
+        "monthly": "Monthly",
+        "quarterly": "Quarterly",
+        "yearly": "Yearly"
+      },
+      "period": {
+        "month": "month",
+        "quarter": "quarter",
+        "year": "year"
+      },
+      "auto_renewal": "(automatic renewal)",
+      "try_for_days": "Try for 14 days for",
+      "features": {
+        "unlimited_cv": "Create unlimited resumes",
+        "cover_letters": "Generate cover letters",
+        "job_alerts": "Job offer alerts",
+        "track_applications": "Track your applications"
+      }
+    },
+    "common": {
+      "logo_alt": "Resume Builder Logo"
+    },
+    "header": {
+      "models": "Templates",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "cover_letter": "Cover Letter",
+      "login": "Login",
+      "create_resume": "Create Resume",
+      "register": "Register",
+      "my_account": "My Account",
+      "dashboard": "Dashboard",
+      "logout": "Logout"
+    },
+    "language_selector": {
+      "change_language": "Change Language"
+    },
+    "homepage": {
+      "hero": {
+        "title": "Create Professional Resumes in Minutes",
+        "subtitle": "Easy to use resume builder with professional templates",
+        "cta_button": "Build Your Resume"
+      },
+      "features": {
+        "title": "Key Features",
+        "subtitle": "Everything you need to create a standout resume",
+        "feature_1": {
+          "title": "Professional Templates",
+          "description": "Choose from a variety of professional templates designed by experts"
+        },
+        "feature_2": {
+          "title": "Easy to Use Editor",
+          "description": "Intuitive drag-and-drop interface makes building your resume easy"
+        },
+        "feature_3": {
+          "title": "ATS-Friendly",
+          "description": "Ensure your resume gets past Applicant Tracking Systems"
+        }
+      },
+      "testimonials": {
+        "title": "What Our Users Say",
+        "testimonial_1": {
+          "content": "This tool helped me land my dream job! The templates are beautiful and so easy to use.",
+          "author": "Jane Smith"
+        },
+        "testimonial_2": {
+          "content": "I was struggling with my resume format until I found this builder. It's been a game-changer.",
+          "author": "John Doe"
+        }
+      },
+      "pricing": {
+        "title": "Simple Pricing",
+        "subtitle": "Choose the plan that works for you",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "free_plan": {
+          "title": "Free",
+          "price": "$0",
+          "description": "Basic features to get started",
+          "features": ["1 Resume", "Basic Templates", "Export as PDF"],
+          "cta": "Get Started"
+        },
+        "premium_plan": {
+          "title": "Premium",
+          "price": "$12",
+          "description": "Everything you need for job hunting",
+          "features": [
+            "Unlimited Resumes",
+            "All Templates",
+            "Multiple Export Formats",
+            "Cover Letter Builder"
+          ],
+          "cta": "Get Premium"
+        }
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "question_1": {
+          "question": "Can I use the builder for free?",
+          "answer": "Yes, you can create and download one resume with our basic templates for free."
+        },
+        "question_2": {
+          "question": "How do I cancel my subscription?",
+          "answer": "You can cancel your subscription at any time from your account settings."
+        }
+      }
+    },
+    "auth": {
+      "login": {
+        "title": "Welcome Back",
+        "subtitle": "Log in to your account",
+        "email_label": "Email",
+        "email_placeholder": "Enter your email",
+        "password_label": "Password",
+        "password_placeholder": "Enter your password",
+        "forgot_password": "Forgot password?",
+        "button": "Log In",
+        "or": "or",
+        "google_login": "Continue with Google",
+        "no_account": "Don't have an account?",
+        "sign_up": "Sign up"
+      },
+      "register": {
+        "title": "Create an Account",
+        "subtitle": "Join us today and start building your resume",
+        "name_label": "Full Name",
+        "name_placeholder": "Enter your full name",
+        "email_label": "Email",
+        "email_placeholder": "Enter your email",
+        "password_label": "Password",
+        "password_placeholder": "Create a password",
+        "confirm_password_label": "Confirm Password",
+        "confirm_password_placeholder": "Confirm your password",
+        "button": "Sign Up",
+        "or": "or",
+        "google_signup": "Sign up with Google",
+        "already_account": "Already have an account?",
+        "log_in": "Log in"
+      }
+    },
+    "dashboard": {
+      "welcome": "Welcome, {{name}}!",
+      "my_resumes": "My Resumes",
+      "create_new": "Create New Resume",
+      "create_cover_letter": "Create Cover Letter",
+      "resume_card": {
+        "last_edited": "Last edited: {{date}}",
+        "edit": "Edit",
+        "download": "Download",
+        "delete": "Delete"
+      },
+      "no_resumes": {
+        "title": "No resumes yet",
+        "description": "Create your first resume to get started",
+        "button": "Create Resume"
+      }
+    },
+    "builder": {
+      "appbar": {
+        "save": "Save",
+        "preview": "Preview",
+        "download": "Download",
+        "back_to_dashboard": "Back to Dashboard"
+      },
+      "tooltips": {
+        "zoom_in": "Zoom In",
+        "zoom_out": "Zoom Out",
+        "fit_to_page": "Fit to Page"
+      },
+      "sidebar_title": "Edit Resume",
+      "sections": {
+        "names": {
+          "personal_info": "Personal Info",
+          "profile": "Profile",
+          "education": "Education",
+          "experience": "Experience",
+          "skills": "Skills",
+          "languages": "Languages",
+          "interests": "Interests",
+          "references": "References",
+          "socials": "Social Links"
+        },
+        "actions": {
+          "add_section": "Add Section",
+          "toggle_section": "Toggle Section"
+        }
+      },
+      "page_layout": {
+        "page_layout_settings": "Page Layout Settings",
+        "page_margins": "Page Margins",
+        "margin_top": "Top Margin",
+        "margin_right": "Right Margin",
+        "margin_bottom": "Bottom Margin",
+        "margin_left": "Left Margin",
+        "page_break_rules": "Page Break Rules",
+        "keep_headings": "Keep headings with content",
+        "avoid_orphans": "Avoid orphaned items"
+      },
+      "pdf_generation": {
+        "generating_pdf": "Generating PDF",
+        "may_take_moments": "This may take a few moments"
+      },
+      "template_selector": {
+        "choose_template": "Choose a Template"
+      },
+      "templates": {
+        "modern": {
+          "name": "Modern",
+          "description": "A modern design with a teal sidebar"
+        },
+        "classic": {
+          "name": "Classic",
+          "description": "A classic design with a purple accent"
+        },
+        "pro": {
+          "name": "Professional",
+          "description": "A professional design with a dark sidebar"
+        }
+      },
+      "forms": {
+        "personal_info": {
+          "fields": {
+            "photo": "Photo",
+            "first_name": "First Name",
+            "last_name": "Last Name",
+            "email": "Email",
+            "phone": "Phone",
+            "address": "Address",
+            "zip_code": "Zip Code",
+            "city": "City",
+            "country": "Country",
+            "job_title": "Job Title",
+            "upload_photo": "Upload Photo",
+            "remove_photo": "Remove Photo"
+          }
+        },
+        "profile": {
+          "fields": {
+            "summary": "Summary",
+            "summary_placeholder": "Write a brief summary about yourself..."
+          }
+        },
+        "education": {
+          "fields": {
+            "school": "School",
+            "degree": "Degree",
+            "start_date": "Start Date",
+            "end_date": "End Date",
+            "present": "Present",
+            "add_education": "Add Education"
+          }
+        },
+        "experience": {
+          "fields": {
+            "position": "Position",
+            "company": "Company",
+            "location": "Location",
+            "start_date": "Start Date",
+            "end_date": "End Date",
+            "present": "Present",
+            "description": "Description",
+            "description_placeholder": "Describe your responsibilities and achievements...",
+            "add_experience": "Add Experience"
+          }
+        },
+        "skills": {
+          "fields": {
+            "name": "Skill Name",
+            "name_placeholder": "Enter a skill (e.g. Project Management)",
+            "level": "Skill Level",
+            "add_skill": "Add Skill"
+          }
+        },
+        "languages": {
+          "fields": {
+            "name": "Language",
+            "name_placeholder": "Enter a language (e.g. English)",
+            "level": "Proficiency Level",
+            "add_language": "Add Language"
+          },
+          "levels": {
+            "elementary": "Elementary",
+            "limited_working": "Limited Working",
+            "professional_working": "Professional Working",
+            "full_professional": "Full Professional",
+            "native_bilingual": "Native/Bilingual"
+          }
+        },
+        "interests": {
+          "fields": {
+            "interest": "Interest",
+            "interest_placeholder": "Enter an interest (e.g. Photography)",
+            "add_interest": "Add Interest"
+          },
+          "options": {
+            "courses": "Courses",
+            "internships": "Internships",
+            "extracurricular": "Extracurricular Activities",
+            "references": "References",
+            "qualities": "Qualities",
+            "certificates": "Certificates",
+            "achievements": "Achievements",
+            "signature": "Signature",
+            "footer": "Footer"
+          }
+        },
+        "references": {
+          "fields": {
+            "name": "Full Name",
+            "name_placeholder": "Dr. John Watson",
+            "position": "Position",
+            "position_placeholder": "Head of Development",
+            "company": "Company",
+            "company_placeholder": "Tech Solutions Inc.",
+            "email": "Email",
+            "email_placeholder": "john.watson@example.com",
+            "phone": "Phone",
+            "phone_placeholder": "+1 234 567 8900",
+            "add_reference": "Add Reference"
+          }
+        },
+        "socials": {
+          "fields": {
+            "network": "Network",
+            "select_network": "Select a network",
+            "username": "Username",
+            "username_placeholder": "johndoe",
+            "url": "URL",
+            "url_placeholder": "https://linkedin.com/in/johndoe",
+            "other": "Other",
+            "add_social": "Add Social Link"
+          }
+        }
       }
     }
   }

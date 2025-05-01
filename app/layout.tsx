@@ -3,13 +3,14 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import AuthProvider from "@/components/providers/session-provider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import LanguageSelector from "@/components/ui/LanguageSelector";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CV.FR - Créez votre CV en ligne",
-  description: "Créez votre CV professionnel en quelques minutes",
+  title: "CV.fr - Online Resume Builder",
+  description: "Professional Resume & CV Builder",
 };
 
 export default function RootLayout({
@@ -21,7 +22,10 @@ export default function RootLayout({
     <html lang="fr">
       <body className={inter.className}>
         <AuthProvider>
-          <LanguageProvider>{children}</LanguageProvider>
+          <LanguageProvider>
+            {children}
+            <LanguageSelector />
+          </LanguageProvider>
         </AuthProvider>
       </body>
     </html>

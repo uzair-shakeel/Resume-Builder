@@ -66,55 +66,63 @@ export default function Skills({ data, updateData }: SkillsProps) {
 
       <div className="p-4 space-y-4">
         {localData.map((item, index) => (
-          <div key={index} className="border border-gray-200 rounded-md p-4">
-            <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("skills_form.skill_name")}
-                </label>
-                <input
-                  type="text"
-                  value={item.name}
-                  onChange={(e) => handleChange(index, "name", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <button
-                onClick={() => removeSkill(index)}
-                className="ml-4 text-gray-400 hover:text-red-500"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="mt-4">
+          <div
+            key={index}
+            className="border border-gray-200 rounded-md p-4 space-y-4"
+          >
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("skills_form.skill_level")}
+                {t("site.builder.forms.skills.fields.name")}
               </label>
               <input
-                type="range"
-                min="1"
-                max="5"
-                value={item.level}
-                onChange={(e) =>
-                  handleChange(index, "level", parseInt(e.target.value))
-                }
-                className="w-full"
+                type="text"
+                value={item.name}
+                onChange={(e) => handleChange(index, "name", e.target.value)}
+                placeholder={t(
+                  "site.builder.forms.skills.fields.name_placeholder"
+                )}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>{t("skills_form.beginner")}</span>
-                <span>{t("skills_form.intermediate")}</span>
-                <span>{t("skills_form.expert")}</span>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t("site.builder.forms.skills.fields.level")}
+              </label>
+              <div className="flex items-center">
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  value={item.level}
+                  onChange={(e) =>
+                    handleChange(index, "level", parseInt(e.target.value))
+                  }
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                />
+                <span className="ml-2 text-sm text-gray-600">
+                  {item.level}/5
+                </span>
               </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={() => removeSkill(index)}
+                className="p-2 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                <Trash2 className="w-5 h-5 text-gray-500" />
+              </button>
             </div>
           </div>
         ))}
 
         <button
           onClick={addSkill}
-          className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
+          className="flex items-center justify-center w-full px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
         >
-          + {t("skills_form.add_skill")}
+          <span className="mr-1">+</span>{" "}
+          {t("site.builder.forms.skills.fields.add_skill")}
         </button>
       </div>
     </div>

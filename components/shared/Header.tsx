@@ -45,7 +45,7 @@ export default function Header() {
           <Link href="/" className="flex items-center text-gray-900 h-8">
             <Image
               src="/assets/logo-black-text.svg"
-              alt="logo"
+              alt={t("site.common.logo_alt")}
               width={85.48}
               height={32}
             />
@@ -57,27 +57,27 @@ export default function Header() {
             href="/modeles"
             className="text-gray-500 focus-visible:ring-4 ring-[#b0bdff] hover:text-gray-900 rounded lg:text-lg py-1 px-2 lg:py-2 lg:px-4"
           >
-            Modèles
+            {t("site.header.models")}
           </Link>
           <Link
             href="/pricing"
             className="text-gray-500 focus-visible:ring-4 ring-[#b0bdff] hover:text-gray-900 rounded lg:text-lg py-1 px-2 lg:py-2 lg:px-4"
           >
-            Prix
+            {t("site.header.pricing")}
           </Link>
           <Link
             href="/faq"
             className="text-gray-500 focus-visible:ring-4 ring-[#b0bdff] hover:text-gray-900 rounded lg:text-lg py-1 px-2 lg:py-2 lg:px-4"
           >
-            FAQ
+            {t("site.header.faq")}
           </Link>
           <Link
             href="/cover-letter"
             className="text-gray-500 focus-visible:ring-4 ring-[#b0bdff] hover:text-gray-900 rounded lg:text-lg py-1 px-2 lg:py-2 lg:px-4"
           >
-            Lettre de motivation
+            {t("site.header.cover_letter")}
           </Link>
-          <LanguageSwitcher />
+          {/* <LanguageSwitcher /> */}
         </nav>
 
         <div className="flex items-center justify-end gap-2">
@@ -85,13 +85,13 @@ export default function Header() {
             href="/auth/signin"
             className="hidden md:inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-transparent active:bg-brand-100 active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
           >
-            Connexion
+            {t("site.header.login")}
           </Link>
           <Link
             href="/builder"
             className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-[#173dff] active:bg-brand-300 active:bg-brand-300 text-white border-transparent hover:bg-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
           >
-            Créer un CV
+            {t("site.header.create_resume")}
           </Link>
           {!isMobileMenuOpen && (
             <Button
@@ -119,7 +119,7 @@ export default function Header() {
             >
               <Image
                 src="/assets/logo-black-text.svg"
-                alt="logo"
+                alt={t("site.common.logo_alt")}
                 width={85.48}
                 height={32}
               />
@@ -130,7 +130,7 @@ export default function Header() {
                 className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-[#173dff] active:bg-brand-300 active:bg-brand-300 text-white border-transparent hover:bg-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Créer un CV
+                {t("site.header.create_resume")}
               </Link>
               <Button
                 variant="ghost"
@@ -151,21 +151,21 @@ export default function Header() {
               className="active:text-[#4a68ff] py-1 focus-visible:ring-4 hover:text-[#173dff] rounded ring-[#b0bdff] inline-flex items-center text-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Modèles
+              {t("site.header.models")}
             </Link>
             <Link
               href="/pricing"
               className="active:text-[#4a68ff] py-1 focus-visible:ring-4 hover:text-[#173dff] rounded ring-[#b0bdff] inline-flex items-center text-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Prix
+              {t("site.header.pricing")}
             </Link>
             <Link
               href="/faq"
               className="active:text-[#4a68ff] py-1 focus-visible:ring-4 hover:text-[#173dff] rounded ring-[#b0bdff] inline-flex items-center text-lg"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              FAQ
+              {t("site.header.faq")}
             </Link>
             <div>
               <Link
@@ -173,7 +173,7 @@ export default function Header() {
                 className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center w-full bg-transparent active:bg-[#e3e8ff] active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-2 ps-4 pe-4 text-base mt-4"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Connexion
+                {t("site.header.login")}
               </Link>
             </div>
           </nav>

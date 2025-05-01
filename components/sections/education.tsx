@@ -121,7 +121,7 @@ export default function Education({ data, updateData }: EducationProps) {
             <div className="flex-1 grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("education_form.school")}
+                  {t("site.builder.forms.education.fields.school")}
                 </label>
                 <input
                   type="text"
@@ -134,7 +134,7 @@ export default function Education({ data, updateData }: EducationProps) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t("education_form.degree")}
+                  {t("site.builder.forms.education.fields.degree")}
                 </label>
                 <input
                   type="text"
@@ -157,7 +157,7 @@ export default function Education({ data, updateData }: EducationProps) {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("education_form.start_date")}
+                {t("site.builder.forms.education.fields.start_date")}
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <select
@@ -207,7 +207,7 @@ export default function Education({ data, updateData }: EducationProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t("education_form.end_date")}
+                {t("site.builder.forms.education.fields.end_date")}
               </label>
               <div className="flex items-center space-x-4">
                 {!item.current ? (
@@ -263,7 +263,7 @@ export default function Education({ data, updateData }: EducationProps) {
                   </div>
                 ) : (
                   <div className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500">
-                    {t("education_form.present")}
+                    {t("site.builder.forms.education.fields.present")}
                   </div>
                 )}
                 <label className="flex items-center space-x-2">
@@ -276,7 +276,7 @@ export default function Education({ data, updateData }: EducationProps) {
                     className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                   />
                   <span className="text-sm text-gray-600">
-                    {t("education_form.present")}
+                    {t("site.builder.forms.education.fields.present")}
                   </span>
                 </label>
               </div>
@@ -289,7 +289,7 @@ export default function Education({ data, updateData }: EducationProps) {
         onClick={addEducation}
         className="w-full py-2 border-2 border-dashed border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors"
       >
-        {t("education_form.add_education")}
+        {t("site.builder.forms.education.fields.add_education")}
       </button>
     </div>
   );

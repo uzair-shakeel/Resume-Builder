@@ -35,7 +35,7 @@ export default function Profile({ data, updateData }: ProfileProps) {
   return (
     <div className="p-4">
       <label className="block text-sm font-medium text-gray-700 mb-1">
-        {t("profile_form.summary")}
+        {t("site.builder.forms.profile.fields.summary")}
       </label>
       <div className="border border-gray-300 rounded-md overflow-hidden">
         <textarea
@@ -43,7 +43,9 @@ export default function Profile({ data, updateData }: ProfileProps) {
           onChange={handleChange}
           rows={6}
           className="w-full p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder={t("profile_form.summary_placeholder")}
+          placeholder={t(
+            "site.builder.forms.profile.fields.summary_placeholder"
+          )}
         />
         <div className="flex border-t p-2 bg-gray-50">
           <div className="flex space-x-1">

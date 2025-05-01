@@ -38,7 +38,7 @@ export default function Sidebar({ user }: SidebarProps) {
             <Link href="/" className="flex items-center text-gray-900 h-8 ps-2">
               <Image
                 src="/assets/logo-white-text.svg"
-                alt="logo"
+                alt={t("site.common.logo_alt")}
                 width={85.48}
                 height={32}
               />
