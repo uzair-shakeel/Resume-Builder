@@ -53,6 +53,8 @@ import Image from "next/image";
 import References from "@/components/sections/references";
 import Socials from "@/components/sections/socials";
 import Link from "next/link";
+import { usePayment } from "../contexts/PaymentContext";
+import PaymentModal from "../components/payment/PaymentModal";
 
 // Font families
 const fontFamilies = [
@@ -347,6 +349,17 @@ export default function Builder() {
     "saved"
   );
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Add payment/subscription states
+  const [email, setEmail] = useState("");
+  const {
+    isPaymentModalOpen,
+    hasActiveSubscription,
+    openPaymentModal,
+    closePaymentModal,
+    processPayment,
+  } = usePayment();
+
   const [cvData, setCVData] = useState<CVData>({
     personalInfo: {
       firstName: "",
@@ -958,6 +971,12 @@ export default function Builder() {
   const handleDownload = async (format: "pdf") => {
     if (!previewRef.current) return;
 
+    if (!hasActiveSubscription) {
+      // Show payment modal if user doesn't have an active subscription
+      openPaymentModal("cv");
+      return;
+    }
+
     try {
       setIsDownloading(true);
       const element = previewRef.current;
@@ -1046,6 +1065,12 @@ export default function Builder() {
     } finally {
       setIsDownloading(false);
     }
+  };
+
+  // Update the handlePaymentSuccess function to match the new payment system
+  const handlePaymentSuccess = async () => {
+    // After successful payment, generate the PDF
+    await handleDownload("pdf");
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
@@ -2857,6 +2882,14 @@ export default function Builder() {
           </svg>
         </button>
       </div>
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={closePaymentModal}
+        onSuccess={handlePaymentSuccess}
+        type="cv"
+      />
     </main>
   );
 }

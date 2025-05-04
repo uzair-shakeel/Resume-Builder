@@ -5,6 +5,7 @@ import AuthProvider from "@/components/providers/session-provider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import LanguageSelector from "@/components/ui/LanguageSelector";
 import "./globals.css";
+import { PaymentProvider } from "./contexts/PaymentContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +24,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <LanguageProvider>
-            {children}
+            <PaymentProvider>{children}</PaymentProvider>
             <LanguageSelector />
           </LanguageProvider>
         </AuthProvider>

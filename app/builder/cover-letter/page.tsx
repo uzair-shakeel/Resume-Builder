@@ -42,6 +42,8 @@ import { fr } from "date-fns/locale";
 import RichTextEditor from "@/components/shared/rich-text-editor";
 import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePayment } from "../../contexts/PaymentContext";
+import PaymentModal from "../../components/payment/PaymentModal";
 
 // Font families
 const fontFamilies = [
@@ -270,6 +272,14 @@ export default function CoverLetterBuilder() {
   const [screenBasedScale, setScreenBasedScale] = useState(1);
   const [mobileScale, setMobileScale] = useState(0.8);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const {
+    isPaymentModalOpen,
+    hasActiveSubscription,
+    openPaymentModal,
+    closePaymentModal,
+    processPayment,
+  } = usePayment();
 
   // Safe reset function to prevent getting stuck in loading state
   const safeResetTemplateLoadingState = useCallback(() => {
@@ -1155,6 +1165,12 @@ export default function CoverLetterBuilder() {
   const generatePDF = async () => {
     if (!previewRef.current) return;
 
+    if (!hasActiveSubscription) {
+      // Show payment modal if user doesn't have an active subscription
+      openPaymentModal("cover-letter");
+      return;
+    }
+
     const canvas = await html2canvas(previewRef.current, {
       scale: 2,
       useCORS: true,
@@ -1173,6 +1189,11 @@ export default function CoverLetterBuilder() {
 
     pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
     pdf.save("cover-letter.pdf");
+  };
+
+  const handlePaymentSuccess = async () => {
+    // After successful payment, generate the PDF
+    await generatePDF();
   };
 
   const renderPersonalInfoInputs = () => (
@@ -2987,6 +3008,14 @@ export default function CoverLetterBuilder() {
           />
         </svg>
       </button>
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={closePaymentModal}
+        onSuccess={handlePaymentSuccess}
+        type="cover-letter"
+      />
     </div>
   );
 }
