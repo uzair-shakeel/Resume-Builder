@@ -354,8 +354,8 @@
       },
       "templates": {
         "description": "Template selection UI",
-          "select_template": "Select Template",
-          "close": "Close",
+        "select_template": "Select Template",
+        "close": "Close",
         "templates": "Templates",
         "options": {
           "modern": "Modern",
@@ -410,16 +410,16 @@
       },
       "page_layout": {
         "description": "Page layout settings",
-          "page_layout_settings": "Page Layout Settings",
-          "page_margins": "Page Margins (mm)",
-          "top": "Top",
-          "right": "Right",
-          "bottom": "Bottom",
+        "page_layout_settings": "Page Layout Settings",
+        "page_margins": "Page Margins (mm)",
+        "top": "Top",
+        "right": "Right",
+        "bottom": "Bottom",
         "left": "Left",
         "page_break_rules": "Page Break Rules",
-          "keep_headings": "Keep headings with content",
-          "avoid_orphans": "Avoid orphaned headings at page bottom",
-          "min_lines": "Min lines before break"
+        "keep_headings": "Keep headings with content",
+        "avoid_orphans": "Avoid orphaned headings at page bottom",
+        "min_lines": "Min lines before break"
       },
       "pdf_generation": {
         "description": "PDF generation messages",
@@ -717,19 +717,27 @@
         "locale": "en-US",
         "loading": "Loading...",
         "noItems": "No items",
-        "justNow": "Just now",
-        "minutesAgo": "minutes ago",
-        "hoursAgo": "hours ago",
-        "daysAgo": "days ago",
-        "monthsAgo": "months ago",
-        "yearsAgo": "years ago",
+        "just_now": "Just now",
+        "modified_prefix": "Modified",
+        "minutes_ago": "minutes ago",
+        "hours_ago": "hours ago",
+        "days_ago": "days ago",
+        "months_ago": "months ago",
+        "years_ago": "years ago",
         "cancel": "Cancel",
         "save": "Save",
         "delete": "Delete",
-        "rename": "Rename"
+        "rename": "Rename",
+        "confirm_delete": "Are you sure you want to delete this item? This action cannot be undone."
       },
       "resumes": {
         "title": "My Resumes",
+        "view_all": "View All",
+        "empty_state": {
+          "title": "No Resumes Yet",
+          "description": "Create your first resume to get started"
+        },
+        "create_resume": "Create Resume",
         "createButton": "Create Resume",
         "createFirstButton": "Create my first resume",
         "noResumes": "You don't have any resumes yet",
@@ -741,6 +749,12 @@
       },
       "coverLetters": {
         "title": "My Cover Letters",
+        "view_all": "View All",
+        "empty_state": {
+          "title": "No Cover Letters Yet",
+          "description": "Create your first cover letter to get started"
+        },
+        "create_letter": "Create Cover Letter",
         "createButton": "Create Cover Letter",
         "createFirstButton": "Create my first cover letter",
         "noCoverLetters": "You don't have any cover letters yet",
@@ -910,201 +924,6 @@
         "google_signup": "Sign up with Google",
         "already_account": "Already have an account?",
         "log_in": "Log in"
-      }
-    },
-    "dashboard": {
-      "welcome": "Welcome, {{name}}!",
-      "my_resumes": "My Resumes",
-      "create_new": "Create New Resume",
-      "create_cover_letter": "Create Cover Letter",
-      "resume_card": {
-        "last_edited": "Last edited: {{date}}",
-        "edit": "Edit",
-        "download": "Download",
-        "delete": "Delete"
-      },
-      "no_resumes": {
-        "title": "No resumes yet",
-        "description": "Create your first resume to get started",
-        "button": "Create Resume"
-      }
-    },
-    "builder": {
-      "appbar": {
-        "save": "Save",
-        "preview": "Preview",
-        "download": "Download",
-        "back_to_dashboard": "Back to Dashboard"
-      },
-      "tooltips": {
-        "zoom_in": "Zoom In",
-        "zoom_out": "Zoom Out",
-        "fit_to_page": "Fit to Page"
-      },
-      "sidebar_title": "Edit Resume",
-      "sections": {
-        "names": {
-          "personal_info": "Personal Info",
-          "profile": "Profile",
-          "education": "Education",
-          "experience": "Experience",
-          "skills": "Skills",
-          "languages": "Languages",
-          "interests": "Interests",
-          "references": "References",
-          "socials": "Social Links"
-        },
-        "actions": {
-          "add_section": "Add Section",
-          "toggle_section": "Toggle Section"
-        }
-      },
-      "page_layout": {
-        "page_layout_settings": "Page Layout Settings",
-        "page_margins": "Page Margins",
-        "margin_top": "Top Margin",
-        "margin_right": "Right Margin",
-        "margin_bottom": "Bottom Margin",
-        "margin_left": "Left Margin",
-        "page_break_rules": "Page Break Rules",
-        "keep_headings": "Keep headings with content",
-        "avoid_orphans": "Avoid orphaned items"
-      },
-      "pdf_generation": {
-        "generating_pdf": "Generating PDF",
-        "may_take_moments": "This may take a few moments"
-      },
-      "template_selector": {
-        "choose_template": "Choose a Template"
-      },
-      "templates": {
-        "modern": {
-          "name": "Modern",
-          "description": "A modern design with a teal sidebar"
-        },
-        "classic": {
-          "name": "Classic",
-          "description": "A classic design with a purple accent"
-        },
-        "pro": {
-          "name": "Professional",
-          "description": "A professional design with a dark sidebar"
-        }
-      },
-      "forms": {
-        "personal_info": {
-          "fields": {
-            "photo": "Photo",
-            "first_name": "First Name",
-            "last_name": "Last Name",
-            "email": "Email",
-            "phone": "Phone",
-            "address": "Address",
-            "zip_code": "Zip Code",
-            "city": "City",
-            "country": "Country",
-            "job_title": "Job Title",
-            "upload_photo": "Upload Photo",
-            "remove_photo": "Remove Photo"
-          }
-        },
-        "profile": {
-          "fields": {
-            "summary": "Summary",
-            "summary_placeholder": "Write a brief summary about yourself..."
-          }
-        },
-        "education": {
-          "fields": {
-            "school": "School",
-            "degree": "Degree",
-            "start_date": "Start Date",
-            "end_date": "End Date",
-            "present": "Present",
-            "add_education": "Add Education"
-          }
-        },
-        "experience": {
-          "fields": {
-            "position": "Position",
-            "company": "Company",
-            "location": "Location",
-            "start_date": "Start Date",
-            "end_date": "End Date",
-            "present": "Present",
-            "description": "Description",
-            "description_placeholder": "Describe your responsibilities and achievements...",
-            "add_experience": "Add Experience"
-          }
-        },
-        "skills": {
-          "fields": {
-            "name": "Skill Name",
-            "name_placeholder": "Enter a skill (e.g. Project Management)",
-            "level": "Skill Level",
-            "add_skill": "Add Skill"
-          }
-        },
-        "languages": {
-          "fields": {
-            "name": "Language",
-            "name_placeholder": "Enter a language (e.g. English)",
-            "level": "Proficiency Level",
-            "add_language": "Add Language"
-          },
-          "levels": {
-            "elementary": "Elementary",
-            "limited_working": "Limited Working",
-            "professional_working": "Professional Working",
-            "full_professional": "Full Professional",
-            "native_bilingual": "Native/Bilingual"
-          }
-        },
-        "interests": {
-          "fields": {
-            "interest": "Interest",
-            "interest_placeholder": "Enter an interest (e.g. Photography)",
-            "add_interest": "Add Interest"
-          },
-          "options": {
-            "courses": "Courses",
-            "internships": "Internships",
-            "extracurricular": "Extracurricular Activities",
-            "references": "References",
-            "qualities": "Qualities",
-            "certificates": "Certificates",
-            "achievements": "Achievements",
-            "signature": "Signature",
-            "footer": "Footer"
-          }
-        },
-        "references": {
-          "fields": {
-            "name": "Full Name",
-            "name_placeholder": "Dr. John Watson",
-            "position": "Position",
-            "position_placeholder": "Head of Development",
-            "company": "Company",
-            "company_placeholder": "Tech Solutions Inc.",
-            "email": "Email",
-            "email_placeholder": "john.watson@example.com",
-            "phone": "Phone",
-            "phone_placeholder": "+1 234 567 8900",
-            "add_reference": "Add Reference"
-          }
-        },
-        "socials": {
-          "fields": {
-            "network": "Network",
-            "select_network": "Select a network",
-            "username": "Username",
-            "username_placeholder": "johndoe",
-            "url": "URL",
-            "url_placeholder": "https://linkedin.com/in/johndoe",
-            "other": "Other",
-            "add_social": "Add Social Link"
-          }
-        }
       }
     }
   }

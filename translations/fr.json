@@ -207,7 +207,7 @@
           "volunteer_work": "Travail bénévole",
           "custom_section": "Section personnalisée"
         }
-      }, 
+      },
       "forms": {
         "custom_section_editor": {
           "description": "Éléments d'interface utilisateur pour l'éditeur de section personnalisé",
@@ -742,24 +742,65 @@
         "conclusion": "Je serais ravi d'avoir l'occasion de discuter de ma candidature plus en détail lors d'un entretien. Merci d'avoir pris en compte ma candidature. J'attends votre réponse avec impatience."
       }
     },
+    "auth": {
+      "login": {
+        "title": "Bienvenue",
+        "subtitle": "Connectez-vous à votre compte",
+        "email_label": "E-mail",
+        "email_placeholder": "Entrez votre adresse e-mail",
+        "password_label": "Mot de passe",
+        "password_placeholder": "Entrez votre mot de passe",
+        "forgot_password": "Mot de passe oublié ?",
+        "button": "Se connecter",
+        "or": "ou",
+        "google_login": "Continuer avec Google",
+        "no_account": "Vous n'avez pas de compte ?",
+        "sign_up": "Créer un compte"
+      },
+      "register": {
+        "title": "Créer un compte",
+        "subtitle": "Rejoignez-nous et commencez à créer votre CV",
+        "name_label": "Nom complet",
+        "name_placeholder": "Entrez votre nom complet",
+        "email_label": "E-mail",
+        "email_placeholder": "Entrez votre adresse e-mail",
+        "password_label": "Mot de passe",
+        "password_placeholder": "Créez un mot de passe",
+        "confirm_password_label": "Confirmer le mot de passe",
+        "confirm_password_placeholder": "Confirmez votre mot de passe",
+        "button": "S'inscrire",
+        "or": "ou",
+        "google_signup": "S'inscrire avec Google",
+        "already_account": "Vous avez déjà un compte ?",
+        "log_in": "Se connecter"
+      }
+    },
     "dashboard": {
       "common": {
         "locale": "fr-FR",
         "loading": "Chargement...",
         "noItems": "Aucun élément",
-        "justNow": "À l'instant",
-        "minutesAgo": "minutes",
-        "hoursAgo": "heures",
-        "daysAgo": "jours",
-        "monthsAgo": "mois",
-        "yearsAgo": "ans",
+        "just_now": "À l'instant",
+        "modified_prefix": "Modifié il y a",
+        "minutes_ago": "minutes",
+        "hours_ago": "heures",
+        "days_ago": "jours",
+        "months_ago": "mois",
+        "years_ago": "ans",
         "cancel": "Annuler",
         "save": "Enregistrer",
         "delete": "Supprimer",
-        "rename": "Renommer"
+        "rename": "Renommer",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible."
       },
       "resumes": {
         "title": "Mes CV",
+        "view_all": "Voir tout",
+        "empty_state": {
+          "title": "Pas encore de CV",
+          "description": "Créez votre premier CV pour commencer"
+        },
+        "create_resume": "Créer un CV",
         "createButton": "Créer un CV",
         "createFirstButton": "Créer mon premier CV",
         "noResumes": "Vous n'avez pas encore de CV",
@@ -771,6 +812,12 @@
       },
       "coverLetters": {
         "title": "Mes Lettres de Motivation",
+        "view_all": "Voir tout",
+        "empty_state": {
+          "title": "Pas encore de lettres de motivation",
+          "description": "Créez votre première lettre de motivation pour commencer"
+        },
+        "create_letter": "Créer une lettre de motivation",
         "createButton": "Créer une lettre",
         "createFirstButton": "Créer ma première lettre",
         "noCoverLetters": "Vous n'avez pas encore de lettre de motivation",

@@ -1,64 +1,55 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Plus, FileText, Mail, X } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-export default function FloatingButton() {
-  const router = useRouter();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const FloatingButton = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { t } = useLanguage();
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsOpen(!isOpen);
   };
 
   return (
-    <>
-      {isMenuOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={toggleMenu}
-        />
+    <div className="lg:hidden fixed right-6 bottom-20 z-50">
+      {/* Floating Menu Items */}
+      {isOpen && (
+        <div className="absolute bottom-16 right-0 flex flex-col items-end space-y-4 mb-2">
+          <Link
+            href="/cv/create"
+            className="flex items-center bg-gray-700 text-white py-2 px-4 rounded-full transform transition-transform hover:bg-gray-800"
+          >
+            <span className="mr-2">
+              {t("site.dashboard.sidebar.create_resume")}
+            </span>
+            <FileText size={18} />
+          </Link>
+          <Link
+            href="/cover-letter/create"
+            className="flex items-center bg-gray-700 text-white py-2 px-4 rounded-full transform transition-transform hover:bg-gray-800"
+          >
+            <span className="mr-2">
+              {t("site.dashboard.sidebar.create_cover_letter")}
+            </span>
+            <Mail size={18} />
+          </Link>
+        </div>
       )}
 
-      <div className="lg:hidden fixed right-4 bottom-20 flex flex-col items-end space-y-2 z-50">
-        {isMenuOpen && (
-          <>
-            <button
-              onClick={() => {
-                router.push("/builder");
-                setIsMenuOpen(false);
-              }}
-              className="flex items-center bg-white text-blue-600 rounded-full shadow-lg px-4 py-2"
-            >
-              <FileText className="w-5 h-5 mr-2" />
-              <span>Créer un CV</span>
-            </button>
-
-            <button
-              onClick={() => {
-                router.push("/builder/cover-letter");
-                setIsMenuOpen(false);
-              }}
-              className="flex items-center bg-white text-blue-600 rounded-full shadow-lg px-4 py-2"
-            >
-              <Mail className="w-5 h-5 mr-2" />
-              <span>Créer une lettre</span>
-            </button>
-          </>
-        )}
-
-        <button
-          onClick={toggleMenu}
-          className="w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
-        >
-          {isMenuOpen ? (
-            <X className="w-6 h-6" />
-          ) : (
-            <Plus className="w-6 h-6" />
-          )}
-        </button>
-      </div>
-    </>
+      {/* Floating Action Button */}
+      <button
+        onClick={toggleMenu}
+        className={`p-4 rounded-full shadow-lg transition-all duration-300 ${
+          isOpen ? "bg-gray-800 text-white rotate-45" : "bg-blue-600 text-white"
+        }`}
+      >
+        {isOpen ? <X size={24} /> : <Plus size={24} />}
+      </button>
+    </div>
   );
-}
+};
+
+export default FloatingButton;
