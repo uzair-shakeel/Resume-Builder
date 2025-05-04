@@ -1,9 +1,9 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import {
-  initializePaystack,
-  openPaystackPopup,
+  initializePayment,
   verifyPayment,
+  PaymentVerificationResult,
 } from "../utils/paystack";
 
 // Subscription plan types
@@ -151,18 +151,6 @@ export function PaymentProvider({ children }: { children: React.ReactNode }) {
     checkSubscriptionStatus();
   }, []);
 
-  // Initialize Paystack
-  useEffect(() => {
-    const loadPaystack = async () => {
-      if (typeof window !== "undefined" && !paystackInitialized) {
-        const initialized = await initializePaystack();
-        setPaystackInitialized(initialized);
-      }
-    };
-
-    loadPaystack();
-  }, [paystackInitialized]);
-
   const openPaymentModal = (type: "cv" | "cover-letter") => {
     setCurrentDownloadType(type);
     setIsPaymentModalOpen(true);
@@ -176,110 +164,33 @@ export function PaymentProvider({ children }: { children: React.ReactNode }) {
     email: string,
     plan: SubscriptionPlan
   ): Promise<boolean> => {
-    setLoading(true);
-
     try {
-      // Generate a unique reference
+      setLoading(true);
+
+      // Generate reference
       const reference = `trx_${Date.now()}_${Math.floor(
         Math.random() * 1000000
       )}`;
 
-      return new Promise((resolve) => {
-        openPaystackPopup({
-          email,
-          amount: plan.trialPriceRaw, // Amount in cents
-          reference,
-          metadata: {
-            custom_fields: [
-              {
-                display_name: "Plan",
-                variable_name: "plan",
-                value: plan.id,
-              },
-              {
-                display_name: "Download Type",
-                variable_name: "download_type",
-                value: currentDownloadType,
-              },
-            ],
-          },
-          callback: async (response: PaystackResponse) => {
-            if (response.status === "success") {
-              try {
-                // Register the subscription on the server
-                const registerResponse = await fetch(
-                  "/api/subscription/register",
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      reference: response.reference,
-                      email,
-                      plan: plan.id,
-                      type: currentDownloadType,
-                    }),
-                  }
-                );
-
-                const registerData = await registerResponse.json();
-
-                if (registerData.success) {
-                  // Verify payment on the server side
-                  const verificationResult = await verifyPayment(
-                    response.reference
-                  );
-
-                  if (verificationResult.status) {
-                    // Update context state with subscription info
-                    setCurrentPlan(plan);
-                    setSubscriptionEmail(email);
-                    setHasActiveSubscription(true);
-
-                    if (registerData.data?.expiresAt) {
-                      setSubscriptionExpiry(
-                        new Date(registerData.data.expiresAt)
-                      );
-                    }
-
-                    setLoading(false);
-                    setIsPaymentModalOpen(false);
-                    resolve(true);
-                  } else {
-                    console.error("Payment verification failed");
-                    setLoading(false);
-                    resolve(false);
-                  }
-                } else {
-                  console.error("Subscription registration failed");
-                  setLoading(false);
-                  resolve(false);
-                }
-              } catch (error) {
-                console.error("Error during subscription process:", error);
-                // Still consider successful if Paystack transaction succeeded
-                setHasActiveSubscription(true);
-                setCurrentPlan(plan);
-                setSubscriptionEmail(email);
-                setLoading(false);
-                setIsPaymentModalOpen(false);
-                resolve(true);
-              }
-            } else {
-              console.error("Paystack transaction failed");
-              setLoading(false);
-              resolve(false);
-            }
-          },
-          onClose: () => {
-            setLoading(false);
-            resolve(false);
-          },
-        });
+      // Initialize payment via server
+      const authorizationUrl = await initializePayment({
+        email,
+        amount: plan.trialPriceRaw,
+        reference,
+        metadata: {
+          plan: plan.id,
+          type: currentDownloadType,
+        },
       });
+
+      // Redirect to Paystack
+      window.location.href = authorizationUrl;
+
+      // Return true to indicate initialization was successful
+      // (user will be redirected, so this return value isn't really used)
+      return true;
     } catch (error) {
-      console.error("Payment processing error:", error);
+      console.error("Error processing payment:", error);
       setLoading(false);
       return false;
     }

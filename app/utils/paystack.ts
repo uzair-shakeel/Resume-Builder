@@ -1,7 +1,30 @@
-import { loadScript } from "./scriptLoader";
+// Inline implementation of loadScript to avoid import issues
+const loadScript = (src: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    // Check if script already exists
+    if (
+      typeof document !== "undefined" &&
+      document.querySelector(`script[src="${src}"]`)
+    ) {
+      resolve();
+      return;
+    }
+
+    if (typeof document !== "undefined") {
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = (error) => reject(error);
+      document.head.appendChild(script);
+    } else {
+      resolve(); // Resolve for SSR
+    }
+  });
+};
 
 // For security, in production you should use environment variables for these values
-const PAYSTACK_PUBLIC_KEY = "pk_test_your_paystack_public_key";
+const PAYSTACK_PUBLIC_KEY = "pk_test_b9cd9c05de9f3c38d3d5f9110ebfa91538bc25e7";
 const PAYSTACK_TRANSACTION_AMOUNT = 99; // 0.99 USD in cents
 
 interface PaystackResponse {
@@ -18,49 +41,51 @@ export interface PaymentConfig {
   email: string;
   amount: number;
   reference?: string;
-  callback?: (response: any) => void;
-  onClose?: () => void;
   metadata?: Record<string, any>;
 }
 
-// Initialize Paystack
-export const initializePaystack = async (): Promise<boolean> => {
+// Initialize payment via server-side API
+export const initializePayment = async (
+  config: PaymentConfig
+): Promise<string> => {
   try {
-    await loadScript("https://js.paystack.co/v1/inline.js");
-    return true;
+    console.log("Initializing payment via API:", config);
+
+    // Call our API to initialize the payment with Paystack
+    const response = await fetch("/api/payment/initialize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: config.email,
+        amount: config.amount,
+        reference: config.reference || generateReference(),
+        metadata: config.metadata,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Payment initialization failed:", data);
+      throw new Error(data.message || "Failed to initialize payment");
+    }
+
+    if (!data.data?.authorization_url) {
+      console.error("No authorization URL returned:", data);
+      throw new Error("No payment URL returned");
+    }
+
+    console.log(
+      "Payment initialized successfully, redirecting to:",
+      data.data.authorization_url
+    );
+    return data.data.authorization_url;
   } catch (error) {
-    console.error("Failed to load Paystack:", error);
-    return false;
+    console.error("Error initializing payment:", error);
+    throw error;
   }
-};
-
-// Open Paystack payment popup
-export const openPaystackPopup = (config: PaymentConfig): void => {
-  if (typeof window === "undefined" || !(window as any).PaystackPop) {
-    console.error("Paystack not loaded");
-    return;
-  }
-
-  const handler = (window as any).PaystackPop.setup({
-    key: PAYSTACK_PUBLIC_KEY,
-    email: config.email,
-    amount: config.amount || PAYSTACK_TRANSACTION_AMOUNT,
-    currency: "USD",
-    ref: config.reference || generateReference(),
-    callback: config.callback,
-    onClose: config.onClose,
-    metadata: config.metadata || {
-      custom_fields: [
-        {
-          display_name: "Resume Builder",
-          variable_name: "resume_builder",
-          value: "premium_download",
-        },
-      ],
-    },
-  });
-
-  handler.openIframe();
 };
 
 // Generate a unique transaction reference
@@ -68,10 +93,23 @@ export const generateReference = (): string => {
   return `trx_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
 };
 
+// Response type for our verification API
+export interface PaymentVerificationResult {
+  status: boolean;
+  message: string;
+  data?: {
+    reference?: string;
+    amount?: number;
+    email?: string;
+    plan?: string;
+    type?: string;
+  };
+}
+
 // Verify payment on the server side
 export const verifyPayment = async (
   reference: string
-): Promise<PaystackResponse> => {
+): Promise<PaymentVerificationResult> => {
   try {
     const response = await fetch(`/api/payment/verify?reference=${reference}`, {
       method: "GET",

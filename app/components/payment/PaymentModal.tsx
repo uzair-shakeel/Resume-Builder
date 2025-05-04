@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, CreditCard, Wallet, BarChart4 } from "lucide-react";
-import { initializePaystack, openPaystackPopup } from "../../utils/paystack";
+import { initializePayment } from "../../utils/paystack";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -73,15 +73,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const [selectedPlan, setSelectedPlan] = useState<PlanOption>(
     SUBSCRIPTION_PLANS[0]
   );
-  const [paystackInitialized, setPaystackInitialized] = useState(false);
-
-  useEffect(() => {
-    if (isOpen && !paystackInitialized) {
-      initializePaystack().then((success) => {
-        setPaystackInitialized(success);
-      });
-    }
-  }, [isOpen, paystackInitialized]);
+  const [paystackInitialized, setPaystackInitialized] = useState(true);
 
   if (!isOpen) return null;
 
@@ -133,65 +125,40 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         Math.random() * 1000000
       )}`;
 
-      // Open Paystack payment popup
-      openPaystackPopup({
+      console.log(
+        "Starting payment process with email:",
+        email,
+        "plan:",
+        selectedPlan.id
+      );
+
+      // Use the server-side initialization approach
+      const authorizationUrl = await initializePayment({
         email,
         amount: selectedPlan.trialPriceRaw, // Amount in cents
         reference,
         metadata: {
-          custom_fields: [
-            {
-              display_name: "Plan",
-              variable_name: "plan",
-              value: selectedPlan.id,
-            },
-            {
-              display_name: "Type",
-              variable_name: "type",
-              value: type,
-            },
-          ],
-        },
-        callback: async (response) => {
-          if (response.status === "success") {
-            // Set a cookie to indicate active subscription
-            document.cookie =
-              "hasActiveSubscription=true; path=/; max-age=1209600"; // 14 days
-
-            // Make server call to register subscription
-            try {
-              await fetch("/api/subscription/register", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  reference: response.reference,
-                  email,
-                  plan: selectedPlan.id,
-                  type,
-                }),
-              });
-            } catch (error) {
-              console.error("Error registering subscription:", error);
-              // Continue anyway since payment was successful
-            }
-
-            setIsProcessing(false);
-            onSuccess();
-          } else {
-            setIsProcessing(false);
-            alert("Le paiement a échoué. Veuillez réessayer.");
-          }
-        },
-        onClose: () => {
-          setIsProcessing(false);
+          plan: selectedPlan.id,
+          type: type,
         },
       });
-    } catch (error) {
+
+      console.log("Got authorization URL:", authorizationUrl);
+
+      // Redirect to Paystack checkout page
+      if (authorizationUrl) {
+        window.location.href = authorizationUrl;
+      } else {
+        throw new Error("No authorization URL returned");
+      }
+    } catch (error: any) {
       console.error("Payment error:", error);
       setIsProcessing(false);
-      alert("Une erreur s'est produite lors du traitement du paiement.");
+      alert(
+        `Une erreur s'est produite: ${
+          error.message || "Erreur inconnue"
+        }. Veuillez réessayer plus tard.`
+      );
     }
   };
 
