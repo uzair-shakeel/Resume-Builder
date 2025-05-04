@@ -195,7 +195,7 @@ export default function CoverLetterDashboard() {
   };
 
   const handleDelete = async (coverId: string) => {
-    if (!confirm(t("site.dashboard.common.confirm_delete"))) {
+    if (!confirm(t("site.dashboard.coverLetters.deleteConfirmation"))) {
       return;
     }
 
@@ -326,14 +326,14 @@ export default function CoverLetterDashboard() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-2xl font-bold">
-              {t("site.dashboard.cover_letters.title")}
+              {t("site.dashboard.coverLetters.title")}
             </h1>
             <button
               onClick={() => router.push("/builder/cover-letter")}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
-              {t("site.dashboard.cover_letters.create_letter")}
+              {t("site.dashboard.coverLetters.create_letter")}
             </button>
           </div>
 
@@ -346,17 +346,17 @@ export default function CoverLetterDashboard() {
             <div className="text-center py-12">
               <Mail className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h2 className="text-xl font-semibold text-gray-700 mb-2">
-                {t("site.dashboard.cover_letters.empty_state.title")}
+                {t("site.dashboard.coverLetters.empty_state.title")}
               </h2>
               <p className="text-gray-500 mb-4">
-                {t("site.dashboard.cover_letters.empty_state.description")}
+                {t("site.dashboard.coverLetters.empty_state.description")}
               </p>
               <button
                 onClick={() => router.push("/builder/cover-letter")}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                {t("site.dashboard.cover_letters.create_letter")}
+                {t("site.dashboard.coverLetters.create_letter")}
               </button>
             </div>
           ) : (
@@ -370,7 +370,7 @@ export default function CoverLetterDashboard() {
                   <div className="flex flex-col items-center gap-2 text-gray-500 group-hover:text-blue-500">
                     <Plus className="w-8 h-8" />
                     <span className="font-medium">
-                      {t("site.dashboard.cover_letters.create_letter")}
+                      {t("site.dashboard.coverLetters.create_letter")}
                     </span>
                   </div>
                 </Link>

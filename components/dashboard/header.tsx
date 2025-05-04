@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const header = () => {
+const Header = () => {
+  const { t } = useLanguage();
+
   return (
     <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#1f1f1f] z-50 flex items-center justify-between px-4 text-white">
       <div className="flex items-center">
@@ -13,7 +17,7 @@ const header = () => {
         >
           <Image
             src="/assets/logo-white-text.svg"
-            alt="logo"
+            alt={t("site.common.logo_alt")}
             width={85.48}
             height={32}
           />
@@ -23,4 +27,4 @@ const header = () => {
   );
 };
 
-export default header;
+export default Header;

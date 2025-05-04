@@ -70,57 +70,36 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   };
 
   const t = (key: string, options: { returnObjects?: boolean } = {}): any => {
-    // key format: "category.path.to.value"
+    // key format: "site.dashboard.path.to.value"
     const parts = key.split(".");
-    const categoryName = parts[0];
 
-    // Find the category in our translations across all pages
-    let categoryObj: TranslationCategory | undefined;
-    let result: any;
+    // Start with the entire translations object
+    let result = translations;
 
-    // Search through all pages to find the category
-    for (const pageName in translations) {
-      const page = translations[pageName];
-
-      // Handle both array and object structures
-      if (Array.isArray(page)) {
-        const foundCategory = page.find((cat) => cat.category === categoryName);
-        if (foundCategory) {
-          categoryObj = foundCategory;
-          result = foundCategory.translations;
-          break;
-        }
-      } else if (typeof page === "object" && page !== null) {
-        // Direct object structure (like in Placeholder-CV)
-        if (pageName === categoryName || page[categoryName]) {
-          result = pageName === categoryName ? page : page[categoryName];
-          break;
-        }
-      }
-    }
-
-    if (!result) return options.returnObjects ? [] : key;
-
-    // Navigate through the object based on the key path
-    for (let i = 1; i < parts.length; i++) {
-      // Handle array indices (e.g., "items[0]")
+    // Navigate through each part of the path
+    for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
-      const match = part.match(/^(\w+)\[(\d+)\]$/);
-      if (match) {
-        const arrayKey = match[1];
-        const index = parseInt(match[2], 10);
-        if (result[arrayKey] && Array.isArray(result[arrayKey])) {
-          result = result[arrayKey][index];
-        } else {
-          return options.returnObjects ? [] : key;
-        }
-      } else {
-        if (result[part] === undefined) return options.returnObjects ? [] : key;
-        result = result[part];
+
+      if (!result || typeof result !== "object") {
+        console.warn(
+          `Translation not found for key: ${key}, failed at part: ${part}`
+        );
+        return options.returnObjects ? [] : key;
+      }
+
+      // Move to the next level
+      result = result[part];
+
+      // If undefined at any level, return the key
+      if (result === undefined) {
+        console.warn(
+          `Translation not found for key: ${key}, missing part: ${part}`
+        );
+        return options.returnObjects ? [] : key;
       }
     }
 
-    // If returnObjects is true, return the raw result (could be array, object, etc.)
+    // If returnObjects is true, return the raw result
     if (options.returnObjects) {
       return result || [];
     }

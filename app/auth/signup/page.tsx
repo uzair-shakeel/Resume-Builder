@@ -19,32 +19,47 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, CheckCircle } from "lucide-react";
-
-const formSchema = z
-  .object({
-    name: z
-      .string()
-      .min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
-    email: z.string().email({ message: "Adresse e-mail invalide" }),
-    password: z
-      .string()
-      .min(6, {
-        message: "Le mot de passe doit contenir au moins 6 caractères",
-      }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Les mots de passe ne correspondent pas",
-    path: ["confirmPassword"],
-  });
-
-type FormData = z.infer<typeof formSchema>;
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 
 export default function SignUpPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { t, language } = useLanguage();
+
+  const formSchema = z
+    .object({
+      name: z.string().min(2, {
+        message:
+          language === "en"
+            ? "Name must contain at least 2 characters"
+            : "Le nom doit contenir au moins 2 caractères",
+      }),
+      email: z.string().email({
+        message:
+          language === "en"
+            ? "Invalid email address"
+            : "Adresse e-mail invalide",
+      }),
+      password: z.string().min(6, {
+        message:
+          language === "en"
+            ? "Password must contain at least 6 characters"
+            : "Le mot de passe doit contenir au moins 6 caractères",
+      }),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message:
+        language === "en"
+          ? "Passwords don't match"
+          : "Les mots de passe ne correspondent pas",
+      path: ["confirmPassword"],
+    });
+
+  type FormData = z.infer<typeof formSchema>;
 
   const {
     register,
@@ -82,7 +97,10 @@ export default function SignUpPage() {
 
       if (!response.ok) {
         setError(
-          result.message || "Une erreur est survenue lors de l'inscription"
+          result.message ||
+            (language === "en"
+              ? "An error occurred during registration"
+              : "Une erreur est survenue lors de l'inscription")
         );
         setIsLoading(false);
         return;
@@ -93,19 +111,26 @@ export default function SignUpPage() {
         router.push("/auth/signin");
       }, 2000);
     } catch (error) {
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      setError(
+        language === "en"
+          ? "An error occurred. Please try again."
+          : "Une erreur est survenue. Veuillez réessayer."
+      );
       setIsLoading(false);
     }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Créer un compte</CardTitle>
-          <CardDescription>
-            Entrez vos informations pour créer un compte
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">
+            {t("auth.register.title")}
+          </CardTitle>
+          <CardDescription>{t("auth.register.subtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
           {error && (
@@ -118,18 +143,19 @@ export default function SignUpPage() {
             <Alert className="mb-4 bg-green-50 text-green-800 border-green-200">
               <CheckCircle className="h-4 w-4 text-green-500" />
               <AlertDescription>
-                Compte créé avec succès! Vous allez être redirigé vers la page
-                de connexion.
+                {language === "en"
+                  ? "Account created successfully! You will be redirected to the login page."
+                  : "Compte créé avec succès! Vous allez être redirigé vers la page de connexion."}
               </AlertDescription>
             </Alert>
           )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nom complet</Label>
+              <Label htmlFor="name">{t("auth.register.name_label")}</Label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Jean Dupont"
+                placeholder={t("auth.register.name_placeholder")}
                 {...register("name")}
                 disabled={isLoading || success}
               />
@@ -138,11 +164,11 @@ export default function SignUpPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Adresse e-mail</Label>
+              <Label htmlFor="email">{t("auth.register.email_label")}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="exemple@email.com"
+                placeholder={t("auth.register.email_placeholder")}
                 {...register("email")}
                 disabled={isLoading || success}
               />
@@ -151,10 +177,13 @@ export default function SignUpPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">
+                {t("auth.register.password_label")}
+              </Label>
               <Input
                 id="password"
                 type="password"
+                placeholder={t("auth.register.password_placeholder")}
                 {...register("password")}
                 disabled={isLoading || success}
               />
@@ -165,10 +194,13 @@ export default function SignUpPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+              <Label htmlFor="confirmPassword">
+                {t("auth.register.confirm_password_label")}
+              </Label>
               <Input
                 id="confirmPassword"
                 type="password"
+                placeholder={t("auth.register.confirm_password_placeholder")}
                 {...register("confirmPassword")}
                 disabled={isLoading || success}
               />
@@ -183,15 +215,19 @@ export default function SignUpPage() {
               className="w-full"
               disabled={isLoading || success}
             >
-              {isLoading ? "Inscription en cours..." : "S'inscrire"}
+              {isLoading
+                ? language === "en"
+                  ? "Signing up..."
+                  : "Inscription en cours..."
+                : t("auth.register.button")}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
-            Vous avez déjà un compte?{" "}
+            {t("auth.register.already_account")}{" "}
             <Link href="/auth/signin" className="text-primary hover:underline">
-              Se connecter
+              {t("auth.register.log_in")}
             </Link>
           </div>
         </CardFooter>

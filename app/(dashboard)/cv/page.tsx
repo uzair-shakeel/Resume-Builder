@@ -173,7 +173,7 @@ export default function CVDashboard() {
   };
 
   const handleDelete = async (cvId: string) => {
-    if (!confirm(t("site.dashboard.common.confirm_delete"))) {
+    if (!confirm(t("site.dashboard.resumes.deleteConfirmation"))) {
       return;
     }
 

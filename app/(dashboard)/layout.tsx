@@ -5,6 +5,7 @@ import Sidebar from "@/components/dashboard/sidebar";
 import Header from "@/components/dashboard/header";
 import Footer from "@/components/dashboard/footer";
 import FloatingButton from "@/components/dashboard/floating-button";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 
 export default async function DashboardLayout({
   children,
@@ -17,6 +18,11 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen bg-[#f3f2ef]">
+      {/* Language Switcher - Positioned absolutely */}
+      <div className="fixed top-4 right-4 z-50">
+        <LanguageSwitcher compact />
+      </div>
+
       {/* Header - visible on mobile */}
       <Header />
 
