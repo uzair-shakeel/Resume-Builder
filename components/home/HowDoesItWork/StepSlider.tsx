@@ -41,20 +41,20 @@ export default function StepSlider() {
   const steps = [
     {
       id: 1,
-      title: t("home.steps.items.step1.title"),
-      description: t("home.steps.items.step1.description"),
+      title: t("site.home.steps.items.step1.title"),
+      description: t("site.home.steps.items.step1.description"),
       icon: "/assets/how-it-works-step-1.svg",
     },
     {
       id: 2,
-      title: t("home.steps.items.step2.title"),
-      description: t("home.steps.items.step2.description"),
+      title: t("site.home.steps.items.step2.title"),
+      description: t("site.home.steps.items.step2.description"),
       icon: "/assets/how-it-works-step-2.svg",
     },
     {
       id: 3,
-      title: t("home.steps.items.step3.title"),
-      description: t("home.steps.items.step3.description"),
+      title: t("site.home.steps.items.step3.title"),
+      description: t("site.home.steps.items.step3.description"),
       icon: "/assets/how-it-works-step-3.svg",
     },
   ];
@@ -62,7 +62,7 @@ export default function StepSlider() {
   return (
     <section className="max-w-[1150px] mx-auto px-[20px] py-20 w-full flex flex-col items-center">
       <h1 className="text-gray-900 font-medium text-3xl md:text-5xl mb-12">
-        {t("home.steps.title")}
+        {t("site.home.steps.title")}
       </h1>
       <div className="flex flex-col space-y-8">
         <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6">
