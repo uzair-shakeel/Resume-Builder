@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { initializePayment } from "../../utils/paystack";
-import Email from "next-auth/providers/email";
+import { useSession } from "next-auth/react";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -33,7 +33,7 @@ const SUBSCRIPTION_PLANS: PlanOption[] = [
     regularPriceRaw: 1499, // 14.99 USD in cents
     billingPeriod: "mois",
     interval: "monthly",
-    durationDays: 14,
+    durationDays: 30,
   },
   {
     id: "quarterly",
@@ -45,7 +45,7 @@ const SUBSCRIPTION_PLANS: PlanOption[] = [
     billingPeriod: "mois",
     interval: "quarterly",
     totalPrice: "29,97 US$ facturation trimestrielle",
-    durationDays: 42,
+    durationDays: 90,
   },
   {
     id: "yearly",
@@ -67,6 +67,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   onSuccess,
   type,
 }) => {
+  const { data: session } = useSession();
   const [selectedPlan, setSelectedPlan] = useState<PlanOption>(
     SUBSCRIPTION_PLANS[0]
   );
@@ -85,7 +86,16 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const handlePayment = async () => {
     setIsProcessing(true);
     setError(null);
-    const email = "user@example.com";
+
+    // Get user email from session or prompt them to login
+    const userEmail = session?.user?.email;
+
+    if (!userEmail) {
+      setError("Veuillez vous connecter pour continuer avec le paiement.");
+      setIsProcessing(false);
+      return;
+    }
+
     try {
       // Generate a unique transaction reference
       const reference = `trx_${Date.now()}_${Math.floor(
@@ -94,7 +104,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
       console.log(
         "Starting payment process with email:",
-        email,
+        userEmail,
         "plan:",
         selectedPlan.id,
         "amount:",
@@ -103,7 +113,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
       // Use the server-side initialization approach
       const authorizationUrl = await initializePayment({
-        email,
+        email: userEmail,
         amount: selectedPlan.trialPriceRaw, // Amount in cents
         reference,
         metadata: {
@@ -111,6 +121,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
           type: type,
           amount: selectedPlan.trialPriceRaw,
           duration: selectedPlan.durationDays,
+          // Add additional user information from session if available
+          name: session?.user?.name || "",
+          userId: (session?.user as any)?.id || "",
         },
       });
 
@@ -118,7 +131,21 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
       // Redirect to Paystack checkout page
       if (authorizationUrl) {
-        window.location.href = authorizationUrl;
+        // Add additional query parameters to help with subscription registration
+        const url = new URL(authorizationUrl);
+        // Add extra query parameters to ensure we have all needed info when returning
+        url.searchParams.append("plan", selectedPlan.id);
+        url.searchParams.append("type", type);
+        url.searchParams.append(
+          "amount",
+          selectedPlan.trialPriceRaw.toString()
+        );
+        url.searchParams.append(
+          "duration",
+          selectedPlan.durationDays.toString()
+        );
+
+        window.location.href = url.toString();
       } else {
         throw new Error("No authorization URL returned");
       }
@@ -153,6 +180,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
           )}
 
+          {!session?.user && (
+            <div className="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded-md">
+              Vous devez être connecté pour accéder à cette fonctionnalité.
+            </div>
+          )}
+
           <div className="mb-6 border rounded-lg p-4">
             <div className="flex justify-between items-center mb-2">
               <select
@@ -172,7 +205,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               <div className="text-4xl font-semibold">
                 {selectedPlan.trialPrice}
               </div>
-              <div className="text-sm text-gray-500">pour 14 jours</div>
+              <div className="text-sm text-gray-500">
+                pour {selectedPlan.durationDays} jours
+              </div>
             </div>
 
             <div className="text-center text-sm text-gray-500">
@@ -187,8 +222,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
           <button
             onClick={handlePayment}
-            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors"
-            disabled={isProcessing}
+            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            disabled={isProcessing || !session?.user}
           >
             {isProcessing
               ? "Traitement en cours..."

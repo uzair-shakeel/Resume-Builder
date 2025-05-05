@@ -7,20 +7,11 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import mongoose from "mongoose";
 
-// Subscription plan durations in days
-const PLAN_DURATIONS = {
-  trial: 14, // 14 days trial
-  monthly: 30, // 30 days
-  quarterly: 90, // 90 days
-  yearly: 365, // 365 days
-};
-
-// Plan prices in XOF (or your currency)
+// Plan prices in cents
 const PLAN_PRICES = {
-  trial: 99, // Trial price in cents (0.99)
-  monthly: 1499, // 14.99
-  quarterly: 2997, // 29.97 (9.99 x 3)
-  yearly: 8988, // 89.88 (7.49 x 12)
+  monthly: 99, // Trial price in cents (0.99)
+  quarterly: 99, // Trial price in cents (0.99)
+  yearly: 99, // Trial price in cents (0.99)
 };
 
 export async function POST(request: NextRequest) {
@@ -30,7 +21,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log("Request body:", JSON.stringify(body, null, 2));
 
-    const { reference, email, plan, type, amount } = body;
+    const { reference, email, plan, type, amount, duration, userId, name } =
+      body;
 
     if (!reference || !email || !plan || !type) {
       console.error("Missing required fields:", {
@@ -55,7 +47,9 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(
-      `Registering subscription for ${email}, plan: ${plan}, type: ${type}`
+      `Registering subscription for ${email}, plan: ${plan}, type: ${type}, duration: ${
+        duration || "default"
+      } days`
     );
 
     // Connect to the database
@@ -64,33 +58,57 @@ export async function POST(request: NextRequest) {
     // Get the current user from the session
     const session = await getServerSession(authOptions);
 
-    // Find user by email
-    let user = await User.findOne({ email });
+    // Find user by email or userId
+    let user = null;
 
+    // Try to find by userId if provided
+    if (userId) {
+      user = await User.findById(userId);
+    }
+
+    // If not found by userId, try by email
+    if (!user) {
+      user = await User.findOne({ email });
+    }
+
+    // Try session email as fallback
     if (!user && session?.user?.email) {
-      // Try to find user by session email if available
       user = await User.findOne({ email: session.user.email });
     }
 
+    // Create user if not found
     if (!user) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "User not found",
-        },
-        { status: 404 }
-      );
+      console.log(`User not found for ${email}, creating new user record`);
+      user = await User.create({
+        email,
+        name: name || email.split("@")[0],
+        role: "user",
+      });
+      console.log(`Created new user with ID: ${user._id}`);
     }
 
     // Calculate subscription end date based on the plan
     const startDate = new Date();
     const endDate = new Date();
-    endDate.setDate(
-      startDate.getDate() + PLAN_DURATIONS[plan] || PLAN_DURATIONS.trial
-    );
+
+    // Use the provided duration or fall back to defaults
+    let planDuration = 14; // Default to 14 days
+
+    if (duration) {
+      planDuration = duration;
+    } else if (plan === "monthly") {
+      planDuration = 30;
+    } else if (plan === "quarterly") {
+      planDuration = 90;
+    } else if (plan === "yearly") {
+      planDuration = 365;
+    }
+
+    endDate.setDate(startDate.getDate() + planDuration);
 
     // Determine the actual amount paid
-    const actualAmount = amount || PLAN_PRICES[plan] || PLAN_PRICES.trial;
+    const actualAmount =
+      amount || PLAN_PRICES[plan as keyof typeof PLAN_PRICES] || 99;
 
     // Create a new subscription in the database
     const subscription = await Subscription.create({
@@ -101,12 +119,14 @@ export async function POST(request: NextRequest) {
       startDate,
       endDate,
       amount: actualAmount,
-      currency: "XOF", // Change as needed
+      currency: "USD", // Change as needed
       status: "active",
       paymentReference: reference,
+      duration: planDuration,
     });
 
     console.log("Subscription created in database:", subscription._id);
+    console.log(`Subscription valid until: ${endDate.toISOString()}`);
 
     // We'll keep the cookies as a fallback/convenience,
     // but the database will be the source of truth
@@ -152,6 +172,7 @@ export async function POST(request: NextRequest) {
         type,
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
+        duration: planDuration,
       },
     });
   } catch (error) {

@@ -3,16 +3,22 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { verifyPayment, PaymentVerificationResult } from "@/app/utils/paystack";
+import { useSession } from "next-auth/react";
+import { RefreshCw } from "lucide-react";
 
 export default function PaymentVerificationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session, status: sessionStatus } = useSession();
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading"
   );
   const [message, setMessage] = useState<string>("Vérification du paiement...");
 
   useEffect(() => {
+    // Wait for session to be loaded
+    if (sessionStatus === "loading") return;
+
     const reference = searchParams?.get("reference");
 
     if (!reference) {
@@ -34,14 +40,19 @@ export default function PaymentVerificationPage() {
           setStatus("success");
           setMessage("Paiement réussi! Enregistrement de votre abonnement...");
 
-          // Register the subscription
-          const email = result.data?.email || "";
+          // Get the email from session if available, otherwise use the one from payment result
+          const email = session?.user?.email || result.data?.email || "";
+
+          // Get other parameters from search params or fallback to result data
           const plan =
-            searchParams?.get("plan") || result.data?.plan || "trial";
+            searchParams?.get("plan") || result.data?.plan || "monthly";
           const type = searchParams?.get("type") || result.data?.type || "cv";
           const amount =
+            parseInt(searchParams?.get("amount") || "0", 10) ||
             result.data?.amount ||
-            parseInt(searchParams?.get("amount") || "99", 10);
+            99;
+          const duration =
+            parseInt(searchParams?.get("duration") || "0", 10) || 30;
 
           try {
             console.log("Registering subscription with:", {
@@ -50,6 +61,8 @@ export default function PaymentVerificationPage() {
               plan,
               type,
               amount,
+              duration,
+              userId: (session?.user as any)?.id || null,
             });
 
             const registerResponse = await fetch("/api/subscription/register", {
@@ -63,6 +76,9 @@ export default function PaymentVerificationPage() {
                 plan,
                 type,
                 amount,
+                duration,
+                userId: (session?.user as any)?.id || null,
+                name: session?.user?.name || null,
               }),
             });
 
@@ -70,7 +86,7 @@ export default function PaymentVerificationPage() {
               const registerData = await registerResponse.json();
 
               setMessage(
-                `Abonnement "${plan}" activé avec succès! Redirection...`
+                `Abonnement "${plan}" activé avec succès pour ${email}! Redirection...`
               );
 
               // Redirect back to the builder page after 2 seconds
@@ -113,7 +129,7 @@ export default function PaymentVerificationPage() {
     }
 
     verify();
-  }, [searchParams, router]);
+  }, [searchParams, router, session, sessionStatus]);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -126,7 +142,9 @@ export default function PaymentVerificationPage() {
 
         <div className="text-center mb-6">
           {status === "loading" && (
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900 mx-auto mb-4">
+              <RefreshCw className="w-8 h-8 text-blue-600" />
+            </div>
           )}
           {status === "success" && (
             <div className="text-green-500 text-6xl mb-4">✓</div>
@@ -136,6 +154,15 @@ export default function PaymentVerificationPage() {
           )}
 
           <p className="text-gray-700">{message}</p>
+
+          {sessionStatus === "unauthenticated" && status === "success" && (
+            <div className="mt-4 p-3 bg-yellow-50 rounded border border-yellow-200">
+              <p className="text-sm text-yellow-800">
+                Pour conserver votre abonnement entre les sessions, nous vous
+                recommandons de vous connecter à votre compte.
+              </p>
+            </div>
+          )}
         </div>
 
         {status === "error" && (
