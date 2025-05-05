@@ -285,6 +285,11 @@ export default function CoverLetterBuilder() {
   // Add isDownloading state after the other state declarations
   const [isDownloading, setIsDownloading] = useState(false);
 
+  // Add this state at the top with other state declarations
+  const [verificationStatus, setVerificationStatus] = useState<string>(
+    "Initializing verification..."
+  );
+
   // Safe reset function to prevent getting stuck in loading state
   const safeResetTemplateLoadingState = useCallback(() => {
     setIsTemplateLoading(false);
@@ -1166,29 +1171,67 @@ export default function CoverLetterBuilder() {
     }
   };
 
+  // Update the generatePDF function to remove the duplicate state declaration
   const generatePDF = async () => {
     if (!previewRef.current) return;
 
     try {
-      // First set the loading state
+      // First set the loading state with initial message
       setIsDownloading(true);
 
-      // Then ensure we have the latest subscription status from the database
-      await checkSubscriptionStatus();
+      // First update the UI to indicate we're starting verification
+      setVerificationStatus("Verifying subscription status...");
 
-      // After fresh check, verify if user has active subscription
-      if (!hasActiveSubscription) {
-        // Show payment modal if user doesn't have an active subscription
+      // Directly verify with the server - bypass client-side state completely
+      // This is the most secure approach as it prevents any client-side manipulation
+      const verifyResponse = await fetch("/api/subscription/verify-download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+        body: JSON.stringify({
+          downloadType: "cover-letter",
+          timestamp: Date.now(), // Add timestamp to prevent caching
+        }),
+        cache: "no-store",
+      });
+
+      if (!verifyResponse.ok) {
+        console.error(
+          "Failed to verify download eligibility:",
+          await verifyResponse.text()
+        );
         setIsDownloading(false);
         openPaymentModal("cover-letter");
         return;
       }
 
+      const verifyData = await verifyResponse.json();
+
+      // Check if verification was successful
+      if (!verifyData.success || !verifyData.hasActiveSubscription) {
+        console.warn(
+          "Download verification failed:",
+          verifyData.message || "No active subscription found"
+        );
+        setIsDownloading(false);
+        openPaymentModal("cover-letter");
+        return;
+      }
+
+      // If we get here, the user is verified and can download
+      setVerificationStatus("Subscription verified. Preparing document...");
+
+      // Generate the PDF
       const canvas = await html2canvas(previewRef.current, {
         scale: 2,
         useCORS: true,
         logging: false,
       });
+
+      setVerificationStatus("Creating PDF document...");
 
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
@@ -1201,13 +1244,40 @@ export default function CoverLetterBuilder() {
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
       pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+
+      setVerificationStatus("Finalizing download...");
       pdf.save("cover-letter.pdf");
+
+      // Update client-side subscription info after successful download
+      // This ensures our UI state stays in sync with the server
+      await checkSubscriptionStatus();
     } catch (error) {
       console.error("Error generating cover letter PDF:", error);
     } finally {
       setIsDownloading(false);
     }
   };
+
+  // Fix the TypeScript type for the DownloadingOverlay component
+  const DownloadingOverlay = ({ status }: { status: string }) => (
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-80 z-50 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md">
+        <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mb-6" />
+        <p className="text-xl font-medium text-gray-800 mb-2">
+          {t("site.builder.pdf_generation.generating_pdf")}
+        </p>
+        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+          <div className="bg-blue-600 h-2.5 rounded-full animate-pulse w-full"></div>
+        </div>
+        <p className="text-sm text-gray-600 mb-4 text-center">
+          {status || t("site.builder.pdf_generation.may_take_moments")}
+        </p>
+        <p className="text-xs text-gray-500 text-center">
+          Please don't refresh the page or close the window during this process.
+        </p>
+      </div>
+    </div>
+  );
 
   const handlePaymentSuccess = async () => {
     // After successful payment, generate the PDF
@@ -2101,19 +2171,7 @@ export default function CoverLetterBuilder() {
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       {/* Loading Overlay */}
-      {isDownloading && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
-            <RefreshCw className="w-10 h-10 text-blue-600 animate-spin mb-4" />
-            <p className="text-lg font-medium text-gray-800">
-              {t("site.builder.pdf_generation.generating_pdf")}
-            </p>
-            <p className="text-sm text-gray-600 mt-2">
-              {t("site.builder.pdf_generation.may_take_moments")}
-            </p>
-          </div>
-        </div>
-      )}
+      {isDownloading && <DownloadingOverlay status={verificationStatus} />}
 
       <div className="flex h-screen bg-gray-100">
         <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
@@ -2144,10 +2202,16 @@ export default function CoverLetterBuilder() {
                 <button
                   onClick={() => setShowDownloadOptions(!showDownloadOptions)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                  disabled={isDownloading}
                 >
-                  <Download className="w-5 h-5" />
+                  {isDownloading ? (
+                    <RefreshCw className="w-5 h-5 animate-spin mr-2" />
+                  ) : (
+                    <Download className="w-5 h-5" />
+                  )}
+                  {isDownloading && <span className="ml-1">Processing...</span>}
                 </button>
-                {showDownloadOptions && (
+                {showDownloadOptions && !isDownloading && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
                     <div className="py-1">
                       <button

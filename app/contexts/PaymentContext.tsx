@@ -121,83 +121,21 @@ export function PaymentProvider({ children }: { children: React.ReactNode }) {
 
   const checkSubscriptionStatus = async () => {
     try {
-      // Check if we have cached subscription data in this session (will persist across pages in the same tab)
-      const cachedData = sessionStorage.getItem("subscription_status");
-      const cachedTimestamp = sessionStorage.getItem(
-        "subscription_status_timestamp"
-      );
-
-      // Only use cache if it's less than 5 minutes old
-      const shouldUseCache =
-        cachedData &&
-        cachedTimestamp &&
-        Date.now() - parseInt(cachedTimestamp) < 5 * 60 * 1000;
-
-      if (shouldUseCache) {
-        const data = JSON.parse(cachedData);
-        console.log("Using cached subscription data:", data);
-
-        // Set states from cache
-        setHasActiveSubscription(data.hasActiveSubscription);
-
-        if (data.hasActiveSubscription) {
-          if (data.plan) {
-            const planDetails = SUBSCRIPTION_PLANS.find(
-              (p) => p.id === data.plan
-            );
-            setCurrentPlan(planDetails || null);
-          }
-
-          if (data.email) {
-            setSubscriptionEmail(data.email);
-          }
-
-          if (data.expiresAt) {
-            setSubscriptionExpiry(new Date(data.expiresAt));
-          }
-
-          if (data.source === "database") {
-            setSubscriptionInfo({
-              id: data.subscriptionId,
-              plan: data.plan,
-              type: data.type,
-              startDate: new Date(data.startDate),
-              endDate: new Date(data.endDate),
-              remainingDays: data.remainingDays,
-              amount: data.amount,
-              currency: data.currency,
-              status: data.status,
-            });
-          }
-        }
-
-        // Return early, using cached data
-        return;
-      }
-
-      // No valid cache, fetch fresh data from the server
+      // Always fetch fresh data from the server
       setLoading(true);
       const response = await fetch("/api/subscription/status", {
         headers: {
           "Cache-Control": "no-cache",
           Pragma: "no-cache",
         },
+        // Add a random query parameter to prevent caching
+        // This is important for security to ensure we always get fresh data
+        cache: "no-store",
       });
       const data = await response.json();
       setLoading(false);
 
-      console.log("Fresh subscription status check:", data);
-
-      // Update session storage with fresh data
-      try {
-        sessionStorage.setItem("subscription_status", JSON.stringify(data));
-        sessionStorage.setItem(
-          "subscription_status_timestamp",
-          Date.now().toString()
-        );
-      } catch (e) {
-        console.error("Failed to cache subscription data:", e);
-      }
+      console.log("Direct database subscription status check:", data);
 
       setHasActiveSubscription(data.hasActiveSubscription);
 
@@ -244,37 +182,55 @@ export function PaymentProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
 
       // Fallback to cookie check if server request fails
+      // This is only used if the API is completely unavailable
       checkCookies();
     }
   };
 
   const checkCookies = () => {
+    console.warn(
+      "API request failed - falling back to cookie check as last resort"
+    );
+    console.warn("This is only a UI fallback and will not grant actual access");
+
     try {
-      // Check cookies directly as a fallback
+      // Attempt to check cookies as an absolute last resort
+      // This is only used to show appropriate UI elements if the API is down
+      // It will NOT actually grant access to premium features
       const hasSub = getCookie("hasActiveSubscription") === "true";
-      setHasActiveSubscription(hasSub);
 
-      if (hasSub) {
-        const planId = getCookie("subscriptionPlan");
-        if (planId) {
-          const planDetails = SUBSCRIPTION_PLANS.find((p) => p.id === planId);
-          setCurrentPlan(planDetails || null);
-        }
+      // Only accept cookies if they're properly set
+      const planId = getCookie("subscriptionPlan");
+      const email = getCookie("subscriptionEmail");
 
-        const email = getCookie("subscriptionEmail");
-        if (email) {
-          setSubscriptionEmail(email);
-        }
+      // We only set this to true if we have all three cookies with valid values
+      const hasValidCookies = hasSub && !!planId && !!email;
+
+      // This is strictly for UI purposes - actual access will be verified server-side
+      setHasActiveSubscription(hasValidCookies);
+
+      if (hasValidCookies && planId) {
+        const planDetails = SUBSCRIPTION_PLANS.find((p) => p.id === planId);
+        setCurrentPlan(planDetails || null);
+        setSubscriptionEmail(email);
+      } else {
+        // If not all cookies are valid, reset everything
+        setHasActiveSubscription(false);
+        setCurrentPlan(null);
+        setSubscriptionEmail(null);
+        setSubscriptionExpiry(null);
+        setSubscriptionInfo(null);
       }
 
-      console.warn("Using cookie fallback for subscription status");
+      console.warn("Cookie fallback complete - this is only for UI display");
     } catch (e) {
       console.error("Error checking cookies:", e);
-      // If even cookie check fails, assume no subscription
+      // If cookie check fails, assume no subscription
       setHasActiveSubscription(false);
       setCurrentPlan(null);
       setSubscriptionEmail(null);
       setSubscriptionExpiry(null);
+      setSubscriptionInfo(null);
     }
   };
 

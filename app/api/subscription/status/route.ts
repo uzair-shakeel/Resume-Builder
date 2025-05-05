@@ -58,29 +58,35 @@ export async function GET(request: NextRequest) {
       }`
     );
 
-    // For fallback, check cookies only if there's no active database subscription
+    // Database is the source of truth - if no subscription is found, the user doesn't have one
+    // We'll still update cookies for backward compatibility but won't rely on them for verification
     if (!hasActiveSubscription) {
+      // Clear any existing subscription cookies for security
       const cookieStore = cookies();
-      const subscriptionCookie = cookieStore.get("hasActiveSubscription");
-      const planCookie = cookieStore.get("subscriptionPlan");
-      const emailCookie = cookieStore.get("subscriptionEmail");
+      cookieStore.set("hasActiveSubscription", "false", {
+        path: "/",
+        maxAge: 0, // Expire immediately
+        sameSite: "strict",
+      });
+      cookieStore.set("subscriptionPlan", "", {
+        path: "/",
+        maxAge: 0,
+        sameSite: "strict",
+      });
+      cookieStore.set("subscriptionEmail", "", {
+        path: "/",
+        maxAge: 0,
+        sameSite: "strict",
+      });
 
-      if (subscriptionCookie?.value === "true") {
-        console.log("Active subscription found in cookies");
-
-        // Return cookie-based subscription info
-        return NextResponse.json({
-          hasActiveSubscription: true,
-          source: "cookie",
-          plan: planCookie?.value || "trial",
-          email: emailCookie?.value || userEmail,
-          expiresAt: null, // We don't know exact expiry from cookie
-          cookieBased: true,
-        });
-      }
+      console.log("No active subscription found, cleared cookies");
+      return NextResponse.json({
+        hasActiveSubscription: false,
+        message: "No active subscription found",
+      });
     }
 
-    if (hasActiveSubscription && subscription) {
+    if (subscription) {
       // Data validation for subscription object
       const validSubscription = {
         _id: subscription._id?.toString() || "unknown",
@@ -104,22 +110,23 @@ export async function GET(request: NextRequest) {
         `Returning active subscription with ${remainingDays} days remaining`
       );
 
-      // Also update cookies for backward compatibility
+      // Update cookies with correct expiration time (matches subscription end date)
+      // This is only for backward compatibility but not used for verification
       const cookieStore = cookies();
       cookieStore.set("hasActiveSubscription", "true", {
         path: "/",
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-        sameSite: "lax",
+        expires: validSubscription.endDate,
+        sameSite: "strict",
       });
       cookieStore.set("subscriptionPlan", validSubscription.plan, {
         path: "/",
-        maxAge: 60 * 60 * 24 * 30,
-        sameSite: "lax",
+        expires: validSubscription.endDate,
+        sameSite: "strict",
       });
       cookieStore.set("subscriptionEmail", validSubscription.email, {
         path: "/",
-        maxAge: 60 * 60 * 24 * 30,
-        sameSite: "lax",
+        expires: validSubscription.endDate,
+        sameSite: "strict",
       });
 
       return NextResponse.json({
@@ -141,7 +148,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    console.log("No active subscription found");
     return NextResponse.json({
       hasActiveSubscription: false,
       message: "No active subscription found",
@@ -149,29 +155,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error checking subscription status:", error);
 
-    // If database check fails, fallback to cookies
-    try {
-      const cookieStore = cookies();
-      const subscriptionCookie = cookieStore.get("hasActiveSubscription");
-
-      if (subscriptionCookie?.value === "true") {
-        console.log("Database check failed, falling back to cookies");
-        const planCookie = cookieStore.get("subscriptionPlan");
-        const emailCookie = cookieStore.get("subscriptionEmail");
-
-        return NextResponse.json({
-          hasActiveSubscription: true,
-          source: "cookie_fallback",
-          plan: planCookie?.value || "trial",
-          email: emailCookie?.value || "unknown",
-          expiresAt: null,
-          errorFallback: true,
-        });
-      }
-    } catch (cookieError) {
-      console.error("Cookie fallback also failed:", cookieError);
-    }
-
+    // No cookie fallback for errors - only database checks are trusted for security
     return NextResponse.json(
       {
         hasActiveSubscription: false,
