@@ -358,6 +358,7 @@ export default function Builder() {
     openPaymentModal,
     closePaymentModal,
     processPayment,
+    checkSubscriptionStatus,
   } = usePayment();
 
   const [cvData, setCVData] = useState<CVData>({
@@ -971,13 +972,17 @@ export default function Builder() {
   const handleDownload = async (format: "pdf") => {
     if (!previewRef.current) return;
 
-    if (!hasActiveSubscription) {
-      // Show payment modal if user doesn't have an active subscription
-      openPaymentModal("cv");
-      return;
-    }
-
     try {
+      // First ensure we have the latest subscription status from the database
+      await checkSubscriptionStatus();
+
+      // After fresh check, verify if user has active subscription
+      if (!hasActiveSubscription) {
+        // Show payment modal if user doesn't have an active subscription
+        openPaymentModal("cv");
+        return;
+      }
+
       setIsDownloading(true);
       const element = previewRef.current;
 

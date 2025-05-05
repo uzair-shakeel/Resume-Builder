@@ -279,7 +279,11 @@ export default function CoverLetterBuilder() {
     openPaymentModal,
     closePaymentModal,
     processPayment,
+    checkSubscriptionStatus,
   } = usePayment();
+
+  // Add isDownloading state after the other state declarations
+  const [isDownloading, setIsDownloading] = useState(false);
 
   // Safe reset function to prevent getting stuck in loading state
   const safeResetTemplateLoadingState = useCallback(() => {
@@ -1165,30 +1169,44 @@ export default function CoverLetterBuilder() {
   const generatePDF = async () => {
     if (!previewRef.current) return;
 
-    if (!hasActiveSubscription) {
-      // Show payment modal if user doesn't have an active subscription
-      openPaymentModal("cover-letter");
-      return;
+    try {
+      // First set the loading state
+      setIsDownloading(true);
+
+      // Then ensure we have the latest subscription status from the database
+      await checkSubscriptionStatus();
+
+      // After fresh check, verify if user has active subscription
+      if (!hasActiveSubscription) {
+        // Show payment modal if user doesn't have an active subscription
+        setIsDownloading(false);
+        openPaymentModal("cover-letter");
+        return;
+      }
+
+      const canvas = await html2canvas(previewRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save("cover-letter.pdf");
+    } catch (error) {
+      console.error("Error generating cover letter PDF:", error);
+    } finally {
+      setIsDownloading(false);
     }
-
-    const canvas = await html2canvas(previewRef.current, {
-      scale: 2,
-      useCORS: true,
-      logging: false,
-    });
-
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
-
-    const imgWidth = 210;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-    pdf.save("cover-letter.pdf");
   };
 
   const handlePaymentSuccess = async () => {
@@ -2081,622 +2099,282 @@ export default function CoverLetterBuilder() {
   }, []);
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold">
-              {t("site.builder.header.cover_letter")}
-            </h1>
-            <div className="text-gray-500">
-              {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
-              {saveStatus === "saving" && (
-                <RefreshCw className="w-5 h-5 animate-spin" />
-              )}
-              {saveStatus === "error" && (
-                <CloudOff className="w-5 h-5 text-red-500" />
-              )}
-            </div>
-            <a
-              href="/builder"
-              className="text-blue-600 hover:text-blue-800 hidden md:flex items-center gap-1 text-sm"
-            >
-              <FileText className="w-4 h-4" />
-              CV Builder
-            </a>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <button
-                onClick={() => setShowDownloadOptions(!showDownloadOptions)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
-              >
-                <Download className="w-5 h-5" />
-              </button>
-              {showDownloadOptions && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
-                  <div className="py-1">
-                    <button
-                      onClick={() => {
-                        generatePDF();
-                        setShowDownloadOptions(false);
-                      }}
-                      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                    >
-                      Download as PDF
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+    <div className="min-h-screen overflow-hidden bg-gray-50">
+      {/* Loading Overlay */}
+      {isDownloading && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
+            <RefreshCw className="w-10 h-10 text-blue-600 animate-spin mb-4" />
+            <p className="text-lg font-medium text-gray-800">
+              {t("site.builder.pdf_generation.generating_pdf")}
+            </p>
+            <p className="text-sm text-gray-600 mt-2">
+              {t("site.builder.pdf_generation.may_take_moments")}
+            </p>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto lg:max-w-full max-w-[700px] mx-auto w-full">
-          <div className="p-4 space-y-4">
-            {sectionOrder.map((section, index) => (
-              <div
-                key={section}
-                className="border rounded-md overflow-hidden bg-white"
-                data-section={section}
-                draggable
-                onDragStart={(e) => handleDragStart(e, index)}
-                onDragOver={handleDragOver}
-                onDrop={(e) => handleDrop(e, index)}
-              >
-                <div
-                  className="flex items-center justify-between md:p-4 p-2 cursor-pointer"
-                  onClick={() => toggleSection(section)}
-                >
-                  <div className="flex items-center">
-                    <GripVertical className="w-5 h-5 text-gray-400 mr-2 cursor-move" />
-                    <span className="text-gray-400 mr-2">:</span>
-                    {isRenamingSection && sectionToRename === section ? (
-                      <input
-                        type="text"
-                        value={newSectionName}
-                        onChange={(e) => setNewSectionName(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") saveRenamedSection();
-                          if (e.key === "Escape") {
-                            setIsRenamingSection(false);
-                            setSectionToRename(null);
-                          }
-                          e.stopPropagation();
-                        }}
-                        onBlur={saveRenamedSection}
-                        autoFocus
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-lg font-medium border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-white min-w-[150px]"
-                      />
-                    ) : (
-                      <h2 className="md:text-lg font-medium">
-                        {getSectionTitle(section)}
-                        {sectionPages[section] === 2 && (
-                          <span className="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
-                            {t(
-                              "site.builder.sections.actions.page_2_indicator"
-                            )}
-                          </span>
-                        )}
-                      </h2>
-                    )}
-                  </div>
-                  <div className="flex space-x-2">
-                    <div className="relative">
-                      <button
-                        className={`md:p-2 p-1 rounded-md ${
-                          activeSectionMenu === section
-                            ? "bg-gray-200"
-                            : "hover:bg-gray-100"
-                        }`}
-                        onClick={(e) => toggleSectionMenu(section, e)}
-                      >
-                        <MoreVertical className="w-5 h-5 text-gray-500" />
-                      </button>
+      )}
 
-                      {activeSectionMenu === section && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
-                          <div className="py-1">
-                            <button
-                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                              onClick={() => handleRenameSection(section)}
-                            >
-                              <Pencil className="w-4 h-4 mr-2" />
-                              {t(
-                                "site.builder.sections.actions.rename_section"
-                              )}
-                            </button>
-                            <button
-                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                              onClick={() => handleDeleteSection(section)}
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              {t(
-                                "site.builder.sections.actions.delete_section"
-                              )}
-                            </button>
-                            <button
-                              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                              onClick={() =>
-                                handleAssignSectionToPage(
-                                  section,
-                                  sectionPages[section] === 2 ? 1 : 2
-                                )
-                              }
-                            >
-                              <Layout className="w-4 h-4 mr-2" />
-                              {sectionPages[section] === 2
-                                ? t(
-                                    "site.builder.sections.actions.move_to_page_1"
-                                  )
-                                : t(
-                                    "site.builder.sections.actions.move_to_page_2"
-                                  )}
-                            </button>
-                          </div>
-                        </div>
-                      )}
+      <div className="flex h-screen bg-gray-100">
+        <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
+          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <h1 className="text-xl font-bold">
+                {t("site.builder.header.cover_letter")}
+              </h1>
+              <div className="text-gray-500">
+                {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
+                {saveStatus === "saving" && (
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                )}
+                {saveStatus === "error" && (
+                  <CloudOff className="w-5 h-5 text-red-500" />
+                )}
+              </div>
+              <a
+                href="/builder"
+                className="text-blue-600 hover:text-blue-800 hidden md:flex items-center gap-1 text-sm"
+              >
+                <FileText className="w-4 h-4" />
+                CV Builder
+              </a>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <button
+                  onClick={() => setShowDownloadOptions(!showDownloadOptions)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                >
+                  <Download className="w-5 h-5" />
+                </button>
+                {showDownloadOptions && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
+                    <div className="py-1">
+                      <button
+                        onClick={() => {
+                          generatePDF();
+                          setShowDownloadOptions(false);
+                        }}
+                        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+                      >
+                        Download as PDF
+                      </button>
                     </div>
-                    <button className="md:p-2 p-1 rounded-md hover:bg-gray-100">
-                      {expandedSections[section] ? (
-                        <ChevronUp className="w-5 h-5 text-gray-500" />
-                      ) : (
-                        <ChevronDown className="w-5 h-5 text-gray-500" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-                {expandedSections[section] && (
-                  <div className="border-t">
-                    {renderActiveSectionInputs(section)}
                   </div>
                 )}
               </div>
-            ))}
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto lg:max-w-full max-w-[700px] mx-auto w-full">
+            <div className="p-4 space-y-4">
+              {sectionOrder.map((section, index) => (
+                <div
+                  key={section}
+                  className="border rounded-md overflow-hidden bg-white"
+                  data-section={section}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, index)}
+                >
+                  <div
+                    className="flex items-center justify-between md:p-4 p-2 cursor-pointer"
+                    onClick={() => toggleSection(section)}
+                  >
+                    <div className="flex items-center">
+                      <GripVertical className="w-5 h-5 text-gray-400 mr-2 cursor-move" />
+                      <span className="text-gray-400 mr-2">:</span>
+                      {isRenamingSection && sectionToRename === section ? (
+                        <input
+                          type="text"
+                          value={newSectionName}
+                          onChange={(e) => setNewSectionName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") saveRenamedSection();
+                            if (e.key === "Escape") {
+                              setIsRenamingSection(false);
+                              setSectionToRename(null);
+                            }
+                            e.stopPropagation();
+                          }}
+                          onBlur={saveRenamedSection}
+                          autoFocus
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-lg font-medium border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-white min-w-[150px]"
+                        />
+                      ) : (
+                        <h2 className="md:text-lg font-medium">
+                          {getSectionTitle(section)}
+                          {sectionPages[section] === 2 && (
+                            <span className="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                              {t(
+                                "site.builder.sections.actions.page_2_indicator"
+                              )}
+                            </span>
+                          )}
+                        </h2>
+                      )}
+                    </div>
+                    <div className="flex space-x-2">
+                      <div className="relative">
+                        <button
+                          className={`md:p-2 p-1 rounded-md ${
+                            activeSectionMenu === section
+                              ? "bg-gray-200"
+                              : "hover:bg-gray-100"
+                          }`}
+                          onClick={(e) => toggleSectionMenu(section, e)}
+                        >
+                          <MoreVertical className="w-5 h-5 text-gray-500" />
+                        </button>
 
-            <button
-              onClick={handleAddNewSection}
-              className="w-full py-3 px-4 border-2 border-dashed border-gray-300 rounded-md text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors flex items-center justify-center space-x-2"
-            >
-              <Plus className="w-5 h-5" />
-              <span>{t("site.builder.sections.actions.add_section")}</span>
-            </button>
+                        {activeSectionMenu === section && (
+                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                            <div className="py-1">
+                              <button
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                onClick={() => handleRenameSection(section)}
+                              >
+                                <Pencil className="w-4 h-4 mr-2" />
+                                {t(
+                                  "site.builder.sections.actions.rename_section"
+                                )}
+                              </button>
+                              <button
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                onClick={() => handleDeleteSection(section)}
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                {t(
+                                  "site.builder.sections.actions.delete_section"
+                                )}
+                              </button>
+                              <button
+                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                onClick={() =>
+                                  handleAssignSectionToPage(
+                                    section,
+                                    sectionPages[section] === 2 ? 1 : 2
+                                  )
+                                }
+                              >
+                                <Layout className="w-4 h-4 mr-2" />
+                                {sectionPages[section] === 2
+                                  ? t(
+                                      "site.builder.sections.actions.move_to_page_1"
+                                    )
+                                  : t(
+                                      "site.builder.sections.actions.move_to_page_2"
+                                    )}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <button className="md:p-2 p-1 rounded-md hover:bg-gray-100">
+                        {expandedSections[section] ? (
+                          <ChevronUp className="w-5 h-5 text-gray-500" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 text-gray-500" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  {expandedSections[section] && (
+                    <div className="border-t">
+                      {renderActiveSectionInputs(section)}
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              <button
+                onClick={handleAddNewSection}
+                className="w-full py-3 px-4 border-2 border-dashed border-gray-300 rounded-md text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors flex items-center justify-center space-x-2"
+              >
+                <Plus className="w-5 h-5" />
+                <span>{t("site.builder.sections.actions.add_section")}</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="w-1/2 bg-gray-50 lg:flex hidden flex-col">
-        <div className="bg-white p-4 border-b border-gray-200 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <button
-              className="p-2 rounded hover:bg-gray-100"
-              onClick={() => setShowSidebar(!showSidebar)}
-            >
-              {showSidebar ? <ChevronLeft /> : <ChevronRight />}
-            </button>
-            <h2 className="text-lg font-semibold">
-              {t("site.builder.preview")}
-            </h2>
-          </div>
-          <div className="flex items-center space-x-2">
-            <button
-              className="p-2 rounded hover:bg-gray-100"
-              onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
-            >
-              <ZoomOut size={18} />
-            </button>
-            <span className="text-sm">{Math.round(zoom * 100)}%</span>
-            <button
-              className="p-2 rounded hover:bg-gray-100"
-              onClick={() => setZoom(Math.min(1.5, zoom + 0.1))}
-            >
-              <ZoomIn size={18} />
-            </button>
-            <button
-              className="p-2 rounded hover:bg-gray-100"
-              onClick={resetZoom}
-              title="Reset Zoom"
-            >
-              <Maximize size={18} />
-            </button>
-            <div className="relative">
+        <div className="w-1/2 bg-gray-50 lg:flex hidden flex-col">
+          <div className="bg-white p-4 border-b border-gray-200 flex justify-between items-center">
+            <div className="flex items-center space-x-2">
               <button
                 className="p-2 rounded hover:bg-gray-100"
-                onClick={() => setShowDownloadOptions(!showDownloadOptions)}
+                onClick={() => setShowSidebar(!showSidebar)}
               >
-                <Download size={18} />
+                {showSidebar ? <ChevronLeft /> : <ChevronRight />}
               </button>
-              {showDownloadOptions && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
-                  <div className="py-1">
-                    <button
-                      onClick={() => {
-                        generatePDF();
-                        setShowDownloadOptions(false);
-                      }}
-                      className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                    >
-                      {t("site.builder.header.download")}
-                    </button>
-                  </div>
-                </div>
-              )}
+              <h2 className="text-lg font-semibold">
+                {t("site.builder.preview")}
+              </h2>
             </div>
-          </div>
-        </div>
-        <div className="flex-1 overflow-auto bg-gray-200 flex justify-center p-8">
-          <div
-            className="bg-white shadow-lg"
-            style={
-              {
-                width: "210mm",
-                height: "297mm",
-                transform: `scale(${
-                  zoom *
-                  (window.innerWidth >= 1024 ? screenBasedScale : mobileScale)
-                })`,
-                transformOrigin: "top center",
-                fontFamily: fontFamily,
-                "--accent-color": accentColor,
-              } as React.CSSProperties
-            }
-            ref={previewRef}
-          >
-            {template === "modern" && (
-              <CoverLetterPreviewAlt
-                data={coverLetterData}
-                sectionOrder={sectionOrder}
-                accentColor={accentColor}
-                fontFamily={fontFamily}
-                sectionPages={sectionPages}
-                customSectionNames={customSectionNames}
-                customSections={customSections}
-              />
-            )}
-            {template === "sherlock" && (
-              <CoverLetterPreviewSherlock
-                data={coverLetterData}
-                sectionOrder={sectionOrder}
-                accentColor={accentColor}
-                fontFamily={fontFamily}
-                sectionPages={sectionPages}
-                customSectionNames={customSectionNames}
-                customSections={customSections}
-              />
-            )}
-            {template === "minimal" && (
-              <CoverLetterPreviewMinimal
-                data={coverLetterData}
-                sectionOrder={sectionOrder}
-                accentColor={accentColor}
-                fontFamily={fontFamily}
-                sectionPages={sectionPages}
-                customSectionNames={customSectionNames}
-                customSections={customSections}
-              />
-            )}
-            {template === "classic" && (
-              <CoverLetterPreviewClassic
-                data={coverLetterData}
-                sectionOrder={sectionOrder}
-                accentColor={accentColor}
-                fontFamily={fontFamily}
-                sectionPages={sectionPages}
-                customSectionNames={customSectionNames}
-                customSections={customSections}
-              />
-            )}
-            {template === "professional" && (
-              <CoverLetterPreviewProfessional
-                data={coverLetterData}
-                sectionOrder={sectionOrder}
-                accentColor={accentColor}
-                fontFamily={fontFamily}
-                sectionPages={sectionPages}
-                customSectionNames={customSectionNames}
-                customSections={customSections}
-              />
-            )}
-            {template === "circulaire" && (
-              <CoverLetterPreviewCirculaire
-                data={coverLetterData}
-                sectionOrder={sectionOrder}
-                accentColor={accentColor}
-                fontFamily={fontFamily}
-                sectionPages={sectionPages}
-                customSectionNames={customSectionNames}
-                customSections={customSections}
-              />
-            )}
-            {template === "student" && (
-              <CoverLetterPreviewStudent
-                data={coverLetterData}
-                sectionOrder={sectionOrder}
-                accentColor={accentColor}
-                fontFamily={fontFamily}
-                sectionPages={sectionPages}
-                customSectionNames={customSectionNames}
-                customSections={customSections}
-              />
-            )}
-            {template === "hr" && (
-              <CoverLetterPreviewHR
-                data={coverLetterData}
-                sectionOrder={sectionOrder}
-                accentColor={accentColor}
-                fontFamily={fontFamily}
-                sectionPages={sectionPages}
-                customSectionNames={customSectionNames}
-                customSections={customSections}
-              />
-            )}
-            {template === "teal" && (
-              <CoverLetterPreviewTeal
-                data={coverLetterData}
-                sectionOrder={sectionOrder}
-                accentColor={accentColor}
-                fontFamily={fontFamily}
-                sectionPages={sectionPages}
-                customSectionNames={customSectionNames}
-                customSections={customSections}
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 p-3 shadow-md">
-          {showTemplateCarousel ? (
-            <div className="mb-4">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="font-medium text-gray-800">Select Template</h3>
-                <button
-                  onClick={() => setShowTemplateCarousel(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  Close
-                </button>
-              </div>
-              <div className="relative">
-                <button
-                  onClick={prevTemplate}
-                  className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
-                    isTemplateLoading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-gray-100"
-                  }`}
-                  disabled={isTemplateLoading}
-                  aria-label="Previous template"
-                >
-                  {isTemplateLoading ? (
-                    <RefreshCw className="w-5 h-5 text-gray-400 animate-spin" />
-                  ) : (
-                    <ChevronLeft className="w-5 h-5 text-gray-700" />
-                  )}
-                </button>
-
-                <div className="flex overflow-x-auto py-2 px-8 gap-4 snap-x">
-                  {templateOptions.map((option, index) => (
-                    <div
-                      key={option.value}
-                      className={`flex-none w-32 cursor-pointer transition-all duration-200 ${
-                        index === activeTemplateIndex
-                          ? "ring-2 ring-blue-500 scale-105"
-                          : "hover:scale-105"
-                      } ${
-                        isTemplateLoading
-                          ? "opacity-50 pointer-events-none"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        !isTemplateLoading && selectTemplate(index)
-                      }
-                    >
-                      <div className="bg-white rounded-md shadow-sm overflow-hidden">
-                        <div className="relative aspect-[0.7] bg-gray-100 flex items-center justify-center">
-                          {option.image ? (
-                            <img
-                              src={option.image}
-                              alt={option.name}
-                              className="object-cover w-full h-full"
-                            />
-                          ) : (
-                            <div
-                              className="w-full h-full flex items-center justify-center"
-                              style={{ backgroundColor: option.defaultColor }}
-                            >
-                              <span className="text-white font-medium">
-                                {option.name}
-                              </span>
-                            </div>
-                          )}
-                          <div
-                            className="absolute bottom-0 left-0 right-0 h-1"
-                            style={{ backgroundColor: option.defaultColor }}
-                          ></div>
-                        </div>
-                        <div className="p-2 text-center text-xs font-medium truncate">
-                          {option.name}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  onClick={nextTemplate}
-                  className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
-                    isTemplateLoading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-gray-100"
-                  }`}
-                  disabled={isTemplateLoading}
-                  aria-label="Next template"
-                >
-                  {isTemplateLoading ? (
-                    <RefreshCw className="w-5 h-5 text-gray-400 animate-spin" />
-                  ) : (
-                    <ChevronRight className="w-5 h-5 text-gray-700" />
-                  )}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-wrap md:gap-4 gap-2 justify-center items-center">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() =>
-                    !isTemplateLoading && setShowTemplateCarousel(true)
-                  }
-                  className={`flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm ${
-                    isTemplateLoading
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  }`}
-                  disabled={isTemplateLoading}
-                >
-                  {isTemplateLoading ? (
-                    <>
-                      <div className="animate-spin h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full"></div>
-                      <span>Changing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Layout className="w-5 h-5 text-gray-700" />
-                      <span>Templates</span>
-                    </>
-                  )}
-                </button>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Type className="w-5 h-5 text-gray-700" />
-                <select
-                  value={fontFamily}
-                  onChange={(e) => setFontFamily(e.target.value)}
-                  className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  style={{ fontFamily: fontFamily }}
-                >
-                  {fontFamilies.map((font) => (
-                    <option
-                      key={font.name}
-                      value={font.value}
-                      style={{ fontFamily: font.value }}
-                    >
-                      {font.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Palette className="w-5 h-5 text-gray-700" />
-                <div className="relative flex items-center gap-2">
-                  <div className="flex items-center border border-gray-300 rounded-md px-2 py-1.5">
-                    <div
-                      className="w-4 h-4 rounded-full mr-2"
-                      style={{ backgroundColor: accentColor }}
-                    />
-                    <input
-                      type="color"
-                      value={accentColor}
-                      onChange={(e) => setAccentColor(e.target.value)}
-                      className="w-20 h-8 cursor-pointer bg-transparent border-0"
-                    />
-                  </div>
-                  <button
-                    onClick={() => {
-                      const defaultColor = templateOptions.find(
-                        (t) => t.value === template
-                      )?.defaultColor;
-                      if (defaultColor) {
-                        setAccentColor(defaultColor);
-                      }
-                    }}
-                    className="p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
-                    title="Reset to default color"
-                  >
-                    Reset
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Mobile Preview Drawer */}
-      <div className={`lg:hidden ${isDrawerOpen ? "block" : "hidden"}`}>
-        {/* Overlay */}
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
-          onClick={handleDrawerClose}
-        />
-
-        {/* Drawer */}
-        <div className="fixed inset-y-0 right-0 w-full sm:w-[90%] max-w-[600px] bg-gray-50 z-50 transform transition-transform duration-300 ease-in-out flex flex-col">
-          {/* Drawer header */}
-          <div className="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 p-2 flex justify-between items-center">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center space-x-2">
               <button
+                className="p-2 rounded hover:bg-gray-100"
                 onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
-                className="p-1 rounded-md hover:bg-gray-200"
-                title="Zoom Out"
               >
-                <ZoomOut className="w-5 h-5 text-gray-700" />
+                <ZoomOut size={18} />
               </button>
-              <span className="text-sm font-medium">
-                {Math.round(zoom * 100)}%
-              </span>
+              <span className="text-sm">{Math.round(zoom * 100)}%</span>
               <button
+                className="p-2 rounded hover:bg-gray-100"
                 onClick={() => setZoom(Math.min(1.5, zoom + 0.1))}
-                className="p-1 rounded-md hover:bg-gray-200"
-                title="Zoom In"
               >
-                <ZoomIn className="w-5 h-5 text-gray-700" />
+                <ZoomIn size={18} />
               </button>
               <button
+                className="p-2 rounded hover:bg-gray-100"
                 onClick={resetZoom}
-                className="p-1 rounded-md hover:bg-gray-200 ml-2"
                 title="Reset Zoom"
               >
-                <Maximize className="w-5 h-5 text-gray-700" />
+                <Maximize size={18} />
               </button>
+              <div className="relative">
+                <button
+                  className="p-2 rounded hover:bg-gray-100"
+                  onClick={() => setShowDownloadOptions(!showDownloadOptions)}
+                >
+                  <Download size={18} />
+                </button>
+                {showDownloadOptions && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
+                    <div className="py-1">
+                      <button
+                        onClick={() => {
+                          generatePDF();
+                          setShowDownloadOptions(false);
+                        }}
+                        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+                      >
+                        {t("site.builder.header.download")}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-            <button
-              onClick={handleDrawerClose}
-              className="p-2 rounded-full hover:bg-gray-200"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
           </div>
-
-          {/* Preview content */}
-          <div className="flex-1 overflow-y-auto flex justify-center bg-gray-200 p-4">
+          <div className="flex-1 overflow-auto bg-gray-200 flex justify-center p-8">
             <div
-              className="bg-white shadow-lg transform-gpu transition-transform duration-200"
+              className="bg-white shadow-lg"
               style={
                 {
                   width: "210mm",
                   height: "297mm",
-                  transform: `scale(${zoom * mobileScale})`,
+                  transform: `scale(${
+                    zoom *
+                    (window.innerWidth >= 1024 ? screenBasedScale : mobileScale)
+                  })`,
                   transformOrigin: "top center",
                   fontFamily: fontFamily,
                   "--accent-color": accentColor,
                 } as React.CSSProperties
               }
+              ref={previewRef}
             >
               {template === "modern" && (
                 <CoverLetterPreviewAlt
@@ -2800,7 +2478,6 @@ export default function CoverLetterBuilder() {
             </div>
           </div>
 
-          {/* Template selection */}
           <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 p-3 shadow-md">
             {showTemplateCarousel ? (
               <div className="mb-4">
@@ -2980,42 +2657,404 @@ export default function CoverLetterBuilder() {
             )}
           </div>
         </div>
-      </div>
 
-      {/* Preview Toggle Button for Mobile */}
-      <button
-        onClick={() => setIsDrawerOpen(true)}
-        className="lg:hidden fixed right-4 bottom-4 z-30 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+        {/* Mobile Preview Drawer */}
+        <div className={`lg:hidden ${isDrawerOpen ? "block" : "hidden"}`}>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+            onClick={handleDrawerClose}
+          />
+
+          {/* Drawer */}
+          <div className="fixed inset-y-0 right-0 w-full sm:w-[90%] max-w-[600px] bg-gray-50 z-50 transform transition-transform duration-300 ease-in-out flex flex-col">
+            {/* Drawer header */}
+            <div className="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 p-2 flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+                  className="p-1 rounded-md hover:bg-gray-200"
+                  title="Zoom Out"
+                >
+                  <ZoomOut className="w-5 h-5 text-gray-700" />
+                </button>
+                <span className="text-sm font-medium">
+                  {Math.round(zoom * 100)}%
+                </span>
+                <button
+                  onClick={() => setZoom(Math.min(1.5, zoom + 0.1))}
+                  className="p-1 rounded-md hover:bg-gray-200"
+                  title="Zoom In"
+                >
+                  <ZoomIn className="w-5 h-5 text-gray-700" />
+                </button>
+                <button
+                  onClick={resetZoom}
+                  className="p-1 rounded-md hover:bg-gray-200 ml-2"
+                  title="Reset Zoom"
+                >
+                  <Maximize className="w-5 h-5 text-gray-700" />
+                </button>
+              </div>
+              <button
+                onClick={handleDrawerClose}
+                className="p-2 rounded-full hover:bg-gray-200"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* Preview content */}
+            <div className="flex-1 overflow-y-auto flex justify-center bg-gray-200 p-4">
+              <div
+                className="bg-white shadow-lg transform-gpu transition-transform duration-200"
+                style={
+                  {
+                    width: "210mm",
+                    height: "297mm",
+                    transform: `scale(${zoom * mobileScale})`,
+                    transformOrigin: "top center",
+                    fontFamily: fontFamily,
+                    "--accent-color": accentColor,
+                  } as React.CSSProperties
+                }
+              >
+                {template === "modern" && (
+                  <CoverLetterPreviewAlt
+                    data={coverLetterData}
+                    sectionOrder={sectionOrder}
+                    accentColor={accentColor}
+                    fontFamily={fontFamily}
+                    sectionPages={sectionPages}
+                    customSectionNames={customSectionNames}
+                    customSections={customSections}
+                  />
+                )}
+                {template === "sherlock" && (
+                  <CoverLetterPreviewSherlock
+                    data={coverLetterData}
+                    sectionOrder={sectionOrder}
+                    accentColor={accentColor}
+                    fontFamily={fontFamily}
+                    sectionPages={sectionPages}
+                    customSectionNames={customSectionNames}
+                    customSections={customSections}
+                  />
+                )}
+                {template === "minimal" && (
+                  <CoverLetterPreviewMinimal
+                    data={coverLetterData}
+                    sectionOrder={sectionOrder}
+                    accentColor={accentColor}
+                    fontFamily={fontFamily}
+                    sectionPages={sectionPages}
+                    customSectionNames={customSectionNames}
+                    customSections={customSections}
+                  />
+                )}
+                {template === "classic" && (
+                  <CoverLetterPreviewClassic
+                    data={coverLetterData}
+                    sectionOrder={sectionOrder}
+                    accentColor={accentColor}
+                    fontFamily={fontFamily}
+                    sectionPages={sectionPages}
+                    customSectionNames={customSectionNames}
+                    customSections={customSections}
+                  />
+                )}
+                {template === "professional" && (
+                  <CoverLetterPreviewProfessional
+                    data={coverLetterData}
+                    sectionOrder={sectionOrder}
+                    accentColor={accentColor}
+                    fontFamily={fontFamily}
+                    sectionPages={sectionPages}
+                    customSectionNames={customSectionNames}
+                    customSections={customSections}
+                  />
+                )}
+                {template === "circulaire" && (
+                  <CoverLetterPreviewCirculaire
+                    data={coverLetterData}
+                    sectionOrder={sectionOrder}
+                    accentColor={accentColor}
+                    fontFamily={fontFamily}
+                    sectionPages={sectionPages}
+                    customSectionNames={customSectionNames}
+                    customSections={customSections}
+                  />
+                )}
+                {template === "student" && (
+                  <CoverLetterPreviewStudent
+                    data={coverLetterData}
+                    sectionOrder={sectionOrder}
+                    accentColor={accentColor}
+                    fontFamily={fontFamily}
+                    sectionPages={sectionPages}
+                    customSectionNames={customSectionNames}
+                    customSections={customSections}
+                  />
+                )}
+                {template === "hr" && (
+                  <CoverLetterPreviewHR
+                    data={coverLetterData}
+                    sectionOrder={sectionOrder}
+                    accentColor={accentColor}
+                    fontFamily={fontFamily}
+                    sectionPages={sectionPages}
+                    customSectionNames={customSectionNames}
+                    customSections={customSections}
+                  />
+                )}
+                {template === "teal" && (
+                  <CoverLetterPreviewTeal
+                    data={coverLetterData}
+                    sectionOrder={sectionOrder}
+                    accentColor={accentColor}
+                    fontFamily={fontFamily}
+                    sectionPages={sectionPages}
+                    customSectionNames={customSectionNames}
+                    customSections={customSections}
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Template selection */}
+            <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 p-3 shadow-md">
+              {showTemplateCarousel ? (
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-medium text-gray-800">
+                      Select Template
+                    </h3>
+                    <button
+                      onClick={() => setShowTemplateCarousel(false)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <button
+                      onClick={prevTemplate}
+                      className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
+                        isTemplateLoading
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-gray-100"
+                      }`}
+                      disabled={isTemplateLoading}
+                      aria-label="Previous template"
+                    >
+                      {isTemplateLoading ? (
+                        <RefreshCw className="w-5 h-5 text-gray-400 animate-spin" />
+                      ) : (
+                        <ChevronLeft className="w-5 h-5 text-gray-700" />
+                      )}
+                    </button>
+
+                    <div className="flex overflow-x-auto py-2 px-8 gap-4 snap-x">
+                      {templateOptions.map((option, index) => (
+                        <div
+                          key={option.value}
+                          className={`flex-none w-32 cursor-pointer transition-all duration-200 ${
+                            index === activeTemplateIndex
+                              ? "ring-2 ring-blue-500 scale-105"
+                              : "hover:scale-105"
+                          } ${
+                            isTemplateLoading
+                              ? "opacity-50 pointer-events-none"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            !isTemplateLoading && selectTemplate(index)
+                          }
+                        >
+                          <div className="bg-white rounded-md shadow-sm overflow-hidden">
+                            <div className="relative aspect-[0.7] bg-gray-100 flex items-center justify-center">
+                              {option.image ? (
+                                <img
+                                  src={option.image}
+                                  alt={option.name}
+                                  className="object-cover w-full h-full"
+                                />
+                              ) : (
+                                <div
+                                  className="w-full h-full flex items-center justify-center"
+                                  style={{
+                                    backgroundColor: option.defaultColor,
+                                  }}
+                                >
+                                  <span className="text-white font-medium">
+                                    {option.name}
+                                  </span>
+                                </div>
+                              )}
+                              <div
+                                className="absolute bottom-0 left-0 right-0 h-1"
+                                style={{ backgroundColor: option.defaultColor }}
+                              ></div>
+                            </div>
+                            <div className="p-2 text-center text-xs font-medium truncate">
+                              {option.name}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={nextTemplate}
+                      className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
+                        isTemplateLoading
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-gray-100"
+                      }`}
+                      disabled={isTemplateLoading}
+                      aria-label="Next template"
+                    >
+                      {isTemplateLoading ? (
+                        <RefreshCw className="w-5 h-5 text-gray-400 animate-spin" />
+                      ) : (
+                        <ChevronRight className="w-5 h-5 text-gray-700" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-wrap md:gap-4 gap-2 justify-center items-center">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        !isTemplateLoading && setShowTemplateCarousel(true)
+                      }
+                      className={`flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm ${
+                        isTemplateLoading
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      }`}
+                      disabled={isTemplateLoading}
+                    >
+                      {isTemplateLoading ? (
+                        <>
+                          <div className="animate-spin h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full"></div>
+                          <span>Changing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Layout className="w-5 h-5 text-gray-700" />
+                          <span>Templates</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Type className="w-5 h-5 text-gray-700" />
+                    <select
+                      value={fontFamily}
+                      onChange={(e) => setFontFamily(e.target.value)}
+                      className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      style={{ fontFamily: fontFamily }}
+                    >
+                      {fontFamilies.map((font) => (
+                        <option
+                          key={font.name}
+                          value={font.value}
+                          style={{ fontFamily: font.value }}
+                        >
+                          {font.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Palette className="w-5 h-5 text-gray-700" />
+                    <div className="relative flex items-center gap-2">
+                      <div className="flex items-center border border-gray-300 rounded-md px-2 py-1.5">
+                        <div
+                          className="w-4 h-4 rounded-full mr-2"
+                          style={{ backgroundColor: accentColor }}
+                        />
+                        <input
+                          type="color"
+                          value={accentColor}
+                          onChange={(e) => setAccentColor(e.target.value)}
+                          className="w-20 h-8 cursor-pointer bg-transparent border-0"
+                        />
+                      </div>
+                      <button
+                        onClick={() => {
+                          const defaultColor = templateOptions.find(
+                            (t) => t.value === template
+                          )?.defaultColor;
+                          if (defaultColor) {
+                            setAccentColor(defaultColor);
+                          }
+                        }}
+                        className="p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
+                        title="Reset to default color"
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Preview Toggle Button for Mobile */}
+        <button
+          onClick={() => setIsDrawerOpen(true)}
+          className="lg:hidden fixed right-4 bottom-4 z-30 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-          />
-        </svg>
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            />
+          </svg>
+        </button>
 
-      {/* Payment Modal */}
-      <PaymentModal
-        isOpen={isPaymentModalOpen}
-        onClose={closePaymentModal}
-        onSuccess={handlePaymentSuccess}
-        type="cover-letter"
-      />
+        {/* Payment Modal */}
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={closePaymentModal}
+          onSuccess={handlePaymentSuccess}
+          type="cover-letter"
+        />
+      </div>
     </div>
   );
 }

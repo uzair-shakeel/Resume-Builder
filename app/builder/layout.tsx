@@ -16,9 +16,9 @@ export default async function BuilderLayout({
   return (
     <div className="min-h-screen">
       {/* Language Switcher - Positioned absolutely */}
-      <div className="fixed top-4 right-4 z-50">
+      {/* <div className="fixed top-4 right-4 z-50">
         <LanguageSwitcher compact />
-      </div>
+      </div> */}
 
       {/* Main Content */}
       {children}

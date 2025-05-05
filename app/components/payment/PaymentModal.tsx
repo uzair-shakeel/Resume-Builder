@@ -19,6 +19,7 @@ interface PlanOption {
   billingPeriod: string;
   interval: "monthly" | "quarterly" | "yearly";
   totalPrice?: string;
+  durationDays: number;
 }
 
 const SUBSCRIPTION_PLANS: PlanOption[] = [
@@ -31,6 +32,7 @@ const SUBSCRIPTION_PLANS: PlanOption[] = [
     regularPriceRaw: 1499, // 14.99 USD in cents
     billingPeriod: "mois",
     interval: "monthly",
+    durationDays: 14,
   },
   {
     id: "quarterly",
@@ -42,6 +44,7 @@ const SUBSCRIPTION_PLANS: PlanOption[] = [
     billingPeriod: "mois",
     interval: "quarterly",
     totalPrice: "29,97 US$ facturation trimestrielle",
+    durationDays: 42,
   },
   {
     id: "yearly",
@@ -53,6 +56,7 @@ const SUBSCRIPTION_PLANS: PlanOption[] = [
     billingPeriod: "mois",
     interval: "yearly",
     totalPrice: "89,88 US$ facturation annuelle",
+    durationDays: 365,
   },
 ];
 
@@ -129,7 +133,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         "Starting payment process with email:",
         email,
         "plan:",
-        selectedPlan.id
+        selectedPlan.id,
+        "amount:",
+        selectedPlan.trialPriceRaw
       );
 
       // Use the server-side initialization approach
@@ -140,6 +146,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         metadata: {
           plan: selectedPlan.id,
           type: type,
+          amount: selectedPlan.trialPriceRaw,
+          duration: selectedPlan.durationDays,
         },
       });
 

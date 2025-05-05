@@ -37,8 +37,11 @@ export default function PaymentVerificationPage() {
           // Register the subscription
           const email = result.data?.email || "";
           const plan =
-            searchParams?.get("plan") || result.data?.plan || "mensuel";
+            searchParams?.get("plan") || result.data?.plan || "trial";
           const type = searchParams?.get("type") || result.data?.type || "cv";
+          const amount =
+            result.data?.amount ||
+            parseInt(searchParams?.get("amount") || "99", 10);
 
           try {
             console.log("Registering subscription with:", {
@@ -46,6 +49,7 @@ export default function PaymentVerificationPage() {
               email,
               plan,
               type,
+              amount,
             });
 
             const registerResponse = await fetch("/api/subscription/register", {
@@ -58,11 +62,17 @@ export default function PaymentVerificationPage() {
                 email,
                 plan,
                 type,
+                amount,
               }),
             });
 
             if (registerResponse.ok) {
-              setMessage("Abonnement activé avec succès! Redirection...");
+              const registerData = await registerResponse.json();
+
+              setMessage(
+                `Abonnement "${plan}" activé avec succès! Redirection...`
+              );
+
               // Redirect back to the builder page after 2 seconds
               setTimeout(() => {
                 if (type === "cv") {
@@ -74,12 +84,12 @@ export default function PaymentVerificationPage() {
                 }
               }, 2000);
             } else {
-              console.error(
-                "Failed to register subscription:",
-                await registerResponse.json()
-              );
+              const errorData = await registerResponse.json();
+              console.error("Failed to register subscription:", errorData);
               setMessage(
-                "Paiement réussi, mais erreur lors de l'activation de l'abonnement. Veuillez contacter le support."
+                `Paiement réussi, mais erreur lors de l'activation de l'abonnement: ${
+                  errorData.message || "Erreur inconnue"
+                }. Veuillez contacter le support.`
               );
             }
           } catch (error) {

@@ -1,7 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import connectToDatabase from "@/lib/mongodb";
+import User from "@/models/User";
+import Subscription from "@/models/Subscription";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import mongoose from "mongoose";
 
-// In production, this would interact with a database
+// Subscription plan durations in days
+const PLAN_DURATIONS = {
+  trial: 14, // 14 days trial
+  monthly: 30, // 30 days
+  quarterly: 90, // 90 days
+  yearly: 365, // 365 days
+};
+
+// Plan prices in XOF (or your currency)
+const PLAN_PRICES = {
+  trial: 99, // Trial price in cents (0.99)
+  monthly: 1499, // 14.99
+  quarterly: 2997, // 29.97 (9.99 x 3)
+  yearly: 8988, // 89.88 (7.49 x 12)
+};
+
 export async function POST(request: NextRequest) {
   try {
     console.log("Subscription registration request received");
@@ -9,7 +30,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log("Request body:", JSON.stringify(body, null, 2));
 
-    const { reference, email, plan, type } = body;
+    const { reference, email, plan, type, amount } = body;
 
     if (!reference || !email || !plan || !type) {
       console.error("Missing required fields:", {
@@ -37,44 +58,86 @@ export async function POST(request: NextRequest) {
       `Registering subscription for ${email}, plan: ${plan}, type: ${type}`
     );
 
-    // In a real application, you would:
-    // 1. Store subscription details in a database
-    // 2. Set up a webhook to handle subscription renewal
-    // 3. Potentially integrate with a CRM system
+    // Connect to the database
+    await connectToDatabase();
 
-    // For now, we'll just set a cookie to indicate an active subscription
+    // Get the current user from the session
+    const session = await getServerSession(authOptions);
+
+    // Find user by email
+    let user = await User.findOne({ email });
+
+    if (!user && session?.user?.email) {
+      // Try to find user by session email if available
+      user = await User.findOne({ email: session.user.email });
+    }
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "User not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    // Calculate subscription end date based on the plan
+    const startDate = new Date();
+    const endDate = new Date();
+    endDate.setDate(
+      startDate.getDate() + PLAN_DURATIONS[plan] || PLAN_DURATIONS.trial
+    );
+
+    // Determine the actual amount paid
+    const actualAmount = amount || PLAN_PRICES[plan] || PLAN_PRICES.trial;
+
+    // Create a new subscription in the database
+    const subscription = await Subscription.create({
+      userId: user._id,
+      email,
+      plan,
+      type,
+      startDate,
+      endDate,
+      amount: actualAmount,
+      currency: "XOF", // Change as needed
+      status: "active",
+      paymentReference: reference,
+    });
+
+    console.log("Subscription created in database:", subscription._id);
+
+    // We'll keep the cookies as a fallback/convenience,
+    // but the database will be the source of truth
     const cookieStore = cookies();
-
-    // Set a subscription cookie that expires in 14 days
-    const expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() + 14);
 
     try {
       cookieStore.set({
         name: "hasActiveSubscription",
         value: "true",
-        expires: expirationDate,
+        expires: endDate,
         path: "/",
       });
 
       cookieStore.set({
         name: "subscriptionPlan",
         value: plan,
-        expires: expirationDate,
+        expires: endDate,
         path: "/",
       });
 
       cookieStore.set({
         name: "subscriptionEmail",
         value: email,
-        expires: expirationDate,
+        expires: endDate,
         path: "/",
       });
 
       console.log("Cookies set successfully for subscription");
     } catch (cookieError) {
       console.error("Error setting cookies:", cookieError);
-      // Continue even if cookies fail - we'll still return success
+      // Continue even if cookies fail - database is the source of truth
     }
 
     console.log("Subscription registered successfully");
@@ -82,10 +145,13 @@ export async function POST(request: NextRequest) {
       success: true,
       message: "Subscription registered successfully",
       data: {
+        subscriptionId: subscription._id,
         reference,
         email,
         plan,
-        expiresAt: expirationDate.toISOString(),
+        type,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
       },
     });
   } catch (error) {
