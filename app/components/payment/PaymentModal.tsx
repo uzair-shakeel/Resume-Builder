@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { X, CreditCard, Wallet, BarChart4 } from "lucide-react";
+import React, { useState } from "react";
+import { X } from "lucide-react";
 import { initializePayment } from "../../utils/paystack";
 
 interface PaymentModalProps {
@@ -62,18 +62,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   onSuccess,
   type,
 }) => {
-  const [paymentMethod, setPaymentMethod] = useState<
-    "card" | "paypal" | "gpay"
-  >("card");
-  const [cardNumber, setCardNumber] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [cvv, setCvv] = useState("");
-  const [email, setEmail] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<PlanOption>(
     SUBSCRIPTION_PLANS[0]
   );
-  const [paystackInitialized, setPaystackInitialized] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -84,40 +77,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     }
   };
 
-  const validateForm = () => {
-    if (!email || !email.includes("@")) {
-      alert("Veuillez saisir une adresse e-mail valide");
-      return false;
-    }
-
-    if (paymentMethod === "card") {
-      if (!cardNumber || cardNumber.length < 16) {
-        alert("Veuillez saisir un numéro de carte valide");
-        return false;
-      }
-
-      if (!expiryDate || !expiryDate.match(/^\d{2}\/\d{2}$/)) {
-        alert("Veuillez saisir une date d'expiration valide (MM/AA)");
-        return false;
-      }
-
-      if (!cvv || cvv.length < 3) {
-        alert("Veuillez saisir un code de sécurité valide");
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const handlePayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
+  const handlePayment = async () => {
     setIsProcessing(true);
+    setError(null);
 
     try {
       // Generate a unique transaction reference
@@ -125,12 +87,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         Math.random() * 1000000
       )}`;
 
-      console.log(
-        "Starting payment process with email:",
-        email,
-        "plan:",
-        selectedPlan.id
-      );
+      console.log("Starting payment process for plan:", selectedPlan.id);
+
+      // Use a default email (you can change this if needed)
+      const email = "user@example.com";
 
       // Use the server-side initialization approach
       const authorizationUrl = await initializePayment({
@@ -154,10 +114,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     } catch (error: any) {
       console.error("Payment error:", error);
       setIsProcessing(false);
-      alert(
-        `Une erreur s'est produite: ${
-          error.message || "Erreur inconnue"
-        }. Veuillez réessayer plus tard.`
+      setError(
+        error.message ||
+          "Une erreur s'est produite. Veuillez réessayer plus tard."
       );
     }
   };
@@ -166,16 +125,22 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white w-full max-w-md mx-auto rounded-lg overflow-hidden shadow-xl">
         <div className="flex justify-between items-center bg-black p-4">
-          <h2 className="text-white font-medium">Compte</h2>
+          <h2 className="text-white font-medium">Abonnement Premium</h2>
           <button onClick={onClose} className="text-white hover:text-gray-300">
             <X size={24} />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto h-[85vh]">
+        <div className="p-6">
           <h3 className="text-xl font-medium text-gray-900 mb-6">
-            Activez votre abonnement
+            Choisissez votre formule d'abonnement
           </h3>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
 
           <div className="mb-6 border rounded-lg p-4">
             <div className="flex justify-between items-center mb-2">
@@ -209,140 +174,15 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm text-gray-700 mb-1">
-              Adresse e-mail
-            </label>
-            <input
-              type="email"
-              className="w-full p-2 border rounded-md"
-              placeholder="votremail@exemple.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-3 gap-2 mb-6">
-            <button
-              className={`border rounded-md p-3 flex flex-col items-center justify-center ${
-                paymentMethod === "card" ? "border-blue-500 bg-blue-50" : ""
-              }`}
-              onClick={() => setPaymentMethod("card")}
-            >
-              <div className="bg-blue-600 text-white p-2 rounded mb-1">
-                <CreditCard size={20} />
-              </div>
-              <span className="text-xs text-center">Carte de crédit</span>
-            </button>
-
-            <button
-              className={`border rounded-md p-3 flex flex-col items-center justify-center ${
-                paymentMethod === "paypal" ? "border-blue-500 bg-blue-50" : ""
-              }`}
-              onClick={() => setPaymentMethod("paypal")}
-            >
-              <div className="bg-blue-500 text-white p-2 rounded mb-1">
-                <Wallet size={20} />
-              </div>
-              <span className="text-xs text-center">PayPal</span>
-            </button>
-
-            <button
-              className={`border rounded-md p-3 flex flex-col items-center justify-center ${
-                paymentMethod === "gpay" ? "border-blue-500 bg-blue-50" : ""
-              }`}
-              onClick={() => setPaymentMethod("gpay")}
-            >
-              <div className="bg-green-600 text-white p-2 rounded mb-1">
-                <BarChart4 size={20} />
-              </div>
-              <span className="text-xs text-center">Google Pay</span>
-            </button>
-          </div>
-
-          {paymentMethod === "card" && (
-            <form onSubmit={handlePayment}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1">
-                    Numéro de la carte
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full p-2 border rounded-md"
-                    placeholder="1234 5678 9012 3456"
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm text-gray-700 mb-1">
-                      Date d'expiration
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-md"
-                      placeholder="MM/AA"
-                      value={expiryDate}
-                      onChange={(e) => setExpiryDate(e.target.value)}
-                      required
-                    />
-                    <div className="text-xs text-gray-500 mt-1">
-                      Recto de la carte au format MM/AA
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm text-gray-700 mb-1">
-                      Code de sécurité
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-md"
-                      placeholder="123"
-                      maxLength={3}
-                      value={cvv}
-                      onChange={(e) => setCvv(e.target.value)}
-                      required
-                    />
-                    <div className="text-xs text-gray-500 mt-1">
-                      3 chiffres sur le verso de la carte
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors mt-4"
-                  disabled={isProcessing}
-                >
-                  {isProcessing
-                    ? "Traitement en cours..."
-                    : `Payer ${selectedPlan.trialPrice}`}
-                </button>
-              </div>
-            </form>
-          )}
-
-          {(paymentMethod === "paypal" || paymentMethod === "gpay") && (
-            <div className="mt-4">
-              <button
-                onClick={handlePayment}
-                className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors"
-                disabled={isProcessing}
-              >
-                {isProcessing
-                  ? "Traitement en cours..."
-                  : `Payer avec ${
-                      paymentMethod === "paypal" ? "PayPal" : "Google Pay"
-                    }`}
-              </button>
-            </div>
-          )}
+          <button
+            onClick={handlePayment}
+            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors"
+            disabled={isProcessing}
+          >
+            {isProcessing
+              ? "Traitement en cours..."
+              : `Payer ${selectedPlan.trialPrice}`}
+          </button>
 
           <div className="mt-4 text-sm text-gray-600">
             <p>
