@@ -13,16 +13,16 @@ export default function MakeCVOnline() {
         {/* Left side content */}
         <div className="w-full flex flex-col items-center lg:items-start justify-center text-center lg:text-start lg:max-w-md">
           <h1 className="font-medium text-xl md:text-5xl leading-tight md:leading-tight text-gray-900 mb-3">
-            {t("home.makecv.title")}
+            {t("site.home.makecv.title")}
           </h1>
           <p className="text-lg text-gray-500 mb-10">
-            {t("home.makecv.subtitle")}
+            {t("site.home.makecv.subtitle")}
           </p>
           <Link
             href="/builder"
             className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 can-hover:active:bg-brand-300 text-white border-transparent can-hover:hover:bg-brand-400 font-medium py-3 ps-7 pe-7 text-lg"
           >
-            {t("home.makecv.cta")}
+            {t("site.home.makecv.cta")}
           </Link>
         </div>
 

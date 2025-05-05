@@ -122,15 +122,15 @@ export default function SignUpPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="absolute top-4 right-4">
+      {/* <div className="absolute top-4 right-4">
         <LanguageSwitcher />
-      </div>
+      </div> */}
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">
-            {t("auth.register.title")}
+            {t("site.auth.register.title")}
           </CardTitle>
-          <CardDescription>{t("auth.register.subtitle")}</CardDescription>
+          <CardDescription>{t("site.auth.register.subtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
           {error && (
@@ -151,11 +151,11 @@ export default function SignUpPage() {
           )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">{t("auth.register.name_label")}</Label>
+              <Label htmlFor="name">{t("site.auth.register.name_label")}</Label>
               <Input
                 id="name"
                 type="text"
-                placeholder={t("auth.register.name_placeholder")}
+                placeholder={t("site.auth.register.name_placeholder")}
                 {...register("name")}
                 disabled={isLoading || success}
               />
@@ -164,11 +164,13 @@ export default function SignUpPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">{t("auth.register.email_label")}</Label>
+              <Label htmlFor="email">
+                {t("site.auth.register.email_label")}
+              </Label>
               <Input
                 id="email"
                 type="email"
-                placeholder={t("auth.register.email_placeholder")}
+                placeholder={t("site.auth.register.email_placeholder")}
                 {...register("email")}
                 disabled={isLoading || success}
               />
@@ -178,12 +180,12 @@ export default function SignUpPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">
-                {t("auth.register.password_label")}
+                {t("site.auth.register.password_label")}
               </Label>
               <Input
                 id="password"
                 type="password"
-                placeholder={t("auth.register.password_placeholder")}
+                placeholder={t("site.auth.register.password_placeholder")}
                 {...register("password")}
                 disabled={isLoading || success}
               />
@@ -195,12 +197,14 @@ export default function SignUpPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">
-                {t("auth.register.confirm_password_label")}
+                {t("site.auth.register.confirm_password_label")}
               </Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder={t("auth.register.confirm_password_placeholder")}
+                placeholder={t(
+                  "site.auth.register.confirm_password_placeholder"
+                )}
                 {...register("confirmPassword")}
                 disabled={isLoading || success}
               />
@@ -219,15 +223,15 @@ export default function SignUpPage() {
                 ? language === "en"
                   ? "Signing up..."
                   : "Inscription en cours..."
-                : t("auth.register.button")}
+                : t("site.auth.register.button")}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
-            {t("auth.register.already_account")}{" "}
+            {t("site.auth.register.already_account")}{" "}
             <Link href="/auth/signin" className="text-primary hover:underline">
-              {t("auth.register.log_in")}
+              {t("site.auth.register.log_in")}
             </Link>
           </div>
         </CardFooter>

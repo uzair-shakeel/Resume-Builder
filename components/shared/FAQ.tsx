@@ -29,39 +29,51 @@ export default function FAQ({
   const faqItems = useTrans
     ? [
         {
-          question: t("home.faqs.items.faq1.question"),
+          question: t("site.home.faqs.items.faq1.question"),
           answer: (
-            <p className="pb-[1.25rem]">{t("home.faqs.items.faq1.answer")}</p>
+            <p className="pb-[1.25rem]">
+              {t("site.home.faqs.items.faq1.answer")}
+            </p>
           ),
         },
         {
-          question: t("home.faqs.items.faq2.question"),
+          question: t("site.home.faqs.items.faq2.question"),
           answer: (
-            <p className="pb-[1.25rem]">{t("home.faqs.items.faq2.answer")}</p>
+            <p className="pb-[1.25rem]">
+              {t("site.home.faqs.items.faq2.answer")}
+            </p>
           ),
         },
         {
-          question: t("home.faqs.items.faq3.question"),
+          question: t("site.home.faqs.items.faq3.question"),
           answer: (
-            <p className="pb-[1.25rem]">{t("home.faqs.items.faq3.answer")}</p>
+            <p className="pb-[1.25rem]">
+              {t("site.home.faqs.items.faq3.answer")}
+            </p>
           ),
         },
         {
-          question: t("home.faqs.items.faq4.question"),
+          question: t("site.home.faqs.items.faq4.question"),
           answer: (
-            <p className="pb-[1.25rem]">{t("home.faqs.items.faq4.answer")}</p>
+            <p className="pb-[1.25rem]">
+              {t("site.home.faqs.items.faq4.answer")}
+            </p>
           ),
         },
         {
-          question: t("home.faqs.items.faq5.question"),
+          question: t("site.home.faqs.items.faq5.question"),
           answer: (
-            <p className="pb-[1.25rem]">{t("home.faqs.items.faq5.answer")}</p>
+            <p className="pb-[1.25rem]">
+              {t("site.home.faqs.items.faq5.answer")}
+            </p>
           ),
         },
         {
-          question: t("home.faqs.items.faq6.question"),
+          question: t("site.home.faqs.items.faq6.question"),
           answer: (
-            <p className="pb-[1.25rem]">{t("home.faqs.items.faq6.answer")}</p>
+            <p className="pb-[1.25rem]">
+              {t("site.home.faqs.items.faq6.answer")}
+            </p>
           ),
         },
       ]
@@ -75,7 +87,7 @@ export default function FAQ({
             page ? "pt-20 pb-32 mb-12" : "mb-20"
           }`}
         >
-          {t("home.faqs.title")}
+          {t("site.home.faqs.title")}
         </h2>
         <Accordion type="single" collapsible className="w-full">
           {faqItems.map((faq, index) => (
@@ -96,7 +108,7 @@ export default function FAQ({
 
         <div className="prose mt-5">
           <p className="text-gray-600">
-            {t("home.faqs.moreQuestions")}{" "}
+            {t("site.home.faqs.moreQuestions")}{" "}
             <Link
               href="/faq"
               className="inline-flex items-center text-[#173dff] font-[500]"

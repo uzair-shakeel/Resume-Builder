@@ -92,15 +92,15 @@ export default function SignInPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="absolute top-4 right-4">
+      {/* <div className="absolute top-4 right-4">
         <LanguageSwitcher />
-      </div>
+      </div> */}
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">
-            {t("auth.login.title")}
+            {t("site.auth.login.title")}
           </CardTitle>
-          <CardDescription>{t("auth.login.subtitle")}</CardDescription>
+          <CardDescription>{t("site.auth.login.subtitle")}</CardDescription>
         </CardHeader>
         <CardContent>
           {error && (
@@ -111,11 +111,11 @@ export default function SignInPage() {
           )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">{t("auth.login.email_label")}</Label>
+              <Label htmlFor="email">{t("site.auth.login.email_label")}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder={t("auth.login.email_placeholder")}
+                placeholder={t("site.auth.login.email_placeholder")}
                 {...register("email")}
                 disabled={isLoading}
               />
@@ -126,19 +126,19 @@ export default function SignInPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">
-                  {t("auth.login.password_label")}
+                  {t("site.auth.login.password_label")}
                 </Label>
                 <Link
                   href="/auth/forgot-password"
                   className="text-sm text-primary hover:underline"
                 >
-                  {t("auth.login.forgot_password")}
+                  {t("site.auth.login.forgot_password")}
                 </Link>
               </div>
               <Input
                 id="password"
                 type="password"
-                placeholder={t("auth.login.password_placeholder")}
+                placeholder={t("site.auth.login.password_placeholder")}
                 {...register("password")}
                 disabled={isLoading}
               />
@@ -153,15 +153,15 @@ export default function SignInPage() {
                 ? language === "en"
                   ? "Logging in..."
                   : "Connexion en cours..."
-                : t("auth.login.button")}
+                : t("site.auth.login.button")}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
-            {t("auth.login.no_account")}{" "}
+            {t("site.auth.login.no_account")}{" "}
             <Link href="/auth/signup" className="text-primary hover:underline">
-              {t("auth.login.sign_up")}
+              {t("site.auth.login.sign_up")}
             </Link>
           </div>
         </CardFooter>

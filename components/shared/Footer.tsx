@@ -71,38 +71,38 @@ export default function Footer() {
   // Define footerLinks using translations
   const footerLinks = {
     ressources: {
-      title: t("home.footer.resources"),
+      title: t("site.home.footer.resources"),
       links: [
-        { label: t("home.footer.advice"), href: "/conseils" },
-        { label: t("home.footer.examples"), href: "/exemples" },
+        { label: t("site.home.footer.advice"), href: "/conseils" },
+        { label: t("site.home.footer.examples"), href: "/exemples" },
       ],
     },
     produit: {
-      title: t("home.footer.product"),
+      title: t("site.home.footer.product"),
       links: [
-        { label: t("home.footer.pricing"), href: "/pricing" },
-        { label: t("home.footer.models"), href: "/modeles" },
-        { label: t("home.footer.reviews"), href: "/avis" },
+        { label: t("site.home.footer.pricing"), href: "/pricing" },
+        { label: t("site.home.footer.models"), href: "/modeles" },
+        { label: t("site.home.footer.reviews"), href: "/avis" },
       ],
     },
     service: {
-      title: t("home.footer.customerService"),
+      title: t("site.home.footer.customerService"),
       links: [
-        { label: t("home.footer.faq"), href: "/faq" },
-        { label: t("home.footer.contact"), href: "/contact" },
-        { label: t("home.footer.terms"), href: "/conditions" },
-        { label: t("home.footer.privacy"), href: "/confidentialite" },
-        { label: t("home.footer.about"), href: "/about" },
+        { label: t("site.home.footer.faq"), href: "/faq" },
+        { label: t("site.home.footer.contact"), href: "/contact" },
+        { label: t("site.home.footer.terms"), href: "/conditions" },
+        { label: t("site.home.footer.privacy"), href: "/confidentialite" },
+        { label: t("site.home.footer.about"), href: "/about" },
       ],
     },
   };
 
   // Define languages using translations
   const languages = [
-    { label: t("home.footer.languages.french"), code: "fr" },
-    { label: t("home.footer.languages.dutch"), code: "nl" },
-    { label: t("home.footer.languages.finnish"), code: "fi" },
-    { label: t("home.footer.languages.swedish"), code: "sv" },
+    { label: t("site.home.footer.languages.french"), code: "fr" },
+    { label: t("site.home.footer.languages.dutch"), code: "nl" },
+    { label: t("site.home.footer.languages.finnish"), code: "fi" },
+    { label: t("site.home.footer.languages.swedish"), code: "sv" },
   ];
 
   return (
@@ -222,7 +222,7 @@ export default function Footer() {
 
       {/* Copyright */}
       <div className="text-xs md:text-base text-gray-500 mt-5 md:mt-8 text-center mx-5">
-        <span>{t("home.footer.copyright")}</span>
+        <span>{t("site.home.footer.copyright")}</span>
       </div>
     </footer>
   );

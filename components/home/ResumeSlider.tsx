@@ -200,7 +200,7 @@ export default function ResumeSlider() {
                         Chargement...
                       </span>
                     ) : (
-                      t("hero.cta.secondary")
+                      t("site.home.hero.cta.secondary")
                     )}
                   </button>
                 </div>

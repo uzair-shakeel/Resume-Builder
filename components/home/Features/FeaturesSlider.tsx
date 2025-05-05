@@ -41,29 +41,29 @@ export default function FeaturesSlider() {
     {
       lightIcon: "/assets/resume-light.svg",
       darkIcon: "/assets/resume-dark.svg",
-      title: t("home.features.items.feature1.title"),
-      description: t("home.features.items.feature1.description"),
+      title: t("site.home.features.items.feature1.title"),
+      description: t("site.home.features.items.feature1.description"),
       image: "/assets/our-tools-step-1.svg",
     },
     {
       lightIcon: "/assets/letter-light.svg",
       darkIcon: "/assets/letter-dark.svg",
-      title: t("home.features.items.feature2.title"),
-      description: t("home.features.items.feature2.description"),
+      title: t("site.home.features.items.feature2.title"),
+      description: t("site.home.features.items.feature2.description"),
       image: "/assets/our-tools-step-2.svg",
     },
     {
       lightIcon: "/assets/businesscenter-light.svg",
       darkIcon: "/assets/businesscenter-dark.svg",
-      title: t("home.features.items.feature3.title"),
-      description: t("home.features.items.feature3.description"),
+      title: t("site.home.features.items.feature3.title"),
+      description: t("site.home.features.items.feature3.description"),
       image: "/assets/our-tools-step-3.svg",
     },
     {
       lightIcon: "/assets/applications-light.svg",
       darkIcon: "/assets/applications-dark.svg",
-      title: t("home.features.items.feature4.title"),
-      description: t("home.features.items.feature4.description"),
+      title: t("site.home.features.items.feature4.title"),
+      description: t("site.home.features.items.feature4.description"),
       image: "/assets/our-tools-step-4.svg",
     },
   ];
@@ -71,7 +71,7 @@ export default function FeaturesSlider() {
   return (
     <section className="max-w-[1150px] w-full mx-auto pt-20 px-5 flex flex-col items-center">
       <h1 className="text-gray-900 font-medium text-3xl md:text-5xl mb-12">
-        {t("home.features.title")}
+        {t("site.home.features.title")}
       </h1>
 
       <div className="flex w-full flex-col lg:flex-row items-center lg:items-start">
