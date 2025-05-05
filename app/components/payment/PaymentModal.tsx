@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { initializePayment } from "../../utils/paystack";
+import Email from "next-auth/providers/email";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -84,7 +85,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const handlePayment = async () => {
     setIsProcessing(true);
     setError(null);
-
+    const email = "user@example.com";
     try {
       // Generate a unique transaction reference
       const reference = `trx_${Date.now()}_${Math.floor(
