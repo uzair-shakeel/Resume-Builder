@@ -447,6 +447,7 @@ export default function Builder() {
 
   // Add state for download progress
   const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadStatus, setDownloadStatus] = useState("");
 
   // Add state for section page assignment
   const [sectionPages, setSectionPages] = useState<Record<string, number>>({});
@@ -973,17 +974,53 @@ export default function Builder() {
     if (!previewRef.current) return;
 
     try {
-      // First ensure we have the latest subscription status from the database
-      await checkSubscriptionStatus();
+      setIsDownloading(true);
 
-      // After fresh check, verify if user has active subscription
-      if (!hasActiveSubscription) {
-        // Show payment modal if user doesn't have an active subscription
+      // Show initial status message
+      setDownloadStatus("Verifying subscription status...");
+
+      // Direct server-side verification instead of relying on client state
+      // This is more secure and reliable
+      const verifyResponse = await fetch("/api/subscription/verify-download", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+        body: JSON.stringify({
+          downloadType: "cv",
+          timestamp: Date.now(), // Add timestamp to prevent caching
+        }),
+        cache: "no-store",
+      });
+
+      if (!verifyResponse.ok) {
+        console.error(
+          "Failed to verify download eligibility:",
+          await verifyResponse.text()
+        );
+        setIsDownloading(false);
         openPaymentModal("cv");
         return;
       }
 
-      setIsDownloading(true);
+      const verifyData = await verifyResponse.json();
+
+      // Check if verification was successful
+      if (!verifyData.success || !verifyData.hasActiveSubscription) {
+        console.warn(
+          "Download verification failed:",
+          verifyData.message || "No active subscription found"
+        );
+        setIsDownloading(false);
+        openPaymentModal("cv");
+        return;
+      }
+
+      // If we get here, the user is verified and can download
+      setDownloadStatus("Preparing document...");
+
       const element = previewRef.current;
 
       // Get all pages
@@ -1000,6 +1037,8 @@ export default function Builder() {
         // Process each page
         for (let i = 0; i < pages.length; i++) {
           const page = pages[i] as HTMLElement;
+
+          setDownloadStatus(`Capturing page ${i + 1} of ${pages.length}...`);
 
           // For pages after the first, add a new page to the PDF
           if (i > 0) {
@@ -1057,16 +1096,24 @@ export default function Builder() {
           // Remove the clone after capture
           document.body.removeChild(clone);
 
+          setDownloadStatus(`Processing page ${i + 1}...`);
+
           // Add to PDF with maximum quality settings
           const imgData = canvas.toDataURL("image/png", 1.0); // Using PNG for lossless quality
           pdf.addImage(imgData, "PNG", 0, 0, 210, 297, undefined, "SLOW"); // Using SLOW for better quality
         }
 
+        setDownloadStatus("Finalizing your download...");
+
         // Save the PDF
         pdf.save(`resume.pdf`);
+
+        // Update client-side subscription info after successful download
+        await checkSubscriptionStatus(true);
       }
     } catch (error) {
       console.error("Error generating CV:", error);
+      alert("Failed to generate PDF. Please try again.");
     } finally {
       setIsDownloading(false);
     }
@@ -1941,689 +1988,278 @@ export default function Builder() {
     };
   }, []);
 
+  // Then add a DownloadingOverlay component before the return statement
+  const DownloadingOverlay = () => (
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-80 z-50 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md">
+        <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mb-6" />
+        <p className="text-xl font-medium text-gray-800">
+          {t("site.builder.pdf_generation.generating_pdf")}
+        </p>
+        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+          <div className="bg-blue-600 h-2.5 rounded-full animate-pulse w-full"></div>
+        </div>
+        <p className="text-sm text-gray-600 mb-4 text-center">
+          {downloadStatus || t("site.builder.pdf_generation.may_take_moments")}
+        </p>
+        <p className="text-xs text-gray-500 text-center">
+          Please don't refresh the page or close the window during this process.
+        </p>
+      </div>
+    </div>
+  );
+
   return (
-    <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
-      {/* Loading Overlay */}
-      {isDownloading && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
-            <RefreshCw className="w-10 h-10 text-blue-600 animate-spin mb-4" />
-            <p className="text-lg font-medium text-gray-800">
-              {t("site.builder.pdf_generation.generating_pdf")}
-            </p>
-            <p className="text-sm text-gray-600 mt-2">
-              {t("site.builder.pdf_generation.may_take_moments")}
-            </p>
-          </div>
-        </div>
-      )}
-
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left Panel - Form */}
-        <div className="w-full lg:w-1/2 flex flex-col border-r border-gray-200 bg-white">
-          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-            <div className="flex items-center lg:gap-4 gap-2">
-              <button
-                onClick={handleBackToDashboard}
-                className="min-w-[30px] min-h-[30px] flex items-center justify-center rounded-[5px] bg-gray-100 hover:bg-gray-200"
-              >
-                <MoveLeft size={18} />
-              </button>
-              <h1 className="text-xl font-bold">
-                {t("site.builder.header.title")}
-              </h1>
-              {/* Save status indicator */}
-              <div className="text-gray-500">
-                {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
-                {saveStatus === "saving" && (
-                  <RefreshCw className="w-5 h-5 animate-spin" />
-                )}
-                {saveStatus === "error" && (
-                  <CloudOff className="w-5 h-5 text-red-500" />
-                )}
-              </div>
-              {/* Link to Cover Letter Builder */}
-              <a
-                href="/builder/cover-letter"
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
-              >
-                <FileText className="w-4 h-4" />
-                {t("site.builder.header.cover_letter")}
-              </a>
+    <div className="min-h-screen overflow-hidden bg-gray-50">
+      {isDownloading && <DownloadingOverlay />}
+      <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
+        {/* Loading Overlay */}
+        {isDownloading && (
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
+              <RefreshCw className="w-10 h-10 text-blue-600 animate-spin mb-4" />
+              <p className="text-lg font-medium text-gray-800">
+                {t("site.builder.pdf_generation.generating_pdf")}
+              </p>
+              <p className="text-sm text-gray-600 mt-2">
+                {t("site.builder.pdf_generation.may_take_moments")}
+              </p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="relative">
+          </div>
+        )}
+
+        <div className="flex flex-1 overflow-hidden">
+          {/* Left Panel - Form */}
+          <div className="w-full lg:w-1/2 flex flex-col border-r border-gray-200 bg-white">
+            <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+              <div className="flex items-center lg:gap-4 gap-2">
                 <button
-                  onClick={() => setShowDownloadOptions(!showDownloadOptions)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                  onClick={handleBackToDashboard}
+                  className="min-w-[30px] min-h-[30px] flex items-center justify-center rounded-[5px] bg-gray-100 hover:bg-gray-200"
                 >
-                  <Download className="w-4 h-4 mr-2" />
-                  {t("site.builder.header.download")}
+                  <MoveLeft size={18} />
                 </button>
-                {showDownloadOptions && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
-                    <div className="py-1">
-                      <button
-                        onClick={() => handleDownload("pdf")}
-                        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                      >
-                        {t("site.builder.header.download_as_pdf")}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="flex-1 overflow-y-auto lg:max-w-full max-w-[700px] mx-auto">
-            <div className="md:p-4 p-2 space-y-4">
-              {sectionOrder.map((section, index) => (
-                <div
-                  key={section}
-                  className="border rounded-md overflow-hidden"
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, index)}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, index)}
-                  data-section={section}
+                <h1 className="text-xl font-bold">
+                  {t("site.builder.header.title")}
+                </h1>
+                {/* Save status indicator */}
+                <div className="text-gray-500">
+                  {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
+                  {saveStatus === "saving" && (
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                  )}
+                  {saveStatus === "error" && (
+                    <CloudOff className="w-5 h-5 text-red-500" />
+                  )}
+                </div>
+                {/* Link to Cover Letter Builder */}
+                <a
+                  href="/builder/cover-letter"
+                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
                 >
-                  <div
-                    className="flex items-center justify-between p-4 bg-white cursor-pointer"
-                    onClick={() => toggleSection(section)}
-                  >
-                    <div className="flex items-center">
-                      <GripVertical className="w-5 h-5 text-gray-400 mr-2 cursor-move" />
-                      <span className="text-gray-400 mr-2">:</span>
-                      {isRenamingSection && sectionToRename === section ? (
-                        <input
-                          type="text"
-                          value={newSectionName}
-                          onChange={(e) => setNewSectionName(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              saveRenamedSection();
-                            } else if (e.key === "Escape") {
-                              setIsRenamingSection(false);
-                              setSectionToRename(null);
-                            }
-                            e.stopPropagation();
-                          }}
-                          onBlur={saveRenamedSection}
-                          autoFocus
-                          onClick={(e) => e.stopPropagation()}
-                          className="text-lg font-medium border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-white min-w-[150px] text-gray-900"
-                        />
-                      ) : (
-                        <h2 className="md:text-lg font-medium">
-                          {getSectionTitle(section)}
-                          {sectionPages[section] === 2 && (
-                            <span className="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
-                              Page 2
-                            </span>
-                          )}
-                        </h2>
-                      )}
-                    </div>
-                    <div className="flex space-x-2">
-                      <div className="relative">
-                        <button
-                          className={`md:p-2 p-1 rounded-md ${
-                            activeSectionMenu === section
-                              ? "bg-gray-200"
-                              : "hover:bg-gray-100"
-                          }`}
-                          onClick={(e) => toggleSectionMenu(section, e)}
-                        >
-                          <MoreVertical className="w-5 h-5 text-gray-500" />
-                        </button>
-
-                        {/* Section Menu Popup */}
-                        {activeSectionMenu === section && (
-                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200 section-menu-container">
-                            <div className="py-1">
-                              <button
-                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                                onClick={() => handleRenameSection(section)}
-                              >
-                                <Pencil className="w-4 h-4 mr-2" />
-                                {t(
-                                  "site.builder.sections.actions.rename_section"
-                                )}
-                              </button>
-                              <button
-                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                                onClick={() => handleDeleteSection(section)}
-                              >
-                                <Trash2 className="w-4 h-4 mr-2" />
-                                {t(
-                                  "site.builder.sections.actions.delete_section"
-                                )}
-                              </button>
-                              <button
-                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                                onClick={() =>
-                                  handleAssignSectionToPage(
-                                    section,
-                                    sectionPages[section] === 2 ? 1 : 2
-                                  )
-                                }
-                              >
-                                <FileText className="w-4 h-4 mr-2" />
-                                {sectionPages[section] === 2
-                                  ? t(
-                                      "site.builder.sections.actions.move_to_page_1"
-                                    )
-                                  : t(
-                                      "site.builder.sections.actions.move_to_page_2"
-                                    )}
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <button className="md:p-2 p-1 rounded-md hover:bg-gray-100">
-                        {expandedSections[section] ? (
-                          <ChevronUp className="w-5 h-5 text-gray-500" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 text-gray-500" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                  {expandedSections[section] &&
-                    renderSectionContent(
-                      section,
-                      cvData,
-                      updateCVData,
-                      template
-                    )}
-                </div>
-              ))}
-
-              {/* Add Section Button */}
-              <div className="mt-4">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                  {t("site.builder.sections.actions.add_section")}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "Certifications",
-                    "Projects",
-                    "Publications",
-                    "Awards",
-                    "References",
-                    "Volunteer Work",
-                    "Custom Section",
-                  ].map((sectionName) => (
-                    // <button
-                    //   key={sectionName}
-                    //   onClick={() => addCustomSection(sectionName)}
-                    //   className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
-                    // >
-                    //   + {sectionName}
-                    // </button>
-                    <button
-                      key={sectionName}
-                      onClick={() => addCustomSection(sectionName)}
-                      className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
-                    >
-                      <span className="mr-1">+</span>{" "}
-                      {t(
-                        `site.builder.custom_sections.options.${sectionName
-                          .toLowerCase()
-                          .replace(/\s+/g, "_")}`
-                      )}
-                    </button>
-                  ))}
-                </div>
+                  <FileText className="w-4 h-4" />
+                  {t("site.builder.header.cover_letter")}
+                </a>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Modified Right Panel with Drawer functionality */}
-        <div className="w-1/2 bg-gray-50 hidden lg:flex flex-col">
-          {/* Zoom and page controls */}
-          <div className="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 p-2 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={zoomOut}
-                className="p-1 rounded-md hover:bg-gray-200"
-                title={t("site.builder.tooltips.zoom_out")}
-              >
-                <ZoomOut className="w-5 h-5 text-gray-700" />
-              </button>
-              <span className="text-sm font-medium">{zoomLevel}%</span>
-              <button
-                onClick={zoomIn}
-                className="p-1 rounded-md hover:bg-gray-200"
-                title={t("site.builder.tooltips.zoom_in")}
-              >
-                <ZoomIn className="w-5 h-5 text-gray-700" />
-              </button>
-              <button
-                onClick={resetZoom}
-                className="p-1 rounded-md hover:bg-gray-200 ml-2"
-                title={t("site.builder.tooltips.fit_to_page")}
-              >
-                <Maximize className="w-5 h-5 text-gray-700" />
-              </button>
-            </div>
-          </div>
-
-          {/* Page break controls panel */}
-          {showPageBreakControls && (
-            <div className="bg-white border-b border-gray-200 p-3 shadow-sm">
-              <h3 className="font-medium text-gray-800 mb-2">
-                {t("site.builder.page_layout.page_layout_settings")}
-              </h3>
-
-              <div className="space-y-4">
-                {/* Margin controls */}
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    {t("site.builder.page_layout.page_margins")}
-                  </h4>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">
-                        {t("site.builder.page_layout.top")}
-                      </label>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            handleMarginChange(
-                              "top",
-                              Math.max(pageMargins.top - 5, 0)
-                            )
-                          }
-                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowDown className="w-3 h-3" />
-                        </button>
-                        <input
-                          type="number"
-                          value={pageMargins.top}
-                          onChange={handleTopMarginChange}
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
-                        />
-                        <button
-                          onClick={() =>
-                            handleMarginChange("top", pageMargins.top + 5)
-                          }
-                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowUp className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">
-                        {t("site.builder.page_layout.right")}
-                      </label>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            handleMarginChange(
-                              "right",
-                              Math.max(pageMargins.right - 5, 0)
-                            )
-                          }
-                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowDown className="w-3 h-3" />
-                        </button>
-                        <input
-                          type="number"
-                          value={pageMargins.right}
-                          onChange={handleRightMarginChange}
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
-                        />
-                        <button
-                          onClick={() =>
-                            handleMarginChange("right", pageMargins.right + 5)
-                          }
-                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowUp className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">
-                        {t("site.builder.page_layout.bottom")}
-                      </label>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            handleMarginChange(
-                              "bottom",
-                              Math.max(pageMargins.bottom - 5, 0)
-                            )
-                          }
-                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowDown className="w-3 h-3" />
-                        </button>
-                        <input
-                          type="number"
-                          value={pageMargins.bottom}
-                          onChange={handleBottomMarginChange}
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
-                        />
-                        <button
-                          onClick={() =>
-                            handleMarginChange("bottom", pageMargins.bottom + 5)
-                          }
-                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowUp className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">
-                        {t("site.builder.page_layout.left")}
-                      </label>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            handleMarginChange(
-                              "left",
-                              Math.max(pageMargins.left - 5, 0)
-                            )
-                          }
-                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowDown className="w-3 h-3" />
-                        </button>
-                        <input
-                          type="number"
-                          value={pageMargins.left}
-                          onChange={handleLeftMarginChange}
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
-                        />
-                        <button
-                          onClick={() =>
-                            handleMarginChange("left", pageMargins.left + 5)
-                          }
-                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowUp className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Page break controls */}
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    {t("site.builder.page_layout.page_break_rules")}
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="keepHeadings"
-                        checked={pageBreakSettings.keepHeadingsWithContent}
-                        onChange={(e) =>
-                          handlePageBreakSettingChange(
-                            "keepHeadingsWithContent",
-                            e.target.checked
-                          )
-                        }
-                        className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                      />
-                      <label
-                        htmlFor="keepHeadings"
-                        className="text-xs text-gray-600"
-                      >
-                        {t("site.builder.page_layout.keep_headings")}
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="avoidOrphans"
-                        checked={pageBreakSettings.avoidOrphanedHeadings}
-                        onChange={(e) =>
-                          handlePageBreakSettingChange(
-                            "avoidOrphanedHeadings",
-                            e.target.checked
-                          )
-                        }
-                        className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                      />
-                      <label
-                        htmlFor="avoidOrphans"
-                        className="text-xs text-gray-600"
-                      >
-                        {t("site.builder.page_layout.avoid_orphans")}
-                      </label>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <label className="text-xs text-gray-600">
-                        {t("site.builder.page_layout.min_lines")}
-                      </label>
-                      <div className="flex items-center">
-                        <button
-                          onClick={() =>
-                            handlePageBreakSettingChange(
-                              "minLinesBeforeBreak",
-                              Math.max(
-                                1,
-                                (pageBreakSettings.minLinesBeforeBreak as number) -
-                                  1
-                              )
-                            )
-                          }
-                          className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowDown className="w-3 h-3" />
-                        </button>
-                        <input
-                          type="number"
-                          value={pageBreakSettings.minLinesBeforeBreak}
-                          onChange={handleMinLinesChange}
-                          className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
-                        />
-                        <button
-                          onClick={() =>
-                            handlePageBreakSettingChange(
-                              "minLinesBeforeBreak",
-                              (pageBreakSettings.minLinesBeforeBreak as number) +
-                                1
-                            )
-                          }
-                          className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
-                        >
-                          <ArrowUp className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Scrollable preview container */}
-          <div className="flex-1 overflow-y-auto flex justify-center">
-            <div
-              ref={previewRef}
-              className="my-8 transform-gpu transition-transform duration-200 w-full relative"
-              style={
-                {
-                  transform: `scale(${
-                    (zoomLevel / 100) *
-                    (window.innerWidth >= 1024 ? screenBasedScale : mobileScale)
-                  })`,
-                  transformOrigin: "top left",
-                  fontFamily: fontFamily,
-                  "--accent-color": accentColor,
-                } as React.CSSProperties
-              }
-            >
-              {/* Add a key to force re-render when template changes */}
-              <div key={`template-${template}`}>{renderTemplate()}</div>
-            </div>
-          </div>
-
-          {/* Edit bar */}
-          <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 p-3 shadow-md">
-            {showTemplateCarousel ? (
-              <div className="mb-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-medium text-gray-800">
-                    {t("site.builder.templates.select_template")}
-                  </h3>
-                  <button
-                    onClick={() => setShowTemplateCarousel(false)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    {t("site.builder.templates.close")}
-                  </button>
-                </div>
+              <div className="flex items-center gap-2">
                 <div className="relative">
                   <button
-                    onClick={prevTemplate}
-                    className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow-md z-10 hover:bg-gray-100"
+                    onClick={() => setShowDownloadOptions(!showDownloadOptions)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
                   >
-                    <ChevronLeft className="w-5 h-5" />
+                    <Download className="w-4 h-4 mr-2" />
+                    {t("site.builder.header.download")}
                   </button>
-                  <div className="flex overflow-x-auto space-x-4 px-8 pb-2 scrollbar-hide">
-                    {templateOptions.map((templateOption, index) => (
-                      <div
-                        key={templateOption.value}
-                        className={`flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity ${
-                          index === activeTemplateIndex
-                            ? "ring-2 ring-blue-500"
-                            : ""
-                        }`}
-                        onClick={() => selectTemplate(index)}
-                      >
-                        <div className="w-32 h-32 mb-1">
-                          <img
-                            src={templateOption.image}
-                            alt={templateOption.name}
-                            className="w-full h-full object-cover border border-gray-200 rounded-md"
-                          />
-                        </div>
-                        <p className="text-xs text-center text-gray-600">
-                          {t(
-                            `site.builder.templates.options.${templateOption.value}`
-                          )}
-                        </p>
+                  {showDownloadOptions && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
+                      <div className="py-1">
+                        <button
+                          onClick={() => handleDownload("pdf")}
+                          className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+                        >
+                          {t("site.builder.header.download_as_pdf")}
+                        </button>
                       </div>
-                    ))}
-                  </div>
-                  <button
-                    onClick={nextTemplate}
-                    className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow-md z-10 hover:bg-gray-100"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-3">
-                {/* Template Selection */}
-                <div>
-                  <button
-                    onClick={() => setShowTemplateCarousel(true)}
-                    className="w-full flex flex-col items-center justify-center space-y-1 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <Layout className="w-5 h-5 text-gray-500" />
-                    <span className="text-xs font-medium text-gray-600">
-                      {t("site.builder.templates.templates")}
-                    </span>
-                  </button>
-                </div>
-
-                {/* Font family selector */}
-                <div className="flex items-center gap-2">
-                  <Type className="w-5 h-5 text-gray-700" />
-                  <select
-                    value={fontFamily}
-                    onChange={(e) => setFontFamily(e.target.value)}
-                    className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    style={{ fontFamily: fontFamily }}
-                  >
-                    {fontFamilies.map((font) => (
-                      <option
-                        key={font.name}
-                        value={font.value}
-                        style={{ fontFamily: font.value }}
-                      >
-                        {font.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Color selector */}
-                <div className="flex items-center gap-2">
-                  <Palette className="w-5 h-5 text-gray-700" />
-                  <div className="relative flex items-center gap-2">
-                    <div className="flex items-center border border-gray-300 rounded-md px-2 py-1.5">
-                      <div
-                        className="w-4 h-4 rounded-full mr-2"
-                        style={{ backgroundColor: accentColor }}
-                      />
-                      <input
-                        type="color"
-                        value={accentColor}
-                        onChange={(e) => setAccentColor(e.target.value)}
-                        className="w-20 h-8 cursor-pointer bg-transparent border-0"
-                      />
                     </div>
-                    <button
-                      onClick={() => {
-                        // Reset to default color for this template
-                        const defaultColor = templateOptions.find(
-                          (t) => t.value === template
-                        )?.defaultColor;
-                        if (defaultColor) {
-                          setAccentColor(defaultColor);
-                        }
-                      }}
-                      className="p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
-                      title={t("templates.reset_to_default_color")}
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto lg:max-w-full max-w-[700px] mx-auto">
+              <div className="md:p-4 p-2 space-y-4">
+                {sectionOrder.map((section, index) => (
+                  <div
+                    key={section}
+                    className="border rounded-md overflow-hidden"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, index)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, index)}
+                    data-section={section}
+                  >
+                    <div
+                      className="flex items-center justify-between p-4 bg-white cursor-pointer"
+                      onClick={() => toggleSection(section)}
                     >
-                      {t("templates.reset")}
-                    </button>
+                      <div className="flex items-center">
+                        <GripVertical className="w-5 h-5 text-gray-400 mr-2 cursor-move" />
+                        <span className="text-gray-400 mr-2">:</span>
+                        {isRenamingSection && sectionToRename === section ? (
+                          <input
+                            type="text"
+                            value={newSectionName}
+                            onChange={(e) => setNewSectionName(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                saveRenamedSection();
+                              } else if (e.key === "Escape") {
+                                setIsRenamingSection(false);
+                                setSectionToRename(null);
+                              }
+                              e.stopPropagation();
+                            }}
+                            onBlur={saveRenamedSection}
+                            autoFocus
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-lg font-medium border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-white min-w-[150px] text-gray-900"
+                          />
+                        ) : (
+                          <h2 className="md:text-lg font-medium">
+                            {getSectionTitle(section)}
+                            {sectionPages[section] === 2 && (
+                              <span className="ml-2 text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                                Page 2
+                              </span>
+                            )}
+                          </h2>
+                        )}
+                      </div>
+                      <div className="flex space-x-2">
+                        <div className="relative">
+                          <button
+                            className={`md:p-2 p-1 rounded-md ${
+                              activeSectionMenu === section
+                                ? "bg-gray-200"
+                                : "hover:bg-gray-100"
+                            }`}
+                            onClick={(e) => toggleSectionMenu(section, e)}
+                          >
+                            <MoreVertical className="w-5 h-5 text-gray-500" />
+                          </button>
+
+                          {/* Section Menu Popup */}
+                          {activeSectionMenu === section && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200 section-menu-container">
+                              <div className="py-1">
+                                <button
+                                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  onClick={() => handleRenameSection(section)}
+                                >
+                                  <Pencil className="w-4 h-4 mr-2" />
+                                  {t(
+                                    "site.builder.sections.actions.rename_section"
+                                  )}
+                                </button>
+                                <button
+                                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  onClick={() => handleDeleteSection(section)}
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  {t(
+                                    "site.builder.sections.actions.delete_section"
+                                  )}
+                                </button>
+                                <button
+                                  className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  onClick={() =>
+                                    handleAssignSectionToPage(
+                                      section,
+                                      sectionPages[section] === 2 ? 1 : 2
+                                    )
+                                  }
+                                >
+                                  <FileText className="w-4 h-4 mr-2" />
+                                  {sectionPages[section] === 2
+                                    ? t(
+                                        "site.builder.sections.actions.move_to_page_1"
+                                      )
+                                    : t(
+                                        "site.builder.sections.actions.move_to_page_2"
+                                      )}
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <button className="md:p-2 p-1 rounded-md hover:bg-gray-100">
+                          {expandedSections[section] ? (
+                            <ChevronUp className="w-5 h-5 text-gray-500" />
+                          ) : (
+                            <ChevronDown className="w-5 h-5 text-gray-500" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                    {expandedSections[section] &&
+                      renderSectionContent(
+                        section,
+                        cvData,
+                        updateCVData,
+                        template
+                      )}
+                  </div>
+                ))}
+
+                {/* Add Section Button */}
+                <div className="mt-4">
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">
+                    {t("site.builder.sections.actions.add_section")}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "Certifications",
+                      "Projects",
+                      "Publications",
+                      "Awards",
+                      "References",
+                      "Volunteer Work",
+                      "Custom Section",
+                    ].map((sectionName) => (
+                      // <button
+                      //   key={sectionName}
+                      //   onClick={() => addCustomSection(sectionName)}
+                      //   className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                      // >
+                      //   + {sectionName}
+                      // </button>
+                      <button
+                        key={sectionName}
+                        onClick={() => addCustomSection(sectionName)}
+                        className="flex items-center px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                      >
+                        <span className="mr-1">+</span>{" "}
+                        {t(
+                          `site.builder.custom_sections.options.${sectionName
+                            .toLowerCase()
+                            .replace(/\s+/g, "_")}`
+                        )}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
 
-        {/* Mobile Preview Drawer */}
-        <div className={`lg:hidden ${isDrawerOpen ? "block" : "hidden"}`}>
-          {/* Overlay */}
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
-            onClick={handleDrawerClose}
-          />
-
-          {/* Drawer */}
-          <div className="fixed inset-y-0 right-0 w-full sm:w-[90%] max-w-[600px] bg-gray-50 z-50 transform transition-transform duration-300 ease-in-out flex flex-col">
-            {/* Drawer Content - Copy the content from the desktop right panel */}
-            {/* Zoom controls */}
+          {/* Modified Right Panel with Drawer functionality */}
+          <div className="w-1/2 bg-gray-50 hidden lg:flex flex-col">
+            {/* Zoom and page controls */}
             <div className="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 p-2 flex justify-between items-center">
-              {/* ...existing zoom controls code... */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={zoomOut}
                   className="p-1 rounded-md hover:bg-gray-200"
-                  title="Zoom Out"
+                  title={t("site.builder.tooltips.zoom_out")}
                 >
                   <ZoomOut className="w-5 h-5 text-gray-700" />
                 </button>
@@ -2631,45 +2267,270 @@ export default function Builder() {
                 <button
                   onClick={zoomIn}
                   className="p-1 rounded-md hover:bg-gray-200"
-                  title="Zoom In"
+                  title={t("site.builder.tooltips.zoom_in")}
                 >
                   <ZoomIn className="w-5 h-5 text-gray-700" />
                 </button>
                 <button
                   onClick={resetZoom}
                   className="p-1 rounded-md hover:bg-gray-200 ml-2"
-                  title="Fit to Page"
+                  title={t("site.builder.tooltips.fit_to_page")}
                 >
                   <Maximize className="w-5 h-5 text-gray-700" />
                 </button>
               </div>
-              <button
-                onClick={handleDrawerClose}
-                className="p-2 rounded-full hover:bg-gray-200"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
             </div>
 
-            {/* Preview content */}
-            <div className="flex-1 overflow-y-auto flex justify-center lg:max-w-full max-w-[700px]">
-              {/* ...existing preview code... */}
+            {/* Page break controls panel */}
+            {showPageBreakControls && (
+              <div className="bg-white border-b border-gray-200 p-3 shadow-sm">
+                <h3 className="font-medium text-gray-800 mb-2">
+                  {t("site.builder.page_layout.page_layout_settings")}
+                </h3>
+
+                <div className="space-y-4">
+                  {/* Margin controls */}
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      {t("site.builder.page_layout.page_margins")}
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-gray-600">
+                          {t("site.builder.page_layout.top")}
+                        </label>
+                        <div className="flex items-center">
+                          <button
+                            onClick={() =>
+                              handleMarginChange(
+                                "top",
+                                Math.max(pageMargins.top - 5, 0)
+                              )
+                            }
+                            className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                          >
+                            <ArrowDown className="w-3 h-3" />
+                          </button>
+                          <input
+                            type="number"
+                            value={pageMargins.top}
+                            onChange={handleTopMarginChange}
+                            className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
+                          />
+                          <button
+                            onClick={() =>
+                              handleMarginChange("top", pageMargins.top + 5)
+                            }
+                            className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                          >
+                            <ArrowUp className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-gray-600">
+                          {t("site.builder.page_layout.right")}
+                        </label>
+                        <div className="flex items-center">
+                          <button
+                            onClick={() =>
+                              handleMarginChange(
+                                "right",
+                                Math.max(pageMargins.right - 5, 0)
+                              )
+                            }
+                            className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                          >
+                            <ArrowDown className="w-3 h-3" />
+                          </button>
+                          <input
+                            type="number"
+                            value={pageMargins.right}
+                            onChange={handleRightMarginChange}
+                            className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
+                          />
+                          <button
+                            onClick={() =>
+                              handleMarginChange("right", pageMargins.right + 5)
+                            }
+                            className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                          >
+                            <ArrowUp className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-gray-600">
+                          {t("site.builder.page_layout.bottom")}
+                        </label>
+                        <div className="flex items-center">
+                          <button
+                            onClick={() =>
+                              handleMarginChange(
+                                "bottom",
+                                Math.max(pageMargins.bottom - 5, 0)
+                              )
+                            }
+                            className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                          >
+                            <ArrowDown className="w-3 h-3" />
+                          </button>
+                          <input
+                            type="number"
+                            value={pageMargins.bottom}
+                            onChange={handleBottomMarginChange}
+                            className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
+                          />
+                          <button
+                            onClick={() =>
+                              handleMarginChange(
+                                "bottom",
+                                pageMargins.bottom + 5
+                              )
+                            }
+                            className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                          >
+                            <ArrowUp className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-gray-600">
+                          {t("site.builder.page_layout.left")}
+                        </label>
+                        <div className="flex items-center">
+                          <button
+                            onClick={() =>
+                              handleMarginChange(
+                                "left",
+                                Math.max(pageMargins.left - 5, 0)
+                              )
+                            }
+                            className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                          >
+                            <ArrowDown className="w-3 h-3" />
+                          </button>
+                          <input
+                            type="number"
+                            value={pageMargins.left}
+                            onChange={handleLeftMarginChange}
+                            className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
+                          />
+                          <button
+                            onClick={() =>
+                              handleMarginChange("left", pageMargins.left + 5)
+                            }
+                            className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                          >
+                            <ArrowUp className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Page break controls */}
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      {t("site.builder.page_layout.page_break_rules")}
+                    </h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="keepHeadings"
+                          checked={pageBreakSettings.keepHeadingsWithContent}
+                          onChange={(e) =>
+                            handlePageBreakSettingChange(
+                              "keepHeadingsWithContent",
+                              e.target.checked
+                            )
+                          }
+                          className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                        />
+                        <label
+                          htmlFor="keepHeadings"
+                          className="text-xs text-gray-600"
+                        >
+                          {t("site.builder.page_layout.keep_headings")}
+                        </label>
+                      </div>
+
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="avoidOrphans"
+                          checked={pageBreakSettings.avoidOrphanedHeadings}
+                          onChange={(e) =>
+                            handlePageBreakSettingChange(
+                              "avoidOrphanedHeadings",
+                              e.target.checked
+                            )
+                          }
+                          className="mr-2 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                        />
+                        <label
+                          htmlFor="avoidOrphans"
+                          className="text-xs text-gray-600"
+                        >
+                          {t("site.builder.page_layout.avoid_orphans")}
+                        </label>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs text-gray-600">
+                          {t("site.builder.page_layout.min_lines")}
+                        </label>
+                        <div className="flex items-center">
+                          <button
+                            onClick={() =>
+                              handlePageBreakSettingChange(
+                                "minLinesBeforeBreak",
+                                Math.max(
+                                  1,
+                                  (pageBreakSettings.minLinesBeforeBreak as number) -
+                                    1
+                                )
+                              )
+                            }
+                            className="p-1 rounded-l border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                          >
+                            <ArrowDown className="w-3 h-3" />
+                          </button>
+                          <input
+                            type="number"
+                            value={pageBreakSettings.minLinesBeforeBreak}
+                            onChange={handleMinLinesChange}
+                            className="w-12 text-center border-y border-gray-300 py-1 text-xs text-gray-900"
+                          />
+                          <button
+                            onClick={() =>
+                              handlePageBreakSettingChange(
+                                "minLinesBeforeBreak",
+                                (pageBreakSettings.minLinesBeforeBreak as number) +
+                                  1
+                              )
+                            }
+                            className="p-1 rounded-r border border-gray-300 bg-gray-50 hover:bg-gray-100"
+                          >
+                            <ArrowUp className="w-3 h-3" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Scrollable preview container */}
+            <div className="flex-1 overflow-y-auto flex justify-center">
               <div
                 ref={previewRef}
-                className="my-4 transform-gpu transition-transform duration-200 min-w-full relative"
+                className="my-8 transform-gpu transition-transform duration-200 w-full relative"
                 style={
                   {
                     transform: `scale(${
@@ -2678,7 +2539,7 @@ export default function Builder() {
                         ? screenBasedScale
                         : mobileScale)
                     })`,
-                    transformOrigin: "left top",
+                    transformOrigin: "top left",
                     fontFamily: fontFamily,
                     "--accent-color": accentColor,
                   } as React.CSSProperties
@@ -2691,112 +2552,72 @@ export default function Builder() {
 
             {/* Edit bar */}
             <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 p-3 shadow-md">
-              {/* ...existing edit bar code... */}
               {showTemplateCarousel ? (
                 <div className="mb-4">
                   <div className="flex justify-between items-center mb-2">
                     <h3 className="font-medium text-gray-800">
-                      Select Template
+                      {t("site.builder.templates.select_template")}
                     </h3>
                     <button
                       onClick={() => setShowTemplateCarousel(false)}
                       className="text-gray-500 hover:text-gray-700"
                     >
-                      Close
+                      {t("site.builder.templates.close")}
                     </button>
                   </div>
                   <div className="relative">
                     <button
                       onClick={prevTemplate}
-                      className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
-                        isTemplateLoading
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-gray-100"
-                      }`}
-                      aria-label="Previous template"
-                      disabled={isTemplateLoading}
+                      className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow-md z-10 hover:bg-gray-100"
                     >
-                      <ChevronLeft className="w-5 h-5 text-gray-700" />
+                      <ChevronLeft className="w-5 h-5" />
                     </button>
-
-                    <div className="flex overflow-x-auto py-2 px-8 gap-4 snap-x">
-                      {templateOptions.map((option, index) => (
+                    <div className="flex overflow-x-auto space-x-4 px-8 pb-2 scrollbar-hide">
+                      {templateOptions.map((templateOption, index) => (
                         <div
-                          key={option.value}
-                          className={`flex-none w-32 transition-all duration-200 ${
+                          key={templateOption.value}
+                          className={`flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity ${
                             index === activeTemplateIndex
-                              ? "ring-2 ring-blue-500 scale-105"
-                              : "hover:scale-105"
-                          } ${
-                            isTemplateLoading
-                              ? "opacity-70 cursor-not-allowed"
-                              : "cursor-pointer"
+                              ? "ring-2 ring-blue-500"
+                              : ""
                           }`}
-                          onClick={() =>
-                            !isTemplateLoading && selectTemplate(index)
-                          }
+                          onClick={() => selectTemplate(index)}
                         >
-                          <div className="bg-white rounded-md shadow-sm overflow-hidden">
-                            <div className="relative aspect-[0.7]">
-                              <Image
-                                src={option.image}
-                                alt={option.name}
-                                fill
-                                className="object-cover"
-                              />
-                              <div
-                                className="absolute bottom-0 left-0 right-0 h-1"
-                                style={{ backgroundColor: option.defaultColor }}
-                              ></div>
-                            </div>
-                            <div className="p-2 text-center text-xs font-medium truncate">
-                              {option.name}
-                            </div>
+                          <div className="w-32 h-32 mb-1">
+                            <img
+                              src={templateOption.image}
+                              alt={templateOption.name}
+                              className="w-full h-full object-cover border border-gray-200 rounded-md"
+                            />
                           </div>
+                          <p className="text-xs text-center text-gray-600">
+                            {t(
+                              `site.builder.templates.options.${templateOption.value}`
+                            )}
+                          </p>
                         </div>
                       ))}
                     </div>
-
                     <button
                       onClick={nextTemplate}
-                      className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
-                        isTemplateLoading
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-gray-100"
-                      }`}
-                      aria-label={t("tooltips.next_template")}
-                      disabled={isTemplateLoading}
+                      className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white rounded-full p-1 shadow-md z-10 hover:bg-gray-100"
                     >
-                      <ChevronRight className="w-5 h-5 text-gray-700" />
+                      <ChevronRight className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-wrap md:gap-4 gap-2 justify-center items-center">
-                  {/* Template selector */}
-                  <div className="flex items-center gap-2">
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Template Selection */}
+                  <div>
                     <button
-                      onClick={() =>
-                        !isTemplateLoading && setShowTemplateCarousel(true)
-                      }
-                      className={`flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm ${
-                        isTemplateLoading
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      }`}
-                      disabled={isTemplateLoading}
+                      onClick={() => setShowTemplateCarousel(true)}
+                      className="w-full flex flex-col items-center justify-center space-y-1 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      {isTemplateLoading ? (
-                        <>
-                          <div className="animate-spin h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full"></div>
-                          <span>Changing...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Layout className="w-5 h-5 text-gray-700" />
-                          <span>Templates</span>
-                        </>
-                      )}
+                      <Layout className="w-5 h-5 text-gray-500" />
+                      <span className="text-xs font-medium text-gray-600">
+                        {t("site.builder.templates.templates")}
+                      </span>
                     </button>
                   </div>
 
@@ -2848,9 +2669,9 @@ export default function Builder() {
                           }
                         }}
                         className="p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
-                        title="Reset to default color"
+                        title={t("templates.reset_to_default_color")}
                       >
-                        Reset
+                        {t("templates.reset")}
                       </button>
                     </div>
                   </div>
@@ -2858,43 +2679,300 @@ export default function Builder() {
               )}
             </div>
           </div>
+
+          {/* Mobile Preview Drawer */}
+          <div className={`lg:hidden ${isDrawerOpen ? "block" : "hidden"}`}>
+            {/* Overlay */}
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+              onClick={handleDrawerClose}
+            />
+
+            {/* Drawer */}
+            <div className="fixed inset-y-0 right-0 w-full sm:w-[90%] max-w-[600px] bg-gray-50 z-50 transform transition-transform duration-300 ease-in-out flex flex-col">
+              {/* Drawer Content - Copy the content from the desktop right panel */}
+              {/* Zoom controls */}
+              <div className="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 p-2 flex justify-between items-center">
+                {/* ...existing zoom controls code... */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={zoomOut}
+                    className="p-1 rounded-md hover:bg-gray-200"
+                    title="Zoom Out"
+                  >
+                    <ZoomOut className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <span className="text-sm font-medium">{zoomLevel}%</span>
+                  <button
+                    onClick={zoomIn}
+                    className="p-1 rounded-md hover:bg-gray-200"
+                    title="Zoom In"
+                  >
+                    <ZoomIn className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <button
+                    onClick={resetZoom}
+                    className="p-1 rounded-md hover:bg-gray-200 ml-2"
+                    title="Fit to Page"
+                  >
+                    <Maximize className="w-5 h-5 text-gray-700" />
+                  </button>
+                </div>
+                <button
+                  onClick={handleDrawerClose}
+                  className="p-2 rounded-full hover:bg-gray-200"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Preview content */}
+              <div className="flex-1 overflow-y-auto flex justify-center lg:max-w-full max-w-[700px]">
+                {/* ...existing preview code... */}
+                <div
+                  ref={previewRef}
+                  className="my-4 transform-gpu transition-transform duration-200 min-w-full relative"
+                  style={
+                    {
+                      transform: `scale(${
+                        (zoomLevel / 100) *
+                        (window.innerWidth >= 1024
+                          ? screenBasedScale
+                          : mobileScale)
+                      })`,
+                      transformOrigin: "left top",
+                      fontFamily: fontFamily,
+                      "--accent-color": accentColor,
+                    } as React.CSSProperties
+                  }
+                >
+                  {/* Add a key to force re-render when template changes */}
+                  <div key={`template-${template}`}>{renderTemplate()}</div>
+                </div>
+              </div>
+
+              {/* Edit bar */}
+              <div className="sticky bottom-0 z-10 bg-white border-t border-gray-200 p-3 shadow-md">
+                {/* ...existing edit bar code... */}
+                {showTemplateCarousel ? (
+                  <div className="mb-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-medium text-gray-800">
+                        Select Template
+                      </h3>
+                      <button
+                        onClick={() => setShowTemplateCarousel(false)}
+                        className="text-gray-500 hover:text-gray-700"
+                      >
+                        Close
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <button
+                        onClick={prevTemplate}
+                        className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
+                          isTemplateLoading
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-gray-100"
+                        }`}
+                        aria-label="Previous template"
+                        disabled={isTemplateLoading}
+                      >
+                        <ChevronLeft className="w-5 h-5 text-gray-700" />
+                      </button>
+
+                      <div className="flex overflow-x-auto py-2 px-8 gap-4 snap-x">
+                        {templateOptions.map((option, index) => (
+                          <div
+                            key={option.value}
+                            className={`flex-none w-32 transition-all duration-200 ${
+                              index === activeTemplateIndex
+                                ? "ring-2 ring-blue-500 scale-105"
+                                : "hover:scale-105"
+                            } ${
+                              isTemplateLoading
+                                ? "opacity-70 cursor-not-allowed"
+                                : "cursor-pointer"
+                            }`}
+                            onClick={() =>
+                              !isTemplateLoading && selectTemplate(index)
+                            }
+                          >
+                            <div className="bg-white rounded-md shadow-sm overflow-hidden">
+                              <div className="relative aspect-[0.7]">
+                                <Image
+                                  src={option.image}
+                                  alt={option.name}
+                                  fill
+                                  className="object-cover"
+                                />
+                                <div
+                                  className="absolute bottom-0 left-0 right-0 h-1"
+                                  style={{
+                                    backgroundColor: option.defaultColor,
+                                  }}
+                                ></div>
+                              </div>
+                              <div className="p-2 text-center text-xs font-medium truncate">
+                                {option.name}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={nextTemplate}
+                        className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center ${
+                          isTemplateLoading
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-gray-100"
+                        }`}
+                        aria-label={t("tooltips.next_template")}
+                        disabled={isTemplateLoading}
+                      >
+                        <ChevronRight className="w-5 h-5 text-gray-700" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap md:gap-4 gap-2 justify-center items-center">
+                    {/* Template selector */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() =>
+                          !isTemplateLoading && setShowTemplateCarousel(true)
+                        }
+                        className={`flex items-center gap-2 bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm ${
+                          isTemplateLoading
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        }`}
+                        disabled={isTemplateLoading}
+                      >
+                        {isTemplateLoading ? (
+                          <>
+                            <div className="animate-spin h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full"></div>
+                            <span>Changing...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Layout className="w-5 h-5 text-gray-700" />
+                            <span>Templates</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Font family selector */}
+                    <div className="flex items-center gap-2">
+                      <Type className="w-5 h-5 text-gray-700" />
+                      <select
+                        value={fontFamily}
+                        onChange={(e) => setFontFamily(e.target.value)}
+                        className="bg-white border border-gray-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        style={{ fontFamily: fontFamily }}
+                      >
+                        {fontFamilies.map((font) => (
+                          <option
+                            key={font.name}
+                            value={font.value}
+                            style={{ fontFamily: font.value }}
+                          >
+                            {font.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Color selector */}
+                    <div className="flex items-center gap-2">
+                      <Palette className="w-5 h-5 text-gray-700" />
+                      <div className="relative flex items-center gap-2">
+                        <div className="flex items-center border border-gray-300 rounded-md px-2 py-1.5">
+                          <div
+                            className="w-4 h-4 rounded-full mr-2"
+                            style={{ backgroundColor: accentColor }}
+                          />
+                          <input
+                            type="color"
+                            value={accentColor}
+                            onChange={(e) => setAccentColor(e.target.value)}
+                            className="w-20 h-8 cursor-pointer bg-transparent border-0"
+                          />
+                        </div>
+                        <button
+                          onClick={() => {
+                            // Reset to default color for this template
+                            const defaultColor = templateOptions.find(
+                              (t) => t.value === template
+                            )?.defaultColor;
+                            if (defaultColor) {
+                              setAccentColor(defaultColor);
+                            }
+                          }}
+                          className="p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
+                          title="Reset to default color"
+                        >
+                          Reset
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Preview Toggle Button for Mobile */}
+          <button
+            onClick={() => setIsDrawerOpen(true)}
+            className="lg:hidden fixed right-4 bottom-4 z-30 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+            </svg>
+          </button>
         </div>
 
-        {/* Preview Toggle Button for Mobile */}
-        <button
-          onClick={() => setIsDrawerOpen(true)}
-          className="lg:hidden fixed right-4 bottom-4 z-30 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-            />
-          </svg>
-        </button>
-      </div>
-
-      {/* Payment Modal */}
-      <PaymentModal
-        isOpen={isPaymentModalOpen}
-        onClose={closePaymentModal}
-        onSuccess={handlePaymentSuccess}
-        type="cv"
-      />
-    </main>
+        {/* Payment Modal */}
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={closePaymentModal}
+          onSuccess={handlePaymentSuccess}
+          type="cv"
+        />
+      </main>
+    </div>
   );
 }

@@ -89,7 +89,27 @@ export default function PaymentVerificationPage() {
                 `Abonnement "${plan}" activé avec succès pour ${email}! Redirection...`
               );
 
-              // Redirect back to the builder page after 2 seconds
+              // Add a forced refresh of the subscription status
+              try {
+                await fetch("/api/subscription/status", {
+                  method: "GET",
+                  headers: {
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    Pragma: "no-cache",
+                    Expires: "0",
+                  },
+                  cache: "no-store",
+                });
+                console.log("Subscription status refreshed after payment");
+              } catch (refreshError) {
+                console.error(
+                  "Error refreshing subscription status:",
+                  refreshError
+                );
+              }
+
+              // Wait a bit longer to ensure the subscription is properly registered
+              // Redirect back to the builder page after 3 seconds instead of 2
               setTimeout(() => {
                 if (type === "cv") {
                   router.push("/builder");
@@ -98,7 +118,7 @@ export default function PaymentVerificationPage() {
                 } else {
                   router.push("/");
                 }
-              }, 2000);
+              }, 3000);
             } else {
               const errorData = await registerResponse.json();
               console.error("Failed to register subscription:", errorData);

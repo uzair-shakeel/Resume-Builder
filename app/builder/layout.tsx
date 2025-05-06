@@ -8,17 +8,20 @@ export default async function BuilderLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Check if user is authenticated
   const session = await getServerSession(authOptions);
 
-  // Redirect to sign-in page if user is not authenticated
-  if (!session?.user) redirect("/auth/signin");
+  // If not authenticated, redirect to login
+  if (!session?.user) {
+    redirect("/auth/signin");
+  }
 
   return (
-    <div className="min-h-screen">
+    <div className="relative min-h-screen">
       {/* Language Switcher - Positioned absolutely */}
-      {/* <div className="fixed top-4 right-4 z-50">
+      <div className="absolute top-4 right-4 z-50">
         <LanguageSwitcher compact />
-      </div> */}
+      </div>
 
       {/* Main Content */}
       {children}

@@ -8,15 +8,21 @@ import User from "@/models/User";
 
 export async function GET(request: NextRequest) {
   try {
+    console.log("Subscription status check requested");
+
     // Get the current user from the session
     const session = await getServerSession(authOptions);
 
     if (!session?.user) {
-      console.log("No authenticated user found in session");
-      return NextResponse.json({
-        hasActiveSubscription: false,
-        message: "No authenticated user found",
-      });
+      console.log("Subscription status: No authenticated user found");
+      return NextResponse.json(
+        {
+          hasActiveSubscription: false,
+          message: "No authenticated user found",
+          error: "UNAUTHENTICATED",
+        },
+        { status: 401 }
+      );
     }
 
     // Connect to the database
@@ -25,68 +31,59 @@ export async function GET(request: NextRequest) {
     // Find the user by email
     const userEmail = session.user.email;
     if (!userEmail) {
-      console.log("User email not found in session");
-      return NextResponse.json({
-        hasActiveSubscription: false,
-        message: "User email not found in session",
-      });
+      console.log("Subscription status: User email not found in session");
+      return NextResponse.json(
+        {
+          hasActiveSubscription: false,
+          message: "User email not found in session",
+          error: "MISSING_EMAIL",
+        },
+        { status: 400 }
+      );
     }
 
     console.log(`Checking subscription status for ${userEmail}`);
 
+    // Find user in database
     const user = await User.findOne({ email: userEmail });
     if (!user) {
       console.log(`User with email ${userEmail} not found in database`);
-      return NextResponse.json({
-        hasActiveSubscription: false,
-        message: "User not found in database",
-      });
+      return NextResponse.json(
+        {
+          hasActiveSubscription: false,
+          message: "User not found in database",
+          error: "USER_NOT_FOUND",
+        },
+        { status: 404 }
+      );
     }
 
-    // Find active subscriptions for this user
+    // Find active subscriptions for this user by user ID or email
     const currentDate = new Date();
-    const subscription = await Subscription.findOne({
-      $or: [{ userId: user._id }, { email: userEmail }],
+
+    // Build a comprehensive query
+    const query = {
+      $or: [{ userId: user._id.toString() }, { email: userEmail }],
       status: "active",
       endDate: { $gt: currentDate }, // End date is in the future
-    }).sort({ endDate: -1 }); // Get the subscription with the furthest end date
+    };
 
+    console.log("Subscription query:", JSON.stringify(query));
+
+    const subscription = await Subscription.findOne(query).sort({
+      endDate: -1,
+    }); // Get the subscription with the furthest end date
+
+    // Check if user has an active subscription
     const hasActiveSubscription = !!subscription;
+
     console.log(
       `Database subscription check result: ${
-        hasActiveSubscription ? "Active" : "Inactive"
+        hasActiveSubscription ? "ACTIVE" : "INACTIVE"
       }`
     );
 
-    // Database is the source of truth - if no subscription is found, the user doesn't have one
-    // We'll still update cookies for backward compatibility but won't rely on them for verification
-    if (!hasActiveSubscription) {
-      // Clear any existing subscription cookies for security
-      const cookieStore = cookies();
-      cookieStore.set("hasActiveSubscription", "false", {
-        path: "/",
-        maxAge: 0, // Expire immediately
-        sameSite: "strict",
-      });
-      cookieStore.set("subscriptionPlan", "", {
-        path: "/",
-        maxAge: 0,
-        sameSite: "strict",
-      });
-      cookieStore.set("subscriptionEmail", "", {
-        path: "/",
-        maxAge: 0,
-        sameSite: "strict",
-      });
-
-      console.log("No active subscription found, cleared cookies");
-      return NextResponse.json({
-        hasActiveSubscription: false,
-        message: "No active subscription found",
-      });
-    }
-
-    if (subscription) {
+    if (hasActiveSubscription && subscription) {
       // Data validation for subscription object
       const validSubscription = {
         _id: subscription._id?.toString() || "unknown",
@@ -97,7 +94,7 @@ export async function GET(request: NextRequest) {
         endDate: subscription.endDate || new Date(),
         status: subscription.status || "active",
         amount: subscription.amount || 0,
-        currency: subscription.currency || "USD",
+        currency: subscription.currency || "XOF",
         paymentReference: subscription.paymentReference || "",
       };
 
@@ -110,23 +107,22 @@ export async function GET(request: NextRequest) {
         `Returning active subscription with ${remainingDays} days remaining`
       );
 
-      // Update cookies with correct expiration time (matches subscription end date)
-      // This is only for backward compatibility but not used for verification
+      // Update cookies for backward compatibility
       const cookieStore = cookies();
       cookieStore.set("hasActiveSubscription", "true", {
         path: "/",
-        expires: validSubscription.endDate,
-        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        sameSite: "lax",
       });
       cookieStore.set("subscriptionPlan", validSubscription.plan, {
         path: "/",
-        expires: validSubscription.endDate,
-        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 30,
+        sameSite: "lax",
       });
       cookieStore.set("subscriptionEmail", validSubscription.email, {
         path: "/",
-        expires: validSubscription.endDate,
-        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 30,
+        sameSite: "lax",
       });
 
       return NextResponse.json({
@@ -148,19 +144,23 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    console.log("No active subscription found in database");
+
+    // No active subscription found
     return NextResponse.json({
       hasActiveSubscription: false,
       message: "No active subscription found",
+      error: "NO_SUBSCRIPTION",
     });
   } catch (error) {
     console.error("Error checking subscription status:", error);
 
-    // No cookie fallback for errors - only database checks are trusted for security
     return NextResponse.json(
       {
         hasActiveSubscription: false,
-        error: "Failed to check subscription status",
-        errorMessage: error instanceof Error ? error.message : String(error),
+        error: "SERVER_ERROR",
+        message: "Failed to check subscription status",
+        details: error instanceof Error ? error.message : String(error),
       },
       { status: 500 }
     );

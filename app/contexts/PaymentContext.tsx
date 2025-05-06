@@ -45,7 +45,8 @@ interface PaymentContextType {
   subscriptionInfo: SubscriptionInfo | null;
   subscriptionEmail: string | null;
   subscriptionExpiry: Date | null;
-  checkSubscriptionStatus: () => Promise<void>;
+  checkSubscriptionStatus: (forceFresh?: boolean) => Promise<boolean>;
+  isInitialized: boolean;
 }
 
 interface PaystackResponse {
@@ -58,38 +59,47 @@ interface PaystackResponse {
 // Default subscription plans
 export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
+    id: "trial",
+    name: "Essential",
+    trialPrice: "99 XOF",
+    trialPriceRaw: 9900, // in kobo (100 kobo = 1 Naira)
+    regularPrice: "999 XOF",
+    regularPriceRaw: 99900,
+    billingPeriod: "one-time",
+    interval: "trial",
+    durationDays: 14,
+  },
+  {
     id: "monthly",
-    name: "Mensuel",
-    trialPrice: "0,99 US$",
-    trialPriceRaw: 99, // 0.99 USD in cents
-    regularPrice: "14,99 US$",
-    regularPriceRaw: 1499, // 14.99 USD in cents
-    billingPeriod: "mois",
+    name: "Monthly",
+    trialPrice: "1,499 XOF",
+    trialPriceRaw: 149900,
+    regularPrice: "1,499 XOF",
+    regularPriceRaw: 149900,
+    billingPeriod: "month",
     interval: "monthly",
     durationDays: 30,
   },
   {
     id: "quarterly",
-    name: "Trimestriel",
-    trialPrice: "0,99 US$",
-    trialPriceRaw: 99, // 0.99 USD in cents
-    regularPrice: "9,99 US$",
-    regularPriceRaw: 999, // 9.99 USD in cents
-    billingPeriod: "mois",
+    name: "Quarterly",
+    trialPrice: "2,997 XOF",
+    trialPriceRaw: 299700,
+    regularPrice: "2,997 XOF",
+    regularPriceRaw: 299700,
+    billingPeriod: "3 months",
     interval: "quarterly",
-    totalPrice: "29,97 US$ facturation trimestrielle",
     durationDays: 90,
   },
   {
     id: "yearly",
-    name: "Annuel",
-    trialPrice: "0,99 US$",
-    trialPriceRaw: 99, // 0.99 USD in cents
-    regularPrice: "7,49 US$",
-    regularPriceRaw: 749, // 7.49 USD in cents
-    billingPeriod: "mois",
+    name: "Yearly",
+    trialPrice: "8,988 XOF",
+    trialPriceRaw: 898800,
+    regularPrice: "8,988 XOF",
+    regularPriceRaw: 898800,
+    billingPeriod: "year",
     interval: "yearly",
-    totalPrice: "89,88 US$ facturation annuelle",
     durationDays: 365,
   },
 ];
@@ -103,7 +113,6 @@ export function PaymentProvider({ children }: { children: React.ReactNode }) {
     "cv" | "cover-letter"
   >("cv");
   const [loading, setLoading] = useState(false);
-  const [paystackInitialized, setPaystackInitialized] = useState(false);
   const [currentPlan, setCurrentPlan] = useState<SubscriptionPlan | null>(null);
   const [subscriptionInfo, setSubscriptionInfo] =
     useState<SubscriptionInfo | null>(null);
@@ -113,33 +122,71 @@ export function PaymentProvider({ children }: { children: React.ReactNode }) {
   const [subscriptionExpiry, setSubscriptionExpiry] = useState<Date | null>(
     null
   );
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [lastCheckTimestamp, setLastCheckTimestamp] = useState(0);
 
-  // Check user's subscription status on load
+  // Check user's subscription status on load - but only once
   useEffect(() => {
-    checkSubscriptionStatus();
-  }, []);
-
-  const checkSubscriptionStatus = async () => {
-    try {
-      // Always fetch fresh data from the server
-      setLoading(true);
-      const response = await fetch("/api/subscription/status", {
-        headers: {
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-        },
-        // Add a random query parameter to prevent caching
-        // This is important for security to ensure we always get fresh data
-        cache: "no-store",
+    if (!isInitialized) {
+      checkSubscriptionStatus(true).then(() => {
+        setIsInitialized(true);
       });
+    }
+  }, [isInitialized]);
+
+  const checkSubscriptionStatus = async (
+    forceFresh = false
+  ): Promise<boolean> => {
+    try {
+      // Check if we've checked recently (within the last 5 seconds) to avoid excessive API calls
+      const now = Date.now();
+      const timeSinceLastCheck = now - lastCheckTimestamp;
+
+      if (!forceFresh && timeSinceLastCheck < 5000 && isInitialized) {
+        console.log("Using cached subscription status - checked recently");
+        return hasActiveSubscription;
+      }
+
+      // Always fetch fresh data from the server for important operations
+      setLoading(true);
+
+      // Add a random query parameter to prevent browser caching
+      const params = new URLSearchParams({
+        _t: now.toString(),
+      });
+
+      const response = await fetch(
+        `/api/subscription/status?${params.toString()}`,
+        {
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+          cache: "no-store",
+          next: { revalidate: 0 },
+        }
+      );
+
+      if (!response.ok) {
+        console.error(
+          "Subscription status API returned error:",
+          response.status
+        );
+        setLoading(false);
+        return false;
+      }
+
       const data = await response.json();
       setLoading(false);
+      setLastCheckTimestamp(now);
 
       console.log("Direct database subscription status check:", data);
 
-      setHasActiveSubscription(data.hasActiveSubscription);
+      const newHasActiveSubscription = data.hasActiveSubscription || false;
+      setHasActiveSubscription(newHasActiveSubscription);
 
-      if (data.hasActiveSubscription) {
+      if (newHasActiveSubscription) {
         // If there's an active subscription, set the plan details
         if (data.plan) {
           const planDetails = SUBSCRIPTION_PLANS.find(
@@ -177,60 +224,17 @@ export function PaymentProvider({ children }: { children: React.ReactNode }) {
         setSubscriptionExpiry(null);
         setSubscriptionInfo(null);
       }
+
+      return newHasActiveSubscription;
     } catch (error) {
       console.error("Error checking subscription status:", error);
       setLoading(false);
 
-      // Fallback to cookie check if server request fails
-      // This is only used if the API is completely unavailable
-      checkCookies();
-    }
-  };
+      // Don't change any state on error - maintain the current state
+      // This prevents flickering of UI or showing payment modals incorrectly
+      console.warn("Maintaining current subscription state due to error");
 
-  const checkCookies = () => {
-    console.warn(
-      "API request failed - falling back to cookie check as last resort"
-    );
-    console.warn("This is only a UI fallback and will not grant actual access");
-
-    try {
-      // Attempt to check cookies as an absolute last resort
-      // This is only used to show appropriate UI elements if the API is down
-      // It will NOT actually grant access to premium features
-      const hasSub = getCookie("hasActiveSubscription") === "true";
-
-      // Only accept cookies if they're properly set
-      const planId = getCookie("subscriptionPlan");
-      const email = getCookie("subscriptionEmail");
-
-      // We only set this to true if we have all three cookies with valid values
-      const hasValidCookies = hasSub && !!planId && !!email;
-
-      // This is strictly for UI purposes - actual access will be verified server-side
-      setHasActiveSubscription(hasValidCookies);
-
-      if (hasValidCookies && planId) {
-        const planDetails = SUBSCRIPTION_PLANS.find((p) => p.id === planId);
-        setCurrentPlan(planDetails || null);
-        setSubscriptionEmail(email);
-      } else {
-        // If not all cookies are valid, reset everything
-        setHasActiveSubscription(false);
-        setCurrentPlan(null);
-        setSubscriptionEmail(null);
-        setSubscriptionExpiry(null);
-        setSubscriptionInfo(null);
-      }
-
-      console.warn("Cookie fallback complete - this is only for UI display");
-    } catch (e) {
-      console.error("Error checking cookies:", e);
-      // If cookie check fails, assume no subscription
-      setHasActiveSubscription(false);
-      setCurrentPlan(null);
-      setSubscriptionEmail(null);
-      setSubscriptionExpiry(null);
-      setSubscriptionInfo(null);
+      return hasActiveSubscription;
     }
   };
 
@@ -280,16 +284,6 @@ export function PaymentProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Helper function to get cookies
-  const getCookie = (name: string): string | null => {
-    if (typeof document === "undefined") return null;
-
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
-    return null;
-  };
-
   return (
     <PaymentContext.Provider
       value={{
@@ -304,6 +298,7 @@ export function PaymentProvider({ children }: { children: React.ReactNode }) {
         subscriptionEmail,
         subscriptionExpiry,
         checkSubscriptionStatus,
+        isInitialized,
       }}
     >
       {children}

@@ -103,6 +103,8 @@ export async function POST(request: NextRequest) {
       endDate: { $gt: currentDate },
     };
 
+    console.log("Subscription query:", JSON.stringify(query));
+
     // Execute the query and sort by end date
     let subscription = await Subscription.findOne(query).sort({ endDate: -1 });
 
