@@ -264,15 +264,23 @@ export default function CVPreviewSherlock({
                         className=" h-2 rounded-sm"
                         style={{
                           width:
-                            language.level === "Natif"
+                            language.level === "Natif" ||
+                            language.level === "Native/Bilingual" ||
+                            language.level === "Native" ||
+                            language.level === "Bilingual"
                               ? "100%"
-                              : language.level === "Courant"
+                              : language.level === "Courant" ||
+                                language.level === "Full Professional"
                               ? "80%"
-                              : language.level === "Avancé"
+                              : language.level === "Avancé" ||
+                                language.level === "Professional Working"
                               ? "60%"
-                              : language.level === "Intermédiaire"
+                              : language.level === "Intermédiaire" ||
+                                language.level === "Limited Working"
                               ? "40%"
-                              : "20%",
+                              : language.level === "Elementary"
+                              ? "20%"
+                              : "50%", // Default value if level doesn't match any known value
                           backgroundColor: accentColor,
                         }}
                       ></div>

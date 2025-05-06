@@ -32,7 +32,7 @@ export default function Interests({ data, updateData }: InterestsProps) {
 
   const addInterest = () => {
     const newItem: InterestItem = {
-      interest: "",
+      name: "",
     };
     setLocalData([...localData, newItem]);
     updateData([...localData, newItem]);
@@ -46,14 +46,38 @@ export default function Interests({ data, updateData }: InterestsProps) {
 
   // Use translations instead of hardcoded options
   const interestOptions = [
-    { key: "courses", value: t("site.builder.forms.interests.options.courses") },
-    { key: "internships", value: t("site.builder.forms.interests.options.internships") },
-    { key: "extracurricular", value: t("site.builder.forms.interests.options.extracurricular") },
-    { key: "references", value: t("site.builder.forms.interests.options.references") },
-    { key: "qualities", value: t("site.builder.forms.interests.options.qualities") },
-    { key: "certificates", value: t("site.builder.forms.interests.options.certificates") },
-    { key: "achievements", value: t("site.builder.forms.interests.options.achievements") },
-    { key: "signature", value: t("site.builder.forms.interests.options.signature") },
+    {
+      key: "courses",
+      value: t("site.builder.forms.interests.options.courses"),
+    },
+    {
+      key: "internships",
+      value: t("site.builder.forms.interests.options.internships"),
+    },
+    {
+      key: "extracurricular",
+      value: t("site.builder.forms.interests.options.extracurricular"),
+    },
+    {
+      key: "references",
+      value: t("site.builder.forms.interests.options.references"),
+    },
+    {
+      key: "qualities",
+      value: t("site.builder.forms.interests.options.qualities"),
+    },
+    {
+      key: "certificates",
+      value: t("site.builder.forms.interests.options.certificates"),
+    },
+    {
+      key: "achievements",
+      value: t("site.builder.forms.interests.options.achievements"),
+    },
+    {
+      key: "signature",
+      value: t("site.builder.forms.interests.options.signature"),
+    },
     { key: "footer", value: t("site.builder.forms.interests.options.footer") },
   ];
 
@@ -87,10 +111,8 @@ export default function Interests({ data, updateData }: InterestsProps) {
                 </label>
                 <input
                   type="text"
-                  value={item.interest}
-                  onChange={(e) =>
-                    handleChange(index, "interest", e.target.value)
-                  }
+                  value={item.name}
+                  onChange={(e) => handleChange(index, "name", e.target.value)}
                   placeholder={t(
                     "site.builder.forms.interests.fields.interest_placeholder"
                   )}
@@ -117,7 +139,7 @@ export default function Interests({ data, updateData }: InterestsProps) {
               key={interest.key}
               onClick={() => {
                 const newItem: InterestItem = {
-                  interest: interest.value,
+                  name: interest.value,
                 };
                 setLocalData([...localData, newItem]);
                 updateData([...localData, newItem]);

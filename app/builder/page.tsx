@@ -474,75 +474,95 @@ export default function Builder() {
   // Load CV data if editing existing CV
   useEffect(() => {
     const loadCV = async () => {
-      // Try to get CV ID from URL or from sessionStorage
-      const urlId = searchParams.get("id");
-      const storedId = sessionStorage.getItem("current-cv-id");
-      const effectiveCvId = urlId || storedId;
+      try {
+        // Try to get CV ID from URL or from sessionStorage
+        const urlId = searchParams.get("id");
+        const storedId = sessionStorage.getItem("current-cv-id");
+        const effectiveCvId = urlId || storedId;
 
-      if (effectiveCvId) {
-        // If we have an ID from either source, use it
-        try {
-          setIsTemplateLoading(true);
-          // Update URL if needed to reflect the ID we're using
-          if (!urlId && storedId) {
-            window.history.replaceState({}, "", `/builder?id=${storedId}`);
-          }
+        if (effectiveCvId) {
+          // If we have an ID from either source, use it
+          try {
+            setIsTemplateLoading(true);
+            // Update URL if needed to reflect the ID we're using
+            if (!urlId && storedId) {
+              window.history.replaceState({}, "", `/builder?id=${storedId}`);
+            }
 
-          const response = await fetch(`/api/cv/load?cvId=${effectiveCvId}`);
-          const data = await response.json();
+            const response = await fetch(`/api/cv/load?cvId=${effectiveCvId}`);
+            const data = await response.json();
 
-          if (data.success) {
-            console.log(
-              `Loaded CV with template: ${data.cv.template || initialTemplate}`
-            );
-            // Store the ID we're working with
-            sessionStorage.setItem("current-cv-id", effectiveCvId);
-
-            // Initialize all CV data
-            setCVData(data.cv.data);
-
-            // Check for template in URL that might override the saved template
-            const urlTemplate = searchParams.get("template") as string;
-            let templateToUse = data.cv.template || initialTemplate;
-
-            if (
-              urlTemplate &&
-              templateOptions.some((t) => t.value === urlTemplate)
-            ) {
+            if (data.success) {
               console.log(
-                `URL template (${urlTemplate}) overrides saved template (${templateToUse})`
+                `Loaded CV with template: ${
+                  data.cv.template || initialTemplate
+                }`
               );
-              templateToUse = urlTemplate as any;
-            }
+              // Store the ID we're working with
+              sessionStorage.setItem("current-cv-id", effectiveCvId);
 
-            setTemplate(templateToUse);
-            setSectionOrder(
-              data.cv.sectionOrder || [
-                "personal-info",
-                "profile",
-                "education",
-                "experience",
-                "skills",
-                "languages",
-                "interests",
-              ]
-            );
-            setAccentColor(data.cv.accentColor || colorThemes[0].value);
-            setFontFamily(data.cv.fontFamily || fontFamilies[0].value);
-            setCustomSectionNames(data.cv.customSectionNames || {});
-            setSectionPages(data.cv.sectionPages || {});
+              // Fix for interests using interest property instead of name property
+              if (data.cv.data.interests && data.cv.data.interests.length > 0) {
+                data.cv.data.interests = data.cv.data.interests.map(
+                  (item: any) => {
+                    // If the item has interest property but not name property, convert it
+                    if (
+                      item.interest !== undefined &&
+                      item.name === undefined
+                    ) {
+                      return { name: item.interest };
+                    }
+                    return item;
+                  }
+                );
+              }
 
-            // Set active template index
-            const templateIndex = templateOptions.findIndex(
-              (t) => t.value === templateToUse
-            );
-            if (templateIndex !== -1) {
-              setActiveTemplateIndex(templateIndex);
-            }
+              // Initialize all CV data
+              setCVData(data.cv.data);
 
-            // Expand sections that have data
-            const sectionsWithData = Object.entries(data.cv.data || {}).reduce(
-              (acc, [section, value]) => {
+              // Check for template in URL that might override the saved template
+              const urlTemplate = searchParams.get("template") as string;
+              let templateToUse = data.cv.template || initialTemplate;
+
+              if (
+                urlTemplate &&
+                templateOptions.some((t) => t.value === urlTemplate)
+              ) {
+                console.log(
+                  `URL template (${urlTemplate}) overrides saved template (${templateToUse})`
+                );
+                templateToUse = urlTemplate as any;
+              }
+
+              setTemplate(templateToUse);
+              setSectionOrder(
+                data.cv.sectionOrder || [
+                  "personal-info",
+                  "profile",
+                  "education",
+                  "experience",
+                  "skills",
+                  "languages",
+                  "interests",
+                ]
+              );
+              setAccentColor(data.cv.accentColor || colorThemes[0].value);
+              setFontFamily(data.cv.fontFamily || fontFamilies[0].value);
+              setCustomSectionNames(data.cv.customSectionNames || {});
+              setSectionPages(data.cv.sectionPages || {});
+
+              // Set active template index
+              const templateIndex = templateOptions.findIndex(
+                (t) => t.value === templateToUse
+              );
+              if (templateIndex !== -1) {
+                setActiveTemplateIndex(templateIndex);
+              }
+
+              // Expand sections that have data
+              const sectionsWithData = Object.entries(
+                data.cv.data || {}
+              ).reduce((acc, [section, value]) => {
                 if (Array.isArray(value) && value.length > 0) {
                   acc[section] = true;
                 } else if (typeof value === "string" && value.trim() !== "") {
@@ -555,79 +575,84 @@ export default function Builder() {
                   acc[section] = true;
                 }
                 return acc;
-              },
-              {} as Record<string, boolean>
-            );
+              }, {} as Record<string, boolean>);
 
-            setExpandedSections((prev) => ({
-              ...prev,
-              ...sectionsWithData,
-            }));
+              setExpandedSections((prev) => ({
+                ...prev,
+                ...sectionsWithData,
+              }));
 
-            // If URL template differs from saved template, save the changes
-            if (urlTemplate && urlTemplate !== data.cv.template) {
-              // Wait for state updates to complete
-              setTimeout(() => {
-                saveCV().then(() => {
+              // If URL template differs from saved template, save the changes
+              if (urlTemplate && urlTemplate !== data.cv.template) {
+                // Wait for state updates to complete
+                setTimeout(() => {
+                  saveCV().then(() => {
+                    setIsTemplateLoading(false);
+                  });
+                }, 300);
+              } else {
+                // Give time for everything to load before hiding the loading indicator
+                setTimeout(() => {
                   setIsTemplateLoading(false);
-                });
-              }, 300);
+                }, 500);
+              }
             } else {
-              // Give time for everything to load before hiding the loading indicator
-              setTimeout(() => {
-                setIsTemplateLoading(false);
-              }, 500);
+              console.error("Failed to load CV:", data.error);
+              setSaveStatus("error");
+              setIsTemplateLoading(false);
+            }
+          } catch (error) {
+            console.error("Error loading CV:", error);
+            setSaveStatus("error");
+            setIsTemplateLoading(false);
+            // If loading fails, clear the stored ID to start fresh
+            sessionStorage.removeItem("current-cv-id");
+          }
+        } else {
+          // If creating a new CV, initialize with empty data
+          setCVData({
+            personalInfo: {
+              firstName: "",
+              lastName: "",
+              title: "",
+              email: "",
+              phone: "",
+              address: "",
+              postalCode: "",
+              city: "",
+              photo: "/placeholder-user.jpg",
+            },
+            profile: "",
+            education: [],
+            experience: [],
+            skills: [],
+            languages: [],
+            interests: [],
+            references: [],
+            socials: [],
+          });
+
+          // Check if we have a template in the URL
+          const urlTemplate = searchParams.get("template") as string;
+          if (
+            urlTemplate &&
+            templateOptions.some((t) => t.value === urlTemplate)
+          ) {
+            console.log(`Setting initial template from URL: ${urlTemplate}`);
+            setTemplate(urlTemplate as any);
+            const templateIndex = templateOptions.findIndex(
+              (t) => t.value === urlTemplate
+            );
+            if (templateIndex !== -1) {
+              setActiveTemplateIndex(templateIndex);
             }
           }
-        } catch (error) {
-          console.error("Error loading CV:", error);
-          setSaveStatus("error");
-          setIsTemplateLoading(false);
-          // If loading fails, clear the stored ID to start fresh
-          sessionStorage.removeItem("current-cv-id");
-        }
-      } else {
-        // If creating a new CV, initialize with empty data
-        setCVData({
-          personalInfo: {
-            firstName: "",
-            lastName: "",
-            title: "",
-            email: "",
-            phone: "",
-            address: "",
-            postalCode: "",
-            city: "",
-            photo: "/placeholder-user.jpg",
-          },
-          profile: "",
-          education: [],
-          experience: [],
-          skills: [],
-          languages: [],
-          interests: [],
-          references: [],
-          socials: [],
-        });
 
-        // Check if we have a template in the URL
-        const urlTemplate = searchParams.get("template") as string;
-        if (
-          urlTemplate &&
-          templateOptions.some((t) => t.value === urlTemplate)
-        ) {
-          console.log(`Setting initial template from URL: ${urlTemplate}`);
-          setTemplate(urlTemplate as any);
-          const templateIndex = templateOptions.findIndex(
-            (t) => t.value === urlTemplate
-          );
-          if (templateIndex !== -1) {
-            setActiveTemplateIndex(templateIndex);
-          }
+          // Create a new CV immediately to ensure a consistent document
+          createNewCV();
         }
-
-        // Create a new CV immediately to ensure a consistent document
-        createNewCV();
+      } catch (error) {
+        console.error("Error in loadCV:", error);
       }
     };
 
@@ -642,6 +667,30 @@ export default function Builder() {
       // Clear any existing CV ID from session storage
       sessionStorage.removeItem("current-cv-id");
 
+      // Ensure language levels are text strings
+      const processedCVData = { ...cvData };
+      if (processedCVData.languages && processedCVData.languages.length > 0) {
+        processedCVData.languages = processedCVData.languages.map(
+          (lang: any) => {
+            if (typeof lang.level === "number") {
+              // Convert numeric level to text
+              const levelMap: { [key: number]: string } = {
+                1: "Elementary",
+                2: "Limited Working",
+                3: "Professional Working",
+                4: "Full Professional",
+                5: "Native/Bilingual",
+              };
+              return {
+                ...lang,
+                level: levelMap[lang.level] || "Professional Working",
+              };
+            }
+            return lang;
+          }
+        );
+      }
+
       const response = await fetch("/api/cv/save", {
         method: "POST",
         headers: {
@@ -649,7 +698,7 @@ export default function Builder() {
         },
         body: JSON.stringify({
           title: "Untitled CV",
-          data: cvData,
+          data: processedCVData,
           template,
           sectionOrder,
           accentColor,
@@ -721,13 +770,51 @@ export default function Builder() {
         }
       }
 
+      // Process CV data to ensure proper format
+      const processedCVData = { ...cvData };
+
+      // Fix interests format
+      if (processedCVData.interests && processedCVData.interests.length > 0) {
+        processedCVData.interests = processedCVData.interests.map(
+          (item: any) => {
+            if (item.interest !== undefined && item.name === undefined) {
+              return { name: item.interest };
+            }
+            return item;
+          }
+        );
+      }
+
+      // Fix language levels format
+      if (processedCVData.languages && processedCVData.languages.length > 0) {
+        processedCVData.languages = processedCVData.languages.map(
+          (lang: any) => {
+            if (typeof lang.level === "number") {
+              // Convert numeric level to text
+              const levelMap: { [key: number]: string } = {
+                1: "Elementary",
+                2: "Limited Working",
+                3: "Professional Working",
+                4: "Full Professional",
+                5: "Native/Bilingual",
+              };
+              return {
+                ...lang,
+                level: levelMap[lang.level] || "Professional Working",
+              };
+            }
+            return lang;
+          }
+        );
+      }
+
       // Prepare payload with data from the current component state
       const payload = {
         cvId: currentCvId,
-        title: cvData.personalInfo.firstName
-          ? `${cvData.personalInfo.firstName}'s CV`
+        title: processedCVData.personalInfo.firstName
+          ? `${processedCVData.personalInfo.firstName}'s CV`
           : "Untitled CV",
-        data: cvData,
+        data: processedCVData,
         template,
         sectionOrder,
         accentColor,

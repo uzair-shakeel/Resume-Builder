@@ -25,6 +25,47 @@ export async function POST(req: Request) {
       sectionPages
     );
 
+    // Make sure interests data uses the name property before saving to database
+    if (
+      cvData.data &&
+      cvData.data.interests &&
+      cvData.data.interests.length > 0
+    ) {
+      cvData.data.interests = cvData.data.interests.map((item: any) => {
+        // If the item has interest property but not name property, convert it
+        if (item.interest !== undefined && item.name === undefined) {
+          return { name: item.interest };
+        }
+        return item;
+      });
+    }
+
+    // Make sure languages data has proper string levels
+    if (
+      cvData.data &&
+      cvData.data.languages &&
+      cvData.data.languages.length > 0
+    ) {
+      cvData.data.languages = cvData.data.languages.map((item: any) => {
+        // If the level is a number, convert it to a string descriptor
+        if (typeof item.level === "number") {
+          // Convert numeric level to string representation
+          const levelMap: { [key: number]: string } = {
+            1: "Elementary",
+            2: "Limited Working",
+            3: "Professional Working",
+            4: "Full Professional",
+            5: "Native/Bilingual",
+          };
+          return {
+            ...item,
+            level: levelMap[item.level] || "Professional Working",
+          };
+        }
+        return item;
+      });
+    }
+
     let cv;
     if (cvId) {
       // Check if CV exists and belongs to user before updating
