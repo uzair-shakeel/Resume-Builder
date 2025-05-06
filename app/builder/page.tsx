@@ -474,7 +474,119 @@ export default function Builder() {
   // Load CV data if editing existing CV
   useEffect(() => {
     const loadCV = async () => {
-      if (!cvId) {
+      // Try to get CV ID from URL or from sessionStorage
+      const urlId = searchParams.get("id");
+      const storedId = sessionStorage.getItem("current-cv-id");
+      const effectiveCvId = urlId || storedId;
+
+      if (effectiveCvId) {
+        // If we have an ID from either source, use it
+        try {
+          setIsTemplateLoading(true);
+          // Update URL if needed to reflect the ID we're using
+          if (!urlId && storedId) {
+            window.history.replaceState({}, "", `/builder?id=${storedId}`);
+          }
+
+          const response = await fetch(`/api/cv/load?cvId=${effectiveCvId}`);
+          const data = await response.json();
+
+          if (data.success) {
+            console.log(
+              `Loaded CV with template: ${data.cv.template || initialTemplate}`
+            );
+            // Store the ID we're working with
+            sessionStorage.setItem("current-cv-id", effectiveCvId);
+
+            // Initialize all CV data
+            setCVData(data.cv.data);
+
+            // Check for template in URL that might override the saved template
+            const urlTemplate = searchParams.get("template") as string;
+            let templateToUse = data.cv.template || initialTemplate;
+
+            if (
+              urlTemplate &&
+              templateOptions.some((t) => t.value === urlTemplate)
+            ) {
+              console.log(
+                `URL template (${urlTemplate}) overrides saved template (${templateToUse})`
+              );
+              templateToUse = urlTemplate as any;
+            }
+
+            setTemplate(templateToUse);
+            setSectionOrder(
+              data.cv.sectionOrder || [
+                "personal-info",
+                "profile",
+                "education",
+                "experience",
+                "skills",
+                "languages",
+                "interests",
+              ]
+            );
+            setAccentColor(data.cv.accentColor || colorThemes[0].value);
+            setFontFamily(data.cv.fontFamily || fontFamilies[0].value);
+            setCustomSectionNames(data.cv.customSectionNames || {});
+            setSectionPages(data.cv.sectionPages || {});
+
+            // Set active template index
+            const templateIndex = templateOptions.findIndex(
+              (t) => t.value === templateToUse
+            );
+            if (templateIndex !== -1) {
+              setActiveTemplateIndex(templateIndex);
+            }
+
+            // Expand sections that have data
+            const sectionsWithData = Object.entries(data.cv.data || {}).reduce(
+              (acc, [section, value]) => {
+                if (Array.isArray(value) && value.length > 0) {
+                  acc[section] = true;
+                } else if (typeof value === "string" && value.trim() !== "") {
+                  acc[section] = true;
+                } else if (
+                  value &&
+                  typeof value === "object" &&
+                  Object.values(value).some((v) => v !== "")
+                ) {
+                  acc[section] = true;
+                }
+                return acc;
+              },
+              {} as Record<string, boolean>
+            );
+
+            setExpandedSections((prev) => ({
+              ...prev,
+              ...sectionsWithData,
+            }));
+
+            // If URL template differs from saved template, save the changes
+            if (urlTemplate && urlTemplate !== data.cv.template) {
+              // Wait for state updates to complete
+              setTimeout(() => {
+                saveCV().then(() => {
+                  setIsTemplateLoading(false);
+                });
+              }, 300);
+            } else {
+              // Give time for everything to load before hiding the loading indicator
+              setTimeout(() => {
+                setIsTemplateLoading(false);
+              }, 500);
+            }
+          }
+        } catch (error) {
+          console.error("Error loading CV:", error);
+          setSaveStatus("error");
+          setIsTemplateLoading(false);
+          // If loading fails, clear the stored ID to start fresh
+          sessionStorage.removeItem("current-cv-id");
+        }
+      } else {
         // If creating a new CV, initialize with empty data
         setCVData({
           personalInfo: {
@@ -494,6 +606,8 @@ export default function Builder() {
           skills: [],
           languages: [],
           interests: [],
+          references: [],
+          socials: [],
         });
 
         // Check if we have a template in the URL
@@ -512,119 +626,21 @@ export default function Builder() {
           }
         }
 
-        return;
-      }
-
-      try {
-        setIsTemplateLoading(true);
-        const response = await fetch(`/api/cv/load?cvId=${cvId}`);
-        const data = await response.json();
-
-        if (data.success) {
-          console.log(
-            `Loaded CV with template: ${data.cv.template || initialTemplate}`
-          );
-
-          // Initialize all CV data
-          setCVData(data.cv.data);
-
-          // Check for template in URL that might override the saved template
-          const urlTemplate = searchParams.get("template") as string;
-          let templateToUse = data.cv.template || initialTemplate;
-
-          if (
-            urlTemplate &&
-            templateOptions.some((t) => t.value === urlTemplate)
-          ) {
-            console.log(
-              `URL template (${urlTemplate}) overrides saved template (${templateToUse})`
-            );
-            templateToUse = urlTemplate as any;
-          }
-
-          setTemplate(templateToUse);
-          setSectionOrder(
-            data.cv.sectionOrder || [
-              "personal-info",
-              "profile",
-              "education",
-              "experience",
-              "skills",
-              "languages",
-              "interests",
-            ]
-          );
-          setAccentColor(data.cv.accentColor || colorThemes[0].value);
-          setFontFamily(data.cv.fontFamily || fontFamilies[0].value);
-          setCustomSectionNames(data.cv.customSectionNames || {});
-          setSectionPages(data.cv.sectionPages || {});
-
-          // Set active template index
-          const templateIndex = templateOptions.findIndex(
-            (t) => t.value === templateToUse
-          );
-          if (templateIndex !== -1) {
-            setActiveTemplateIndex(templateIndex);
-          }
-
-          // Expand sections that have data
-          const sectionsWithData = Object.entries(data.cv.data || {}).reduce(
-            (acc, [section, value]) => {
-              if (Array.isArray(value) && value.length > 0) {
-                acc[section] = true;
-              } else if (typeof value === "string" && value.trim() !== "") {
-                acc[section] = true;
-              } else if (
-                value &&
-                typeof value === "object" &&
-                Object.values(value).some((v) => v !== "")
-              ) {
-                acc[section] = true;
-              }
-              return acc;
-            },
-            {} as Record<string, boolean>
-          );
-
-          setExpandedSections((prev) => ({
-            ...prev,
-            ...sectionsWithData,
-          }));
-
-          // If URL template differs from saved template, save the changes
-          if (urlTemplate && urlTemplate !== data.cv.template) {
-            // Wait for state updates to complete
-            setTimeout(() => {
-              saveCV().then(() => {
-                setIsTemplateLoading(false);
-              });
-            }, 300);
-          } else {
-            // Give time for everything to load before hiding the loading indicator
-            setTimeout(() => {
-              setIsTemplateLoading(false);
-            }, 500);
-          }
-        }
-      } catch (error) {
-        console.error("Error loading CV:", error);
-        setSaveStatus("error");
-        setIsTemplateLoading(false);
+        // Create a new CV immediately to ensure a consistent document
+        createNewCV();
       }
     };
 
-    if (cvId) {
-      loadCV();
-    } else {
-      // Create a new CV immediately when the page loads without an ID
-      createNewCV();
-    }
+    loadCV();
   }, [cvId, initialTemplate, searchParams]);
 
   // Function to create a new CV
   const createNewCV = async () => {
     try {
       setSaveStatus("saving");
+
+      // Clear any existing CV ID from session storage
+      sessionStorage.removeItem("current-cv-id");
 
       const response = await fetch("/api/cv/save", {
         method: "POST",
@@ -648,6 +664,8 @@ export default function Builder() {
 
       if (data.success) {
         setSaveStatus("saved");
+        // Store the new CV ID in session storage
+        sessionStorage.setItem("current-cv-id", data.cv._id);
         // Update the URL with the new CV ID
         window.history.replaceState({}, "", `/builder?id=${data.cv._id}`);
       } else {
@@ -680,6 +698,10 @@ export default function Builder() {
     }, 15000); // 15 seconds timeout for save operation
 
     try {
+      // Get the current CV ID from sessionStorage or URL
+      const currentCvId =
+        searchParams.get("id") || sessionStorage.getItem("current-cv-id");
+
       // Generate preview image
       const previewElement = document.querySelector(
         ".cv-preview"
@@ -701,7 +723,7 @@ export default function Builder() {
 
       // Prepare payload with data from the current component state
       const payload = {
-        cvId: cvId,
+        cvId: currentCvId,
         title: cvData.personalInfo.firstName
           ? `${cvData.personalInfo.firstName}'s CV`
           : "Untitled CV",
@@ -729,6 +751,16 @@ export default function Builder() {
       const result = await response.json();
       console.log("CV Saved Successfully:", result);
 
+      // Update session storage and URL with the CV ID
+      if (result.cv && result.cv._id) {
+        sessionStorage.setItem("current-cv-id", result.cv._id);
+
+        // Update URL if needed
+        if (!currentCvId || currentCvId !== result.cv._id) {
+          window.history.replaceState({}, "", `/builder?id=${result.cv._id}`);
+        }
+      }
+
       // Clear the save status timeout since save completed
       if (saveStatusTimeoutRef.current) {
         clearTimeout(saveStatusTimeoutRef.current);
@@ -737,12 +769,6 @@ export default function Builder() {
 
       // Update save status and CV ID if needed
       setSaveStatus("saved");
-      if (!cvId && result.cv?._id) {
-        // Update URL with CV ID
-        const url = new URL(window.location.href);
-        url.searchParams.set("id", result.cv._id);
-        window.history.replaceState({}, "", url.toString());
-      }
 
       // Verify the template was saved correctly
       const urlTemplate = new URL(window.location.href).searchParams.get(
@@ -1567,12 +1593,15 @@ export default function Builder() {
     // Save the CV before navigating
     saveCV()
       .then(() => {
+        // Clear session storage if navigating away completely
+        sessionStorage.removeItem("current-cv-id");
         // Use window.location.href for a hard navigation
         window.location.href = "/dashboard";
       })
       .catch((error) => {
         console.error("Error saving before navigation:", error);
         // Navigate anyway even if save fails
+        sessionStorage.removeItem("current-cv-id");
         window.location.href = "/dashboard";
       });
   };

@@ -60,7 +60,13 @@ const Footer = ({ user }: FooterProps) => {
         </Link>
 
         <button
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={() => {
+            // Clear all builder document IDs from session storage
+            sessionStorage.removeItem("current-cv-id");
+            sessionStorage.removeItem("current-cover-letter-id");
+            // Sign out and redirect
+            signOut({ callbackUrl: "/" });
+          }}
           className="flex flex-col items-center justify-center space-y-1 text-gray-400"
         >
           <LogOut size={20} />

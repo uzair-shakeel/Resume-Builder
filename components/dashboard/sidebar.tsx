@@ -132,7 +132,13 @@ export default function Sidebar({ user }: SidebarProps) {
             </div>
           </div>
           <button
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={() => {
+              // Clear all builder document IDs from session storage
+              sessionStorage.removeItem("current-cv-id");
+              sessionStorage.removeItem("current-cover-letter-id");
+              // Sign out and redirect
+              signOut({ callbackUrl: "/" });
+            }}
             className="mt-4 w-full flex items-center justify-center space-x-2 px-3 py-2 text-gray-400 hover:bg-gray-800 hover:text-white rounded-lg transition-colors"
           >
             <LogOut size={18} />

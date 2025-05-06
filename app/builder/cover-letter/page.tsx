@@ -34,6 +34,7 @@ import {
   Cloud,
   RefreshCw,
   CloudOff,
+  MoveLeft,
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -787,55 +788,98 @@ export default function CoverLetterBuilder() {
   };
 
   const loadCoverLetter = async () => {
-    try {
-      const response = await fetch(`/api/cover-letter/load?coverId=${coverId}`);
-      const data = await response.json();
+    // Try to get cover letter ID from URL or from sessionStorage
+    const urlId = searchParams.get("id");
+    const storedId = sessionStorage.getItem("current-cover-letter-id");
+    const effectiveCoverId = urlId || storedId;
 
-      if (data.success) {
-        setCoverLetterData(data.coverLetter.data);
-        setTemplate(data.coverLetter.template || "modern");
-        setSectionOrder(
-          data.coverLetter.sectionOrder || [
-            "personal-info",
-            "destinataire",
-            "date-et-objet",
-            "introduction",
-            "situation-actuelle",
-            "motivation",
-            "conclusion",
-          ]
+    if (effectiveCoverId) {
+      // If we have an ID from either source, use it
+      try {
+        // Update URL if needed to reflect the ID we're using
+        if (!urlId && storedId) {
+          window.history.replaceState(
+            {},
+            "",
+            `/builder/cover-letter?id=${storedId}`
+          );
+        }
+
+        const response = await fetch(
+          `/api/cover-letter/load?coverId=${effectiveCoverId}`
         );
-        setAccentColor(data.coverLetter.accentColor || colorThemes[0].value);
-        setFontFamily(data.coverLetter.fontFamily || fontFamilies[0].value);
-        setCustomSectionNames(data.coverLetter.customSectionNames || {});
-        setSectionPages(data.coverLetter.sectionPages || {});
-        setCustomSections(data.coverLetter.customSections || {});
+        const data = await response.json();
 
-        const sectionsWithData = Object.entries(
-          data.coverLetter.data || {}
-        ).reduce((acc, [section, value]) => {
-          if (Array.isArray(value) && value.length > 0) {
-            acc[section] = true;
-          } else if (typeof value === "string" && value.trim() !== "") {
-            acc[section] = true;
-          } else if (
-            value &&
-            typeof value === "object" &&
-            Object.values(value).some((v) => v !== "")
+        if (data.success) {
+          console.log(
+            `Loaded cover letter with template: ${data.coverLetter.template}`
+          );
+          // Store the ID we're working with
+          sessionStorage.setItem("current-cover-letter-id", effectiveCoverId);
+
+          // Initialize all cover letter data
+          setCoverLetterData(data.coverLetter.data);
+
+          // Check for template in URL that might override the saved template
+          const urlTemplate = searchParams.get("template") as string;
+          let templateToUse = data.coverLetter.template || "modern";
+
+          if (
+            urlTemplate &&
+            templateOptions.some((t) => t.value === urlTemplate)
           ) {
-            acc[section] = true;
+            console.log(
+              `URL template (${urlTemplate}) overrides saved template (${templateToUse})`
+            );
+            templateToUse = urlTemplate as any;
           }
-          return acc;
-        }, {} as Record<string, boolean>);
 
-        setExpandedSections((prev) => ({
-          ...prev,
-          ...sectionsWithData,
-        }));
+          setTemplate(templateToUse);
+          setSectionOrder(
+            data.coverLetter.sectionOrder || [
+              "personal-info",
+              "destinataire",
+              "date-et-objet",
+              "introduction",
+              "situation-actuelle",
+              "motivation",
+              "conclusion",
+            ]
+          );
+          setAccentColor(data.coverLetter.accentColor || "#3498db");
+          setFontFamily(
+            data.coverLetter.fontFamily || "'DejaVu Sans', sans-serif"
+          );
+          setCustomSectionNames(data.coverLetter.customSectionNames || {});
+          setSectionPages(data.coverLetter.sectionPages || {});
+          setCustomSections(data.coverLetter.customSections || {});
+
+          // Set active template index
+          const templateIndex = templateOptions.findIndex(
+            (t) => t.value === templateToUse
+          );
+          if (templateIndex !== -1) {
+            setActiveTemplateIndex(templateIndex);
+          }
+
+          // Update title from the cover letter data
+          document.title = `${
+            data.coverLetter.title || "Cover Letter"
+          } | Resume Builder`;
+        } else {
+          // If cover letter not found, create a new one
+          console.warn("Cover letter not found, creating new one");
+          createNewCoverLetter();
+        }
+      } catch (error) {
+        console.error("Error loading cover letter:", error);
+        // If loading fails, clear the stored ID to start fresh
+        sessionStorage.removeItem("current-cover-letter-id");
+        createNewCoverLetter();
       }
-    } catch (error) {
-      console.error("Error loading cover letter:", error);
-      setSaveStatus("error");
+    } else {
+      // Create a new cover letter if we don't have an ID
+      createNewCoverLetter();
     }
   };
 
@@ -874,9 +918,10 @@ export default function CoverLetterBuilder() {
 
       console.log("Saving cover letter with section pages:", sectionPages);
 
-      // Get the current Cover Letter ID from the URL, which might have been updated
+      // Get the current Cover Letter ID from the URL or sessionStorage
       const currentCoverId =
-        new URLSearchParams(window.location.search).get("id") || coverId;
+        searchParams.get("id") ||
+        sessionStorage.getItem("current-cover-letter-id");
 
       const payload = {
         coverId: currentCoverId,
@@ -910,12 +955,22 @@ export default function CoverLetterBuilder() {
       if (data.success) {
         console.log("Cover letter saved successfully:", data.coverLetter);
         setSaveStatus("saved");
-        if (!currentCoverId && data.coverLetter._id) {
-          window.history.replaceState(
-            {},
-            "",
-            `/builder/cover-letter?id=${data.coverLetter._id}`
+
+        // Update sessionStorage with cover letter ID
+        if (data.coverLetter._id) {
+          sessionStorage.setItem(
+            "current-cover-letter-id",
+            data.coverLetter._id
           );
+
+          // Update URL if needed
+          if (!currentCoverId || currentCoverId !== data.coverLetter._id) {
+            window.history.replaceState(
+              {},
+              "",
+              `/builder/cover-letter?id=${data.coverLetter._id}`
+            );
+          }
         }
       } else {
         console.error("Error saving cover letter:", data.error);
@@ -2091,6 +2146,9 @@ export default function CoverLetterBuilder() {
     try {
       setSaveStatus("saving");
 
+      // Clear any existing cover letter ID from session storage
+      sessionStorage.removeItem("current-cover-letter-id");
+
       const response = await fetch("/api/cover-letter/save", {
         method: "POST",
         headers: {
@@ -2114,7 +2172,9 @@ export default function CoverLetterBuilder() {
 
       if (data.success) {
         setSaveStatus("saved");
-        // Update the URL with the new Cover Letter ID
+        // Store the new cover letter ID in session storage
+        sessionStorage.setItem("current-cover-letter-id", data.coverLetter._id);
+        // Update the URL with the new cover letter ID
         window.history.replaceState(
           {},
           "",
@@ -2177,6 +2237,12 @@ export default function CoverLetterBuilder() {
         <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
+              <button
+                onClick={handleBackToDashboard}
+                className="min-w-[30px] min-h-[30px] flex items-center justify-center rounded-[5px] bg-gray-100 hover:bg-gray-200"
+              >
+                <MoveLeft size={18} />
+              </button>
               <h1 className="text-xl font-bold">
                 {t("site.builder.header.cover_letter")}
               </h1>
