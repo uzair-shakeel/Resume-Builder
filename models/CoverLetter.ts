@@ -97,6 +97,18 @@ const CoverLetterSchema = new mongoose.Schema({
   preview: {
     type: String,
   },
+  // Download tracking fields
+  isDownloaded: {
+    type: Boolean,
+    default: false,
+  },
+  downloadCount: {
+    type: Number,
+    default: 0,
+  },
+  lastDownloadedAt: {
+    type: Date,
+  },
   lastEdited: {
     type: Date,
     default: Date.now,
