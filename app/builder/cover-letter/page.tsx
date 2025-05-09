@@ -302,125 +302,125 @@ export default function CoverLetterBuilder() {
   // introductionOptions
   const introductionOptions = [
     {
-      label: t("builder_cover_letter.introduction.onlinead"),
+      label: t("site.builder_cover_letter.introduction.onlinead"),
       value: "online",
-      template: t("builder_cover_letter.introduction.onlinead_template"),
+      template: t("site.builder_cover_letter.introduction.onlinead_template"),
     },
     {
-      label: t("builder_cover_letter.introduction.spontaneous_application"),
+      label: t("site.builder_cover_letter.introduction.spontaneous_application"),
       value: "spontaneous",
-      template: t("builder_cover_letter.introduction.spontaneous_template"),
+      template: t("site.builder_cover_letter.introduction.spontaneous_template"),
     },
     {
-      label: t("builder_cover_letter.introduction.printad"),
+      label: t("site.builder_cover_letter.introduction.printad"),
       value: "print",
-      template: t("builder_cover_letter.introduction.printad_template"),
+      template: t("site.builder_cover_letter.introduction.printad_template"),
     },
     {
-      label: t("builder_cover_letter.introduction.other"),
+      label: t("site.builder_cover_letter.introduction.other"),
       value: "other",
-      template: t("builder_cover_letter.introduction.other_template"),
+      template: t("site.builder_cover_letter.introduction.other_template"),
     },
   ];
 
   // situationOptions
   const situationOptions = [
     {
-      label: t("builder_cover_letter.current_situation.currently_employed"),
+      label: t("site.builder_cover_letter.current_situation.currently_employed"),
       value: "employed",
-      template: t("builder_cover_letter.current_situation.employed_template"),
+      template: t("site.builder_cover_letter.current_situation.employed_template"),
     },
     {
-      label: t("builder_cover_letter.current_situation.employed_graduated"),
+      label: t("site.builder_cover_letter.current_situation.employed_graduated"),
       value: "employed_graduate",
       template: t(
-        "builder_cover_letter.current_situation.employed_graduate_template"
+        "site.builder_cover_letter.current_situation.employed_graduate_template"
       ),
     },
     {
-      label: t("builder_cover_letter.current_situation.employed_experience"),
+      label: t("site.builder_cover_letter.current_situation.employed_experience"),
       value: "employed_experienced",
       template: t(
-        "builder_cover_letter.current_situation.employed_experienced_template"
+        "site.builder_cover_letter.current_situation.employed_experienced_template"
       ),
     },
     {
-      label: t("builder_cover_letter.current_situation.graduated"),
+      label: t("site.builder_cover_letter.current_situation.graduated"),
       value: "graduate",
-      template: t("builder_cover_letter.current_situation.graduate_template"),
+      template: t("site.builder_cover_letter.current_situation.graduate_template"),
     },
     {
-      label: t("builder_cover_letter.current_situation.is_student"),
+      label: t("site.builder_cover_letter.current_situation.is_student"),
       value: "student",
-      template: t("builder_cover_letter.current_situation.student_template"),
+      template: t("site.builder_cover_letter.current_situation.student_template"),
     },
     {
-      label: t("builder_cover_letter.current_situation.is_unemployed"),
+      label: t("site.builder_cover_letter.current_situation.is_unemployed"),
       value: "unemployed",
-      template: t("builder_cover_letter.current_situation.unemployed_template"),
+      template: t("site.builder_cover_letter.current_situation.unemployed_template"),
     },
   ];
 
   // motivationOptions
   const motivationOptions = [
     {
-      label: t("builder_cover_letter.motivation.my_career"),
+      label: t("site.builder_cover_letter.motivation.my_career"),
       value: "career",
-      template: t("builder_cover_letter.motivation.career_template"),
+      template: t("site.builder_cover_letter.motivation.career_template"),
     },
     {
-      label: t("builder_cover_letter.motivation.my_education"),
+      label: t("site.builder_cover_letter.motivation.my_education"),
       value: "education",
-      template: t("builder_cover_letter.motivation.education_template"),
+      template: t("site.builder_cover_letter.motivation.education_template"),
     },
     {
-      label: t("builder_cover_letter.motivation.my_experience"),
+      label: t("site.builder_cover_letter.motivation.my_experience"),
       value: "experience",
-      template: t("builder_cover_letter.motivation.experience_template"),
+      template: t("site.builder_cover_letter.motivation.experience_template"),
     },
     {
-      label: t("builder_cover_letter.motivation.my_company"),
+      label: t("site.builder_cover_letter.motivation.my_company"),
       value: "company",
-      template: t("builder_cover_letter.motivation.company_template"),
+      template: t("site.builder_cover_letter.motivation.company_template"),
     },
     {
-      label: t("builder_cover_letter.motivation.my_innovation"),
+      label: t("site.builder_cover_letter.motivation.my_innovation"),
       value: "innovation",
-      template: t("builder_cover_letter.motivation.innovation_template"),
+      template: t("site.builder_cover_letter.motivation.innovation_template"),
     },
     {
-      label: t("builder_cover_letter.motivation.other"),
+      label: t("site.builder_cover_letter.motivation.other"),
       value: "other",
-      template: t("builder_cover_letter.motivation.other_template"),
+      template: t("site.builder_cover_letter.motivation.other_template"),
     },
   ];
 
   // conclusionOptions
   const conclusionOptions = [
     {
-      label: t("builder_cover_letter.conclusion.my_job_offer"),
+      label: t("site.builder_cover_letter.conclusion.my_job_offer"),
       value: "job_offer",
-      template: t("builder_cover_letter.conclusion.job_offer_template"),
+      template: t("site.builder_cover_letter.conclusion.job_offer_template"),
     },
     {
-      label: t("builder_cover_letter.conclusion.my_spontaneous"),
+      label: t("site.builder_cover_letter.conclusion.my_spontaneous"),
       value: "spontaneous",
-      template: t("builder_cover_letter.conclusion.spontaneous_template"),
+      template: t("site.builder_cover_letter.conclusion.spontaneous_template"),
     },
     {
-      label: t("builder_cover_letter.conclusion.my_internship"),
+      label: t("site.builder_cover_letter.conclusion.my_internship"),
       value: "internship",
-      template: t("builder_cover_letter.conclusion.internship_template"),
+      template: t("site.builder_cover_letter.conclusion.internship_template"),
     },
     {
-      label: t("builder_cover_letter.conclusion.my_referral"),
+      label: t("site.builder_cover_letter.conclusion.my_referral"),
       value: "referral",
-      template: t("builder_cover_letter.conclusion.referral_template"),
+      template: t("site.builder_cover_letter.conclusion.referral_template"),
     },
     {
-      label: t("builder_cover_letter.conclusion.other"),
+      label: t("site.builder_cover_letter.conclusion.other"),
       value: "other",
-      template: t("builder_cover_letter.conclusion.other_template"),
+      template: t("site.builder_cover_letter.conclusion.other_template"),
     },
   ];
 
@@ -1355,12 +1355,12 @@ export default function CoverLetterBuilder() {
     <div className="p-4 space-y-4">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          {t("builder_cover_letter.recipient.company")}
+          {t("site.builder_cover_letter.recipient.company")}
         </label>
         <input
           type="text"
           className="w-full p-2 border rounded-md"
-          placeholder={t("builder_cover_letter.recipient.company_placeholder")}
+          placeholder={t("site.builder_cover_letter.recipient.company_placeholder")}
           value={coverLetterData.recipient.company}
           onChange={(e) =>
             handleThrottledInput("recipient", "company", e.target.value)
@@ -1369,12 +1369,12 @@ export default function CoverLetterBuilder() {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          {t("builder_cover_letter.recipient.contact")}
+          {t("site.builder_cover_letter.recipient.contact")}
         </label>
         <input
           type="text"
           className="w-full p-2 border rounded-md"
-          placeholder={t("builder_cover_letter.recipient.contact_placeholder")}
+          placeholder={t("site.builder_cover_letter.recipient.contact_placeholder")}
           value={coverLetterData.recipient.name}
           onChange={(e) =>
             handleThrottledInput("recipient", "name", e.target.value)
@@ -1383,12 +1383,12 @@ export default function CoverLetterBuilder() {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          {t("builder_cover_letter.recipient.address")}
+          {t("site.builder_cover_letter.recipient.address")}
         </label>
         <input
           type="text"
           className="w-full p-2 border rounded-md"
-          placeholder={t("builder_cover_letter.recipient.address_placeholder")}
+          placeholder={t("site.builder_cover_letter.recipient.address_placeholder")}
           value={coverLetterData.recipient.address}
           onChange={(e) =>
             handleThrottledInput("recipient", "address", e.target.value)
@@ -1398,13 +1398,13 @@ export default function CoverLetterBuilder() {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t("builder_cover_letter.recipient.postal_code")}
+            {t("site.builder_cover_letter.recipient.postal_code")}
           </label>
           <input
             type="text"
             className="w-full p-2 border rounded-md"
             placeholder={t(
-              "builder_cover_letter.recipient.postal_code_placeholder"
+              "site.builder_cover_letter.recipient.postal_code_placeholder"
             )}
             value={coverLetterData.recipient.postalCode}
             onChange={(e) =>
@@ -1414,12 +1414,12 @@ export default function CoverLetterBuilder() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t("builder_cover_letter.recipient.city")}
+            {t("site.builder_cover_letter.recipient.city")}
           </label>
           <input
             type="text"
             className="w-full p-2 border rounded-md"
-            placeholder={t("builder_cover_letter.recipient.city_placeholder")}
+            placeholder={t("site.builder_cover_letter.recipient.city_placeholder")}
             value={coverLetterData.recipient.city}
             onChange={(e) =>
               handleThrottledInput("recipient", "city", e.target.value)
@@ -1435,13 +1435,13 @@ export default function CoverLetterBuilder() {
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t("builder_cover_letter.date_subject.city")}
+            {t("site.builder_cover_letter.date_subject.city")}
           </label>
           <input
             type="text"
             className="w-full p-2 border rounded-md"
             placeholder={t(
-              "builder_cover_letter.date_subject.city_placeholder"
+              "site.builder_cover_letter.date_subject.city_placeholder"
             )}
             value={coverLetterData.dateAndSubject.location}
             onChange={(e) =>
@@ -1451,7 +1451,7 @@ export default function CoverLetterBuilder() {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t("builder_cover_letter.date_subject.date")}
+            {t("site.builder_cover_letter.date_subject.date")}
           </label>
           <input
             type="date"
@@ -1463,7 +1463,7 @@ export default function CoverLetterBuilder() {
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          {t("builder_cover_letter.date_subject.subject")}
+          {t("site.builder_cover_letter.date_subject.subject")}
         </label>
         <RichTextEditor
           value={coverLetterData.dateAndSubject.subject}
@@ -1471,7 +1471,7 @@ export default function CoverLetterBuilder() {
             handleThrottledInput("dateAndSubject", "subject", value)
           }
           placeholder={t(
-            "builder_cover_letter.date_subject.subject_placeholder"
+            "site.builder_cover_letter.date_subject.subject_placeholder"
           )}
         />
       </div>
@@ -1487,7 +1487,7 @@ export default function CoverLetterBuilder() {
       <div className="p-4 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t("builder_cover_letter.introduction.select_content")}
+            {t("site.builder_cover_letter.introduction.select_content")}
           </label>
           <div className="relative">
             <select
@@ -1521,32 +1521,32 @@ export default function CoverLetterBuilder() {
               handleThrottledInput("root", "introduction", value)
             }
             placeholder={t(
-              "builder_cover_letter.introduction.customize_placeholder"
+              "site.builder_cover_letter.introduction.customize_placeholder"
             )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
-            <p>{t("builder_cover_letter.introduction.replace_instruction")}</p>
+            <p>{t("site.builder_cover_letter.introduction.replace_instruction")}</p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedIntroOption === "online" && (
                 <>
-                  <li>{t("builder_cover_letter.introduction.online.site")}</li>
-                  <li>{t("builder_cover_letter.introduction.online.poste")}</li>
+                  <li>{t("site.builder_cover_letter.introduction.online.site")}</li>
+                  <li>{t("site.builder_cover_letter.introduction.online.poste")}</li>
                 </>
               )}
               {selectedIntroOption === "spontaneous" && (
                 <li>
-                  {t("builder_cover_letter.introduction.spontaneous.poste")}
+                  {t("site.builder_cover_letter.introduction.spontaneous.poste")}
                 </li>
               )}
               {selectedIntroOption === "print" && (
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.introduction.print.journal_magazine"
+                      "site.builder_cover_letter.introduction.print.journal_magazine"
                     )}
                   </li>
-                  <li>{t("builder_cover_letter.introduction.print.date")}</li>
-                  <li>{t("builder_cover_letter.introduction.print.poste")}</li>
+                  <li>{t("site.builder_cover_letter.introduction.print.date")}</li>
+                  <li>{t("site.builder_cover_letter.introduction.print.poste")}</li>
                 </>
               )}
             </ul>
@@ -1566,7 +1566,7 @@ export default function CoverLetterBuilder() {
       <div className="p-4 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t("builder_cover_letter.current_situation.select_content")}
+            {t("site.builder_cover_letter.current_situation.select_content")}
           </label>
           <div className="relative">
             <select
@@ -1600,32 +1600,32 @@ export default function CoverLetterBuilder() {
               handleThrottledInput("root", "currentSituation", value)
             }
             placeholder={t(
-              "builder_cover_letter.current_situation.customize_placeholder"
+              "site.builder_cover_letter.current_situation.customize_placeholder"
             )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
             <p>
-              {t("builder_cover_letter.current_situation.replace_instruction")}
+              {t("site.builder_cover_letter.current_situation.replace_instruction")}
             </p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedSituationOption === "employed" && (
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed.poste_actuel"
+                      "site.builder_cover_letter.current_situation.employed.poste_actuel"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed.entreprise"
+                      "site.builder_cover_letter.current_situation.employed.entreprise"
                     )}
                   </li>
                   <li>
-                    {t("builder_cover_letter.current_situation.employed.ville")}
+                    {t("site.builder_cover_letter.current_situation.employed.ville")}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed.responsabilites"
+                      "site.builder_cover_letter.current_situation.employed.responsabilites"
                     )}
                   </li>
                 </>
@@ -1634,32 +1634,32 @@ export default function CoverLetterBuilder() {
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_graduate.poste_actuel"
+                      "site.builder_cover_letter.current_situation.employed_graduate.poste_actuel"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_graduate.entreprise"
+                      "site.builder_cover_letter.current_situation.employed_graduate.entreprise"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_graduate.ville"
+                      "site.builder_cover_letter.current_situation.employed_graduate.ville"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_graduate.responsabilites"
+                      "site.builder_cover_letter.current_situation.employed_graduate.responsabilites"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_graduate.formation"
+                      "site.builder_cover_letter.current_situation.employed_graduate.formation"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_graduate.etablissement"
+                      "site.builder_cover_letter.current_situation.employed_graduate.etablissement"
                     )}
                   </li>
                 </>
@@ -1668,32 +1668,32 @@ export default function CoverLetterBuilder() {
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_experienced.poste_actuel"
+                      "site.builder_cover_letter.current_situation.employed_experienced.poste_actuel"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_experienced.entreprise"
+                      "site.builder_cover_letter.current_situation.employed_experienced.entreprise"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_experienced.ville"
+                      "site.builder_cover_letter.current_situation.employed_experienced.ville"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_experienced.x"
+                      "site.builder_cover_letter.current_situation.employed_experienced.x"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_experienced.domaine"
+                      "site.builder_cover_letter.current_situation.employed_experienced.domaine"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.employed_experienced.competences_cles"
+                      "site.builder_cover_letter.current_situation.employed_experienced.competences_cles"
                     )}
                   </li>
                 </>
@@ -1702,17 +1702,17 @@ export default function CoverLetterBuilder() {
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.graduate.formation"
+                      "site.builder_cover_letter.current_situation.graduate.formation"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.graduate.etablissement"
+                      "site.builder_cover_letter.current_situation.graduate.etablissement"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.graduate.domaines_expertise"
+                      "site.builder_cover_letter.current_situation.graduate.domaines_expertise"
                     )}
                   </li>
                 </>
@@ -1721,22 +1721,22 @@ export default function CoverLetterBuilder() {
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.student.annee_niveau"
+                      "site.builder_cover_letter.current_situation.student.annee_niveau"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.student.formation"
+                      "site.builder_cover_letter.current_situation.student.formation"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.student.etablissement"
+                      "site.builder_cover_letter.current_situation.student.etablissement"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.student.specialisation"
+                      "site.builder_cover_letter.current_situation.student.specialisation"
                     )}
                   </li>
                 </>
@@ -1745,12 +1745,12 @@ export default function CoverLetterBuilder() {
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.unemployed.raison"
+                      "site.builder_cover_letter.current_situation.unemployed.raison"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.current_situation.unemployed.competences"
+                      "site.builder_cover_letter.current_situation.unemployed.competences"
                     )}
                   </li>
                 </>
@@ -1772,7 +1772,7 @@ export default function CoverLetterBuilder() {
       <div className="p-4 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t("builder_cover_letter.motivation.select_content")}
+            {t("site.builder_cover_letter.motivation.select_content")}
           </label>
           <div className="relative">
             <select
@@ -1806,32 +1806,32 @@ export default function CoverLetterBuilder() {
               handleThrottledInput("root", "motivation", value)
             }
             placeholder={t(
-              "builder_cover_letter.motivation.customize_placeholder"
+              "site.builder_cover_letter.motivation.customize_placeholder"
             )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
-            <p>{t("builder_cover_letter.motivation.replace_instruction")}</p>
+            <p>{t("site.builder_cover_letter.motivation.replace_instruction")}</p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedMotivationOption === "career" && (
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.career.aspect_specifique"
+                      "site.builder_cover_letter.motivation.career.aspect_specifique"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.career.competences_cles"
+                      "site.builder_cover_letter.motivation.career.competences_cles"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.career.domaine_expertise"
+                      "site.builder_cover_letter.motivation.career.domaine_expertise"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.career.projets_objectifs"
+                      "site.builder_cover_letter.motivation.career.projets_objectifs"
                     )}
                   </li>
                 </>
@@ -1839,37 +1839,37 @@ export default function CoverLetterBuilder() {
               {selectedMotivationOption === "education" && (
                 <>
                   <li>
-                    {t("builder_cover_letter.motivation.education.formation")}
+                    {t("site.builder_cover_letter.motivation.education.formation")}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.education.domaines_expertise"
+                      "site.builder_cover_letter.motivation.education.domaines_expertise"
                     )}
                   </li>
                   <li>
-                    {t("builder_cover_letter.motivation.education.projet_cle")}
+                    {t("site.builder_cover_letter.motivation.education.projet_cle")}
                   </li>
                 </>
               )}
               {selectedMotivationOption === "experience" && (
                 <>
-                  <li>{t("builder_cover_letter.motivation.experience.x")}</li>
+                  <li>{t("site.builder_cover_letter.motivation.experience.x")}</li>
                   <li>
-                    {t("builder_cover_letter.motivation.experience.secteur")}
+                    {t("site.builder_cover_letter.motivation.experience.secteur")}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.experience.competences_specifiques"
+                      "site.builder_cover_letter.motivation.experience.competences_specifiques"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.experience.secteur_activite"
+                      "site.builder_cover_letter.motivation.experience.secteur_activite"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.experience.objectifs_projets"
+                      "site.builder_cover_letter.motivation.experience.objectifs_projets"
                     )}
                   </li>
                 </>
@@ -1878,17 +1878,17 @@ export default function CoverLetterBuilder() {
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.company.caracteristique_valeur"
+                      "site.builder_cover_letter.motivation.company.caracteristique_valeur"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.company.realisation_projet"
+                      "site.builder_cover_letter.motivation.company.realisation_projet"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.company.competences_expertise"
+                      "site.builder_cover_letter.motivation.company.competences_expertise"
                     )}
                   </li>
                 </>
@@ -1897,17 +1897,17 @@ export default function CoverLetterBuilder() {
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.innovation.projet_technologie"
+                      "site.builder_cover_letter.motivation.innovation.projet_technologie"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.innovation.domaine_technique"
+                      "site.builder_cover_letter.motivation.innovation.domaine_technique"
                     )}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.motivation.innovation.competence_specifique"
+                      "site.builder_cover_letter.motivation.innovation.competence_specifique"
                     )}
                   </li>
                 </>
@@ -1929,7 +1929,7 @@ export default function CoverLetterBuilder() {
       <div className="p-4 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            {t("builder_cover_letter.conclusion.select_content")}
+            {t("site.builder_cover_letter.conclusion.select_content")}
           </label>
           <div className="relative">
             <select
@@ -1963,48 +1963,48 @@ export default function CoverLetterBuilder() {
               handleThrottledInput("root", "conclusion", value)
             }
             placeholder={t(
-              "builder_cover_letter.conclusion.customize_placeholder"
+              "site.builder_cover_letter.conclusion.customize_placeholder"
             )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
-            <p>{t("builder_cover_letter.conclusion.replace_instruction")}</p>
+            <p>{t("site.builder_cover_letter.conclusion.replace_instruction")}</p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedConclusionOption === "job_offer" && (
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.conclusion.job_offer.emploi_recherche"
+                      "site.builder_cover_letter.conclusion.job_offer.emploi_recherche"
                     )}
                   </li>
                   <li>
-                    {t("builder_cover_letter.conclusion.job_offer.telephone")}
+                    {t("site.builder_cover_letter.conclusion.job_offer.telephone")}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.conclusion.job_offer.adresse_email"
+                      "site.builder_cover_letter.conclusion.job_offer.adresse_email"
                     )}
                   </li>
                   <li>
-                    {t("builder_cover_letter.conclusion.job_offer.prenom")}
+                    {t("site.builder_cover_letter.conclusion.job_offer.prenom")}
                   </li>
-                  <li>{t("builder_cover_letter.conclusion.job_offer.nom")}</li>
+                  <li>{t("site.builder_cover_letter.conclusion.job_offer.nom")}</li>
                 </>
               )}
               {selectedConclusionOption === "spontaneous" && (
                 <>
                   <li>
-                    {t("builder_cover_letter.conclusion.spontaneous.telephone")}
+                    {t("site.builder_cover_letter.conclusion.spontaneous.telephone")}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.conclusion.spontaneous.adresse_email"
+                      "site.builder_cover_letter.conclusion.spontaneous.adresse_email"
                     )}
                   </li>
                   <li>
-                    {t("builder_cover_letter.conclusion.spontaneous.prenom")}
+                    {t("site.builder_cover_letter.conclusion.spontaneous.prenom")}
                   </li>
                   <li>
-                    {t("builder_cover_letter.conclusion.spontaneous.nom")}
+                    {t("site.builder_cover_letter.conclusion.spontaneous.nom")}
                   </li>
                 </>
               )}
@@ -2012,40 +2012,40 @@ export default function CoverLetterBuilder() {
                 <>
                   <li>
                     {t(
-                      "builder_cover_letter.conclusion.internship.type_contrat"
+                      "site.builder_cover_letter.conclusion.internship.type_contrat"
                     )}
                   </li>
                   <li>
-                    {t("builder_cover_letter.conclusion.internship.telephone")}
+                    {t("site.builder_cover_letter.conclusion.internship.telephone")}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.conclusion.internship.adresse_email"
+                      "site.builder_cover_letter.conclusion.internship.adresse_email"
                     )}
                   </li>
                   <li>
-                    {t("builder_cover_letter.conclusion.internship.prenom")}
+                    {t("site.builder_cover_letter.conclusion.internship.prenom")}
                   </li>
-                  <li>{t("builder_cover_letter.conclusion.internship.nom")}</li>
+                  <li>{t("site.builder_cover_letter.conclusion.internship.nom")}</li>
                 </>
               )}
               {selectedConclusionOption === "referral" && (
                 <>
                   <li>
-                    {t("builder_cover_letter.conclusion.referral.contact")}
+                    {t("site.builder_cover_letter.conclusion.referral.contact")}
                   </li>
                   <li>
-                    {t("builder_cover_letter.conclusion.referral.telephone")}
+                    {t("site.builder_cover_letter.conclusion.referral.telephone")}
                   </li>
                   <li>
                     {t(
-                      "builder_cover_letter.conclusion.referral.adresse_email"
+                      "site.builder_cover_letter.conclusion.referral.adresse_email"
                     )}
                   </li>
                   <li>
-                    {t("builder_cover_letter.conclusion.referral.prenom")}
+                    {t("site.builder_cover_letter.conclusion.referral.prenom")}
                   </li>
-                  <li>{t("builder_cover_letter.conclusion.referral.nom")}</li>
+                  <li>{t("site.builder_cover_letter.conclusion.referral.nom")}</li>
                 </>
               )}
             </ul>
