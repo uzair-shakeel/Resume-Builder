@@ -882,6 +882,76 @@
       "my_account": "Mon Compte",
       "dashboard": "Tableau de Bord",
       "logout": "Déconnexion"
+    },
+    "templates": {
+      "page": {
+        "title": "Modèles de CV et mise en page",
+        "subtitle": "Valorisez votre profil en choisissant parmi une sélection de modèles de CV professionnels.",
+        "description": "Tirez avantage de nos modèles de CV pour vous démarquer des autres candidats. Design contemporain, graphisme marqué ou encore choix du minimalisme, de nombreuses options s'offrent à vous pour créer un CV de qualité qui attirera l'attention des recruteurs, tout en soulignant vos compétences.",
+        "select_best": {
+          "title": "Sélectionner le meilleur modèle de CV pour votre profil",
+          "description": "La mise en page de votre CV est un élément crucial de votre candidature. Elle est au service du contenu de votre document. Autrement dit, une mise en page réussie permet de mettre en évidence vos compétences, votre expérience et vos qualifications pour le poste, tout en proposant une lecture agréable."
+        },
+        "format": {
+          "title": "Quel est le bon format pour votre CV ?",
+          "description": "Bien que le contenu de chaque CV varie selon les profils, le format et la structure de ce document s'appliquent à tous les candidats. On peut distinguer deux grandes catégories : le CV chronologique inversé et le CV fonctionnel.",
+          "chronological": {
+            "title": "CV chronologique inversé",
+            "description": "Aussi appelé CV antéchronologique, ce type de CV est le plus fréquemment utilisé. Sa particularité concerne les rubriques Formation et Expérience professionnelle de votre CV en priorité, mais cela vaut aussi pour les stages ou les certifications par exemple. Dans celles-ci, les entrées sont énumérées de la plus récente à la plus ancienne. C'est un CV qui convient aux candidats ayant un parcours classique."
+          },
+          "functional": {
+            "title": "CV fonctionnel",
+            "description": "Ce type de CV convient aux candidats qui présentent un parcours moins classique. Cela peut être dû à un changement de carrière, ou à des périodes d'inactivité. Quoi qu'il en soit, dans ces cas présenter la trajectoire de façon chronologique ne met pas forcément en valeur l'expérience ou les qualifications du candidat. Un CV fonctionnel repose sur les compétences. En ce sens, celles-ci sont placées juste en dessous du profil personnel ou de l'en-tête du CV, avant l'expérience professionnelle et la formation."
+          }
+        },
+        "cta": "Utiliser ce modèle",
+        "faq": {
+          "title": "Foire aux questions : les modèles de CV"
+        },
+        "create_resume": {
+          "title": "Utilisez un modèle de CV élégant",
+          "subtitle": "Trouvez votre prochain emploi avec un modèle de CV professionnel",
+          "cta": "Créez votre CV"
+        }
+      },
+      "templates": {
+        "circular": {
+          "title": "Circulaire",
+          "description": "Le style de ce modèle de CV contemporain est idéal pour mettre en valeur vos compétences."
+        },
+        "professional": {
+          "title": "Professionnel",
+          "description": "Modèle de CV évocateur de tradition et de précision."
+        },
+        "student": {
+          "title": "Student",
+          "description": "Combinaison de contraste et structure pour un modèle de CV qui attire l'attention."
+        },
+        "minimal": {
+          "title": "Minimal",
+          "description": "La simplicité et la mise en valeur du contenu caractérisent ce modèle de CV."
+        },
+        "sherlock": {
+          "title": "Sherlock",
+          "description": "Les blocs de couleur mêlent graphisme franc et sobriété dans ce modèle de CV créatif."
+        },
+        "modern": {
+          "title": "Moderne",
+          "description": "Un modèle de CV accrocheur pour souligner votre candidature au moyen de la couleur."
+        },
+        "classic": {
+          "title": "Classic",
+          "description": "Un modèle de CV intemporel qui mise sur une présentation claire et élégante."
+        },
+        "hr": {
+          "title": "HR",
+          "description": "Un modèle de CV optimisé pour les professionnels des ressources humaines."
+        },
+        "teal": {
+          "title": "Teal",
+          "description": "Un modèle de CV frais et moderne avec une touche de couleur distinctive."
+        }
+      }
     }
   }
 }

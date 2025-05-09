@@ -13,10 +13,8 @@ interface PaymentModalProps {
 interface PlanOption {
   id: string;
   name: string;
-  trialPrice: string;
-  trialPriceRaw: number; // in cents
-  regularPrice: string;
-  regularPriceRaw: number; // in cents
+  price: string;
+  priceRaw: number; // in cents
   billingPeriod: string;
   interval: "monthly" | "quarterly" | "yearly";
   totalPrice?: string;
@@ -27,10 +25,8 @@ const SUBSCRIPTION_PLANS: PlanOption[] = [
   {
     id: "monthly",
     name: "Mensuel",
-    trialPrice: "0,99 US$",
-    trialPriceRaw: 99, // 0.99 USD in cents
-    regularPrice: "14,99 US$",
-    regularPriceRaw: 1499, // 14.99 USD in cents
+    price: "14,99 XOF",
+    priceRaw: 1499,
     billingPeriod: "mois",
     interval: "monthly",
     durationDays: 30,
@@ -38,25 +34,21 @@ const SUBSCRIPTION_PLANS: PlanOption[] = [
   {
     id: "quarterly",
     name: "Trimestriel",
-    trialPrice: "0,99 US$",
-    trialPriceRaw: 99, // 0.99 USD in cents
-    regularPrice: "9,99 US$",
-    regularPriceRaw: 999, // 9.99 USD in cents
+    price: "39,99 XOF",
+    priceRaw: 3999,
     billingPeriod: "mois",
     interval: "quarterly",
-    totalPrice: "29,97 US$ facturation trimestrielle",
+    totalPrice: "39,99 XOF facturation trimestrielle",
     durationDays: 90,
   },
   {
     id: "yearly",
     name: "Annuel",
-    trialPrice: "0,99 US$",
-    trialPriceRaw: 99, // 0.99 USD in cents
-    regularPrice: "7,49 US$",
-    regularPriceRaw: 749, // 7.49 USD in cents
+    price: "139,99 XOF",
+    priceRaw: 13999,
     billingPeriod: "mois",
     interval: "yearly",
-    totalPrice: "89,88 US$ facturation annuelle",
+    totalPrice: "139,99 XOF facturation annuelle",
     durationDays: 365,
   },
 ];
@@ -108,18 +100,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         "plan:",
         selectedPlan.id,
         "amount:",
-        selectedPlan.trialPriceRaw
+        selectedPlan.priceRaw
       );
 
       // Use the server-side initialization approach
       const authorizationUrl = await initializePayment({
         email: userEmail,
-        amount: selectedPlan.trialPriceRaw, // Amount in cents
+        amount: selectedPlan.priceRaw, // Amount in cents
         reference,
         metadata: {
           plan: selectedPlan.id,
           type: type,
-          amount: selectedPlan.trialPriceRaw,
+          amount: selectedPlan.priceRaw,
           duration: selectedPlan.durationDays,
           // Add additional user information from session if available
           name: session?.user?.name || "",
@@ -136,10 +128,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         // Add extra query parameters to ensure we have all needed info when returning
         url.searchParams.append("plan", selectedPlan.id);
         url.searchParams.append("type", type);
-        url.searchParams.append(
-          "amount",
-          selectedPlan.trialPriceRaw.toString()
-        );
+        url.searchParams.append("amount", selectedPlan.priceRaw.toString());
         url.searchParams.append(
           "duration",
           selectedPlan.durationDays.toString()
@@ -202,21 +191,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
 
             <div className="text-center mb-2">
-              <div className="text-4xl font-semibold">
-                {selectedPlan.trialPrice}
-              </div>
+              <div className="text-4xl font-semibold">{selectedPlan.price}</div>
               <div className="text-sm text-gray-500">
                 pour {selectedPlan.durationDays} jours
               </div>
             </div>
 
             <div className="text-center text-sm text-gray-500">
-              <p>
-                Ensuite {selectedPlan.regularPrice} /{" "}
-                {selectedPlan.billingPeriod}
-              </p>
-              {selectedPlan.totalPrice && <p>({selectedPlan.totalPrice})</p>}
-              {!selectedPlan.totalPrice && <p>(renouvellement automatique)</p>}
+              <p>(renouvellement automatique)</p>
             </div>
           </div>
 
@@ -227,7 +209,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
           >
             {isProcessing
               ? "Traitement en cours..."
-              : `Payer ${selectedPlan.trialPrice}`}
+              : `Payer ${selectedPlan.price}`}
           </button>
 
           <div className="mt-4 text-sm text-gray-600">

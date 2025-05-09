@@ -8,11 +8,13 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
+  const { data: session } = useSession();
 
   // Handle scroll
   useEffect(() => {
@@ -81,12 +83,21 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center justify-end gap-2">
-          <Link
-            href="/auth/signin"
-            className="hidden md:inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-transparent active:bg-brand-100 active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
-          >
-            {t("site.header.login")}
-          </Link>
+          {session ? (
+            <Link
+              href="/dashboard"
+              className="hidden md:inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-transparent active:bg-brand-100 active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
+            >
+              {t("site.header.dashboard")}
+            </Link>
+          ) : (
+            <Link
+              href="/auth/signin"
+              className="hidden md:inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-transparent active:bg-brand-100 active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
+            >
+              {t("site.header.login")}
+            </Link>
+          )}
           <Link
             href="/builder"
             className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center bg-[#173dff] active:bg-brand-300 active:bg-brand-300 text-white border-transparent hover:bg-brand-400 font-medium py-1 lg:py-2 ps-3 pe-3 lg:ps-4 lg:pe-4 text-base"
@@ -168,13 +179,23 @@ export default function Header() {
               {t("site.header.faq")}
             </Link>
             <div>
-              <Link
-                href="/login"
-                className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center w-full bg-transparent active:bg-[#e3e8ff] active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-2 ps-4 pe-4 text-base mt-4"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {t("site.header.login")}
-              </Link>
+              {session ? (
+                <Link
+                  href="/dashboard"
+                  className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center w-full bg-transparent active:bg-[#e3e8ff] active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-2 ps-4 pe-4 text-base mt-4"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {t("site.header.dashboard")}
+                </Link>
+              ) : (
+                <Link
+                  href="/auth/signin"
+                  className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-[#b0bdff] items-center w-full bg-transparent active:bg-[#e3e8ff] active:bg-brand-100 text-gray-700 border-gray-400 hover:bg-brand-50 hover:border-brand-400 font-medium py-2 ps-4 pe-4 text-base mt-4"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {t("site.header.login")}
+                </Link>
+              )}
             </div>
           </nav>
         </div>

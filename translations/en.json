@@ -882,6 +882,76 @@
       "my_account": "My Account",
       "dashboard": "Dashboard",
       "logout": "Logout"
+    },
+    "templates": {
+      "page": {
+        "title": "Resume Templates and Layouts",
+        "subtitle": "Enhance your profile by choosing from a selection of professional resume templates.",
+        "description": "Take advantage of our resume templates to stand out from other candidates. Contemporary design, bold graphics, or minimalist choice, many options are available to create a quality resume that will attract recruiters' attention while highlighting your skills.",
+        "select_best": {
+          "title": "Select the Best Resume Template for Your Profile",
+          "description": "Your resume's layout is a crucial element of your application. It serves the content of your document. In other words, a successful layout helps highlight your skills, experience, and qualifications for the position, while providing a pleasant reading experience."
+        },
+        "format": {
+          "title": "What's the Right Format for Your Resume?",
+          "description": "Although the content of each resume varies according to profiles, the format and structure of this document apply to all candidates. We can distinguish two main categories: the reverse chronological resume and the functional resume.",
+          "chronological": {
+            "title": "Reverse Chronological Resume",
+            "description": "Also called anti-chronological resume, this type of resume is the most frequently used. Its particularity concerns the Education and Professional Experience sections of your resume primarily, but this also applies to internships or certifications for example. In these, entries are listed from most recent to oldest. It's a resume that suits candidates with a classic career path."
+          },
+          "functional": {
+            "title": "Functional Resume",
+            "description": "This type of resume is suitable for candidates who have a less conventional career path. This may be due to a career change or periods of inactivity. In any case, in these situations, presenting the trajectory chronologically doesn't necessarily highlight the candidate's experience or qualifications. A functional resume is based on skills. As such, these are placed just below the personal profile or resume header, before professional experience and education."
+          }
+        },
+        "cta": "Use this template",
+        "faq": {
+          "title": "FAQ: Resume Templates"
+        },
+        "create_resume": {
+          "title": "Use an Elegant Resume Template",
+          "subtitle": "Find your next job with a professional resume template",
+          "cta": "Create your Resume"
+        }
+      },
+      "templates": {
+        "circular": {
+          "title": "Circular",
+          "description": "The style of this contemporary resume template is ideal for highlighting your skills."
+        },
+        "professional": {
+          "title": "Professional",
+          "description": "Resume template evocative of tradition and precision."
+        },
+        "student": {
+          "title": "Student",
+          "description": "Combination of contrast and structure for an eye-catching resume template."
+        },
+        "minimal": {
+          "title": "Minimal",
+          "description": "Simplicity and content emphasis characterize this resume template."
+        },
+        "sherlock": {
+          "title": "Sherlock",
+          "description": "Color blocks blend bold graphics and sobriety in this creative resume template."
+        },
+        "modern": {
+          "title": "Modern",
+          "description": "An eye-catching resume template to highlight your application through color."
+        },
+        "classic": {
+          "title": "Classic",
+          "description": "A timeless resume template that focuses on clear and elegant presentation."
+        },
+        "hr": {
+          "title": "HR",
+          "description": "A resume template optimized for human resources professionals."
+        },
+        "teal": {
+          "title": "Teal",
+          "description": "A fresh and modern resume template with a distinctive touch of color."
+        }
+      }
     }
   }
 }

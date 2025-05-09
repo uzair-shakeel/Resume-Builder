@@ -22,16 +22,19 @@ export default function Pricing() {
       price: "14,99",
       trial: "0,99",
       period: t("site.pricing.period.month"),
+      fullPrice: "1499",
     },
     quarter: {
       price: "39,99",
       trial: "0,99",
       period: t("site.pricing.period.quarter"),
+      fullPrice: "3999",
     },
     year: {
-      price: "149,99",
+      price: "139,99",
       trial: "0,99",
       period: t("site.pricing.period.year"),
+      fullPrice: "13999",
     },
   };
 
@@ -111,9 +114,9 @@ export default function Pricing() {
                         {
                           pricingOptions[
                             selectedPeriod as keyof typeof pricingOptions
-                          ].price
+                          ].fullPrice
                         }
-                        &nbsp;US$
+                        &nbsp;XOF
                       </span>{" "}
                       <span id="pricing-per-period">
                         /{" "}
@@ -144,7 +147,7 @@ export default function Pricing() {
                               selectedPeriod as keyof typeof pricingOptions
                             ].trial
                           }
-                          &nbsp;US$
+                          &nbsp;XOF
                         </span>
                       </div>
                     </Link>

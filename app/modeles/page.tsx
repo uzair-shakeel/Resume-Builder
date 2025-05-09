@@ -1,85 +1,63 @@
+"use client";
+
 import FAQ from "@/components/shared/FAQ";
 import Footer from "@/components/shared/Footer";
 import Header from "@/components/shared/Header";
 import Image from "next/image";
 import Link from "next/link";
-import modelesFaqData from "@/data/modelesFaqData";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const templates = [
   {
     id: "circulaire",
-    title: "Circulaire",
-    description:
-      "Le style de ce modèle de CV contemporain est idéal pour mettre en valeur vos compétences.",
     image: "/assets/circulaire.jpg",
     color: "teal",
   },
   {
     id: "pro",
-    title: "Professionnel",
-    description: "Modèle de CV évocateur de tradition et de précision.",
     image: "/assets/professional.png",
     color: "navy",
   },
   {
     id: "student",
-    title: "Student",
-    description:
-      "Combinaison de contraste et structure pour un modèle de CV qui attire l'attention.",
     image: "/assets/student-resume.jpg",
     color: "purple",
   },
   {
     id: "minimal",
-    title: "Minimal",
-    description:
-      "La simplicité et la mise en valeur du contenu caractérisent ce modèle de CV.",
     image: "/assets/minimal-resume.jpg",
     color: "teal",
   },
   {
     id: "sherlock",
-    title: "Sherlock",
-    description:
-      "Les blocs de couleur mêlent graphisme franc et sobriété dans ce modèle de CV créatif.",
     image: "/assets/resume3.png",
     color: "navy",
   },
   {
     id: "modern",
-    title: "Moderne",
-    description:
-      "Un modèle de CV accrocheur pour souligner votre candidature au moyen de la couleur.",
     image: "/assets/modern-cv.svg",
     color: "brown",
   },
   {
     id: "classic",
-    title: "Classic",
-    description:
-      "Un modèle de CV intemporel qui mise sur une présentation claire et élégante.",
     image: "/assets/classic.jpg",
     color: "#2c3e50",
   },
   {
     id: "hr",
-    title: "HR",
-    description:
-      "Un modèle de CV optimisé pour les professionnels des ressources humaines.",
     image: "/assets/hr.jpg",
     color: "#9b59b6",
   },
   {
     id: "teal",
-    title: "Teal",
-    description:
-      "Un modèle de CV frais et moderne avec une touche de couleur distinctive.",
     image: "/assets/teal.jpg",
     color: "#2BCBBA",
   },
 ];
 
 export default function CVTemplates() {
+  const { t } = useLanguage();
+
   return (
     <main>
       <Header />
@@ -90,24 +68,17 @@ export default function CVTemplates() {
               id="hero-title"
               className="text-4xl leading-normal md:text-5xl font-medium font-header text-gray-900 mb-2 text-center"
             >
-              Modèles de CV et mise en page
+              {t("site.templates.page.title")}
             </h1>
             <p className="max-w-xl text-base md:text-lg text-gray-500 text-center">
-              Valorisez votre profil en choisissant parmi une sélection de
-              modèles de CV professionnels.
+              {t("site.templates.page.subtitle")}
             </p>
           </section>
         </div>
         <div className="max-w-[1150px] mx-auto px-[20px] w-full">
           <div className="text-gray-900 text-base leading-7 bg-white py-8 break-words">
             <div className="break-words">
-              <p>
-                Tirez avantage de nos modèles de CV pour vous démarquer des
-                autres candidats. Design contemporain, graphisme marqué ou
-                encore choix du minimalisme, de nombreuses options s'offrent à
-                vous pour créer un CV de qualité qui attirera l'attention des
-                recruteurs, tout en soulignant vos compétences.
-              </p>
+              <p>{t("site.templates.page.description")}</p>
             </div>
           </div>
 
@@ -123,7 +94,9 @@ export default function CVTemplates() {
                   <div className="relative" style={{ paddingBottom: "141%" }}>
                     <Image
                       src={template.image || "/placeholder.svg"}
-                      alt={`Modèles de CV et mise en page - ${template.title}`}
+                      alt={`${t("site.templates.page.title")} - ${t(
+                        `site.templates.templates.${template.id}.title`
+                      )}`}
                       fill
                       className="w-full rounded shadow-md transition-shadow can-hover:group-hover:shadow-lg object-cover absolute start-0 end-0 bottom-0 top-0"
                     />
@@ -133,15 +106,17 @@ export default function CVTemplates() {
                       className="inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 can-hover:active:bg-brand-300 text-white border-transparent can-hover:hover:bg-brand-400 font-medium py-1 ps-3 pe-3 text-base"
                       style={{ outline: "none" }}
                     >
-                      <div className="truncate h-6">Utiliser ce modèle</div>
+                      <div className="truncate h-6">
+                        {t("site.templates.page.cta")}
+                      </div>
                     </div>
                   </div>
                 </div>
                 <p className="font-bold mt-4 text-gray-800 group-hover:text-brand-500 text-base">
-                  {template.title}
+                  {t(`site.templates.templates.${template.id}.title`)}
                 </p>
                 <p className="w-full text-sm text-gray-500 leading-7 mt-3">
-                  {template.description}
+                  {t(`site.templates.templates.${template.id}.description`)}
                 </p>
               </Link>
             ))}
@@ -151,137 +126,108 @@ export default function CVTemplates() {
           <div className="text-gray-900 text-base leading-7 bg-white py-8 break-words">
             <div className="break-words">
               <h2 className="text-2xl font-medium leading-tight text-gray-900 mb-4 mt-8 first:mt-0">
-                Sélectionner le meilleur modèle de CV pour votre profil
+                {t("site.templates.page.select_best.title")}
               </h2>
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
-                La mise en page de votre CV est un élément crucial de votre
-                candidature. Elle est au service du contenu de votre document.
-                Autrement dit, une mise en page réussie permet de mettre en
-                évidence vos compétences, votre expérience et vos qualifications
-                pour le poste, tout en proposant une lecture agréable.
-              </p>
-              <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
-                Choisir le bon modèle de CV, c'est vous donner l'opportunité de
-                susciter l'intérêt pour votre candidature grâce à un design
-                original. En vous démarquant, vous augmentez vos chances d'être
-                présélectionné, et d'être considéré pour un entretien puis pour
-                un emploi.
-              </p>
-              <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
-                Tous nos modèles vous donnent la possibilité de créer votre{" "}
-                <a href="/" className="text-brand-500 font-medium underline">
-                  <u>CV en ligne</u>
-                </a>
-                , ce qui facilite le processus et vous fait gagner du temps.
-                Autre avantage, un modèle pré-conçu vous permet également
-                d'adapter votre CV en quelques clics seulement à toute offre
-                d'emploi qui pourrait vous intéresser.
-              </p>
-              <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
-                Grâce à notre large sélection de couleurs et de styles
-                différents, vous pouvez concevoir un CV correspondant aussi bien
-                au secteur d'activité dans lequel vous souhaitez travailler,
-                qu'au poste que vous visez. Nos{" "}
-                <a
-                  href="/exemples-cv"
-                  className="text-brand-500 font-medium underline"
-                >
-                  <u>exemples de CV</u>
-                </a>{" "}
-                vous aideront à vous représenter les différentes options
-                desquelles vous bénéficiez.
+                {t("site.templates.page.select_best.description")}
               </p>
               <h2
                 className="text-2xl font-medium leading-tight text-gray-900 mb-4 mt-8"
                 id="quel-est-le-bon-format-pour-votre-cv"
               >
-                Quel est le bon format pour votre CV ?
+                {t("site.templates.page.format.title")}
               </h2>
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
-                Bien que le contenu de chaque CV varie selon les profils, le
-                format et la structure de ce document s'appliquent à tous les
-                candidats. On peut distinguer deux grandes catégories : le CV
-                chronologique inversé et le CV fonctionnel.
+                {t("site.templates.page.format.description")}
               </p>
               <h3
                 className="text-xl font-medium leading-tight text-gray-900 mb-3 mt-6"
                 id="cv-chronologique-inversé"
               >
-                CV chronologique inversé
+                {t("site.templates.page.format.chronological.title")}
               </h3>
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
-                Aussi appelé{" "}
-                <a
-                  href="/conseils/cv-antechronologique"
-                  className="text-brand-500 font-medium underline"
-                >
-                  <u>CV antéchronologique</u>
-                </a>
-                , ce type de CV est le plus fréquemment utilisé. Sa
-                particularité concerne les rubriques Formation et Expérience
-                professionnelle de votre CV en priorité, mais cela vaut aussi
-                pour les stages ou les certifications par exemple.&nbsp;
-              </p>
-              <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
-                Dans celles-ci, les entrées sont énumérées de la plus récente à
-                la plus ancienne. C'est un CV qui convient aux candidats ayant
-                un parcours classique.&nbsp;&nbsp;
+                {t("site.templates.page.format.chronological.description")}
               </p>
               <h3
                 className="text-xl font-medium leading-tight text-gray-900 mb-3 mt-6"
                 id="cv-fonctionnel"
               >
-                CV fonctionnel
+                {t("site.templates.page.format.functional.title")}
               </h3>
               <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
-                Ce type de CV convient aux candidats qui présentent un parcours
-                moins classique. Cela peut être dû à un changement de carrière,
-                ou à des périodes d'inactivité. Quoi qu'il en soit, dans ces cas
-                présenter la trajectoire de façon chronologique ne met pas
-                forcément en valeur l'expérience ou les qualifications du
-                candidat.&nbsp;
-              </p>
-              <p className="mb-5 mt-2 last:mb-0 first:mt-0 after:content-['\200b']">
-                Un CV fonctionnel repose sur les compétences. En ce sens,
-                celles-ci sont placées juste en dessous du profil personnel ou
-                de l'en-tête du CV, avant l'expérience professionnelle et la
-                formation. En utilisant un{" "}
-                <a
-                  rel="nofollow"
-                  href="https://www.cv.fr/modeles-cv"
-                  className="text-brand-500 font-medium underline"
-                >
-                  <u>modèle de CV</u>
-                </a>
-                , vous pouvez déplacer les rubriques comme vous le souhaitez,
-                vous permettant ainsi facilement de créer un CV adoptant la
-                structure qui vous correspond le mieux.
+                {t("site.templates.page.format.functional.description")}
               </p>
             </div>
           </div>
 
           {/* FAQ Section */}
-          <FAQ
-            faqs={modelesFaqData}
-            title={"Foire aux questions : les modèles de CV"}
-          />
+          <FAQ useTrans={true} title={t("site.templates.page.faq.title")} />
         </div>
         {/* Create Resume Section */}
         <section className="bg-background relative py-16 lg:py-32">
           <div className="max-w-[1150px] mx-auto flex flex-col items-center text-center px-5">
             <h2 className="font-medium text-3xl md:text-5xl leading-tight md:leading-tight text-gray-900 mb-3">
-              Utilisez un modèle de CV élégant
+              {t("site.templates.page.create_resume.title")}
             </h2>
             <p className="max-w-xl text-xl text-gray-500 mb-10">
-              Trouvez votre prochain emploi avec un modèle de CV professionnel
+              {t("site.templates.page.create_resume.subtitle")}
             </p>
-            <Link
-              className="inline-flex border outline-none justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 can-hover:active:bg-brand-300 text-white border-transparent can-hover:hover:bg-brand-400 font-medium py-3 ps-7 pe-7 text-lg"
-              href="/builder"
-              data-testid=""
-            >
-              <div className="truncate h-7">Créez votre CV</div>
-            </Link>
+            <div className="text-4xl leading-normal sm:text-5xl font-medium text-gray-900">
+              {
+                pricingOptions[selectedPeriod as keyof typeof pricingOptions]
+                  .trial
+              }
+              &nbsp;XOF
+            </div>
+            <div className="text-sm text-gray-500">
+              pour{" "}
+              {selectedPeriod === "month"
+                ? "30"
+                : selectedPeriod === "quarter"
+                ? "90"
+                : "365"}{" "}
+              jours
+            </div>
+            <div className="text-center text-sm text-gray-500 mt-2">
+              Ensuite{" "}
+              {
+                pricingOptions[selectedPeriod as keyof typeof pricingOptions]
+                  .price
+              }{" "}
+              XOF /{" "}
+              {
+                pricingOptions[selectedPeriod as keyof typeof pricingOptions]
+                  .period
+              }
+              <p>{t("site.pricing.auto_renewal")}</p>
+            </div>
+            <div className="flex w-full">
+              <Link
+                id="pricing-get-started"
+                className="outline-none inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center w-full bg-brand-500 active:bg-brand-300 can-hover:active:bg-brand-300 text-white border-transparent can-hover:hover:bg-brand-400 font-medium py-1 ps-3 pe-3 text-base"
+                href="#"
+              >
+                <div>
+                  {t("site.pricing.try_for_days", {
+                    days:
+                      selectedPeriod === "month"
+                        ? "30"
+                        : selectedPeriod === "quarter"
+                        ? "90"
+                        : "365",
+                  })}{" "}
+                  <span id="pricing-trial-fee">
+                    {
+                      pricingOptions[
+                        selectedPeriod as keyof typeof pricingOptions
+                      ].trial
+                    }
+                    &nbsp;XOF
+                  </span>
+                </div>
+              </Link>
+            </div>
           </div>
         </section>
       </div>
