@@ -128,12 +128,12 @@ export default function SignInPage() {
                 <Label htmlFor="password">
                   {t("site.auth.login.password_label")}
                 </Label>
-                <Link
+                {/* <Link
                   href="/auth/forgot-password"
                   className="text-sm text-primary hover:underline"
                 >
                   {t("site.auth.login.forgot_password")}
-                </Link>
+                </Link> */}
               </div>
               <Input
                 id="password"
