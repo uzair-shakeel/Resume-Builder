@@ -57,7 +57,7 @@ export async function GET() {
       {
         $group: {
           _id: null,
-          total: { $sum: "$amount" },
+          total: { $sum: { $divide: ["$amount", 100] } },
         },
       },
     ]);
@@ -99,7 +99,7 @@ export async function GET() {
         {
           $group: {
             _id: null,
-            total: { $sum: "$amount" },
+            total: { $sum: { $divide: ["$amount", 100] } },
           },
         },
       ]);
@@ -173,7 +173,7 @@ export async function GET() {
       {
         $group: {
           _id: { plan: "$plan", type: "$type" },
-          revenue: { $sum: "$amount" },
+          revenue: { $sum: { $divide: ["$amount", 100] } },
         },
       },
     ]);
