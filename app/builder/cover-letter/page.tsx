@@ -2228,6 +2228,27 @@ export default function CoverLetterBuilder() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Add the handleBackToDashboard function after other handler functions
+  const handleBackToDashboard = () => {
+    // Set saving status immediately
+    setSaveStatus("saving");
+
+    // Save the cover letter before navigating
+    saveCoverLetter()
+      .then(() => {
+        // Clear session storage if navigating away completely
+        sessionStorage.removeItem("current-cover-letter-id");
+        // Use window.location.href for a hard navigation
+        window.location.href = "/dashboard";
+      })
+      .catch((error) => {
+        console.error("Error saving before navigation:", error);
+        // Navigate anyway even if save fails
+        sessionStorage.removeItem("current-cover-letter-id");
+        window.location.href = "/dashboard";
+      });
+  };
+
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       {/* Loading Overlay */}
