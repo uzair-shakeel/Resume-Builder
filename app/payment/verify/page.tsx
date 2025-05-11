@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { verifyPayment, PaymentVerificationResult } from "@/app/utils/paystack";
 import { useSession } from "next-auth/react";
 import { RefreshCw } from "lucide-react";
 
-export default function PaymentVerificationPage() {
+function VerifyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session, status: sessionStatus } = useSession();
@@ -197,5 +197,13 @@ export default function PaymentVerificationPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyContent />
+    </Suspense>
   );
 }

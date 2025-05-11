@@ -1,3 +1,7 @@
+"use client";
+
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Header from "@/components/shared/Header";
 import Hero from "@/components/home/Hero";
 import ResumeSlider from "@/components/home/ResumeSlider";
@@ -8,7 +12,10 @@ import FAQ from "@/components/shared/FAQ";
 import MakeCVOnline from "@/components/home/MakeCVOnline";
 import Footer from "@/components/shared/Footer";
 
-export default function Home() {
+function HomeContent() {
+  const searchParams = useSearchParams();
+  // ... rest of your component logic
+
   return (
     <main className="min-h-screen flex flex-col">
       <Header />
@@ -23,5 +30,13 @@ export default function Home() {
       <MakeCVOnline />
       <Footer />
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
