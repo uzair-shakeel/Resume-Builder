@@ -1,3 +1,5 @@
+import CVBuilder from "@/components/cv-templates/cv-builder";
+
 export default function CreateCVPage() {
   const initialData: CVData = {
     personalInfo: {
