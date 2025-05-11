@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import type { CVData } from "@/types";
 import CVPreview from "./cv-preview";
