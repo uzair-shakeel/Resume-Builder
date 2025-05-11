@@ -6,6 +6,7 @@ import Header from "@/components/shared/Header";
 import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useState } from "react";
 
 const templates = [
   {
@@ -55,8 +56,31 @@ const templates = [
   },
 ];
 
+const pricingOptions = {
+  month: {
+    price: "14,99",
+    period: "mois",
+    fullPrice: "1499",
+  },
+  quarter: {
+    price: "39,99",
+    period: "trimestre",
+    fullPrice: "3999",
+  },
+  year: {
+    price: "139,99",
+    period: "an",
+    fullPrice: "13999",
+  },
+};
+
 export default function CVTemplates() {
   const { t } = useLanguage();
+  const [selectedPeriod, setSelectedPeriod] = useState("month");
+
+  const handlePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPeriod(e.target.value);
+  };
 
   return (
     <main>
@@ -97,7 +121,7 @@ export default function CVTemplates() {
                       alt={`${t("site.templates.page.title")} - ${t(
                         `site.templates.templates.${template.id}.title`
                       )}`}
-                      fill
+                      fill 
                       className="w-full rounded shadow-md transition-shadow can-hover:group-hover:shadow-lg object-cover absolute start-0 end-0 bottom-0 top-0"
                     />
                   </div>
@@ -173,12 +197,30 @@ export default function CVTemplates() {
             <p className="max-w-xl text-xl text-gray-500 mb-10">
               {t("site.templates.page.create_resume.subtitle")}
             </p>
+
+            {/* Period Selector */}
+            <div className="mb-6 w-full max-w-sm">
+              <select
+                value={selectedPeriod}
+                onChange={handlePeriodChange}
+                className="w-full p-2 border rounded-md bg-white"
+              >
+                <option value="month">
+                  {t("site.pricing.options.monthly")}
+                </option>
+                <option value="quarter">
+                  {t("site.pricing.options.quarterly")}
+                </option>
+                <option value="year">{t("site.pricing.options.yearly")}</option>
+              </select>
+            </div>
+
             <div className="text-4xl leading-normal sm:text-5xl font-medium text-gray-900">
               {
                 pricingOptions[selectedPeriod as keyof typeof pricingOptions]
-                  .trial
-              }
-              &nbsp;XOF
+                  .price
+              }{" "}
+              XOF
             </div>
             <div className="text-sm text-gray-500">
               pour{" "}
@@ -190,23 +232,12 @@ export default function CVTemplates() {
               jours
             </div>
             <div className="text-center text-sm text-gray-500 mt-2">
-              Ensuite{" "}
-              {
-                pricingOptions[selectedPeriod as keyof typeof pricingOptions]
-                  .price
-              }{" "}
-              XOF /{" "}
-              {
-                pricingOptions[selectedPeriod as keyof typeof pricingOptions]
-                  .period
-              }
               <p>{t("site.pricing.auto_renewal")}</p>
             </div>
-            <div className="flex w-full">
+            <div className="flex w-full max-w-sm mt-6">
               <Link
-                id="pricing-get-started"
-                className="outline-none inline-flex border justify-center rounded-[5px] relative overflow-hidden max-w-full focus-visible:ring-4 ring-brand-200 items-center w-full bg-brand-500 active:bg-brand-300 can-hover:active:bg-brand-300 text-white border-transparent can-hover:hover:bg-brand-400 font-medium py-1 ps-3 pe-3 text-base"
                 href="#"
+                className="w-full outline-none inline-flex border justify-center rounded-[5px] relative overflow-hidden focus-visible:ring-4 ring-brand-200 items-center bg-brand-500 active:bg-brand-300 can-hover:active:bg-brand-300 text-white border-transparent can-hover:hover:bg-brand-400 font-medium py-3 ps-3 pe-3 text-base"
               >
                 <div>
                   {t("site.pricing.try_for_days", {
@@ -217,13 +248,13 @@ export default function CVTemplates() {
                         ? "90"
                         : "365",
                   })}{" "}
-                  <span id="pricing-trial-fee">
+                  <span>
                     {
                       pricingOptions[
                         selectedPeriod as keyof typeof pricingOptions
-                      ].trial
-                    }
-                    &nbsp;XOF
+                      ].price
+                    }{" "}
+                    XOF
                   </span>
                 </div>
               </Link>
