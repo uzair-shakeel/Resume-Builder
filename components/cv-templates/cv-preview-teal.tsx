@@ -152,29 +152,33 @@ export default function CVPreviewTeal({
 
   // Render custom section
   const renderCustomSection = (sectionId: string) => {
-    const customSection = data.customSections?.[sectionId];
-    if (
-      !customSection ||
-      !customSection.items ||
-      customSection.items.length === 0
-    ) {
-      return null;
-    }
+    // Try both direct access and customSections object
+    const customData =
+      data[`custom-${sectionId}`] || data.customSections?.[sectionId];
+    if (!customData) return null;
+
+    // Handle both array of items and customSections format
+    const items = Array.isArray(customData) ? customData : customData.items;
+    if (!items || items.length === 0) return null;
 
     return (
       <div className="mb-8">
         <h2
-          className="text-xl font-semibold mb-4"
-          style={{ color: accentColor }}
+          className="text-xl font-semibold mb-4 pb-2 border-b"
+          style={{ color: accentColor, borderColor: accentColor }}
         >
           {getSectionTitle(`custom-${sectionId}`)}
         </h2>
         <div className="space-y-4">
-          {customSection.items.map((item: CustomSectionItem, index: number) => (
+          {items.map((item: CustomSectionItem, index: number) => (
             <div key={index} className="mb-4">
-              <div className="font-semibold">{item.title}</div>
+              {item.title && (
+                <div className="font-semibold text-gray-800">{item.title}</div>
+              )}
               {item.description && (
-                <div className="text-sm mt-1">{item.description}</div>
+                <div className="text-sm mt-1 text-gray-700 whitespace-pre-line">
+                  {item.description}
+                </div>
               )}
             </div>
           ))}

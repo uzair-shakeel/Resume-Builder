@@ -120,6 +120,38 @@ export default function CVPreviewCirculaire({
     }
   };
 
+  const renderCustomSection = (section: string) => {
+    if (section.startsWith("custom-") && data[section]) {
+      return (
+        <div className="mt-6">
+          <h2
+            style={{ color: accentColor, borderColor: accentColor }}
+            className="text-xl font-bold mb-4 border-b pb-2"
+          >
+            {getSectionTitle(section)}
+          </h2>
+          <div className="space-y-4">
+            {(data[section] as any[]).map((item, index) => (
+              <div key={index} className="mb-4">
+                {item.title && (
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {item.title}
+                  </h3>
+                )}
+                {item.description && (
+                  <p className="text-gray-700 mt-1 whitespace-pre-line">
+                    {item.description}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
   const renderSection = (section: string) => {
     switch (section) {
       case "profile":
@@ -128,7 +160,17 @@ export default function CVPreviewCirculaire({
         return renderEducation();
       case "experience":
         return renderExperience();
+      case "skills":
+        return renderSkills();
+      case "languages":
+        return renderLanguages();
+      case "interests":
+        return renderInterests();
       default:
+        // Handle custom sections
+        if (section.startsWith("custom-")) {
+          return renderCustomSection(section);
+        }
         return null;
     }
   };
@@ -478,8 +520,14 @@ export default function CVPreviewCirculaire({
         <div className="w-2/3 p-8">
           <div className="space-y-6">
             {sections
-              .filter((section) =>
-                ["profile", "experience", "education"].includes(section)
+              .filter(
+                (section) =>
+                  ![
+                    "skills",
+                    "languages",
+                    "interests",
+                    "personal-info",
+                  ].includes(section)
               )
               .map((section) => (
                 <div key={section}>{renderSection(section)}</div>
