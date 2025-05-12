@@ -281,8 +281,6 @@ export default function CVPreviewPro({
 
   const renderSection = (section: string) => {
     switch (section) {
-      case "personal-info":
-        return null; // Personal info is in header
       case "profile":
         return renderProfile();
       case "education":
@@ -290,12 +288,36 @@ export default function CVPreviewPro({
       case "experience":
         return renderExperience();
       case "skills":
-        return null; // Skills are in sidebar
+        return renderSkills();
       case "languages":
-        return null; // Languages are in sidebar
+        return renderLanguages();
       case "interests":
-        return null; // Interests are in sidebar
+        return renderInterests();
       default:
+        // Handle custom sections
+        if (section.startsWith("custom-") && data[section]) {
+          return (
+            <div className="mb-8">
+              <h2 className="text-lg font-medium mb-4 uppercase tracking-wider">
+                {getSectionTitle(section)}
+              </h2>
+              <div className="space-y-4">
+                {(data[section] as any[]).map((item, index) => (
+                  <div key={index}>
+                    {item.title && (
+                      <p className="font-medium text-sm">{item.title}</p>
+                    )}
+                    {item.description && (
+                      <p className="text-sm text-gray-600 mt-1">
+                        {item.description}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        }
         return null;
     }
   };
@@ -326,11 +348,13 @@ export default function CVPreviewPro({
           {sections.includes("interests") && renderInterests()}
         </div>
         <div className="pt-[2rem] pl-[2rem]">
-          {sections.map(
-            (section) =>
-              ["profile", "education", "experience"].includes(section) &&
-              renderSection(section)
-          )}
+          {sections.map((section) => {
+            // Don't render sidebar sections in main content
+            if (!["skills", "languages", "interests"].includes(section)) {
+              return renderSection(section);
+            }
+            return null;
+          })}
         </div>
       </div>
     </div>
