@@ -306,97 +306,140 @@ export default function CVPreviewClassic({
 
           {/* Right column */}
           <div className="w-2/3">
-            {/* Profile */}
-            {sections.includes("profile") && (
-              <div
-                className={`mb-6 ${
-                  breakSettings.keepHeadingsWithContent ? "keep-together" : ""
-                }`}
-              >
-                <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                  {getSectionTitle("profile")}
-                </h2>
-                <p className="text-sm section-content">
-                  {profile || placeholderData.profile}
-                </p>
-              </div>
-            )}
-
-            {/* Experience */}
-            {sections.includes("experience") && (
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                  {getSectionTitle("experience")}
-                </h2>
-                <div className="space-y-4 section-content">
-                  {(experience?.length
-                    ? experience
-                    : placeholderData.experience
-                  ).map((exp, index) => (
+            {sections.map((section) => {
+              switch (section) {
+                case "profile":
+                  return (
                     <div
-                      key={index}
-                      className={`${
-                        index > 0 && index < experience.length - 1
+                      key={section}
+                      className={`mb-6 ${
+                        breakSettings.keepHeadingsWithContent
                           ? "keep-together"
                           : ""
                       }`}
                     >
-                      <div className="flex justify-between">
-                        <h3 className="text-sm font-medium">{exp.position}</h3>
-                        <p className="text-sm cv-accent-color">
-                          {exp.startDate} -{" "}
-                          {exp.current ? "Present" : exp.endDate}
-                        </p>
-                      </div>
-                      <p className="text-sm italic">
-                        {exp.company}, {exp.location}
+                      <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                        {getSectionTitle("profile")}
+                      </h2>
+                      <p className="text-sm section-content">
+                        {profile || placeholderData.profile}
                       </p>
-                      {exp.description && (
-                        <p className="text-sm mt-1 whitespace-pre-line">
-                          {exp.description}
-                        </p>
-                      )}
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Education */}
-            {sections.includes("education") && (
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                  {getSectionTitle("education")}
-                </h2>
-                <div className="space-y-4 section-content">
-                  {(education?.length
-                    ? education
-                    : placeholderData.education
-                  ).map((edu, index) => (
-                    <div
-                      key={index}
-                      className={`${
-                        index > 0 && index < education.length - 1
-                          ? "keep-together"
-                          : ""
-                      }`}
-                    >
-                      <div className="flex justify-between">
-                        <h3 className="text-sm font-medium">{edu.degree}</h3>
-                        <p className="text-sm cv-accent-color">
-                          {edu.startDate} -{" "}
-                          {edu.current ? "Present" : edu.endDate}
-                        </p>
+                  );
+                case "experience":
+                  return (
+                    <div key={section} className="mb-6">
+                      <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                        {getSectionTitle("experience")}
+                      </h2>
+                      <div className="space-y-4 section-content">
+                        {(experience?.length
+                          ? experience
+                          : placeholderData.experience
+                        ).map((exp, index) => (
+                          <div
+                            key={index}
+                            className={`${
+                              index > 0 && index < experience.length - 1
+                                ? "keep-together"
+                                : ""
+                            }`}
+                          >
+                            <div className="flex justify-between">
+                              <h3 className="text-sm font-medium">
+                                {exp.position}
+                              </h3>
+                              <p className="text-sm cv-accent-color">
+                                {exp.startDate} -{" "}
+                                {exp.current ? "Present" : exp.endDate}
+                              </p>
+                            </div>
+                            <p className="text-sm italic">
+                              {exp.company}, {exp.location}
+                            </p>
+                            {exp.description && (
+                              <p className="text-sm mt-1 whitespace-pre-line">
+                                {exp.description}
+                              </p>
+                            )}
+                          </div>
+                        ))}
                       </div>
-                      <p className="text-sm italic">{edu.school}</p>
-                      {edu.description && (
-                        <p className="text-sm mt-1">{edu.description}</p>
-                      )}
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  );
+                case "education":
+                  return (
+                    <div key={section} className="mb-6">
+                      <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                        {getSectionTitle("education")}
+                      </h2>
+                      <div className="space-y-4 section-content">
+                        {(education?.length
+                          ? education
+                          : placeholderData.education
+                        ).map((edu, index) => (
+                          <div
+                            key={index}
+                            className={`${
+                              index > 0 && index < education.length - 1
+                                ? "keep-together"
+                                : ""
+                            }`}
+                          >
+                            <div className="flex justify-between">
+                              <h3 className="text-sm font-medium">
+                                {edu.degree}
+                              </h3>
+                              <p className="text-sm cv-accent-color">
+                                {edu.startDate} -{" "}
+                                {edu.current ? "Present" : edu.endDate}
+                              </p>
+                            </div>
+                            <p className="text-sm italic">{edu.school}</p>
+                            {edu.description && (
+                              <p className="text-sm mt-1">{edu.description}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                default:
+                  // Handle custom sections
+                  if (
+                    section.startsWith("custom-") &&
+                    data[section] &&
+                    !["skills", "languages", "interests"].includes(section)
+                  ) {
+                    return (
+                      <div key={section} className="mb-6">
+                        <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                          {getSectionTitle(section)}
+                        </h2>
+                        <div className="space-y-4 section-content">
+                          {(data[section] as any[]).map((item, index) => (
+                            <div key={index} className="keep-together">
+                              {item.title && (
+                                <div className="flex justify-between">
+                                  <h3 className="text-sm font-medium">
+                                    {item.title}
+                                  </h3>
+                                </div>
+                              )}
+                              {item.description && (
+                                <p className="text-sm mt-1 whitespace-pre-line">
+                                  {item.description}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+              }
+            })}
           </div>
         </div>
       </div>
