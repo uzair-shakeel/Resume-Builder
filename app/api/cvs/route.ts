@@ -3,6 +3,8 @@ import dbConnect from "@/lib/dbConnect";
 import CV from "@/models/CV";
 import User from "@/models/User";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET handler for retrieving all CVs (accessible to everyone)
  * Provides paginated access to all CVs in the system
