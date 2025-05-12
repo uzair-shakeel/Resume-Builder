@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import Subscription from "@/models/Subscription";
 
+export const dynamic = "force-dynamic";
+
 // This route is designed to be called by a cron job service (like Vercel Cron)
 // It checks for expired subscriptions and updates their status
 export async function GET(request: NextRequest) {

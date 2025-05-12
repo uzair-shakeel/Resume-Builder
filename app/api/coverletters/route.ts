@@ -3,6 +3,8 @@ import dbConnect from "@/lib/dbConnect";
 import CoverLetter from "@/models/CoverLetter";
 import User from "@/models/User";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET handler for retrieving all cover letters (accessible to everyone)
  * Provides paginated access to all cover letters in the system

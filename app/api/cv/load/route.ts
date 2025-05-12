@@ -5,6 +5,8 @@ import dbConnect from "@/lib/dbConnect";
 import CV from "@/models/CV";
 import connectDB from "@/lib/mongodb";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);

@@ -11,10 +11,20 @@ export default function LanguageSelector() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [position, setPosition] = useState({
     x: 24,
-    y: window.innerHeight - 100,
-  }); // Initial position
+    y: 0, // Temporary fallback
+  });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Set initial position on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setPosition({
+        x: 24,
+        y: window.innerHeight - 100,
+      });
+    }
+  }, []);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -37,8 +47,8 @@ export default function LanguageSelector() {
     setIsDragging(false);
   };
 
-  const handleDrag = (e: MouseEvent) => {
-    if (isDragging) {
+  const handleDrag = (e: globalThis.MouseEvent) => {
+    if (isDragging && typeof window !== "undefined") {
       const newX = Math.min(
         Math.max(0, e.clientX - dragStart.x),
         window.innerWidth - 150
@@ -56,7 +66,7 @@ export default function LanguageSelector() {
   };
 
   useEffect(() => {
-    if (isDragging) {
+    if (isDragging && typeof window !== "undefined") {
       window.addEventListener("mousemove", handleDrag);
       window.addEventListener("mouseup", handleDragEnd);
 
@@ -67,8 +77,9 @@ export default function LanguageSelector() {
     }
   }, [isDragging]);
 
-  // Handle scroll behavior - hide when scrolling down, show when scrolling up
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       const isScrollingDown = currentScrollY > lastScrollY;
@@ -104,8 +115,7 @@ export default function LanguageSelector() {
           aria-haspopup="true"
           aria-expanded={isOpen}
         >
-          {/* Drag Handle */}
-          <div className=" cursor-move" onMouseDown={handleDragStart}>
+          <div className="cursor-move" onMouseDown={handleDragStart}>
             <GripVertical className="w-5 h-5 hidden group-hover:block text-gray-700 hover:text-gray-900" />
           </div>
           <Globe className="w-5 h-5" />
@@ -130,7 +140,7 @@ export default function LanguageSelector() {
                   <img
                     src="/flags/usa.webp"
                     alt=""
-                    className="h-5 w-5 rounded-full "
+                    className="h-5 w-5 rounded-full"
                   />
                   {t("site.language.english")}
                 </button>
@@ -145,7 +155,7 @@ export default function LanguageSelector() {
                   <img
                     src="/flags/france.webp"
                     alt=""
-                    className="h-5 w-5 rounded-full "
+                    className="h-5 w-5 rounded-full"
                   />
                   {t("site.language.french")}
                 </button>
