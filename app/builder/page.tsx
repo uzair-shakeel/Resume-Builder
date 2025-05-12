@@ -2787,7 +2787,7 @@ export default function Builder() {
                         className="p-1 rounded-md hover:bg-gray-100 text-xs text-gray-500"
                         title={t("templates.reset_to_default_color")}
                       >
-                        {t("templates.reset")}
+                        {t("site.builder.templates.reset")}
                       </button>
                     </div>
                   </div>

@@ -136,6 +136,9 @@ export default function CoverLetterDashboard() {
   const [newTitle, setNewTitle] = useState("");
   const router = useRouter();
   const [scale, setScale] = useState<number>(1);
+  const [deletingCoverLetter, setDeletingCoverLetter] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const getScale = (width: number): number => {
@@ -200,6 +203,7 @@ export default function CoverLetterDashboard() {
     }
 
     try {
+      setDeletingCoverLetter(coverId);
       const response = await fetch(`/api/cover-letter/delete?id=${coverId}`, {
         method: "DELETE",
       });
@@ -213,6 +217,8 @@ export default function CoverLetterDashboard() {
       }
     } catch (error) {
       console.error("Error deleting cover letter:", error);
+    } finally {
+      setDeletingCoverLetter(null);
     }
   };
 
@@ -411,9 +417,19 @@ export default function CoverLetterDashboard() {
                         <DropdownMenuItem
                           onClick={() => handleDelete(coverLetter._id)}
                           className="text-red-600"
+                          disabled={deletingCoverLetter === coverLetter._id}
                         >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          {t("site.dashboard.common.delete")}
+                          {deletingCoverLetter === coverLetter._id ? (
+                            <div className="flex items-center">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2" />
+                              {t("site.dashboard.common.delete")}
+                            </div>
+                          ) : (
+                            <>
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              {t("site.dashboard.common.delete")}
+                            </>
+                          )}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

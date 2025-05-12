@@ -381,6 +381,7 @@
         "description": "Template Selection Interface",
         "select_template": "Select a Template",
         "close": "Close",
+        "reset": "Reset",
         "templates": "Templates",
         "options": {
           "modern": "Modern",
