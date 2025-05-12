@@ -5,14 +5,15 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   // Get the request origin
   const origin = request.headers.get("origin");
+  const allowedOrigin = "http://localhost:5173";
 
   // Get the response we're going to send
   // Forward the request to the destination
   const response = NextResponse.next();
 
   // Add the CORS headers to the response
-  // For development, we'll allow all origins (*), but in production you should restrict this
-  response.headers.set("Access-Control-Allow-Origin", "*");
+  // Only allow requests from localhost:5173
+  response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
   response.headers.set(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, OPTIONS"
@@ -27,7 +28,7 @@ export function middleware(request: NextRequest) {
     return new NextResponse(null, {
       status: 204,
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": allowedOrigin,
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
         "Access-Control-Max-Age": "86400",
