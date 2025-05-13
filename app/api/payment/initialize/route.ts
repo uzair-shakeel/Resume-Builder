@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Keep API key on server side for security
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY; // This key should work based on previous files
-const PAYSTACK_API_URL = process.env.PAYSTACK_API_URL;
+const PAYSTACK_API_URL = "https://api.paystack.co/transaction/initialize";
 
 export async function POST(request: NextRequest) {
   try {
