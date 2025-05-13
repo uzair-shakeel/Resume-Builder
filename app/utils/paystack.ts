@@ -24,7 +24,7 @@ const loadScript = (src: string): Promise<void> => {
 };
 
 // For security, in production you should use environment variables for these values
-const PAYSTACK_PUBLIC_KEY = "pk_test_b9cd9c05de9f3c38d3d5f9110ebfa91538bc25e7";
+const PAYSTACK_PUBLIC_KEY = process.env.PAYSTACK_PUBLIC_KEY;
 const PAYSTACK_TRANSACTION_AMOUNT = 99; // 0.99 USD in cents
 
 interface PaystackResponse {

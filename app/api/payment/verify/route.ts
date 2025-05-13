@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // In production, use environment variables for the secret key
-const PAYSTACK_SECRET_KEY = "sk_test_19552c98aef21808417a8679895da2833166a4b8";
+const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
