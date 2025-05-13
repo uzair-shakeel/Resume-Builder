@@ -111,24 +111,25 @@ export default function LanguageSelector() {
       <div className="relative group">
         <button
           className="flex items-center gap-2 bg-white text-gray-800 hover:bg-gray-100 px-4 py-2 rounded-full shadow-lg transition-colors"
-          onClick={toggleDropdown}
           aria-haspopup="true"
           aria-expanded={isOpen}
         >
           <div className="cursor-move" onMouseDown={handleDragStart}>
             <GripVertical className="w-5 h-5 hidden group-hover:block text-gray-700 hover:text-gray-900" />
           </div>
-          <Globe className="w-5 h-5" />
-          <span className="font-medium">{t("site.language.name")}</span>
-          {isOpen ? (
-            <ChevronUp className="w-4 h-4" />
-          ) : (
-            <ChevronDown className="w-4 h-4" />
-          )}
+          <div onClick={toggleDropdown} className="flex items-center gap-2">
+            <Globe className="w-5 h-5" />
+            <span className="font-medium">{t("site.language.name")}</span>
+            {isOpen ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </div>
         </button>
 
         {isOpen && (
-          <div className="absolute bottom-full mb-2 right-0 bg-white rounded-lg shadow-lg overflow-hidden min-w-[150px]">
+          <div className="absolute bottom-2  mb-2 right-2 bg-white rounded-lg shadow-lg overflow-hidden min-w-[150px]">
             <ul className="py-1">
               <div>
                 <button
