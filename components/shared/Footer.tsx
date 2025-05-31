@@ -190,18 +190,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Language Selection */}
-      <div className="flex flex-wrap max-w-[864px] mx-auto px-[20px] mt-12 md:mt-24 justify-center">
-        {languages.map((lang) => (
-          <button
-            key={lang.code}
-            className="text-base focus-visible:ring-4 ring-brand-200 rounded-sm font-normal text-gray-500 md:text-gray-500 hover:text-gray-700 px-4 py-3 md:px-3 md:py-1"
-          >
-            {lang.label}
-          </button>
-        ))}
-      </div>
-
       {/* Social Links */}
       <div className="flex space-x-2 mt-12 md:mt-24">
         {socialLinks.map((social, index) => (
