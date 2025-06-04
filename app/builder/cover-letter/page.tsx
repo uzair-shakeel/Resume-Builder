@@ -250,7 +250,21 @@ export default function CoverLetterBuilder() {
   const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "error">(
     "saved"
   );
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState("");
+  const [screenBasedScale, setScreenBasedScale] = useState(1);
+  const [mobileScale, setMobileScale] = useState(0.8);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const {
+    isPaymentModalOpen,
+    hasActiveSubscription,
+    openPaymentModal,
+    closePaymentModal,
+    processPayment,
+    checkSubscriptionStatus,
+  } = usePayment();
 
   // Template loading state
   const [isTemplateLoading, setIsTemplateLoading] = useState(false);
@@ -270,25 +284,6 @@ export default function CoverLetterBuilder() {
     field: "",
   });
 
-  const [screenBasedScale, setScreenBasedScale] = useState(1);
-  const [mobileScale, setMobileScale] = useState(0.8);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const {
-    isPaymentModalOpen,
-    hasActiveSubscription,
-    openPaymentModal,
-    closePaymentModal,
-    processPayment,
-    checkSubscriptionStatus,
-  } = usePayment();
-
-  // Add isDownloading state after the other state declarations
-  const [isDownloading, setIsDownloading] = useState(false);
-
-  // Add this state at the top with other state declarations
-  const [verificationStatus, setVerificationStatus] = useState("");
-
   // Safe reset function to prevent getting stuck in loading state
   const safeResetTemplateLoadingState = useCallback(() => {
     setIsTemplateLoading(false);
@@ -307,9 +302,13 @@ export default function CoverLetterBuilder() {
       template: t("site.builder_cover_letter.introduction.onlinead_template"),
     },
     {
-      label: t("site.builder_cover_letter.introduction.spontaneous_application"),
+      label: t(
+        "site.builder_cover_letter.introduction.spontaneous_application"
+      ),
       value: "spontaneous",
-      template: t("site.builder_cover_letter.introduction.spontaneous_template"),
+      template: t(
+        "site.builder_cover_letter.introduction.spontaneous_template"
+      ),
     },
     {
       label: t("site.builder_cover_letter.introduction.printad"),
@@ -326,19 +325,27 @@ export default function CoverLetterBuilder() {
   // situationOptions
   const situationOptions = [
     {
-      label: t("site.builder_cover_letter.current_situation.currently_employed"),
+      label: t(
+        "site.builder_cover_letter.current_situation.currently_employed"
+      ),
       value: "employed",
-      template: t("site.builder_cover_letter.current_situation.employed_template"),
+      template: t(
+        "site.builder_cover_letter.current_situation.employed_template"
+      ),
     },
     {
-      label: t("site.builder_cover_letter.current_situation.employed_graduated"),
+      label: t(
+        "site.builder_cover_letter.current_situation.employed_graduated"
+      ),
       value: "employed_graduate",
       template: t(
         "site.builder_cover_letter.current_situation.employed_graduate_template"
       ),
     },
     {
-      label: t("site.builder_cover_letter.current_situation.employed_experience"),
+      label: t(
+        "site.builder_cover_letter.current_situation.employed_experience"
+      ),
       value: "employed_experienced",
       template: t(
         "site.builder_cover_letter.current_situation.employed_experienced_template"
@@ -347,17 +354,23 @@ export default function CoverLetterBuilder() {
     {
       label: t("site.builder_cover_letter.current_situation.graduated"),
       value: "graduate",
-      template: t("site.builder_cover_letter.current_situation.graduate_template"),
+      template: t(
+        "site.builder_cover_letter.current_situation.graduate_template"
+      ),
     },
     {
       label: t("site.builder_cover_letter.current_situation.is_student"),
       value: "student",
-      template: t("site.builder_cover_letter.current_situation.student_template"),
+      template: t(
+        "site.builder_cover_letter.current_situation.student_template"
+      ),
     },
     {
       label: t("site.builder_cover_letter.current_situation.is_unemployed"),
       value: "unemployed",
-      template: t("site.builder_cover_letter.current_situation.unemployed_template"),
+      template: t(
+        "site.builder_cover_letter.current_situation.unemployed_template"
+      ),
     },
   ];
 
@@ -982,19 +995,6 @@ export default function CoverLetterBuilder() {
     }
   };
 
-  const debouncedSave = (immediate = false) => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    if (immediate) {
-      saveCoverLetter();
-    } else {
-      setSaveStatus("saving");
-      saveTimeoutRef.current = setTimeout(saveCoverLetter, 2000);
-    }
-  };
-
   // Batch update for multiple fields to reduce save frequency
   const batchUpdateCoverLetterData = (updates: Record<string, any>) => {
     setCoverLetterData((prev) => {
@@ -1030,8 +1030,8 @@ export default function CoverLetterBuilder() {
       return newState;
     });
 
-    // Use standard debounce for batch updates
-    debouncedSave(false);
+    // Mark that there are unsaved changes
+    setHasUnsavedChanges(true);
   };
 
   const handleThrottledInput = (
@@ -1052,7 +1052,7 @@ export default function CoverLetterBuilder() {
       field,
     };
 
-    // Update the UI immediately without saving
+    // Update the UI immediately
     setCoverLetterData((prev) => {
       if (section === "root") {
         return {
@@ -1085,12 +1085,9 @@ export default function CoverLetterBuilder() {
       return newState;
     });
 
-    // Set a timeout to save after user stops typing
+    // Set a timeout to mark unsaved changes after user stops typing
     throttledInputRef.current.timeout = setTimeout(() => {
-      // Only save if the value is still the same
-      if (throttledInputRef.current.value === value) {
-        updateCoverLetterData(section, field, value);
-      }
+      setHasUnsavedChanges(true);
     }, 1000);
   };
 
@@ -1131,22 +1128,14 @@ export default function CoverLetterBuilder() {
       return newState;
     });
 
-    // Only save immediately for completed personal info changes
-    // For all other changes, use the longer debounce
-    const shouldSaveImmediately =
-      section === "personalInfo" &&
-      field === "firstName" &&
-      typeof value === "string" &&
-      value.length > 0 &&
-      !!coverLetterData.personalInfo?.lastName;
-
-    debouncedSave(shouldSaveImmediately);
+    // Instead of auto-saving, just mark that there are unsaved changes
+    setHasUnsavedChanges(true);
   };
 
   useEffect(() => {
     return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
+      if (throttledInputRef.current.timeout) {
+        clearTimeout(throttledInputRef.current.timeout);
       }
     };
   }, []);
@@ -1193,7 +1182,8 @@ export default function CoverLetterBuilder() {
       return newSectionPages;
     });
     setActiveSectionMenu(null);
-    debouncedSave(true); // Save immediately when section page is changed
+    // Mark changes as unsaved instead of auto-saving
+    setHasUnsavedChanges(true);
   };
 
   const toggleSectionMenu = (section: string, e: React.MouseEvent) => {
@@ -1360,7 +1350,9 @@ export default function CoverLetterBuilder() {
         <input
           type="text"
           className="w-full p-2 border rounded-md"
-          placeholder={t("site.builder_cover_letter.recipient.company_placeholder")}
+          placeholder={t(
+            "site.builder_cover_letter.recipient.company_placeholder"
+          )}
           value={coverLetterData.recipient.company}
           onChange={(e) =>
             handleThrottledInput("recipient", "company", e.target.value)
@@ -1374,7 +1366,9 @@ export default function CoverLetterBuilder() {
         <input
           type="text"
           className="w-full p-2 border rounded-md"
-          placeholder={t("site.builder_cover_letter.recipient.contact_placeholder")}
+          placeholder={t(
+            "site.builder_cover_letter.recipient.contact_placeholder"
+          )}
           value={coverLetterData.recipient.name}
           onChange={(e) =>
             handleThrottledInput("recipient", "name", e.target.value)
@@ -1388,7 +1382,9 @@ export default function CoverLetterBuilder() {
         <input
           type="text"
           className="w-full p-2 border rounded-md"
-          placeholder={t("site.builder_cover_letter.recipient.address_placeholder")}
+          placeholder={t(
+            "site.builder_cover_letter.recipient.address_placeholder"
+          )}
           value={coverLetterData.recipient.address}
           onChange={(e) =>
             handleThrottledInput("recipient", "address", e.target.value)
@@ -1419,7 +1415,9 @@ export default function CoverLetterBuilder() {
           <input
             type="text"
             className="w-full p-2 border rounded-md"
-            placeholder={t("site.builder_cover_letter.recipient.city_placeholder")}
+            placeholder={t(
+              "site.builder_cover_letter.recipient.city_placeholder"
+            )}
             value={coverLetterData.recipient.city}
             onChange={(e) =>
               handleThrottledInput("recipient", "city", e.target.value)
@@ -1525,17 +1523,25 @@ export default function CoverLetterBuilder() {
             )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
-            <p>{t("site.builder_cover_letter.introduction.replace_instruction")}</p>
+            <p>
+              {t("site.builder_cover_letter.introduction.replace_instruction")}
+            </p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedIntroOption === "online" && (
                 <>
-                  <li>{t("site.builder_cover_letter.introduction.online.site")}</li>
-                  <li>{t("site.builder_cover_letter.introduction.online.poste")}</li>
+                  <li>
+                    {t("site.builder_cover_letter.introduction.online.site")}
+                  </li>
+                  <li>
+                    {t("site.builder_cover_letter.introduction.online.poste")}
+                  </li>
                 </>
               )}
               {selectedIntroOption === "spontaneous" && (
                 <li>
-                  {t("site.builder_cover_letter.introduction.spontaneous.poste")}
+                  {t(
+                    "site.builder_cover_letter.introduction.spontaneous.poste"
+                  )}
                 </li>
               )}
               {selectedIntroOption === "print" && (
@@ -1545,8 +1551,12 @@ export default function CoverLetterBuilder() {
                       "site.builder_cover_letter.introduction.print.journal_magazine"
                     )}
                   </li>
-                  <li>{t("site.builder_cover_letter.introduction.print.date")}</li>
-                  <li>{t("site.builder_cover_letter.introduction.print.poste")}</li>
+                  <li>
+                    {t("site.builder_cover_letter.introduction.print.date")}
+                  </li>
+                  <li>
+                    {t("site.builder_cover_letter.introduction.print.poste")}
+                  </li>
                 </>
               )}
             </ul>
@@ -1605,7 +1615,9 @@ export default function CoverLetterBuilder() {
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
             <p>
-              {t("site.builder_cover_letter.current_situation.replace_instruction")}
+              {t(
+                "site.builder_cover_letter.current_situation.replace_instruction"
+              )}
             </p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedSituationOption === "employed" && (
@@ -1621,7 +1633,9 @@ export default function CoverLetterBuilder() {
                     )}
                   </li>
                   <li>
-                    {t("site.builder_cover_letter.current_situation.employed.ville")}
+                    {t(
+                      "site.builder_cover_letter.current_situation.employed.ville"
+                    )}
                   </li>
                   <li>
                     {t(
@@ -1810,7 +1824,9 @@ export default function CoverLetterBuilder() {
             )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
-            <p>{t("site.builder_cover_letter.motivation.replace_instruction")}</p>
+            <p>
+              {t("site.builder_cover_letter.motivation.replace_instruction")}
+            </p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedMotivationOption === "career" && (
                 <>
@@ -1839,7 +1855,9 @@ export default function CoverLetterBuilder() {
               {selectedMotivationOption === "education" && (
                 <>
                   <li>
-                    {t("site.builder_cover_letter.motivation.education.formation")}
+                    {t(
+                      "site.builder_cover_letter.motivation.education.formation"
+                    )}
                   </li>
                   <li>
                     {t(
@@ -1847,15 +1865,21 @@ export default function CoverLetterBuilder() {
                     )}
                   </li>
                   <li>
-                    {t("site.builder_cover_letter.motivation.education.projet_cle")}
+                    {t(
+                      "site.builder_cover_letter.motivation.education.projet_cle"
+                    )}
                   </li>
                 </>
               )}
               {selectedMotivationOption === "experience" && (
                 <>
-                  <li>{t("site.builder_cover_letter.motivation.experience.x")}</li>
                   <li>
-                    {t("site.builder_cover_letter.motivation.experience.secteur")}
+                    {t("site.builder_cover_letter.motivation.experience.x")}
+                  </li>
+                  <li>
+                    {t(
+                      "site.builder_cover_letter.motivation.experience.secteur"
+                    )}
                   </li>
                   <li>
                     {t(
@@ -1967,7 +1991,9 @@ export default function CoverLetterBuilder() {
             )}
           />
           <div className="p-3 mt-2 bg-gray-50 rounded-md text-sm text-gray-600">
-            <p>{t("site.builder_cover_letter.conclusion.replace_instruction")}</p>
+            <p>
+              {t("site.builder_cover_letter.conclusion.replace_instruction")}
+            </p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               {selectedConclusionOption === "job_offer" && (
                 <>
@@ -1977,7 +2003,9 @@ export default function CoverLetterBuilder() {
                     )}
                   </li>
                   <li>
-                    {t("site.builder_cover_letter.conclusion.job_offer.telephone")}
+                    {t(
+                      "site.builder_cover_letter.conclusion.job_offer.telephone"
+                    )}
                   </li>
                   <li>
                     {t(
@@ -1987,13 +2015,17 @@ export default function CoverLetterBuilder() {
                   <li>
                     {t("site.builder_cover_letter.conclusion.job_offer.prenom")}
                   </li>
-                  <li>{t("site.builder_cover_letter.conclusion.job_offer.nom")}</li>
+                  <li>
+                    {t("site.builder_cover_letter.conclusion.job_offer.nom")}
+                  </li>
                 </>
               )}
               {selectedConclusionOption === "spontaneous" && (
                 <>
                   <li>
-                    {t("site.builder_cover_letter.conclusion.spontaneous.telephone")}
+                    {t(
+                      "site.builder_cover_letter.conclusion.spontaneous.telephone"
+                    )}
                   </li>
                   <li>
                     {t(
@@ -2001,7 +2033,9 @@ export default function CoverLetterBuilder() {
                     )}
                   </li>
                   <li>
-                    {t("site.builder_cover_letter.conclusion.spontaneous.prenom")}
+                    {t(
+                      "site.builder_cover_letter.conclusion.spontaneous.prenom"
+                    )}
                   </li>
                   <li>
                     {t("site.builder_cover_letter.conclusion.spontaneous.nom")}
@@ -2016,7 +2050,9 @@ export default function CoverLetterBuilder() {
                     )}
                   </li>
                   <li>
-                    {t("site.builder_cover_letter.conclusion.internship.telephone")}
+                    {t(
+                      "site.builder_cover_letter.conclusion.internship.telephone"
+                    )}
                   </li>
                   <li>
                     {t(
@@ -2024,9 +2060,13 @@ export default function CoverLetterBuilder() {
                     )}
                   </li>
                   <li>
-                    {t("site.builder_cover_letter.conclusion.internship.prenom")}
+                    {t(
+                      "site.builder_cover_letter.conclusion.internship.prenom"
+                    )}
                   </li>
-                  <li>{t("site.builder_cover_letter.conclusion.internship.nom")}</li>
+                  <li>
+                    {t("site.builder_cover_letter.conclusion.internship.nom")}
+                  </li>
                 </>
               )}
               {selectedConclusionOption === "referral" && (
@@ -2035,7 +2075,9 @@ export default function CoverLetterBuilder() {
                     {t("site.builder_cover_letter.conclusion.referral.contact")}
                   </li>
                   <li>
-                    {t("site.builder_cover_letter.conclusion.referral.telephone")}
+                    {t(
+                      "site.builder_cover_letter.conclusion.referral.telephone"
+                    )}
                   </li>
                   <li>
                     {t(
@@ -2045,7 +2087,9 @@ export default function CoverLetterBuilder() {
                   <li>
                     {t("site.builder_cover_letter.conclusion.referral.prenom")}
                   </li>
-                  <li>{t("site.builder_cover_letter.conclusion.referral.nom")}</li>
+                  <li>
+                    {t("site.builder_cover_letter.conclusion.referral.nom")}
+                  </li>
                 </>
               )}
             </ul>
@@ -2228,24 +2272,66 @@ export default function CoverLetterBuilder() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Add the handleBackToDashboard function after other handler functions
+  // Modify handleBackToDashboard to handle unsaved changes properly
   const handleBackToDashboard = () => {
-    // Set saving status immediately
-    setSaveStatus("saving");
+    if (hasUnsavedChanges) {
+      const confirmLeave = window.confirm(
+        "You have unsaved changes. Do you want to save them?"
+      );
+      if (confirmLeave) {
+        setSaveStatus("saving");
+        saveCoverLetter()
+          .then(() => {
+            setHasUnsavedChanges(false);
+            window.location.href = "/dashboard";
+          })
+          .catch((error) => {
+            console.error("Error saving:", error);
+            const forceLeave = window.confirm(
+              "Failed to save changes. Leave anyway?"
+            );
+            if (forceLeave) {
+              window.location.href = "/dashboard";
+            }
+          });
+      } else {
+        // User chose not to save, just leave
+        window.location.href = "/dashboard";
+      }
+    } else {
+      // No unsaved changes, just leave
+      window.location.href = "/dashboard";
+    }
+  };
 
-    // Save the cover letter before navigating
+  // Add unsaved changes warning when leaving
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        const message = "You have unsaved changes. Do you want to leave?";
+        e.preventDefault();
+        e.returnValue = message;
+        return message;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  // Add manual save handler
+  const handleManualSave = () => {
+    if (!hasUnsavedChanges) return;
+
+    setSaveStatus("saving");
     saveCoverLetter()
       .then(() => {
-        // Clear session storage if navigating away completely
-        sessionStorage.removeItem("current-cover-letter-id");
-        // Use window.location.href for a hard navigation
-        window.location.href = "/dashboard";
+        setHasUnsavedChanges(false);
+        setSaveStatus("saved");
       })
       .catch((error) => {
-        console.error("Error saving before navigation:", error);
-        // Navigate anyway even if save fails
-        sessionStorage.removeItem("current-cover-letter-id");
-        window.location.href = "/dashboard";
+        console.error("Error saving cover letter:", error);
+        setSaveStatus("error");
       });
   };
 
@@ -2268,23 +2354,30 @@ export default function CoverLetterBuilder() {
                 {t("site.builder.header.cover_letter")}
               </h1>
               <div className="text-gray-500">
-                {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
+                {!hasUnsavedChanges && saveStatus === "saved" && (
+                  <Cloud className="w-5 h-5" />
+                )}
                 {saveStatus === "saving" && (
                   <RefreshCw className="w-5 h-5 animate-spin" />
                 )}
-                {saveStatus === "error" && (
+                {(hasUnsavedChanges || saveStatus === "error") && (
                   <CloudOff className="w-5 h-5 text-red-500" />
                 )}
               </div>
-              <a
-                href="/builder"
-                className="text-blue-600 hover:text-blue-800 hidden md:flex items-center gap-1 text-sm"
-              >
-                <FileText className="w-4 h-4" />
-                CV Builder
-              </a>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                onClick={handleManualSave}
+                className={`px-4 py-2 rounded-md flex items-center ${
+                  hasUnsavedChanges
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                }`}
+                disabled={!hasUnsavedChanges || saveStatus === "saving"}
+              >
+                <Cloud className="w-5 h-5 mr-2" />
+                Save
+              </button>
               <div className="relative">
                 <button
                   onClick={() => setShowDownloadOptions(!showDownloadOptions)}
