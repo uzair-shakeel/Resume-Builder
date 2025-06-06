@@ -119,15 +119,15 @@
           },
           "faq3": {
             "question": "Comment créer un CV ?",
-            "answer": "Pour créer un CV, vous avez deux options : utiliser un générateur de CV qui vous offre un document prêt à l'emploi avec un modèle préconçu, ou créer votre CV à partir de zéro en commençant par une page blanche à l'aide d'un traitement de texte."
+            "answer": "Pour créer un CV, vous avez deux options : utiliser un générateur de CV qui vous propose un document prêt à l'emploi avec un modèle préconçu, ou créer votre CV de toutes pièces en commençant par une page blanche à l'aide d'un traitement de texte."
           },
           "faq4": {
-            "question": "Comment créer un CV en utilisant un générateur?",
+            "question": "Comment créer un CV à l'aide d'un constructeur?",
             "answer": "Parcourez simplement les différents modèles disponibles, choisissez-en un qui correspond à l'image que vous souhaitez projeter, puis utilisez le concepteur de CV pour compléter les différentes sections en fonction de votre profil."
           },
           "faq5": {
-            "question": "Quels sont les avantages d'un générateur de CV?",
-            "answer": "Les avantages d'un générateur de CV incluent les économies de temps, s'assurer que vous n'omettez aucune section importante, maintenir l'intégrité de la mise en page, la facilité de mise à jour, et la possibilité de sauvegarder au format PDF."
+            "question": "Quels sont les avantages d’un créateur de CV ?",
+            "answer": "Les avantages d'un créateur de CV incluent le gain de temps, la garantie de n'omettre aucune section importante, le maintien de l'intégrité de la mise en page, la facilité de mise à jour et la possibilité d'enregistrer au format PDF."
           },
           "faq6": {
             "question": "Conseils pour créer un bon CV",
@@ -870,7 +870,7 @@
       }
     },
     "common": {
-      "logo_alt": "Logo du Générateur de CV"
+      "logo_alt": "Logo"
     },
     "header": {
       "models": "Modèles",

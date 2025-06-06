@@ -4,7 +4,7 @@
       "hero": {
         "description": "Main Section - Homepage Banner",
         "title": "Create Your Professional Resume in Minutes",
-        "subtitle": "A powerful resume generator to help you land your dream job",
+        "subtitle": "Un puissant générateur de CV pour vous aider à décrocher l'emploi de vos rêves.",
         "cta": {
           "primary": "Get Started",
           "secondary": "View Templates"
@@ -119,15 +119,15 @@
           },
           "faq3": {
             "question": "How to create a Resume?",
-            "answer": "To create a resume, you have two options: use a resume generator that offers you a ready-to-use document with a pre-designed template, or create your resume from scratch by starting with a blank page using a word processor."
+            "answer": "To create a resume, you have two options: use a resume builder that offers you a ready-to-use document with a pre-designed template, or create your resume from scratch by starting with a blank page using a word processor."
           },
           "faq4": {
-            "question": "How to create a Resume using a generator?",
+            "question": "How to create a Resume using a builder?",
             "answer": "Simply browse the various templates available, choose one that matches the image you want to project, then use the resume designer to complete the different sections according to your profile."
           },
           "faq5": {
-            "question": "What are the advantages of a Resume generator?",
-            "answer": "The advantages of a resume generator include time savings, ensuring you don't omit any important section, maintaining layout integrity, ease of updating, and the ability to save as a PDF."
+            "question": "What are the advantages of a Resume builder?",
+            "answer": "The advantages of a resume builder include time savings, ensuring you don't omit any important section, maintaining layout integrity, ease of updating, and the ability to save as a PDF."
           },
           "faq6": {
             "question": "Tips for creating a good Resume",
@@ -164,7 +164,7 @@
     "builder": {
       "header": {
         "description": "Resume Builder Page Header Section",
-        "title": "Resume Generator",
+        "title": "Resume Builder",
         "cover_letter": "Cover Letter",
         "download": "Download",
         "download_as_pdf": "Download as PDF"
@@ -870,7 +870,7 @@
       }
     },
     "common": {
-      "logo_alt": "Resume Generator Logo"
+      "logo_alt": "Logo"
     },
     "header": {
       "models": "Templates",
