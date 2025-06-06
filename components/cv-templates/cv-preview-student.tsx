@@ -317,8 +317,7 @@ export default function CVPreviewStudent({
                 {edu.location ? `, ${edu.location}` : ""}
               </p>
               <p>
-                {edu.startDate} - {edu.current ? "Present" : edu.endDate} | GPA:
-                3.75
+                {edu.startDate} - {edu.current ? "Present" : edu.endDate}
               </p>
             </div>
           ))}

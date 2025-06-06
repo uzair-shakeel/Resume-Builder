@@ -210,7 +210,20 @@ export default function Education({ data, updateData }: EducationProps) {
                 {t("site.builder.forms.education.fields.end_date")}
               </label>
               <div className="flex items-center space-x-4">
-                {!item.current ? (
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={item.current}
+                    onChange={(e) =>
+                      handleChange(index, "current", e.target.checked)
+                    }
+                    className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+                  />
+                  <span className="text-sm text-gray-600">
+                    {t("site.builder.forms.education.fields.present")}
+                  </span>
+                </label>
+                {!item.current && (
                   <div className="grid grid-cols-2 gap-2 flex-1">
                     <select
                       className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -261,24 +274,7 @@ export default function Education({ data, updateData }: EducationProps) {
                       ))}
                     </select>
                   </div>
-                ) : (
-                  <div className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500">
-                    {t("site.builder.forms.education.fields.present")}
-                  </div>
                 )}
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={item.current}
-                    onChange={(e) =>
-                      handleChange(index, "current", e.target.checked)
-                    }
-                    className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-600">
-                    {t("site.builder.forms.education.fields.present")}
-                  </span>
-                </label>
               </div>
             </div>
           </div>

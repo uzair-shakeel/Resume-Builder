@@ -292,7 +292,9 @@ export default function CVPreviewCirculaire({
                     {edu.school}
                   </p>
                 </div>
-                <div className="text-gray-600 font-medium">{edu.startDate}</div>
+                <div className="text-gray-600 font-medium">
+                  de {edu.startDate} à {edu.current ? "ce jour" : edu.endDate}
+                </div>
               </div>
               {edu.description && (
                 <p className="text-gray-700 mt-1">{edu.description}</p>
