@@ -345,9 +345,9 @@ export default function Builder() {
   >({});
 
   // Add save status states
-  const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "error">(
-    "saved"
-  );
+  const [saveStatus, setSaveStatus] = useState<
+    "saved" | "saving" | "error" | "unsaved"
+  >("saved");
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Add payment/subscription states
@@ -900,10 +900,20 @@ export default function Builder() {
     if (immediate) {
       saveCV();
     } else {
-      // Increase debounce time to reduce save frequency
-      setSaveStatus("saving");
-      saveTimeoutRef.current = setTimeout(saveCV, 2000);
+      setSaveStatus("unsaved");
     }
+  };
+
+  // Add a new manual save function
+  const handleManualSave = () => {
+    setSaveStatus("saving");
+    saveCV()
+      .then(() => {
+        console.log("Manual save completed");
+      })
+      .catch((error) => {
+        console.error("Manual save failed:", error);
+      });
   };
 
   // Batch update for multiple fields to reduce save frequency
@@ -919,8 +929,10 @@ export default function Builder() {
       return newData;
     });
 
-    // Use standard debounce for batch updates
-    debouncedSave(false);
+    // Set status to unsaved
+    if (saveStatus === "saved") {
+      setSaveStatus("unsaved");
+    }
   };
 
   // Update CV data with auto-save
@@ -933,16 +945,10 @@ export default function Builder() {
       return newData;
     });
 
-    // Only save immediately for completed personal info changes
-    // For all other changes, use the longer debounce
-    const shouldSaveImmediately =
-      section === "personalInfo" &&
-      data.firstName &&
-      data.firstName.length > 0 &&
-      data.lastName &&
-      data.lastName.length > 0;
-
-    debouncedSave(shouldSaveImmediately);
+    // Set status to unsaved
+    if (saveStatus === "saved") {
+      setSaveStatus("unsaved");
+    }
   };
 
   // Clean up timeout on unmount
@@ -1323,6 +1329,9 @@ export default function Builder() {
       [section]: page,
     }));
     setActiveSectionMenu(null);
+
+    // Mark as unsaved when changing section page assignment
+    setSaveStatus("unsaved");
   };
 
   // Function to toggle section menu
@@ -1532,6 +1541,9 @@ export default function Builder() {
       ...prev,
       [sectionId]: true,
     }));
+
+    // Mark as unsaved when adding a new section
+    setSaveStatus("unsaved");
   };
 
   // Add effect to conditionally add References and Socials sections for Sherlock template
@@ -1656,41 +1668,60 @@ export default function Builder() {
       return newData;
     });
 
-    // Set a timeout to save after user stops typing
+    // Set status to unsaved
+    if (saveStatus === "saved") {
+      setSaveStatus("unsaved");
+    }
+
+    // Set a timeout to update the local state only (no saving)
     throttledInputRef.current.timeout = setTimeout(() => {
-      // Only save if the value is still the same
+      // Only update if the value is still the same
       if (throttledInputRef.current.value === value) {
         if (typeof data === "object" && field) {
           const updatedData = {
             ...data,
             [field]: value,
           };
-          updateCVData(section, updatedData);
+          // Just update state without saving
+          setCVData((prev) => ({
+            ...prev,
+            [section]: updatedData,
+          }));
         } else {
-          updateCVData(section, value);
+          // Just update state without saving
+          setCVData((prev) => ({
+            ...prev,
+            [section]: value,
+          }));
         }
       }
     }, 1000);
   };
 
   const handleBackToDashboard = () => {
-    // Set saving status immediately
-    setSaveStatus("saving");
+    // If there are unsaved changes, save before navigating
+    if (saveStatus === "unsaved") {
+      setSaveStatus("saving");
 
-    // Save the CV before navigating
-    saveCV()
-      .then(() => {
-        // Clear session storage if navigating away completely
-        sessionStorage.removeItem("current-cv-id");
-        // Use window.location.href for a hard navigation
-        window.location.href = "/dashboard";
-      })
-      .catch((error) => {
-        console.error("Error saving before navigation:", error);
-        // Navigate anyway even if save fails
-        sessionStorage.removeItem("current-cv-id");
-        window.location.href = "/dashboard";
-      });
+      // Save the CV before navigating
+      saveCV()
+        .then(() => {
+          // Clear session storage if navigating away completely
+          sessionStorage.removeItem("current-cv-id");
+          // Use window.location.href for a hard navigation
+          window.location.href = "/dashboard";
+        })
+        .catch((error) => {
+          console.error("Error saving before navigation:", error);
+          // Navigate anyway even if save fails
+          sessionStorage.removeItem("current-cv-id");
+          window.location.href = "/dashboard";
+        });
+    } else {
+      // If no unsaved changes, just navigate
+      sessionStorage.removeItem("current-cv-id");
+      window.location.href = "/dashboard";
+    }
   };
 
   // Add this new state near other state declarations
@@ -2160,12 +2191,32 @@ export default function Builder() {
                 </h1>
                 {/* Save status indicator */}
                 <div className="text-gray-500">
-                  {saveStatus === "saved" && <Cloud className="w-5 h-5" />}
+                  {saveStatus === "saved" && (
+                    <Cloud
+                      className="w-5 h-5 cursor-pointer hover:text-blue-500"
+                      onClick={handleManualSave}
+                      title={t("site.builder.header.save")}
+                    />
+                  )}
+                  {saveStatus === "unsaved" && (
+                    <Cloud
+                      className="w-5 h-5 cursor-pointer text-yellow-500 hover:text-blue-500"
+                      onClick={handleManualSave}
+                      title={t("site.builder.header.save_changes")}
+                    />
+                  )}
                   {saveStatus === "saving" && (
-                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    <RefreshCw
+                      className="w-5 h-5 animate-spin"
+                      title={t("site.builder.header.saving")}
+                    />
                   )}
                   {saveStatus === "error" && (
-                    <CloudOff className="w-5 h-5 text-red-500" />
+                    <CloudOff
+                      className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-600"
+                      onClick={handleManualSave}
+                      title={t("site.builder.header.retry_save")}
+                    />
                   )}
                 </div>
                 {/* Link to Cover Letter Builder */}
@@ -2341,13 +2392,6 @@ export default function Builder() {
                       "Volunteer Work",
                       "Custom Section",
                     ].map((sectionName) => (
-                      // <button
-                      //   key={sectionName}
-                      //   onClick={() => addCustomSection(sectionName)}
-                      //   className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
-                      // >
-                      //   + {sectionName}
-                      // </button>
                       <button
                         key={sectionName}
                         onClick={() => addCustomSection(sectionName)}
