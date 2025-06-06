@@ -494,9 +494,9 @@
         }
       },
       "language": {
-        "name": "Français",
-        "english": "Anglais",
-        "french": "Français"
+        "name": "FR",
+        "english": "EN",
+        "french": "FR"
       }
     },
     "builder_cover_letter": {
@@ -842,10 +842,10 @@
     },
     "locale": "fr-FR",
     "language": {
-      "name": "Français",
+      "name": "FR",
       "selector": "Langue",
-      "english": "Anglais",
-      "french": "Français"
+      "english": "EN",
+      "french": "FR"
     },
     "pricing": {
       "title": "Prix",

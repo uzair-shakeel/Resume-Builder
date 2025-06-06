@@ -494,9 +494,9 @@
         }
       },
       "language": {
-        "name": "English",
-        "english": "English",
-        "french": "French"
+        "name": "EN",
+        "english": "EN",
+        "french": "FR"
       }
     },
     "builder_cover_letter": {

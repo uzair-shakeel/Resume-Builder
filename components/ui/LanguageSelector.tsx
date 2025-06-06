@@ -99,14 +99,9 @@ export default function LanguageSelector() {
 
   return (
     <div
-      className={`fixed z-50 transition-all duration-300 ease-in-out ${
+      className={`fixed z-50 bottom-4 left-4 transition-all duration-300 ease-in-out ${
         isVisible ? "translate-y-0" : "translate-y-24"
       }`}
-      style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        transition: isDragging ? "none" : "all 0.3s ease-in-out",
-      }}
     >
       <div className="relative group">
         <button
@@ -114,12 +109,11 @@ export default function LanguageSelector() {
           aria-haspopup="true"
           aria-expanded={isOpen}
         >
-          <div className="cursor-move" onMouseDown={handleDragStart}>
-            <GripVertical className="w-5 h-5 hidden group-hover:block text-gray-700 hover:text-gray-900" />
-          </div>
           <div onClick={toggleDropdown} className="flex items-center gap-2">
             <Globe className="w-5 h-5" />
-            <span className="font-medium">{t("site.language.name")}</span>
+            <span className="font-medium">
+              {t("site.builder.language.name")}
+            </span>
             {isOpen ? (
               <ChevronUp className="w-4 h-4" />
             ) : (
@@ -129,7 +123,7 @@ export default function LanguageSelector() {
         </button>
 
         {isOpen && (
-          <div className="absolute bottom-2  mb-2 right-2 bg-white rounded-lg shadow-lg overflow-hidden min-w-[150px]">
+          <div className="absolute bottom-9  mb-2 right-2 bg-white rounded-lg shadow-md overflow-hidden min-w-[90px]">
             <ul className="py-1">
               <div>
                 <button
@@ -143,7 +137,7 @@ export default function LanguageSelector() {
                     alt=""
                     className="h-5 w-5 rounded-full"
                   />
-                  {t("site.language.english")}
+                  {t("site.builder.language.english")}
                 </button>
               </div>
               <div>
@@ -158,7 +152,7 @@ export default function LanguageSelector() {
                     alt=""
                     className="h-5 w-5 rounded-full"
                   />
-                  {t("site.language.french")}
+                  {t("site.builder.language.french")}
                 </button>
               </div>
             </ul>
