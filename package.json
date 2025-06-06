@@ -72,6 +72,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.54.1",
     "react-hot-toast": "^2.5.2",
+    "react-image-crop": "^11.0.10",
     "react-paystack": "^6.0.0",
     "react-resizable-panels": "^2.1.7",
     "recharts": "2.15.0",

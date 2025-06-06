@@ -4,9 +4,16 @@ import type React from "react";
 
 import { useState, useRef, type ChangeEvent, useEffect } from "react";
 import type { PersonalInfoData } from "@/types";
-import { PencilIcon } from "lucide-react";
+import {
+  PencilIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
+  RotateCwIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
+import ReactCrop, { type Crop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 interface PersonalInfoProps {
   data: PersonalInfoData;
@@ -21,7 +28,19 @@ export default function PersonalInfo({
 }: PersonalInfoProps) {
   const [localData, setLocalData] = useState<PersonalInfoData>(data);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const { t } = useLanguage();
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [crop, setCrop] = useState<Crop>({
+    unit: "%",
+    width: 100,
+    height: 100,
+    x: 0,
+    y: 0,
+  });
+  const [tempImage, setTempImage] = useState<string>("");
+  const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
 
   // Check if the current template is HR (which doesn't use a photo)
   const isHRTemplate = template === "hr";
@@ -49,16 +68,65 @@ export default function PersonalInfo({
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target?.result) {
-          const newData = {
-            ...localData,
-            photo: event.target.result as string,
-          };
-          setLocalData(newData);
-          updateData(newData);
+          setTempImage(event.target.result as string);
+          setShowCropModal(true);
         }
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleCropComplete = (crop: Crop) => {
+    if (imageRef.current && crop.width && crop.height) {
+      const canvas = document.createElement("canvas");
+      const scaleX = imageRef.current.naturalWidth / imageRef.current.width;
+      const scaleY = imageRef.current.naturalHeight / imageRef.current.height;
+
+      canvas.width = crop.width;
+      canvas.height = crop.height;
+
+      const ctx = canvas.getContext("2d");
+
+      if (ctx) {
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((rotation * Math.PI) / 180);
+        ctx.scale(zoom, zoom);
+        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+        ctx.drawImage(
+          imageRef.current,
+          crop.x * scaleX,
+          crop.y * scaleY,
+          crop.width * scaleX,
+          crop.height * scaleY,
+          0,
+          0,
+          crop.width,
+          crop.height
+        );
+
+        const base64Image = canvas.toDataURL("image/jpeg");
+        const newData = {
+          ...localData,
+          photo: base64Image,
+        };
+        setLocalData(newData);
+        updateData(newData);
+        setShowCropModal(false);
+      }
+    }
+  };
+
+  const handleZoomIn = () => {
+    setZoom((prev) => Math.min(prev + 0.1, 3));
+  };
+
+  const handleZoomOut = () => {
+    setZoom((prev) => Math.max(prev - 0.1, 0.1));
+  };
+
+  const handleRotate = () => {
+    setRotation((prev) => (prev + 90) % 360);
   };
 
   return (
@@ -91,6 +159,65 @@ export default function PersonalInfo({
                 accept="image/*"
                 onChange={handleImageChange}
               />
+            </div>
+          </div>
+        )}
+
+        {/* Image Crop Modal */}
+        {showCropModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white p-4 rounded-lg max-w-2xl w-full">
+              <div className="mb-4">
+                <h3 className="text-lg font-medium">Adjust Photo</h3>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={handleZoomIn}
+                    className="p-2 rounded bg-gray-100 hover:bg-gray-200"
+                  >
+                    <ZoomInIcon className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={handleZoomOut}
+                    className="p-2 rounded bg-gray-100 hover:bg-gray-200"
+                  >
+                    <ZoomOutIcon className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={handleRotate}
+                    className="p-2 rounded bg-gray-100 hover:bg-gray-200"
+                  >
+                    <RotateCwIcon className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="max-h-[60vh] overflow-auto">
+                <ReactCrop crop={crop} onChange={(c) => setCrop(c)} aspect={1}>
+                  <img
+                    ref={imageRef}
+                    src={tempImage}
+                    alt="Crop"
+                    style={{
+                      transform: `scale(${zoom}) rotate(${rotation}deg)`,
+                      maxWidth: "100%",
+                      height: "auto",
+                    }}
+                  />
+                </ReactCrop>
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  onClick={() => setShowCropModal(false)}
+                  className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleCropComplete(crop)}
+                  className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Apply
+                </button>
+              </div>
             </div>
           </div>
         )}
