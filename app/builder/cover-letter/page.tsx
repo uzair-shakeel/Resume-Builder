@@ -2345,7 +2345,7 @@ export default function CoverLetterBuilder() {
       {isDownloading && <DownloadingOverlay />}
 
       <div className="flex h-screen bg-gray-100">
-        <div className="w-1/2 flex flex-col border-r border-gray-200 bg-white">
+        <div className="w-full md:w-1/2 flex flex-col border-r border-gray-200 bg-white">
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
             <div className="flex items-center gap-4">
               <button
