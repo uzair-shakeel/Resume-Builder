@@ -796,7 +796,8 @@
         "save": "Save",
         "delete": "Delete",
         "rename": "Rename",
-        "confirm_delete": "Are you sure you want to delete this item? This action is irreversible."
+        "confirm_delete": "Are you sure you want to delete this item? This action is irreversible.",
+        "copy": "Copy"
       },
       "resumes": {
         "title": "My Resumes",

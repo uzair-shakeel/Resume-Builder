@@ -139,6 +139,9 @@ export default function CoverLetterDashboard() {
   const [deletingCoverLetter, setDeletingCoverLetter] = useState<string | null>(
     null
   );
+  const [copyingCoverLetter, setCopyingCoverLetter] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const getScale = (width: number): number => {
@@ -325,6 +328,29 @@ export default function CoverLetterDashboard() {
     return <CoverLetterPreviewWrapper>{preview}</CoverLetterPreviewWrapper>;
   };
 
+  const handleCopyCoverLetter = async (coverId: string) => {
+    setCopyingCoverLetter(coverId);
+    try {
+      const response = await fetch("/api/cover-letter/copy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ coverId }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.coverLetter) {
+          setCoverLetters((prev) => [data.coverLetter, ...prev]);
+        }
+      } else {
+        console.error("Failed to copy cover letter");
+      }
+    } catch (error) {
+      console.error("Error copying cover letter:", error);
+    } finally {
+      setCopyingCoverLetter(null);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Main content */}
@@ -403,20 +429,38 @@ export default function CoverLetterDashboard() {
                     </Link>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="absolute bottom-2 right-2 z-30 p-1.5 rounded-lg bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-colors">
+                        <button className="absolute bottom-2 right-2 z-30 p-1.5 rounded-lg bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-colors cursor-pointer">
                           <MoreVertical size={18} />
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="z-50">
                         <DropdownMenuItem
                           onClick={() => startRenaming(coverLetter)}
+                          className="cursor-pointer"
                         >
                           <Pencil className="w-4 h-4 mr-2" />
                           {t("site.dashboard.common.rename")}
                         </DropdownMenuItem>
                         <DropdownMenuItem
+                          onClick={() => handleCopyCoverLetter(coverLetter._id)}
+                          disabled={copyingCoverLetter === coverLetter._id}
+                          className="cursor-pointer"
+                        >
+                          {copyingCoverLetter === coverLetter._id ? (
+                            <div className="flex items-center">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2" />
+                              {t("site.dashboard.common.copy") || "Copy"}
+                            </div>
+                          ) : (
+                            <>
+                              <FileText className="w-4 h-4 mr-2" />
+                              {t("site.dashboard.common.copy") || "Copy"}
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                           onClick={() => handleDelete(coverLetter._id)}
-                          className="text-red-600"
+                          className="text-red-600 cursor-pointer"
                           disabled={deletingCoverLetter === coverLetter._id}
                         >
                           {deletingCoverLetter === coverLetter._id ? (

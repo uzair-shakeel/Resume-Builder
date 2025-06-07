@@ -171,6 +171,10 @@ export default function Dashboard() {
   const [deletingCoverLetter, setDeletingCoverLetter] = useState<string | null>(
     null
   );
+  const [copyingCV, setCopyingCV] = useState<string | null>(null);
+  const [copyingCoverLetter, setCopyingCoverLetter] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     const getScale = (width: number): number => {
@@ -242,18 +246,16 @@ export default function Dashboard() {
   };
 
   const handleDeleteCV = async (cvId: string) => {
-    if (!confirm("Are you sure you want to delete this CV?")) {
+    if (!confirm(t("site.dashboard.resumes.deleteConfirmation"))) {
       return;
     }
-
     try {
       setDeletingCV(cvId);
       const response = await fetch(`/api/cv/delete?id=${cvId}`, {
         method: "DELETE",
       });
-
       if (response.ok) {
-        loadCVs();
+        setCVs((prev) => prev.filter((cv) => cv._id !== cvId));
       } else {
         console.error("Failed to delete CV");
       }
@@ -268,15 +270,15 @@ export default function Dashboard() {
     if (!confirm(t("site.dashboard.coverLetters.deleteConfirmation"))) {
       return;
     }
-
     try {
       setDeletingCoverLetter(coverId);
       const response = await fetch(`/api/cover-letter/delete?id=${coverId}`, {
         method: "DELETE",
       });
-
       if (response.ok) {
-        loadCoverLetters();
+        setCoverLetters((prev) =>
+          prev.filter((cover) => cover._id !== coverId)
+        );
       } else {
         console.error("Failed to delete cover letter");
       }
@@ -301,7 +303,6 @@ export default function Dashboard() {
     if (!newTitle.trim()) {
       return;
     }
-
     try {
       const response = await fetch("/api/cv/rename", {
         method: "PUT",
@@ -310,10 +311,12 @@ export default function Dashboard() {
         },
         body: JSON.stringify({ cvId, newTitle: newTitle.trim() }),
       });
-
       if (response.ok) {
-        // Refresh the CV list
-        loadCVs();
+        setCVs((prev) =>
+          prev.map((cv) =>
+            cv._id === cvId ? { ...cv, title: newTitle.trim() } : cv
+          )
+        );
       } else {
         console.error("Failed to rename CV");
       }
@@ -329,7 +332,6 @@ export default function Dashboard() {
     if (!newTitle.trim()) {
       return;
     }
-
     try {
       const response = await fetch("/api/cover-letter/rename", {
         method: "PUT",
@@ -338,10 +340,12 @@ export default function Dashboard() {
         },
         body: JSON.stringify({ coverId, newTitle: newTitle.trim() }),
       });
-
       if (response.ok) {
-        // Refresh the cover letter list
-        loadCoverLetters();
+        setCoverLetters((prev) =>
+          prev.map((cover) =>
+            cover._id === coverId ? { ...cover, title: newTitle.trim() } : cover
+          )
+        );
       } else {
         console.error("Failed to rename cover letter");
       }
@@ -350,6 +354,52 @@ export default function Dashboard() {
     } finally {
       setRenamingCoverLetter(null);
       setNewTitle("");
+    }
+  };
+
+  const handleCopyCV = async (cvId: string) => {
+    setCopyingCV(cvId);
+    try {
+      const response = await fetch("/api/cv/copy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cvId }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.cv) {
+          setCVs((prev) => [data.cv, ...prev]);
+        }
+      } else {
+        console.error("Failed to copy CV");
+      }
+    } catch (error) {
+      console.error("Error copying CV:", error);
+    } finally {
+      setCopyingCV(null);
+    }
+  };
+
+  const handleCopyCoverLetter = async (coverId: string) => {
+    setCopyingCoverLetter(coverId);
+    try {
+      const response = await fetch("/api/cover-letter/copy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ coverId }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.coverLetter) {
+          setCoverLetters((prev) => [data.coverLetter, ...prev]);
+        }
+      } else {
+        console.error("Failed to copy cover letter");
+      }
+    } catch (error) {
+      console.error("Error copying cover letter:", error);
+    } finally {
+      setCopyingCoverLetter(null);
     }
   };
 
@@ -560,9 +610,27 @@ export default function Dashboard() {
                             {t("site.dashboard.common.rename")}
                           </DropdownMenuItem>
                           <DropdownMenuItem
+                            onClick={() => handleCopyCV(cv._id)}
+                            disabled={copyingCV === cv._id}
+                          >
+                            {copyingCV === cv._id ? (
+                              <div className="flex items-center">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2" />
+                                {t("site.dashboard.common.copy") || "Copy"}
+                              </div>
+                            ) : (
+                              <>
+                                <FileText className="w-4 h-4 mr-2" />
+                                {t("site.dashboard.common.copy") || "Copy"}
+                              </>
+                            )}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
                             onClick={() => handleDeleteCV(cv._id)}
-                            className="text-red-600"
                             disabled={deletingCV === cv._id}
+                            className={
+                              deletingCV === cv._id ? undefined : "text-red-600"
+                            }
                           >
                             {deletingCV === cv._id ? (
                               <div className="flex items-center">
@@ -711,10 +779,32 @@ export default function Dashboard() {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() =>
+                              handleCopyCoverLetter(coverLetter._id)
+                            }
+                            disabled={copyingCoverLetter === coverLetter._id}
+                          >
+                            {copyingCoverLetter === coverLetter._id ? (
+                              <div className="flex items-center">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2" />
+                                {t("site.dashboard.common.copy") || "Copy"}
+                              </div>
+                            ) : (
+                              <>
+                                <FileText className="w-4 h-4 mr-2" />
+                                {t("site.dashboard.common.copy") || "Copy"}
+                              </>
+                            )}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
                               handleDeleteCoverLetter(coverLetter._id)
                             }
-                            className="text-red-600"
                             disabled={deletingCoverLetter === coverLetter._id}
+                            className={
+                              deletingCoverLetter === coverLetter._id
+                                ? undefined
+                                : "text-red-600"
+                            }
                           >
                             {deletingCoverLetter === coverLetter._id ? (
                               <div className="flex items-center">

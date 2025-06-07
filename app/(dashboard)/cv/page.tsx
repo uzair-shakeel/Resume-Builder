@@ -114,6 +114,7 @@ export default function CVDashboard() {
   const [newTitle, setNewTitle] = useState("");
   const router = useRouter();
   const [scale, setScale] = useState<number>(1);
+  const [copyingCV, setCopyingCV] = useState<string | null>(null);
 
   useEffect(() => {
     const getScale = (width: number): number => {
@@ -314,6 +315,29 @@ export default function CVDashboard() {
     return <CVPreviewWrapper>{preview}</CVPreviewWrapper>;
   };
 
+  const handleCopyCV = async (cvId: string) => {
+    setCopyingCV(cvId);
+    try {
+      const response = await fetch("/api/cv/copy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cvId }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.cv) {
+          setCVs((prev) => [data.cv, ...prev]);
+        }
+      } else {
+        console.error("Failed to copy CV");
+      }
+    } catch (error) {
+      console.error("Error copying CV:", error);
+    } finally {
+      setCopyingCV(null);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Main content */}
@@ -392,18 +416,38 @@ export default function CVDashboard() {
                     </Link>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="absolute bottom-2 right-2 z-30 p-1.5 rounded-lg bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-colors">
+                        <button className="absolute bottom-2 right-2 z-30 p-1.5 rounded-lg bg-white shadow-md hover:bg-gray-50 text-gray-600 transition-colors cursor-pointer">
                           <MoreVertical size={18} />
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="z-50">
-                        <DropdownMenuItem onClick={() => startRenaming(cv)}>
+                        <DropdownMenuItem
+                          onClick={() => startRenaming(cv)}
+                          className="cursor-pointer"
+                        >
                           <Pencil className="w-4 h-4 mr-2" />
                           {t("site.dashboard.common.rename")}
                         </DropdownMenuItem>
                         <DropdownMenuItem
+                          onClick={() => handleCopyCV(cv._id)}
+                          disabled={copyingCV === cv._id}
+                          className="cursor-pointer"
+                        >
+                          {copyingCV === cv._id ? (
+                            <div className="flex items-center">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2" />
+                              {t("site.dashboard.common.copy") || "Copy"}
+                            </div>
+                          ) : (
+                            <>
+                              <FileText className="w-4 h-4 mr-2" />
+                              {t("site.dashboard.common.copy") || "Copy"}
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                           onClick={() => handleDelete(cv._id)}
-                          className="text-red-600"
+                          className="text-red-600 cursor-pointer"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           {t("site.dashboard.common.delete")}
