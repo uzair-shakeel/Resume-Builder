@@ -109,67 +109,73 @@ export default function CVPreviewAlt({
 
   const renderProfile = () => (
     <section className="mb-8">
-      <h2 className="text-xl text-gray-800 font-medium mb-3">
-        {getSectionTitle("profile")}
-      </h2>
-      <p className="text-gray-600 leading-relaxed">
-        {profile || placeholderData.profile}
-      </p>
+      {profile && (
+        <>
+          <h2 className="text-xl text-gray-800 font-medium mb-3">
+            {getSectionTitle("profile")}
+          </h2>
+          <p className="text-gray-600 leading-relaxed">{profile}</p>
+        </>
+      )}
     </section>
   );
 
   const renderEducation = () => (
     <section className="mb-8">
-      <h2 className="text-xl text-gray-800 font-medium mb-4">
-        {getSectionTitle("education")}
-      </h2>
-      {(education?.length ? education : placeholderData.education).map(
-        (edu, index) => (
-          <div key={index} className="mb-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="font-medium text-gray-800">{edu.school}</p>
-                <p className="text-gray-600">{edu.degree}</p>
+      {education?.length > 0 && (
+        <>
+          <h2 className="text-xl text-gray-800 font-medium mb-4">
+            {getSectionTitle("education")}
+          </h2>
+          {education.map((edu, index) => (
+            <div key={index} className="mb-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-medium text-gray-800">{edu.school}</p>
+                  <p className="text-gray-600">{edu.degree}</p>
+                </div>
+                <p className="text-sm text-gray-500">
+                  {edu.startDate} - {edu.current ? "Present" : edu.endDate}
+                </p>
               </div>
-              <p className="text-sm text-gray-500">
-                {edu.startDate} - {edu.current ? "Present" : edu.endDate}
-              </p>
+              {"description" in edu && edu.description && (
+                <p className="text-gray-600 mt-2 text-sm">{edu.description}</p>
+              )}
             </div>
-            {edu.description && (
-              <p className="text-gray-600 mt-2 text-sm">{edu.description}</p>
-            )}
-          </div>
-        )
+          ))}
+        </>
       )}
     </section>
   );
 
   const renderExperience = () => (
     <section className="mb-8">
-      <h2 className="text-xl text-gray-800 font-medium mb-4">
-        {getSectionTitle("experience")}
-      </h2>
-      {(experience?.length ? experience : placeholderData.experience).map(
-        (exp, index) => (
-          <div key={index} className="mb-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="font-medium text-gray-800">{exp.position}</p>
-                <p className="text-gray-600">
-                  {exp.company}, {exp.location}
+      {experience?.length > 0 && (
+        <>
+          <h2 className="text-xl text-gray-800 font-medium mb-4">
+            {getSectionTitle("experience")}
+          </h2>
+          {experience.map((exp, index) => (
+            <div key={index} className="mb-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-medium text-gray-800">{exp.position}</p>
+                  <p className="text-gray-600">
+                    {exp.company}, {exp.location}
+                  </p>
+                </div>
+                <p className="text-sm text-gray-500">
+                  {exp.startDate} - {exp.current ? "Present" : exp.endDate}
                 </p>
               </div>
-              <p className="text-sm text-gray-500">
-                {exp.startDate} - {exp.current ? "Present" : exp.endDate}
-              </p>
+              {exp.description && (
+                <p className="text-gray-600 mt-2 text-sm whitespace-pre-line">
+                  {exp.description}
+                </p>
+              )}
             </div>
-            {exp.description && (
-              <p className="text-gray-600 mt-2 text-sm whitespace-pre-line">
-                {exp.description}
-              </p>
-            )}
-          </div>
-        )
+          ))}
+        </>
       )}
     </section>
   );
@@ -182,21 +188,25 @@ export default function CVPreviewAlt({
 
     return (
       <section className="mb-8">
-        <h2 className="text-xl text-gray-800 font-medium mb-4">
-          {getSectionTitle(section)}
-        </h2>
-        {sectionData.map((item, index) => (
-          <div key={index} className="mb-4">
-            {item.title && (
-              <p className="font-medium text-gray-800">{item.title}</p>
-            )}
-            {item.description && (
-              <p className="text-gray-600 mt-2 text-sm whitespace-pre-line">
-                {item.description}
-              </p>
-            )}
-          </div>
-        ))}
+        {sectionData.length > 0 && (
+          <>
+            <h2 className="text-xl text-gray-800 font-medium mb-4">
+              {getSectionTitle(section)}
+            </h2>
+            {sectionData.map((item, index) => (
+              <div key={index} className="mb-4">
+                {item.title && (
+                  <p className="font-medium text-gray-800">{item.title}</p>
+                )}
+                {item.description && (
+                  <p className="text-gray-600 mt-2 text-sm whitespace-pre-line">
+                    {item.description}
+                  </p>
+                )}
+              </div>
+            ))}
+          </>
+        )}
       </section>
     );
   };
@@ -205,141 +215,149 @@ export default function CVPreviewAlt({
     <div className="cv-sidebar w-1/3 bg-purple-50 p-6">
       {/* Photo */}
       <div className="mb-6 flex justify-center">
-        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md">
-          <Image
-            src={personalInfo?.photo || placeholderData.personalInfo.photo}
-            alt={`${getPlaceholderOrValue(
-              "personalInfo",
-              "firstName",
-              personalInfo?.firstName
-            )} ${getPlaceholderOrValue(
-              "personalInfo",
-              "lastName",
-              personalInfo?.lastName
-            )}`}
-            width={128}
-            height={128}
-            className="object-cover w-full h-full"
-          />
-        </div>
+        {personalInfo && "photo" in personalInfo && personalInfo.photo && (
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md">
+            <Image
+              src={personalInfo.photo as string}
+              alt={`${
+                "firstName" in personalInfo
+                  ? (personalInfo.firstName as string) || ""
+                  : ""
+              } ${
+                "lastName" in personalInfo
+                  ? (personalInfo.lastName as string) || ""
+                  : ""
+              }`}
+              width={128}
+              height={128}
+              className="object-cover w-full h-full"
+            />
+          </div>
+        )}
       </div>
 
       {/* Contact Info */}
       <div className="mb-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-3">
-          {getSectionTitle("personal-info")}
-        </h2>
-        <div className="space-y-2">
-          <div className="flex items-start">
-            <Mail className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
-            <span className="text-sm text-gray-900">
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "email",
-                personalInfo?.email
-              )}
-            </span>
-          </div>
-          <div className="flex items-start">
-            <Phone className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
-            <span className="text-sm text-gray-900">
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "phone",
-                personalInfo?.phone
-              )}
-            </span>
-          </div>
-          <div className="flex items-start">
-            <MapPin className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
-            <span className="text-sm text-gray-900">
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "address",
-                personalInfo?.address
-              )}
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "postalCode",
-                personalInfo?.postalCode
-              ) &&
-                `, ${getPlaceholderOrValue(
-                  "personalInfo",
-                  "postalCode",
-                  personalInfo?.postalCode
-                )}`}
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "city",
-                personalInfo?.city
-              ) &&
-                `, ${getPlaceholderOrValue(
-                  "personalInfo",
-                  "city",
-                  personalInfo?.city
-                )}`}
-            </span>
-          </div>
-        </div>
+        {personalInfo &&
+          (("email" in personalInfo && personalInfo.email) ||
+            ("phone" in personalInfo && personalInfo.phone) ||
+            ("address" in personalInfo && personalInfo.address) ||
+            ("postalCode" in personalInfo && personalInfo.postalCode) ||
+            ("city" in personalInfo && personalInfo.city)) && (
+            <>
+              <h2 className="text-lg font-medium text-gray-900 mb-3">
+                {getSectionTitle("personal-info")}
+              </h2>
+              <div className="space-y-2">
+                {personalInfo &&
+                  "email" in personalInfo &&
+                  personalInfo.email && (
+                    <div className="flex items-start">
+                      <Mail className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-900">
+                        {personalInfo.email as string}
+                      </span>
+                    </div>
+                  )}
+                {personalInfo &&
+                  "phone" in personalInfo &&
+                  personalInfo.phone && (
+                    <div className="flex items-start">
+                      <Phone className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-900">
+                        {personalInfo.phone as string}
+                      </span>
+                    </div>
+                  )}
+                {personalInfo &&
+                  (("address" in personalInfo && personalInfo.address) ||
+                    ("postalCode" in personalInfo && personalInfo.postalCode) ||
+                    ("city" in personalInfo && personalInfo.city)) && (
+                    <div className="flex items-start">
+                      <MapPin className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-900">
+                        {"address" in personalInfo
+                          ? (personalInfo.address as string) || ""
+                          : ""}
+                        {"postalCode" in personalInfo &&
+                          personalInfo.postalCode &&
+                          `, ${personalInfo.postalCode as string}`}
+                        {"city" in personalInfo &&
+                          personalInfo.city &&
+                          `, ${personalInfo.city as string}`}
+                      </span>
+                    </div>
+                  )}
+              </div>
+            </>
+          )}
       </div>
 
       {/* Skills */}
       <div className="mb-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-3">
-          {getSectionTitle("skills")}
-        </h2>
-        <div className="space-y-3">
-          {(skills?.length ? skills : placeholderData.skills)?.map(
-            (skill, index) => (
-              <div key={index}>
-                <div className="flex justify-between mb-1">
-                  <span className="text-sm text-gray-900">{skill.name}</span>
-                  <span className="text-xs text-gray-700">{skill.level}/5</span>
+        {skills?.length > 0 && (
+          <>
+            <h2 className="text-lg font-medium text-gray-900 mb-3">
+              {getSectionTitle("skills")}
+            </h2>
+            <div className="space-y-3">
+              {skills.map((skill, index) => (
+                <div key={index}>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm text-gray-900">{skill.name}</span>
+                    <span className="text-xs text-gray-700">
+                      {skill.level}/5
+                    </span>
+                  </div>
+                  <div className="w-full bg-purple-200 rounded-full h-1.5">
+                    <div
+                      className="bg-gray-700 h-1.5 rounded-full"
+                      style={{ width: `${(skill.level / 5) * 100}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-purple-200 rounded-full h-1.5">
-                  <div
-                    className="bg-gray-700 h-1.5 rounded-full"
-                    style={{ width: `${(skill.level / 5) * 100}%` }}
-                  />
-                </div>
-              </div>
-            )
-          )}
-        </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Languages */}
       <div>
-        <h2 className="text-lg font-medium text-gray-900 mb-3">
-          {getSectionTitle("languages")}
-        </h2>
-        <div className="space-y-2">
-          {(languages?.length ? languages : placeholderData.languages).map(
-            (language, index) => (
-              <div key={index}>
-                <div className="text-sm text-gray-900">{language.name}</div>
-                <div className="text-sm text-gray-700">{language.level}</div>
-              </div>
-            )
-          )}
-        </div>
+        {languages?.length > 0 && (
+          <>
+            <h2 className="text-lg font-medium text-gray-900 mb-3">
+              {getSectionTitle("languages")}
+            </h2>
+            <div className="space-y-2">
+              {languages.map((language, index) => (
+                <div key={index}>
+                  <div className="text-sm text-gray-900">{language.name}</div>
+                  <div className="text-sm text-gray-700">{language.level}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Interests */}
       <div>
-        <h2 className="text-lg font-medium text-gray-900 mb-3">
-          {getSectionTitle("interests")}
-        </h2>
-        <div className="space-y-1">
-          {(interests?.length ? interests : placeholderData.interests).map(
-            (interest, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 bg-gray-700 rounded-full" />
-                <span className="text-sm text-gray-900">{interest.name}</span>
-              </div>
-            )
-          )}
-        </div>
+        {interests?.length > 0 && (
+          <>
+            <h2 className="text-lg font-medium text-gray-900 mb-3">
+              {getSectionTitle("interests")}
+            </h2>
+            <div className="space-y-1">
+              {interests.map((interest, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-gray-700 rounded-full" />
+                  <span className="text-sm text-gray-900">{interest.name}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
