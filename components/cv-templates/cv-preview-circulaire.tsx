@@ -176,80 +176,88 @@ export default function CVPreviewCirculaire({
   };
 
   const renderPersonalInfo = () => {
-    const firstName = getPlaceholderOrValue(
-      "personalInfo",
-      "firstName",
-      personalInfo?.firstName
-    );
-    const lastName = getPlaceholderOrValue(
-      "personalInfo",
-      "lastName",
-      personalInfo?.lastName
-    );
-    const title = getPlaceholderOrValue(
-      "personalInfo",
-      "title",
-      personalInfo?.title
-    );
-    const email = getPlaceholderOrValue(
-      "personalInfo",
-      "email",
-      personalInfo?.email
-    );
-    const phone = getPlaceholderOrValue(
-      "personalInfo",
-      "phone",
-      personalInfo?.phone
-    );
-    const address = getPlaceholderOrValue(
-      "personalInfo",
-      "address",
-      personalInfo?.address
-    );
-    const postalCode = getPlaceholderOrValue(
-      "personalInfo",
-      "postalCode",
-      personalInfo?.postalCode
-    );
-    const city = getPlaceholderOrValue(
-      "personalInfo",
-      "city",
-      personalInfo?.city
-    );
+    const firstName =
+      personalInfo && "firstName" in personalInfo
+        ? personalInfo.firstName || ""
+        : "";
+    const lastName =
+      personalInfo && "lastName" in personalInfo
+        ? personalInfo.lastName || ""
+        : "";
+    const title =
+      personalInfo && "title" in personalInfo ? personalInfo.title || "" : "";
+    const email =
+      personalInfo && "email" in personalInfo ? personalInfo.email || "" : "";
+    const phone =
+      personalInfo && "phone" in personalInfo ? personalInfo.phone || "" : "";
+    const address =
+      personalInfo && "address" in personalInfo
+        ? personalInfo.address || ""
+        : "";
+    const postalCode =
+      personalInfo && "postalCode" in personalInfo
+        ? personalInfo.postalCode || ""
+        : "";
+    const city =
+      personalInfo && "city" in personalInfo ? personalInfo.city || "" : "";
 
     return (
       <div className="mt-6">
-        <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4 border-b  pb-2"
-        >
-          Informations personnelles
-        </h2>
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <User style={{ color: accentColor }} className="h-5 w-5  " />
-            <span className="text-gray-700">
-              {firstName} {lastName}
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Mail style={{ color: accentColor }} className="h-5 w-5  " />
-            <span className="text-gray-700">{email}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Phone style={{ color: accentColor }} className="h-5 w-5  " />
-            <span className="text-gray-700">{phone}</span>
-          </div>
-          <div className="flex items-start gap-3">
-            <Home style={{ color: accentColor }} className="h-5 w-5   mt-0.5" />
-            <div className="text-gray-700">
-              <div>{address}</div>
-              <div>
-                {postalCode} {city}
-              </div>
+        {(firstName ||
+          lastName ||
+          title ||
+          email ||
+          phone ||
+          address ||
+          postalCode ||
+          city) && (
+          <>
+            <h2
+              style={{ color: accentColor, borderColor: accentColor }}
+              className="text-xl font-bold mb-4 border-b pb-2"
+            >
+              Informations personnelles
+            </h2>
+            <div className="space-y-4">
+              {(firstName || lastName) && (
+                <div className="flex items-center gap-3">
+                  <User style={{ color: accentColor }} className="h-5 w-5  " />
+                  <span className="text-gray-700">
+                    {firstName} {lastName}
+                  </span>
+                </div>
+              )}
+              {email && (
+                <div className="flex items-center gap-3">
+                  <Mail style={{ color: accentColor }} className="h-5 w-5  " />
+                  <span className="text-gray-700">{email}</span>
+                </div>
+              )}
+              {phone && (
+                <div className="flex items-center gap-3">
+                  <Phone style={{ color: accentColor }} className="h-5 w-5  " />
+                  <span className="text-gray-700">{phone}</span>
+                </div>
+              )}
+              {(address || postalCode || city) && (
+                <div className="flex items-start gap-3">
+                  <Home
+                    style={{ color: accentColor }}
+                    className="h-5 w-5   mt-0.5"
+                  />
+                  <div className="text-gray-700">
+                    {address && <div>{address}</div>}
+                    {(postalCode || city) && (
+                      <div>
+                        {postalCode} {city}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     );
   };
@@ -257,15 +265,17 @@ export default function CVPreviewCirculaire({
   const renderProfile = () => {
     return data.profile ? (
       <div className="mb-8">
-        <h3
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-2xl font-bold mb-4  border-b  pb-2"
-        >
-          {getSectionTitle("profile")}
-        </h3>
-        <p className="text-gray-700">
-          {getPlaceholderOrValue("profile", "profile", data.profile)}
-        </p>
+        {data.profile && (
+          <>
+            <h3
+              style={{ color: accentColor, borderColor: accentColor }}
+              className="text-2xl font-bold mb-4  border-b  pb-2"
+            >
+              {getSectionTitle("profile")}
+            </h3>
+            <p className="text-gray-700">{data.profile}</p>
+          </>
+        )}
       </div>
     ) : null;
   };
@@ -273,35 +283,37 @@ export default function CVPreviewCirculaire({
   const renderEducation = () => {
     return (
       <div className="mb-8">
-        <h3
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-2xl font-bold mb-4  border-b  pb-2"
-        >
-          {getSectionTitle("education")}
-        </h3>
-        <div className="space-y-6">
-          {(data.education?.length
-            ? data.education
-            : placeholderData.education
-          ).map((edu: Education, index: number) => (
-            <div key={index}>
-              <div className="flex justify-between mb-1">
-                <div>
-                  <p className="font-bold text-gray-800">{edu.degree}</p>
-                  <p style={{ color: accentColor }} className=" ">
-                    {edu.school}
-                  </p>
+        {data.education?.length > 0 && (
+          <>
+            <h3
+              style={{ color: accentColor, borderColor: accentColor }}
+              className="text-2xl font-bold mb-4  border-b  pb-2"
+            >
+              {getSectionTitle("education")}
+            </h3>
+            <div className="space-y-6">
+              {data.education.map((edu: Education, index: number) => (
+                <div key={index}>
+                  <div className="flex justify-between mb-1">
+                    <div>
+                      <p className="font-bold text-gray-800">{edu.degree}</p>
+                      <p style={{ color: accentColor }} className=" ">
+                        {edu.school}
+                      </p>
+                    </div>
+                    <div className="text-gray-600 font-medium">
+                      de {edu.startDate} à{" "}
+                      {edu.current ? "ce jour" : edu.endDate}
+                    </div>
+                  </div>
+                  {edu.description && (
+                    <p className="text-gray-700 mt-1">{edu.description}</p>
+                  )}
                 </div>
-                <div className="text-gray-600 font-medium">
-                  de {edu.startDate} à {edu.current ? "ce jour" : edu.endDate}
-                </div>
-              </div>
-              {edu.description && (
-                <p className="text-gray-700 mt-1">{edu.description}</p>
-              )}
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     );
   };
@@ -309,44 +321,46 @@ export default function CVPreviewCirculaire({
   const renderExperience = () => {
     return (
       <div className="mb-8">
-        <h3
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-2xl font-bold mb-4  border-b  pb-2"
-        >
-          {getSectionTitle("experience")}
-        </h3>
-        <div className="space-y-6">
-          {(data.experience?.length
-            ? data.experience
-            : placeholderData.experience
-          ).map((exp: Experience, index: number) => (
-            <div key={index}>
-              <div className="flex justify-between mb-1">
-                <div>
-                  <p className="font-bold text-gray-800">{exp.position}</p>
-                  <p style={{ color: accentColor }} className=" ">
-                    {exp.company}, {exp.location}
-                  </p>
-                </div>
-                <div className="text-gray-600 font-medium">
-                  de {exp.startDate} à {exp.current ? "ce jour" : exp.endDate}
-                </div>
-              </div>
-              {exp.description && (
-                <div className="mt-3 text-gray-700">
-                  <div className="whitespace-pre-line">
-                    {exp.description.split("\n").map((item, i) => (
-                      <div key={i} className="flex items-start">
-                        <span className="mr-2 text-black">•</span>
-                        <span>{item.replace("• ", "")}</span>
-                      </div>
-                    ))}
+        {data.experience?.length > 0 && (
+          <>
+            <h3
+              style={{ color: accentColor, borderColor: accentColor }}
+              className="text-2xl font-bold mb-4  border-b  pb-2"
+            >
+              {getSectionTitle("experience")}
+            </h3>
+            <div className="space-y-6">
+              {data.experience.map((exp: Experience, index: number) => (
+                <div key={index}>
+                  <div className="flex justify-between mb-1">
+                    <div>
+                      <p className="font-bold text-gray-800">{exp.position}</p>
+                      <p style={{ color: accentColor }} className=" ">
+                        {exp.company}, {exp.location}
+                      </p>
+                    </div>
+                    <div className="text-gray-600 font-medium">
+                      de {exp.startDate} à{" "}
+                      {exp.current ? "ce jour" : exp.endDate}
+                    </div>
                   </div>
+                  {exp.description && (
+                    <div className="mt-3 text-gray-700">
+                      <div className="whitespace-pre-line">
+                        {exp.description.split("\n").map((item, i) => (
+                          <div key={i} className="flex items-start">
+                            <span className="mr-2 text-black">•</span>
+                            <span>{item.replace("• ", "")}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     );
   };
@@ -354,86 +368,78 @@ export default function CVPreviewCirculaire({
   const renderSkills = () => {
     return (
       <div className="mb-8">
-        <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className={`text-xl font-bold mb-4  border-b pt-6 pb-2`}
-        >
-          {getSectionTitle("skills")}
-        </h2>
-        <div className="space-y-3">
-          {(data.skills?.length ? data.skills : placeholderData.skills).map(
-            (skill: Skill, index: number) => (
-              <div key={index}>
-                <div className="flex justify-between mb-1">
-                  <span className="text-gray-700">{skill.name}</span>
+        {data.skills?.length > 0 && (
+          <>
+            <h2
+              style={{ color: accentColor, borderColor: accentColor }}
+              className={`text-xl font-bold mb-4  border-b pt-6 pb-2`}
+            >
+              {getSectionTitle("skills")}
+            </h2>
+            <div className="space-y-3">
+              {data.skills.map((skill: Skill, index: number) => (
+                <div key={index}>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-gray-700">{skill.name}</span>
+                  </div>
                 </div>
-                {/* <div className="flex">
-                  {[1, 2, 3, 4, 5].map((dot) => (
-                    <div
-                      key={dot}
-                      className={`w-3 h-3 rounded-full mr-1 ${
-                        dot <= Math.round(skill.level / 20)
-                          ? "bg-[#006273]"
-                          : "bg-gray-200"
-                      }`}
-                    />
-                  ))}
-                </div> */}
-              </div>
-            )
-          )}
-        </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     );
   };
 
   const renderLanguages = () => {
-    return data.languages?.length || placeholderData.languages ? (
+    return data.languages?.length > 0 ? (
       <div className="mb-8">
-        <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4  border-b  pb-2"
-        >
-          {getSectionTitle("languages")}
-        </h2>
-        <div className="space-y-2">
-          {(data.languages?.length
-            ? data.languages
-            : placeholderData.languages
-          ).map((lang: Language, index: number) => (
-            <div key={index} className="text-gray-700">
-              <span>{lang.name}: </span>
-              <span className="text-gray-600">{lang.level}</span>
+        {data.languages?.length > 0 && (
+          <>
+            <h2
+              style={{ color: accentColor, borderColor: accentColor }}
+              className="text-xl font-bold mb-4  border-b  pb-2"
+            >
+              {getSectionTitle("languages")}
+            </h2>
+            <div className="space-y-2">
+              {data.languages.map((lang: Language, index: number) => (
+                <div key={index} className="text-gray-700">
+                  <span>{lang.name}: </span>
+                  <span className="text-gray-600">{lang.level}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     ) : null;
   };
 
   const renderInterests = () => {
-    return data.interests?.length || placeholderData.interests ? (
+    return data.interests?.length > 0 ? (
       <div className="mb-8">
-        <h2
-          style={{ color: accentColor, borderColor: accentColor }}
-          className="text-xl font-bold mb-4  border-b  pb-2"
-        >
-          {getSectionTitle("interests")}
-        </h2>
-        <div className="space-y-2">
-          {(data.interests?.length
-            ? data.interests
-            : placeholderData.interests
-          ).map((interest: Interest, index: number) => (
-            <div key={index} className="flex items-start">
-              <div
-                style={{ backgroundColor: accentColor }}
-                className="w-3 h-3  mt-1.5 mr-2 flex-shrink-0"
-              ></div>
-              <span className="text-gray-700">{interest.name}</span>
+        {data.interests?.length > 0 && (
+          <>
+            <h2
+              style={{ color: accentColor, borderColor: accentColor }}
+              className="text-xl font-bold mb-4  border-b  pb-2"
+            >
+              {getSectionTitle("interests")}
+            </h2>
+            <div className="space-y-2">
+              {data.interests.map((interest: Interest, index: number) => (
+                <div key={index} className="flex items-start">
+                  <div
+                    style={{ backgroundColor: accentColor }}
+                    className="w-3 h-3  mt-1.5 mr-2 flex-shrink-0"
+                  ></div>
+                  <span className="text-gray-700">{interest.name}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     ) : null;
   };
@@ -461,38 +467,36 @@ export default function CVPreviewCirculaire({
           {/* Name at the top */}
           <div className="relative z-10 pt-12 px-8 text-center">
             <h1 className="text-2xl font-bold text-white">
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "firstName",
-                personalInfo?.firstName
-              )}{" "}
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "lastName",
-                personalInfo?.lastName
-              )}
+              {personalInfo && "firstName" in personalInfo
+                ? personalInfo.firstName || ""
+                : ""}{" "}
+              {personalInfo && "lastName" in personalInfo
+                ? personalInfo.lastName || ""
+                : ""}
             </h1>
           </div>
 
           {/* Profile photo */}
           <div className="relative z-10 flex justify-center mt-6">
-            <div className="w-36 h-36 rounded-full overflow-hidden border-4 border-white">
-              <Image
-                src={personalInfo?.photo || placeholderData.personalInfo.photo}
-                alt={`${getPlaceholderOrValue(
-                  "personalInfo",
-                  "firstName",
-                  personalInfo?.firstName
-                )} ${getPlaceholderOrValue(
-                  "personalInfo",
-                  "lastName",
-                  personalInfo?.lastName
-                )}`}
-                width={144}
-                height={144}
-                className="object-cover w-full h-full"
-              />
-            </div>
+            {personalInfo && "photo" in personalInfo && personalInfo.photo && (
+              <div className="w-36 h-36 rounded-full overflow-hidden border-4 border-white">
+                <Image
+                  src={personalInfo.photo}
+                  alt={`${
+                    personalInfo && "firstName" in personalInfo
+                      ? personalInfo.firstName || ""
+                      : ""
+                  } ${
+                    personalInfo && "lastName" in personalInfo
+                      ? personalInfo.lastName || ""
+                      : ""
+                  }`}
+                  width={144}
+                  height={144}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            )}
           </div>
 
           {/* Content sections */}

@@ -189,186 +189,208 @@ export default function CVPreviewTeal({
 
   // Render profile section
   const renderProfile = () => {
-    return data.profile || placeholderData.profile ? (
+    return data.profile ? (
       <div className="py-8">
-        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
-          {getSectionTitle("profile")}
-        </h3>
-        <p className="text-gray-700">
-          {data.profile || placeholderData.profile}
-        </p>
+        {data.profile && (
+          <>
+            <h3
+              className="text-xl font-bold mb-4"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("profile")}
+            </h3>
+            <p className="text-gray-700">{data.profile}</p>
+          </>
+        )}
       </div>
     ) : null;
   };
 
   // Render education section
   const renderEducation = () => {
-    return data.education?.length || placeholderData.education?.length ? (
+    return data.education?.length > 0 ? (
       <div className="pb-8">
-        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
-          {getSectionTitle("education")}
-        </h3>
-        <div className="space-y-4">
-          {(data.education?.length
-            ? data.education
-            : placeholderData.education
-          ).map((edu: Education, index: number) => (
-            <div key={index}>
-              <div className="flex justify-between mb-1">
-                <div>
-                  <p className="font-bold text-gray-800">{edu.degree}</p>
-                  <p style={{ color: accentColor }}>{edu.school}</p>
+        {data.education?.length > 0 && (
+          <>
+            <h3
+              className="text-xl font-bold mb-4"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("education")}
+            </h3>
+            <div className="space-y-4">
+              {data.education.map((edu: Education, index: number) => (
+                <div key={index}>
+                  <div className="flex justify-between mb-1">
+                    <div>
+                      <p className="font-bold text-gray-800">{edu.degree}</p>
+                      <p style={{ color: accentColor }}>{edu.school}</p>
+                    </div>
+                    <div className="text-gray-600">
+                      {edu.startDate} - {edu.current ? "Present" : edu.endDate}
+                    </div>
+                  </div>
+                  {edu.description && (
+                    <p className="text-gray-700 mt-1">{edu.description}</p>
+                  )}
                 </div>
-                <div className="text-gray-600">
-                  {edu.startDate} - {edu.current ? "Present" : edu.endDate}
-                </div>
-              </div>
-              {edu.description && (
-                <p className="text-gray-700 mt-1">{edu.description}</p>
-              )}
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     ) : null;
   };
 
   // Render experience section
   const renderExperience = () => {
-    return data.experience?.length || placeholderData.experience?.length ? (
+    return data.experience?.length > 0 ? (
       <div className="pb-8">
-        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
-          {getSectionTitle("experience")}
-        </h3>
-        <div className="space-y-4">
-          {(data.experience?.length
-            ? data.experience
-            : placeholderData.experience
-          ).map((exp: ExperienceItem, index: number) => (
-            <div key={index}>
-              <div className="flex justify-between mb-1">
-                <div>
-                  <p className="font-bold text-gray-800">{exp.position}</p>
-                  <p style={{ color: accentColor }}>
-                    {exp.company}, {exp.location}
-                  </p>
-                </div>
-                <div className="text-gray-600">
-                  {exp.startDate} - {exp.current ? "Present" : exp.endDate}
-                </div>
-              </div>
-              {exp.description && (
-                <div className="mt-2 text-gray-700">
-                  <div className="whitespace-pre-line">
-                    {exp.description.split("\n").map((item, i) => (
-                      <div key={i} className="flex items-start">
-                        <span className="mr-2">•</span>
-                        <span>{item.replace("• ", "")}</span>
-                      </div>
-                    ))}
+        {data.experience?.length > 0 && (
+          <>
+            <h3
+              className="text-xl font-bold mb-4"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("experience")}
+            </h3>
+            <div className="space-y-4">
+              {data.experience.map((exp: ExperienceItem, index: number) => (
+                <div key={index}>
+                  <div className="flex justify-between mb-1">
+                    <div>
+                      <p className="font-bold text-gray-800">{exp.position}</p>
+                      <p style={{ color: accentColor }}>
+                        {exp.company}, {exp.location}
+                      </p>
+                    </div>
+                    <div className="text-gray-600">
+                      {exp.startDate} - {exp.current ? "Present" : exp.endDate}
+                    </div>
                   </div>
+                  {exp.description && (
+                    <div className="mt-2 text-gray-700">
+                      <div className="whitespace-pre-line">
+                        {exp.description.split("\n").map((item, i) => (
+                          <div key={i} className="flex items-start">
+                            <span className="mr-2">•</span>
+                            <span>{item.replace("• ", "")}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     ) : null;
   };
 
   // Render skills section
   const renderSkills = () => {
-    return data.skills?.length || placeholderData.skills?.length ? (
+    return data.skills?.length > 0 ? (
       <div className="pb-8">
-        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
-          {getSectionTitle("skills")}
-        </h3>
-        <div className="space-y-3">
-          {(data.skills?.length ? data.skills : placeholderData.skills).map(
-            (skill: SkillItem, index: number) => (
-              <div key={index}>
-                <div className="flex justify-between mb-1">
-                  <span className="text-gray-700">{skill.name}</span>
+        {data.skills?.length > 0 && (
+          <>
+            <h3
+              className="text-xl font-bold mb-4"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("skills")}
+            </h3>
+            <div className="space-y-3">
+              {data.skills.map((skill: SkillItem, index: number) => (
+                <div key={index}>
+                  <div className="flex justify-between mb-1">
+                    <span className="text-gray-700">{skill.name}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full"
+                      style={{
+                        width: `${skill.level * 20}%`,
+                        backgroundColor: accentColor,
+                      }}
+                    ></div>
+                  </div>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="h-2 rounded-full"
-                    style={{
-                      width: `${skill.level * 20}%`,
-                      backgroundColor: accentColor,
-                    }}
-                  ></div>
-                </div>
-              </div>
-            )
-          )}
-        </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     ) : null;
   };
 
   // Render languages section
   const renderLanguages = () => {
-    return data.languages?.length || placeholderData.languages?.length ? (
+    return data.languages?.length > 0 ? (
       <div className="pb-8">
-        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
-          {getSectionTitle("languages")}
-        </h3>
-        <div className="space-y-2">
-          {(data.languages?.length
-            ? data.languages
-            : placeholderData.languages
-          ).map((lang: LanguageItem, index: number) => (
-            <div key={index} className="flex justify-between">
-              <span className="text-gray-700">{lang.name}</span>
-              <span className="text-gray-600">{lang.level}</span>
+        {data.languages?.length > 0 && (
+          <>
+            <h3
+              className="text-xl font-bold mb-4"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("languages")}
+            </h3>
+            <div className="space-y-2">
+              {data.languages.map((lang: LanguageItem, index: number) => (
+                <div key={index} className="flex justify-between">
+                  <span className="text-gray-700">{lang.name}</span>
+                  <span className="text-gray-600">{lang.level}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     ) : null;
   };
 
   // Render interests section
   const renderInterests = () => {
-    return data.interests?.length || placeholderData.interests?.length ? (
+    return data.interests?.length > 0 ? (
       <div className="pb-8">
-        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
-          {getSectionTitle("interests")}
-        </h3>
-        <div className="flex flex-wrap gap-2">
-          {(data.interests?.length
-            ? data.interests
-            : placeholderData.interests
-          ).map((interest: InterestItem, index: number) => (
-            <span
-              key={index}
-              className="px-3 py-1 text-center rounded-full text-white"
-              style={{ backgroundColor: accentColor }}
+        {data.interests?.length > 0 && (
+          <>
+            <h3
+              className="text-xl font-bold mb-4"
+              style={{ color: accentColor }}
             >
-              {interest.name}
-            </span>
-          ))}
-        </div>
+              {getSectionTitle("interests")}
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {data.interests.map((interest: InterestItem, index: number) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 text-center rounded-full text-white"
+                  style={{ backgroundColor: accentColor }}
+                >
+                  {interest.name}
+                </span>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     ) : null;
   };
 
   // Render header with personal info
   const renderHeader = () => {
-    const firstName =
-      personalInfo?.firstName || placeholderData.personalInfo.firstName;
-    const lastName =
-      personalInfo?.lastName || placeholderData.personalInfo.lastName;
-    const email = personalInfo?.email || placeholderData.personalInfo.email;
-    const phone = personalInfo?.phone || placeholderData.personalInfo.phone;
-    const address =
-      personalInfo?.address || placeholderData.personalInfo.address;
-    const city = personalInfo?.city || placeholderData.personalInfo.city;
-    const postalCode =
-      personalInfo?.postalCode || placeholderData.personalInfo.postalCode;
-    const photo = personalInfo?.photo || placeholderData.personalInfo.photo;
-    const title = personalInfo?.title || placeholderData.personalInfo.title;
+    const firstName = personalInfo?.firstName || "";
+    const lastName = personalInfo?.lastName || "";
+    const email = personalInfo?.email || "";
+    const phone = personalInfo?.phone || "";
+    const address = personalInfo?.address || "";
+    const city = personalInfo?.city || "";
+    const postalCode = personalInfo?.postalCode || "";
+    const photo = personalInfo?.photo || "";
+    const title = personalInfo?.title || "";
 
     return (
       <div className="bg-gray-100 p-4">
@@ -378,20 +400,22 @@ export default function CVPreviewTeal({
             <h1 className="text-4xl font-medium" style={{ color: accentColor }}>
               {firstName} {lastName}
             </h1>
-            <div className="text-xl text-gray-600 mt-1">{title}</div>
+            {title && <div className="text-xl text-gray-600 mt-1">{title}</div>}
           </div>
-          <div
-            className="w-24 h-24 rounded-full overflow-hidden border-2"
-            style={{ borderColor: accentColor }}
-          >
-            <Image
-              src={photo || "/placeholder-user.jpg"}
-              alt={`${firstName} ${lastName}`}
-              width={96}
-              height={96}
-              className="object-cover w-full h-full"
-            />
-          </div>
+          {photo && (
+            <div
+              className="w-24 h-24 rounded-full overflow-hidden border-2"
+              style={{ borderColor: accentColor }}
+            >
+              <Image
+                src={photo}
+                alt={`${firstName} ${lastName}`}
+                width={96}
+                height={96}
+                className="object-cover w-full h-full"
+              />
+            </div>
+          )}
         </div>
 
         {/* Contact information */}
@@ -412,7 +436,7 @@ export default function CVPreviewTeal({
               <span>{phone}</span>
             </div>
           )}
-          {address && (
+          {(address || city || postalCode) && (
             <div className="flex items-center">
               <span className="mr-2" style={{ color: accentColor }}>
                 ⌂
