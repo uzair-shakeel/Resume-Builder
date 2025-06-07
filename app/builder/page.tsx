@@ -2414,7 +2414,7 @@ export default function Builder() {
           {/* Modified Right Panel with Drawer functionality */}
           <div className="w-1/2 bg-gray-50 hidden lg:flex flex-col">
             {/* Zoom and page controls */}
-            <div className="sticky top-0 z-10 bg-gray-100 border-b border-gray-200 p-2 flex justify-between items-center">
+            <div className="sticky top-0 z-10 py-5 bg-white border-b border-gray-200 p-2 flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <button
                   onClick={zoomOut}
@@ -2443,7 +2443,7 @@ export default function Builder() {
 
             {/* Page break controls panel */}
             {showPageBreakControls && (
-              <div className="bg-white border-b border-gray-200 p-3 shadow-sm">
+              <div className="bg-gray-200 border-b border-gray-200 p-3 shadow-sm">
                 <h3 className="font-medium text-gray-800 mb-2">
                   {t("site.builder.page_layout.page_layout_settings")}
                 </h3>
