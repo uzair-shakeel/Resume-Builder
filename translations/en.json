@@ -167,7 +167,11 @@
         "title": "Resume Builder",
         "cover_letter": "Cover Letter",
         "download": "Download",
-        "download_as_pdf": "Download as PDF"
+        "download_as_pdf": "Download as PDF",
+        "save": "Saved",
+        "save_changes": "Save",
+        "saving": "Saving...",
+        "retry_save": "Retry Save"
       },
       "preview": "Preview",
       "tabs": {

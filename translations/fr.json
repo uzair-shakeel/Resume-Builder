@@ -126,7 +126,7 @@
             "answer": "Parcourez simplement les différents modèles disponibles, choisissez-en un qui correspond à l'image que vous souhaitez projeter, puis utilisez le concepteur de CV pour compléter les différentes sections en fonction de votre profil."
           },
           "faq5": {
-            "question": "Quels sont les avantages d’un créateur de CV ?",
+            "question": "Quels sont les avantages d'un créateur de CV ?",
             "answer": "Les avantages d'un créateur de CV incluent le gain de temps, la garantie de n'omettre aucune section importante, le maintien de l'intégrité de la mise en page, la facilité de mise à jour et la possibilité d'enregistrer au format PDF."
           },
           "faq6": {
@@ -167,7 +167,11 @@
         "title": "Générateur de CV",
         "cover_letter": "Lettre de Motivation",
         "download": "Télécharger",
-        "download_as_pdf": "Télécharger en PDF"
+        "download_as_pdf": "Télécharger en PDF",
+        "save": "Enregistré",
+        "save_changes": "Enregistrer",
+        "saving": "Enregistrement...",
+        "retry_save": "Réessayer l'enregistrement"
       },
       "preview": "Aperçu",
       "tabs": {

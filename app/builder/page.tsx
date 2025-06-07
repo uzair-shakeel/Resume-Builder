@@ -154,7 +154,11 @@ const templateOptions = [
 function renderSectionContent(
   section: string,
   cvData: CVData,
-  updateCVData: (section: string, data: any) => void,
+  updateCVData: (
+    section: string,
+    data: any,
+    options?: { skipUnsavedFlag?: boolean }
+  ) => void,
   template: string
 ) {
   switch (section) {
@@ -228,7 +232,7 @@ function renderSectionContent(
         return (
           <CustomSection
             data={cvData[section] || []}
-            updateData={(data) => updateCVData(section, data)}
+            updateData={(data, options) => updateCVData(section, data, options)}
           />
         );
       }
@@ -242,13 +246,16 @@ function CustomSection({
   updateData,
 }: {
   data: CustomSectionItem[];
-  updateData: (data: CustomSectionItem[]) => void;
+  updateData: (
+    data: CustomSectionItem[],
+    options?: { skipUnsavedFlag?: boolean }
+  ) => void;
 }) {
   const [items, setItems] = useState(data);
   const { t } = useLanguage();
 
   useEffect(() => {
-    updateData(items);
+    updateData(items, { skipUnsavedFlag: true });
   }, [items, updateData]);
 
   const addItem = () => {
@@ -846,6 +853,8 @@ export default function Builder() {
         if (!currentCvId || currentCvId !== result.cv._id) {
           window.history.replaceState({}, "", `/builder?id=${result.cv._id}`);
         }
+        setActiveSectionMenu(null); // Close any open section menu after save
+        setSaveStatus("saved");
       }
 
       // Clear the save status timeout since save completed
@@ -909,9 +918,11 @@ export default function Builder() {
     setSaveStatus("saving");
     saveCV()
       .then(() => {
-        console.log("Manual save completed");
+        setActiveSectionMenu(null); // Close any open section menu
+        setSaveStatus("saved");
       })
       .catch((error) => {
+        setSaveStatus("error");
         console.error("Manual save failed:", error);
       });
   };
@@ -936,7 +947,11 @@ export default function Builder() {
   };
 
   // Update CV data with auto-save
-  const updateCVData = (section: string, data: any) => {
+  const updateCVData = (
+    section: string,
+    data: any,
+    options?: { skipUnsavedFlag?: boolean }
+  ) => {
     setCVData((prev) => {
       const newData = {
         ...prev,
@@ -945,8 +960,8 @@ export default function Builder() {
       return newData;
     });
 
-    // Set status to unsaved
-    if (saveStatus === "saved") {
+    // Only set unsaved if not skipping
+    if (!options?.skipUnsavedFlag && saveStatus === "saved") {
       setSaveStatus("unsaved");
     }
   };
@@ -2178,7 +2193,7 @@ export default function Builder() {
         <div className="flex flex-1 overflow-hidden">
           {/* Left Panel - Form */}
           <div className="w-full lg:w-1/2 flex flex-col border-r border-gray-200 bg-white">
-            <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+            <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center gap-2">
               <div className="flex items-center lg:gap-4 gap-2">
                 <button
                   onClick={handleBackToDashboard}
@@ -2190,39 +2205,64 @@ export default function Builder() {
                   {t("site.builder.header.title")}
                 </h1>
                 {/* Save status indicator */}
-                <div className="text-gray-500">
-                  {saveStatus === "saved" && (
-                    <Cloud
-                      className="w-5 h-5 cursor-pointer hover:text-blue-500"
-                      onClick={handleManualSave}
-                      title={t("site.builder.header.save")}
-                    />
-                  )}
-                  {saveStatus === "unsaved" && (
-                    <Cloud
-                      className="w-5 h-5 cursor-pointer text-yellow-500 hover:text-blue-500"
-                      onClick={handleManualSave}
-                      title={t("site.builder.header.save_changes")}
-                    />
-                  )}
-                  {saveStatus === "saving" && (
-                    <RefreshCw
-                      className="w-5 h-5 animate-spin"
-                      title={t("site.builder.header.saving")}
-                    />
-                  )}
-                  {saveStatus === "error" && (
-                    <CloudOff
-                      className="w-5 h-5 text-red-500 cursor-pointer hover:text-red-600"
-                      onClick={handleManualSave}
-                      title={t("site.builder.header.retry_save")}
-                    />
-                  )}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleManualSave}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md font-semibold transition-colors focus:outline-none
+                      ${
+                        saveStatus === "saved"
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : ""
+                      }
+                      ${
+                        saveStatus === "unsaved"
+                          ? "bg-orange-500 text-white hover:bg-orange-600"
+                          : ""
+                      }
+                      ${
+                        saveStatus === "saving"
+                          ? "bg-gray-400 text-white cursor-wait"
+                          : ""
+                      }
+                      ${
+                        saveStatus === "error"
+                          ? "bg-red-500 text-white hover:bg-red-600"
+                          : ""
+                      }
+                    `}
+                    disabled={saveStatus === "saving"}
+                    title={
+                      saveStatus === "saved"
+                        ? t("site.builder.header.save")
+                        : saveStatus === "unsaved"
+                        ? t("site.builder.header.save_changes")
+                        : saveStatus === "saving"
+                        ? t("site.builder.header.saving")
+                        : t("site.builder.header.retry_save")
+                    }
+                  >
+                    {saveStatus === "saving" ? (
+                      <RefreshCw className="w-5 h-5 animate-spin" />
+                    ) : saveStatus === "error" ? (
+                      <CloudOff className="w-5 h-5" />
+                    ) : (
+                      <Cloud className="w-5 h-5" />
+                    )}
+                    <span className="sm:block hidden">
+                      {saveStatus === "saved"
+                        ? t("site.builder.header.save")
+                        : saveStatus === "unsaved"
+                        ? t("site.builder.header.save_changes")
+                        : saveStatus === "saving"
+                        ? t("site.builder.header.saving")
+                        : t("site.builder.header.retry_save")}
+                    </span>
+                  </button>
                 </div>
                 {/* Link to Cover Letter Builder */}
                 <a
                   href="/builder/cover-letter"
-                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
+                  className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm sm:inline-flex hidden"
                 >
                   <FileText className="w-4 h-4" />
                   {t("site.builder.header.cover_letter")}
@@ -2232,10 +2272,12 @@ export default function Builder() {
                 <div className="relative">
                   <button
                     onClick={() => setShowDownloadOptions(!showDownloadOptions)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
                   >
-                    <Download className="w-4 h-4 mr-2" />
-                    {t("site.builder.header.download")}
+                    <Download className="w-4 sm:h-4 h-[20px]" />
+                    <span className="sm:block hidden">
+                      {t("site.builder.header.download")}
+                    </span>
                   </button>
                   {showDownloadOptions && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
