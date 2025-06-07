@@ -2406,12 +2406,8 @@ export default function CoverLetterBuilder() {
                   className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
                   disabled={isDownloading}
                 >
-                  {isDownloading ? (
-                    <RefreshCw className="w-5 h-5 animate-spin mr-2" />
-                  ) : (
-                    <Download className="w-5 h-5" />
-                  )}
-                  {isDownloading && <span className="ml-1">Processing...</span>}
+                  <Download className="w-5 h-5" />
+                  {t("site.builder.header.download")}
                 </button>
                 {showDownloadOptions && !isDownloading && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
@@ -2566,18 +2562,7 @@ export default function CoverLetterBuilder() {
         </div>
 
         <div className="w-1/2 bg-gray-50 lg:flex hidden flex-col">
-          <div className="bg-white p-4 border-b border-gray-200 flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <button
-                className="p-2 rounded hover:bg-gray-100"
-                onClick={() => setShowSidebar(!showSidebar)}
-              >
-                {showSidebar ? <ChevronLeft /> : <ChevronRight />}
-              </button>
-              <h2 className="text-lg font-semibold">
-                {t("site.builder.preview")}
-              </h2>
-            </div>
+          <div className="bg-white p-4 border-b border-gray-200 flex justify-start items-center">
             <div className="flex items-center space-x-2">
               <button
                 className="p-2 rounded hover:bg-gray-100"
@@ -2599,29 +2584,6 @@ export default function CoverLetterBuilder() {
               >
                 <Maximize size={18} />
               </button>
-              <div className="relative">
-                <button
-                  className="p-2 rounded hover:bg-gray-100"
-                  onClick={() => setShowDownloadOptions(!showDownloadOptions)}
-                >
-                  <Download size={18} />
-                </button>
-                {showDownloadOptions && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
-                    <div className="py-1">
-                      <button
-                        onClick={() => {
-                          generatePDF();
-                          setShowDownloadOptions(false);
-                        }}
-                        className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                      >
-                        {t("site.builder.header.download")}
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
           <div className="flex-1 overflow-auto bg-gray-200 flex justify-center p-8">
