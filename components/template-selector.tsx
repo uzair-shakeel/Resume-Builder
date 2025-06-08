@@ -28,12 +28,6 @@ const templates = [
     descriptionKey: "site.builder.templates.descriptions.classic",
     image: "/templates/classic.png",
   },
-  {
-    id: "pro",
-    nameKey: "site.builder.templates.options.pro",
-    descriptionKey: "site.builder.templates.descriptions.pro",
-    image: "/templates/pro.png",
-  },
 ];
 
 export function TemplateSelector({

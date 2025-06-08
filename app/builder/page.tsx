@@ -100,12 +100,7 @@ const templateOptions = [
     image: "/assets/classic.jpg",
     defaultColor: "#2c3e50",
   },
-  {
-    name: "Pro",
-    value: "pro",
-    image: "/assets/professional.png",
-    defaultColor: "#3498db",
-  },
+
   {
     name: "Sherlock",
     value: "sherlock",
@@ -337,7 +332,6 @@ export default function Builder() {
     (searchParams.get("template") as
       | "modern"
       | "classic"
-      | "pro"
       | "sherlock"
       | "hr"
       | "minimal"
@@ -1443,8 +1437,6 @@ export default function Builder() {
         return <CVPreviewAlt {...(commonProps as any)} />;
       case "classic":
         return <CVPreviewClassic {...(commonProps as any)} />;
-      case "pro":
-        return <CVPreviewPro {...(commonProps as any)} />;
       case "sherlock":
         return <CVPreviewSherlock {...(commonProps as any)} />;
       case "hr":
@@ -2008,7 +2000,6 @@ export default function Builder() {
     const templateParam = searchParams.get("template") as
       | "modern"
       | "classic"
-      | "pro"
       | "sherlock"
       | "hr"
       | "minimal"

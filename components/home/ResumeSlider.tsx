@@ -25,15 +25,7 @@ const resumeTemplates = [
     image: "/assets/classic.jpg",
     defaultColor: "#2c3e50",
   },
-  {
-    id: 3,
-    name: "Pro",
-    value: "pro",
-    type: "pro",
 
-    image: "/assets/professional.png",
-    defaultColor: "#3498db",
-  },
   {
     id: 4,
     name: "Sherlock",

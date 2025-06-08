@@ -15,11 +15,6 @@ const templates = [
     color: "teal",
   },
   {
-    id: "pro",
-    image: "/assets/professional.png",
-    color: "navy",
-  },
-  {
     id: "student",
     image: "/assets/student-resume.jpg",
     color: "purple",
@@ -121,7 +116,7 @@ export default function CVTemplates() {
                       alt={`${t("site.templates.page.title")} - ${t(
                         `site.templates.templates.${template.id}.title`
                       )}`}
-                      fill 
+                      fill
                       className="w-full rounded shadow-md transition-shadow can-hover:group-hover:shadow-lg object-cover absolute start-0 end-0 bottom-0 top-0"
                     />
                   </div>

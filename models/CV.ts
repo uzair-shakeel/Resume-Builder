@@ -22,7 +22,7 @@ const CVSchema = new mongoose.Schema({
     enum: [
       "modern",
       "classic",
-      "pro",
+
       "sherlock",
       "hr",
       "minimal",
