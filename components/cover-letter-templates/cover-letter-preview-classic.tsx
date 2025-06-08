@@ -1,7 +1,6 @@
 import React from "react";
 import type { CoverLetterData } from "@/types";
 import Image from "next/image";
-import { placeholderData, getPlaceholderOrValue } from "@/lib/utils";
 
 interface CoverLetterPreviewClassicProps {
   data: CoverLetterData;
@@ -84,17 +83,14 @@ export default function CoverLetterPreviewClassic({
       switch (section) {
         case "destinataire":
           return (
-            <div className="mt-6">
+            <div key={section} className="mt-6">
               <div className="space-y-4">
                 <div className="text-gray-700">
-                  <p className="font-medium">
-                    {recipient?.company || "Entreprise XYZ"}
-                  </p>
-                  <p>{recipient?.name || "Responsable Recrutement"}</p>
-                  <p>{recipient?.address || "456 Avenue Business"}</p>
+                  <p className="font-medium">{recipient?.company || ""}</p>
+                  <p>{recipient?.name || ""}</p>
+                  <p>{recipient?.address || ""}</p>
                   <p>
-                    {recipient?.postalCode || "75001"}{" "}
-                    {recipient?.city || "Paris"}
+                    {recipient?.postalCode || ""} {recipient?.city || ""}
                   </p>
                 </div>
               </div>
@@ -105,16 +101,12 @@ export default function CoverLetterPreviewClassic({
             <div key={section} className="mt-8 mb-8">
               <div className="text-right mb-4">
                 <p>
-                  {dateAndSubject?.location || "Paris"}, le{" "}
+                  {dateAndSubject?.location || ""}, le{" "}
                   {dateAndSubject?.date ||
                     new Date().toLocaleDateString("fr-FR")}
                 </p>
               </div>
-              <p className="font-medium">
-                Objet :{" "}
-                {dateAndSubject?.subject ||
-                  "Candidature pour le poste de [Poste]"}
-              </p>
+              <p className="font-medium">{dateAndSubject?.subject || ""}</p>
             </div>
           );
         case "introduction":
@@ -122,9 +114,7 @@ export default function CoverLetterPreviewClassic({
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html:
-                    introduction ||
-                    "Je me permets de vous écrire concernant le poste de [Poste] que vous proposez. Ayant découvert votre annonce sur [Site], je souhaite vous faire part de ma candidature.",
+                  __html: introduction || "",
                 }}
                 className="text-sm section-content"
               />
@@ -135,9 +125,7 @@ export default function CoverLetterPreviewClassic({
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html:
-                    currentSituation ||
-                    "Actuellement [Poste actuel] chez [Entreprise] à [Ville], je suis en charge de [Responsabilités]. Cette expérience m'a permis de développer de solides compétences en [Compétences clés].",
+                  __html: currentSituation || "",
                 }}
                 className="text-sm section-content"
               />
@@ -148,9 +136,7 @@ export default function CoverLetterPreviewClassic({
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html:
-                    motivation ||
-                    "Votre entreprise m'intéresse particulièrement pour [Aspect spécifique]. Mes compétences en [Compétences clés] et mon expertise en [Domaine d'expertise] seraient des atouts pour contribuer aux [Projets/Objectifs de l'entreprise].",
+                  __html: motivation || "",
                 }}
                 className="text-sm section-content"
               />
@@ -161,9 +147,7 @@ export default function CoverLetterPreviewClassic({
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html:
-                    conclusion ||
-                    "Je me tiens à votre disposition pour échanger plus en détail sur ma candidature lors d'un entretien. Dans l'attente de votre réponse, je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.",
+                  __html: conclusion || "",
                 }}
                 className="text-sm section-content"
               />
@@ -181,12 +165,9 @@ export default function CoverLetterPreviewClassic({
         {/* Header with name */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold" style={{ color: accentColor }}>
-            {personalInfo?.firstName || "John"}{" "}
-            {personalInfo?.lastName || "Doe"}
+            {personalInfo?.firstName} {personalInfo?.lastName}
           </h1>
-          <p className="text-gray-600">
-            {personalInfo?.title || "Professional Title"}
-          </p>
+          <p className="text-gray-600">{personalInfo?.title}</p>
         </div>
 
         {/* Two-column layout */}

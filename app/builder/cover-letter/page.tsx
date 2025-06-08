@@ -299,6 +299,9 @@ export default function CoverLetterBuilder() {
     field: "",
   });
 
+  // Add a ref to generate unique template keys
+  const templateInstanceRef = useRef<number>(Date.now());
+
   const [screenBasedScale, setScreenBasedScale] = useState(1);
   const [mobileScale, setMobileScale] = useState(0.8);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -602,6 +605,7 @@ export default function CoverLetterBuilder() {
     }
   }, [searchParams, template, safeResetTemplateLoadingState]);
 
+  /* Replace the prevTemplate function */
   const prevTemplate = () => {
     if (isTemplateLoading) return; // Prevent multiple template changes while loading
 
@@ -633,57 +637,22 @@ export default function CoverLetterBuilder() {
     currentUrl.searchParams.set("template", selectedTemplateValue);
     window.history.replaceState({}, "", currentUrl.toString());
 
-    // Only save if we have an existing cover letter ID
-    if (coverId) {
-      // Save the template change to the database immediately
-      saveCoverLetter()
-        .then(() => {
-          // Verify URL consistency
-          const urlTemplate = new URL(window.location.href).searchParams.get(
-            "template"
-          );
-          if (urlTemplate !== selectedTemplateValue) {
-            console.error(
-              `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
-            );
-            // Force URL update
-            const fixUrl = new URL(window.location.href);
-            fixUrl.searchParams.set("template", selectedTemplateValue);
-            window.history.replaceState({}, "", fixUrl.toString());
-          }
+    // Mark as unsaved instead of saving
+    setSaveStatus("unsaved");
 
-          setTimeout(() => {
-            isChangingTemplate.current = false;
-            setIsTemplateLoading(false);
-            // Clear the safety timeout
-            if (templateLoadingTimeoutRef.current) {
-              clearTimeout(templateLoadingTimeoutRef.current);
-              templateLoadingTimeoutRef.current = null;
-            }
-            console.log(`Template change completed: ${selectedTemplateValue}`);
-          }, 500); // Give extra time for rendering
-        })
-        .catch((error) => {
-          console.error("Error saving template change:", error);
-          safeResetTemplateLoadingState(); // Reset on error
-        });
-    } else {
-      // For new cover letters, just mark as unsaved
-      setSaveStatus("unsaved");
-
-      setTimeout(() => {
-        isChangingTemplate.current = false;
-        setIsTemplateLoading(false);
-        // Clear the safety timeout
-        if (templateLoadingTimeoutRef.current) {
-          clearTimeout(templateLoadingTimeoutRef.current);
-          templateLoadingTimeoutRef.current = null;
-        }
-        console.log(`Template change completed: ${selectedTemplateValue}`);
-      }, 500); // Give extra time for rendering
-    }
+    setTimeout(() => {
+      isChangingTemplate.current = false;
+      setIsTemplateLoading(false);
+      // Clear the safety timeout
+      if (templateLoadingTimeoutRef.current) {
+        clearTimeout(templateLoadingTimeoutRef.current);
+        templateLoadingTimeoutRef.current = null;
+      }
+      console.log(`Template change completed: ${selectedTemplateValue}`);
+    }, 500); // Give extra time for rendering
   };
 
+  /* Replace the nextTemplate function */
   const nextTemplate = () => {
     if (isTemplateLoading) return; // Prevent multiple template changes while loading
 
@@ -715,62 +684,33 @@ export default function CoverLetterBuilder() {
     currentUrl.searchParams.set("template", selectedTemplateValue);
     window.history.replaceState({}, "", currentUrl.toString());
 
-    // Only save if we have an existing cover letter ID
-    if (coverId) {
-      // Save the template change to the database immediately
-      saveCoverLetter()
-        .then(() => {
-          // Verify URL consistency
-          const urlTemplate = new URL(window.location.href).searchParams.get(
-            "template"
-          );
-          if (urlTemplate !== selectedTemplateValue) {
-            console.error(
-              `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
-            );
-            // Force URL update
-            const fixUrl = new URL(window.location.href);
-            fixUrl.searchParams.set("template", selectedTemplateValue);
-            window.history.replaceState({}, "", fixUrl.toString());
-          }
+    // Mark as unsaved instead of saving
+    setSaveStatus("unsaved");
 
-          setTimeout(() => {
-            isChangingTemplate.current = false;
-            setIsTemplateLoading(false);
-            // Clear the safety timeout
-            if (templateLoadingTimeoutRef.current) {
-              clearTimeout(templateLoadingTimeoutRef.current);
-              templateLoadingTimeoutRef.current = null;
-            }
-            console.log(`Template change completed: ${selectedTemplateValue}`);
-          }, 500); // Give extra time for rendering
-        })
-        .catch((error) => {
-          console.error("Error saving template change:", error);
-          safeResetTemplateLoadingState(); // Reset on error
-        });
-    } else {
-      // For new cover letters, just mark as unsaved
-      setSaveStatus("unsaved");
-
-      setTimeout(() => {
-        isChangingTemplate.current = false;
-        setIsTemplateLoading(false);
-        // Clear the safety timeout
-        if (templateLoadingTimeoutRef.current) {
-          clearTimeout(templateLoadingTimeoutRef.current);
-          templateLoadingTimeoutRef.current = null;
-        }
-        console.log(`Template change completed: ${selectedTemplateValue}`);
-      }, 500); // Give extra time for rendering
-    }
+    setTimeout(() => {
+      isChangingTemplate.current = false;
+      setIsTemplateLoading(false);
+      // Clear the safety timeout
+      if (templateLoadingTimeoutRef.current) {
+        clearTimeout(templateLoadingTimeoutRef.current);
+        templateLoadingTimeoutRef.current = null;
+      }
+      console.log(`Template change completed: ${selectedTemplateValue}`);
+    }, 500); // Give extra time for rendering
   };
 
+  /* Replace the selectTemplate function */
   const selectTemplate = (index: number) => {
     if (isTemplateLoading) return; // Prevent multiple template changes while loading
 
     setIsTemplateLoading(true);
     isChangingTemplate.current = true;
+
+    // Debug log: print the current data before template change
+    console.log(
+      "Data before template change:",
+      JSON.stringify(coverLetterData)
+    );
 
     // Set a safety timeout to prevent getting stuck in loading state
     if (templateLoadingTimeoutRef.current) {
@@ -795,55 +735,24 @@ export default function CoverLetterBuilder() {
     currentUrl.searchParams.set("template", selectedTemplateValue);
     window.history.replaceState({}, "", currentUrl.toString());
 
-    // Only save if we have an existing cover letter ID
-    if (coverId) {
-      // Save the template change to the database immediately
-      saveCoverLetter()
-        .then(() => {
-          // Verify URL consistency
-          const urlTemplate = new URL(window.location.href).searchParams.get(
-            "template"
-          );
-          if (urlTemplate !== selectedTemplateValue) {
-            console.error(
-              `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
-            );
-            // Force URL update
-            const fixUrl = new URL(window.location.href);
-            fixUrl.searchParams.set("template", selectedTemplateValue);
-            window.history.replaceState({}, "", fixUrl.toString());
-          }
+    // Mark as unsaved instead of saving
+    setSaveStatus("unsaved");
 
-          setTimeout(() => {
-            isChangingTemplate.current = false;
-            setIsTemplateLoading(false);
-            // Clear the safety timeout
-            if (templateLoadingTimeoutRef.current) {
-              clearTimeout(templateLoadingTimeoutRef.current);
-              templateLoadingTimeoutRef.current = null;
-            }
-            console.log(`Template change completed: ${selectedTemplateValue}`);
-          }, 500); // Give extra time for rendering
-        })
-        .catch((error) => {
-          console.error("Error saving template change:", error);
-          safeResetTemplateLoadingState(); // Reset on error
-        });
-    } else {
-      // For new cover letters, just mark as unsaved
-      setSaveStatus("unsaved");
-
-      setTimeout(() => {
-        isChangingTemplate.current = false;
-        setIsTemplateLoading(false);
-        // Clear the safety timeout
-        if (templateLoadingTimeoutRef.current) {
-          clearTimeout(templateLoadingTimeoutRef.current);
-          templateLoadingTimeoutRef.current = null;
-        }
-        console.log(`Template change completed: ${selectedTemplateValue}`);
-      }, 500); // Give extra time for rendering
-    }
+    setTimeout(() => {
+      isChangingTemplate.current = false;
+      setIsTemplateLoading(false);
+      // Clear the safety timeout
+      if (templateLoadingTimeoutRef.current) {
+        clearTimeout(templateLoadingTimeoutRef.current);
+        templateLoadingTimeoutRef.current = null;
+      }
+      // Debug log: print the data after template change
+      console.log(
+        "Data after template change:",
+        JSON.stringify(coverLetterData)
+      );
+      console.log(`Template change completed: ${selectedTemplateValue}`);
+    }, 500); // Give extra time for rendering
   };
 
   const loadCoverLetter = async () => {
@@ -1076,8 +985,8 @@ export default function CoverLetterBuilder() {
       return newState;
     });
 
-    // Use standard debounce for batch updates
-    debouncedSave(false);
+    // Mark as unsaved without auto-saving
+    setSaveStatus("unsaved");
   };
 
   const handleThrottledInput = (
@@ -2375,6 +2284,20 @@ export default function CoverLetterBuilder() {
       });
   };
 
+  // Add a function to generate unique template keys
+  const getTemplateKey = () => {
+    // Generate a stable hash of the data
+    const dataKeys = Object.keys(coverLetterData).join("");
+    const dataValues = Object.values(coverLetterData)
+      .map((val) =>
+        typeof val === "object" ? JSON.stringify(val) : String(val)
+      )
+      .join("");
+    const dataHash = dataKeys.length + dataValues.length;
+
+    return `${template}-${templateInstanceRef.current}-${dataHash}`;
+  };
+
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       {/* Add tooltip styles */}
@@ -2666,6 +2589,7 @@ export default function CoverLetterBuilder() {
             >
               {template === "modern" && (
                 <CoverLetterPreviewAlt
+                  key={getTemplateKey()}
                   data={coverLetterData}
                   sectionOrder={sectionOrder}
                   accentColor={accentColor}
@@ -2677,6 +2601,7 @@ export default function CoverLetterBuilder() {
               )}
               {template === "sherlock" && (
                 <CoverLetterPreviewSherlock
+                  key={getTemplateKey()}
                   data={coverLetterData}
                   sectionOrder={sectionOrder}
                   accentColor={accentColor}
@@ -2688,6 +2613,7 @@ export default function CoverLetterBuilder() {
               )}
               {template === "minimal" && (
                 <CoverLetterPreviewMinimal
+                  key={getTemplateKey()}
                   data={coverLetterData}
                   sectionOrder={sectionOrder}
                   accentColor={accentColor}
@@ -2699,6 +2625,7 @@ export default function CoverLetterBuilder() {
               )}
               {template === "classic" && (
                 <CoverLetterPreviewClassic
+                  key={getTemplateKey()}
                   data={coverLetterData}
                   sectionOrder={sectionOrder}
                   accentColor={accentColor}
@@ -2710,6 +2637,7 @@ export default function CoverLetterBuilder() {
               )}
               {template === "professional" && (
                 <CoverLetterPreviewProfessional
+                  key={getTemplateKey()}
                   data={coverLetterData}
                   sectionOrder={sectionOrder}
                   accentColor={accentColor}
@@ -2721,6 +2649,7 @@ export default function CoverLetterBuilder() {
               )}
               {template === "circulaire" && (
                 <CoverLetterPreviewCirculaire
+                  key={getTemplateKey()}
                   data={coverLetterData}
                   sectionOrder={sectionOrder}
                   accentColor={accentColor}
@@ -2732,6 +2661,7 @@ export default function CoverLetterBuilder() {
               )}
               {template === "student" && (
                 <CoverLetterPreviewStudent
+                  key={getTemplateKey()}
                   data={coverLetterData}
                   sectionOrder={sectionOrder}
                   accentColor={accentColor}
@@ -2743,6 +2673,7 @@ export default function CoverLetterBuilder() {
               )}
               {template === "hr" && (
                 <CoverLetterPreviewHR
+                  key={getTemplateKey()}
                   data={coverLetterData}
                   sectionOrder={sectionOrder}
                   accentColor={accentColor}
@@ -2754,6 +2685,7 @@ export default function CoverLetterBuilder() {
               )}
               {template === "teal" && (
                 <CoverLetterPreviewTeal
+                  key={getTemplateKey()}
                   data={coverLetterData}
                   sectionOrder={sectionOrder}
                   accentColor={accentColor}
@@ -3022,6 +2954,7 @@ export default function CoverLetterBuilder() {
               >
                 {template === "modern" && (
                   <CoverLetterPreviewAlt
+                    key={getTemplateKey()}
                     data={coverLetterData}
                     sectionOrder={sectionOrder}
                     accentColor={accentColor}
@@ -3033,6 +2966,7 @@ export default function CoverLetterBuilder() {
                 )}
                 {template === "sherlock" && (
                   <CoverLetterPreviewSherlock
+                    key={getTemplateKey()}
                     data={coverLetterData}
                     sectionOrder={sectionOrder}
                     accentColor={accentColor}
@@ -3044,6 +2978,7 @@ export default function CoverLetterBuilder() {
                 )}
                 {template === "minimal" && (
                   <CoverLetterPreviewMinimal
+                    key={getTemplateKey()}
                     data={coverLetterData}
                     sectionOrder={sectionOrder}
                     accentColor={accentColor}
@@ -3055,6 +2990,7 @@ export default function CoverLetterBuilder() {
                 )}
                 {template === "classic" && (
                   <CoverLetterPreviewClassic
+                    key={getTemplateKey()}
                     data={coverLetterData}
                     sectionOrder={sectionOrder}
                     accentColor={accentColor}
@@ -3066,6 +3002,7 @@ export default function CoverLetterBuilder() {
                 )}
                 {template === "professional" && (
                   <CoverLetterPreviewProfessional
+                    key={getTemplateKey()}
                     data={coverLetterData}
                     sectionOrder={sectionOrder}
                     accentColor={accentColor}
@@ -3077,6 +3014,7 @@ export default function CoverLetterBuilder() {
                 )}
                 {template === "circulaire" && (
                   <CoverLetterPreviewCirculaire
+                    key={getTemplateKey()}
                     data={coverLetterData}
                     sectionOrder={sectionOrder}
                     accentColor={accentColor}
@@ -3088,6 +3026,7 @@ export default function CoverLetterBuilder() {
                 )}
                 {template === "student" && (
                   <CoverLetterPreviewStudent
+                    key={getTemplateKey()}
                     data={coverLetterData}
                     sectionOrder={sectionOrder}
                     accentColor={accentColor}
@@ -3099,6 +3038,7 @@ export default function CoverLetterBuilder() {
                 )}
                 {template === "hr" && (
                   <CoverLetterPreviewHR
+                    key={getTemplateKey()}
                     data={coverLetterData}
                     sectionOrder={sectionOrder}
                     accentColor={accentColor}
@@ -3110,6 +3050,7 @@ export default function CoverLetterBuilder() {
                 )}
                 {template === "teal" && (
                   <CoverLetterPreviewTeal
+                    key={getTemplateKey()}
                     data={coverLetterData}
                     sectionOrder={sectionOrder}
                     accentColor={accentColor}

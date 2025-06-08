@@ -90,9 +90,7 @@ export default function CoverLetterPreviewAlt({
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html:
-                    introduction ||
-                    "Je me permets de vous écrire concernant le poste de [Poste] que vous proposez. Ayant découvert votre annonce sur [Site], je souhaite vous faire part de ma candidature.",
+                  __html: introduction,
                 }}
                 className="text-sm section-content"
               />
@@ -103,9 +101,7 @@ export default function CoverLetterPreviewAlt({
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html:
-                    currentSituation ||
-                    "Actuellement [Poste actuel] chez [Entreprise] à [Ville], je suis en charge de [Responsabilités]. Cette expérience m'a permis de développer de solides compétences en [Compétences clés].",
+                  __html: currentSituation,
                 }}
                 className="text-sm section-content"
               />
@@ -116,9 +112,7 @@ export default function CoverLetterPreviewAlt({
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html:
-                    motivation ||
-                    "Votre entreprise m'intéresse particulièrement pour [Aspect spécifique]. Mes compétences en [Compétences clés] et mon expertise en [Domaine d'expertise] seraient des atouts pour contribuer aux [Projets/Objectifs de l'entreprise].",
+                  __html: motivation,
                 }}
                 className="text-sm section-content"
               />
@@ -129,9 +123,7 @@ export default function CoverLetterPreviewAlt({
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html:
-                    conclusion ||
-                    "Je me tiens à votre disposition pour échanger plus en détail sur ma candidature lors d'un entretien. Dans l'attente de votre réponse, je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.",
+                  __html: conclusion,
                 }}
                 className="text-sm section-content"
               />
@@ -164,20 +156,16 @@ export default function CoverLetterPreviewAlt({
             )}
             <div className="text-center">
               <h2 className="text-2xl font-bold">
-                {personalInfo.firstName || "John"}{" "}
-                {personalInfo.lastName || "Doe"}
+                {personalInfo.firstName} {personalInfo.lastName}
               </h2>
-              <p className="text-lg opacity-90">
-                {personalInfo.title || "Professional Title"}
-              </p>
+              <p className="text-lg opacity-90">{personalInfo.title}</p>
             </div>
             <div className="space-y-2 text-sm">
-              <p>{personalInfo.email || "email@example.com"}</p>
-              <p>{personalInfo.phone || "+33 6 12 34 56 78"}</p>
-              <p>{personalInfo.address || "123 Rue Example"}</p>
+              <p>{personalInfo.email}</p>
+              <p>{personalInfo.phone}</p>
+              <p>{personalInfo.address}</p>
               <p>
-                {personalInfo.postalCode || "75000"}{" "}
-                {personalInfo.city || "Paris"}
+                {personalInfo.postalCode} {personalInfo.city}
               </p>
             </div>
           </div>
@@ -188,27 +176,25 @@ export default function CoverLetterPreviewAlt({
       <div className="ml-[70mm] p-8">
         {/* Recipient Info */}
         <div className="mb-8">
-          <p>{recipient.company || "Entreprise XYZ"}</p>
-          <p>{recipient.name || "Responsable Recrutement"}</p>
-          <p>{recipient.address || "456 Avenue Business"}</p>
+          <p>{recipient.company}</p>
+          <p>{recipient.name}</p>
+          <p>{recipient.address}</p>
           <p>
-            {recipient.postalCode || "75001"} {recipient.city || "Paris"}
+            {recipient.postalCode} {recipient.city}
           </p>
         </div>
 
         {/* Date and Location */}
         <div className="mb-8 text-right">
           <p>
-            {dateAndSubject.location || "Paris"}, le{" "}
+            {dateAndSubject.location}, le{" "}
             {dateAndSubject.date || new Date().toLocaleDateString("fr-FR")}
           </p>
         </div>
 
         {/* Subject */}
         <div className="mb-8">
-          <p>
-            {dateAndSubject.subject || "Candidature pour le poste de [Poste]"}
-          </p>
+          <p>{dateAndSubject.subject}</p>
         </div>
 
         {/* Letter Content */}
@@ -230,12 +216,9 @@ export default function CoverLetterPreviewAlt({
               <div className="space-y-4">
                 <div className="text-center">
                   <h2 className="text-2xl font-bold">
-                    {personalInfo.firstName || "John"}{" "}
-                    {personalInfo.lastName || "Doe"}
+                    {personalInfo.firstName} {personalInfo.lastName}
                   </h2>
-                  <p className="text-lg opacity-90">
-                    {personalInfo.title || "Professional Title"}
-                  </p>
+                  <p className="text-lg opacity-90">{personalInfo.title}</p>
                 </div>
               </div>
             </div>

@@ -1,7 +1,6 @@
 import React from "react";
 import type { CoverLetterData } from "@/types";
 import Image from "next/image";
-import { getPlaceholder } from "@/lib/placeholder-data";
 
 interface CoverLetterPreviewTealProps {
   data: CoverLetterData;
@@ -82,26 +81,10 @@ export default function CoverLetterPreviewTeal({
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-4xl font-medium" style={{ color: accentColor }}>
-              {getPlaceholder(
-                "personalInfo",
-                "firstName",
-                personalInfo?.firstName,
-                language
-              )}{" "}
-              {getPlaceholder(
-                "personalInfo",
-                "lastName",
-                personalInfo?.lastName,
-                language
-              )}
+              {personalInfo?.firstName || ""} {personalInfo?.lastName || ""}
             </h1>
             <div className="text-xl text-gray-600 mt-1">
-              {getPlaceholder(
-                "personalInfo",
-                "title",
-                personalInfo?.title,
-                language
-              )}
+              {personalInfo?.title || ""}
             </div>
           </div>
           {personalInfo?.photo && (
@@ -111,17 +94,9 @@ export default function CoverLetterPreviewTeal({
             >
               <Image
                 src={personalInfo.photo || "/placeholder-user.jpg"}
-                alt={`${getPlaceholder(
-                  "personalInfo",
-                  "firstName",
-                  personalInfo?.firstName,
-                  language
-                )} ${getPlaceholder(
-                  "personalInfo",
-                  "lastName",
-                  personalInfo?.lastName,
-                  language
-                )}`}
+                alt={`${personalInfo?.firstName || ""} ${
+                  personalInfo?.lastName || ""
+                }`}
                 width={96}
                 height={96}
                 className="object-cover w-full h-full"
@@ -136,53 +111,22 @@ export default function CoverLetterPreviewTeal({
             <span className="mr-2" style={{ color: accentColor }}>
               ✉
             </span>
-            <span>
-              {getPlaceholder(
-                "personalInfo",
-                "email",
-                personalInfo?.email,
-                language
-              )}
-            </span>
+            <span>{personalInfo?.email || ""}</span>
           </div>
           <div className="flex items-center mr-6">
             <span className="mr-2" style={{ color: accentColor }}>
               ☏
             </span>
-            <span>
-              {getPlaceholder(
-                "personalInfo",
-                "phone",
-                personalInfo?.phone,
-                language
-              )}
-            </span>
+            <span>{personalInfo?.phone || ""}</span>
           </div>
           <div className="flex items-center">
             <span className="mr-2" style={{ color: accentColor }}>
               ⌂
             </span>
             <span>
-              {getPlaceholder(
-                "personalInfo",
-                "address",
-                personalInfo?.address,
-                language
-              )}
-              {personalInfo?.city &&
-                `, ${getPlaceholder(
-                  "personalInfo",
-                  "city",
-                  personalInfo?.city,
-                  language
-                )}`}
-              {personalInfo?.postalCode &&
-                `, ${getPlaceholder(
-                  "personalInfo",
-                  "postalCode",
-                  personalInfo?.postalCode,
-                  language
-                )}`}
+              {personalInfo?.address || ""}
+              {personalInfo?.city && `, ${personalInfo?.city}`}
+              {personalInfo?.postalCode && `, ${personalInfo?.postalCode}`}
             </span>
           </div>
         </div>
@@ -198,54 +142,14 @@ export default function CoverLetterPreviewTeal({
           <div>
             <div className="flex justify-between mb-1">
               <div>
-                <h4 className=" text-gray-800">
-                  {getPlaceholder(
-                    "recipient",
-                    "company",
-                    recipient?.company,
-                    language
-                  )}
-                </h4>
+                <p className="font-bold">{recipient?.company || ""}</p>
+                <p>{recipient?.name || ""}</p>
+                <p>{recipient?.address || ""}</p>
                 <p className="text-gray-600">
-                  {getPlaceholder(
-                    "recipient",
-                    "name",
-                    recipient?.name,
-                    language
-                  )}
+                  {recipient?.postalCode || ""} {recipient?.city || ""}
                 </p>
               </div>
-              <div className="text-right" style={{ color: accentColor }}>
-                {getPlaceholder(
-                  "dateAndSubject",
-                  "location",
-                  dateAndSubject?.location,
-                  language
-                )}
-                ,{" "}
-                {dateAndSubject?.date ||
-                  new Date().toLocaleDateString(
-                    language === "fr" ? "fr-FR" : "en-US"
-                  )}
-              </div>
             </div>
-            <p className="text-gray-600 mt-2">
-              {getPlaceholder(
-                "recipient",
-                "address",
-                recipient?.address,
-                language
-              )}
-            </p>
-            <p className="text-gray-600">
-              {getPlaceholder(
-                "recipient",
-                "postalCode",
-                recipient?.postalCode,
-                language
-              )}{" "}
-              {getPlaceholder("recipient", "city", recipient?.city, language)}
-            </p>
           </div>
         </div>
       </div>
@@ -258,12 +162,7 @@ export default function CoverLetterPreviewTeal({
       <div className="pb-8">
         <div>
           <h4 className="font-semibold text-gray-800">
-            {getPlaceholder(
-              "dateAndSubject",
-              "subject",
-              dateAndSubject?.subject,
-              language
-            )}
+            {dateAndSubject?.subject || ""}
           </h4>
         </div>
       </div>
@@ -276,12 +175,7 @@ export default function CoverLetterPreviewTeal({
       <div className="mb-8">
         <div
           dangerouslySetInnerHTML={{
-            __html: getPlaceholder(
-              "sections",
-              "introduction",
-              introduction,
-              language
-            ),
+            __html: introduction || "",
           }}
           className="text-gray-700"
         />
@@ -295,12 +189,7 @@ export default function CoverLetterPreviewTeal({
       <div className="mb-8">
         <div
           dangerouslySetInnerHTML={{
-            __html: getPlaceholder(
-              "sections",
-              "currentSituation",
-              currentSituation,
-              language
-            ),
+            __html: currentSituation || "",
           }}
           className="text-gray-700"
         />
@@ -314,12 +203,7 @@ export default function CoverLetterPreviewTeal({
       <div className="mb-8">
         <div
           dangerouslySetInnerHTML={{
-            __html: getPlaceholder(
-              "sections",
-              "motivation",
-              motivation,
-              language
-            ),
+            __html: motivation || "",
           }}
           className="text-gray-700"
         />
@@ -333,12 +217,7 @@ export default function CoverLetterPreviewTeal({
       <div className="mb-8">
         <div
           dangerouslySetInnerHTML={{
-            __html: getPlaceholder(
-              "sections",
-              "conclusion",
-              conclusion,
-              language
-            ),
+            __html: conclusion || "",
           }}
           className="text-gray-700"
         />
