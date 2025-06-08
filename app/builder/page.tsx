@@ -900,10 +900,25 @@ export default function Builder() {
       clearTimeout(saveTimeoutRef.current);
     }
 
+    // Skip saving during template changes
+    if (isChangingTemplate.current) {
+      console.log("Skipping save operation during template change");
+      return;
+    }
+
     if (immediate) {
       saveCV();
     } else {
       setSaveStatus("unsaved");
+
+      // Set up debounced save
+      saveTimeoutRef.current = setTimeout(() => {
+        if (!isChangingTemplate.current) {
+          saveCV();
+        } else {
+          console.log("Skipping delayed save due to active template change");
+        }
+      }, 2000); // 2 second debounce
     }
   };
 
@@ -946,6 +961,12 @@ export default function Builder() {
     data: any,
     options?: { skipUnsavedFlag?: boolean }
   ) => {
+    // Skip updates during template changes to prevent data loss
+    if (isChangingTemplate.current) {
+      console.log(`Skipping update to ${section} during template change`);
+      return;
+    }
+
     setCVData((prev) => {
       const newData = {
         ...prev,
@@ -1920,6 +1941,9 @@ export default function Builder() {
     setIsTemplateLoading(true);
     isChangingTemplate.current = true;
 
+    // Store current CV data to ensure it's preserved during template change
+    const currentData = { ...cvData };
+
     // Set a safety timeout to prevent getting stuck in loading state
     if (templateLoadingTimeoutRef.current) {
       clearTimeout(templateLoadingTimeoutRef.current);
@@ -1933,9 +1957,11 @@ export default function Builder() {
 
     console.log(`Starting template change to: ${selectedTemplateValue}`);
 
-    // Batch state updates to avoid race conditions
-    setActiveTemplateIndex(index);
+    // First update the template value
     setTemplate(selectedTemplateValue);
+
+    // Then update other UI states
+    setActiveTemplateIndex(index);
     setShowTemplateCarousel(false);
 
     // Update the URL with the selected template
@@ -1943,51 +1969,58 @@ export default function Builder() {
     currentUrl.searchParams.set("template", selectedTemplateValue);
     window.history.replaceState({}, "", currentUrl.toString());
 
-    // Save the template change to the database immediately
-    if (cvId) {
-      saveCV()
-        .then((result) => {
-          // Verify URL consistency
-          const urlTemplate = new URL(window.location.href).searchParams.get(
-            "template"
-          );
-          if (urlTemplate !== selectedTemplateValue) {
-            console.error(
-              `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
-            );
-            // Force URL update
-            const fixUrl = new URL(window.location.href);
-            fixUrl.searchParams.set("template", selectedTemplateValue);
-            window.history.replaceState({}, "", fixUrl.toString());
-          }
+    // Ensure data is preserved by explicitly setting it again
+    setTimeout(() => {
+      setCVData(currentData);
 
-          setTimeout(() => {
-            isChangingTemplate.current = false;
-            setIsTemplateLoading(false);
-            // Clear the safety timeout
-            if (templateLoadingTimeoutRef.current) {
-              clearTimeout(templateLoadingTimeoutRef.current);
-              templateLoadingTimeoutRef.current = null;
+      // Save the template change to the database immediately
+      if (cvId) {
+        saveCV()
+          .then((result) => {
+            // Verify URL consistency
+            const urlTemplate = new URL(window.location.href).searchParams.get(
+              "template"
+            );
+            if (urlTemplate !== selectedTemplateValue) {
+              console.error(
+                `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
+              );
+              // Force URL update
+              const fixUrl = new URL(window.location.href);
+              fixUrl.searchParams.set("template", selectedTemplateValue);
+              window.history.replaceState({}, "", fixUrl.toString());
             }
-            console.log(`Template change completed: ${selectedTemplateValue}`);
-          }, 500); // Give extra time for rendering
-        })
-        .catch((error) => {
-          console.error("Error saving template change:", error);
-          safeResetTemplateLoadingState(); // Reset on error
-        });
-    } else {
-      setTimeout(() => {
-        isChangingTemplate.current = false;
-        setIsTemplateLoading(false);
-        // Clear the safety timeout
-        if (templateLoadingTimeoutRef.current) {
-          clearTimeout(templateLoadingTimeoutRef.current);
-          templateLoadingTimeoutRef.current = null;
-        }
-        console.log(`Template change completed: ${selectedTemplateValue}`);
-      }, 500); // Give extra time for rendering
-    }
+
+            setTimeout(() => {
+              isChangingTemplate.current = false;
+              setIsTemplateLoading(false);
+              // Clear the safety timeout
+              if (templateLoadingTimeoutRef.current) {
+                clearTimeout(templateLoadingTimeoutRef.current);
+                templateLoadingTimeoutRef.current = null;
+              }
+              console.log(
+                `Template change completed: ${selectedTemplateValue}`
+              );
+            }, 500); // Give extra time for rendering
+          })
+          .catch((error) => {
+            console.error("Error saving template change:", error);
+            safeResetTemplateLoadingState(); // Reset on error
+          });
+      } else {
+        setTimeout(() => {
+          isChangingTemplate.current = false;
+          setIsTemplateLoading(false);
+          // Clear the safety timeout
+          if (templateLoadingTimeoutRef.current) {
+            clearTimeout(templateLoadingTimeoutRef.current);
+            templateLoadingTimeoutRef.current = null;
+          }
+          console.log(`Template change completed: ${selectedTemplateValue}`);
+        }, 500); // Give extra time for rendering
+      }
+    }, 100); // Small delay to ensure template change happens first
   };
 
   // Add the useEffect that handles URL template changes

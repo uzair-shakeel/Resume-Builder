@@ -220,11 +220,11 @@ export default function CVPreviewMinimal({
                   {exp.description && (
                     <ul className="mt-2 list-disc pl-5 space-y-1">
                       {exp.description.split("\n").map((item, i) => (
-                        <li key={i} className="text-gray-700">
+                        <div key={i} className="text-gray-700">
                           {item.startsWith("•")
                             ? item.substring(1).trim()
                             : item}
-                        </li>
+                        </div>
                       ))}
                     </ul>
                   )}

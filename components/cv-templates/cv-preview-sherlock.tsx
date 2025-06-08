@@ -309,12 +309,12 @@ export default function CVPreviewSherlock({
                 </h2>
                 <div className="flex flex-wrap gap-2">
                   {data.interests.map((interest, index) => (
-                    <span
+                    <div
                       key={index}
                       className="px-3 py-1 text-sm rounded-full text-gray-700 bg-gray-100"
                     >
                       {interest.name}
-                    </span>
+                    </div>
                   ))}
                 </div>
               </>
@@ -462,9 +462,9 @@ export default function CVPreviewSherlock({
                   </h2>
                   <ul className="text-sm text-gray-300">
                     {data.interests.map((interest, index) => (
-                      <li key={index} className="mb-1">
-                        • {interest.name}
-                      </li>
+                      <div key={index} className="mb-1">
+                        {interest.name}
+                      </div>
                     ))}
                   </ul>
                 </div>
@@ -681,9 +681,9 @@ export default function CVPreviewSherlock({
                         ? interests
                         : placeholderData.interests
                       ).map((interest, index) => (
-                        <li key={index} className="mb-1">
-                          • {interest.name}
-                        </li>
+                        <div key={index} className="mb-1">
+                          {interest.name}
+                        </div>
                       ))}
                     </ul>
                   </div>
