@@ -127,71 +127,38 @@ export default function CVPreviewMinimal({
         </h3>
 
         <div className="space-y-4">
-          <div>
-            <h4 className="font-medium">Name</h4>
-            <p>
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "firstName",
-                personalInfo?.firstName
-              )}{" "}
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "lastName",
-                personalInfo?.lastName
-              )}
-            </p>
-          </div>
-
-          <div>
-            <h4 className="font-medium">Email address</h4>
-            <p>
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "email",
-                personalInfo?.email
-              )}
-            </p>
-          </div>
-
-          <div>
-            <h4 className="font-medium">Phone number</h4>
-            <p>
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "phone",
-                personalInfo?.phone
-              )}
-            </p>
-          </div>
-
-          <div>
-            <h4 className="font-medium">Address</h4>
-            <p>
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "address",
-                personalInfo?.address
-              )}
-            </p>
-            <p>
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "postalCode",
-                personalInfo?.postalCode
-              )}{" "}
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "city",
-                personalInfo?.city
-              )}
-            </p>
-          </div>
-
-          {personalInfo?.linkedin && (
+          {(personalInfo?.firstName || personalInfo?.lastName) && (
             <div>
-              <h4 className="font-medium">LinkedIn</h4>
-              <p>{personalInfo.linkedin}</p>
+              <h4 className="font-medium">Name</h4>
+              <p>
+                {personalInfo?.firstName || ''} {personalInfo?.lastName || ''}
+              </p>
+            </div>
+          )}
+
+          {personalInfo?.email && (
+            <div>
+              <h4 className="font-medium">Email address</h4>
+              <p>{personalInfo?.email}</p>
+            </div>
+          )}
+
+          {personalInfo?.phone && (
+            <div>
+              <h4 className="font-medium">Phone number</h4>
+              <p>{personalInfo?.phone}</p>
+            </div>
+          )}
+
+          {(personalInfo?.address || personalInfo?.postalCode || personalInfo?.city) && (
+            <div>
+              <h4 className="font-medium">Address</h4>
+              {personalInfo?.address && <p>{personalInfo?.address}</p>}
+              {(personalInfo?.postalCode || personalInfo?.city) && (
+                <p>
+                  {personalInfo?.postalCode || ''} {personalInfo?.city || ''}
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -201,191 +168,204 @@ export default function CVPreviewMinimal({
 
   const renderProfile = () => {
     if (!sectionOrder.includes("profile")) return null;
-    return (
+    return data.profile ? (
       <div className="mb-8">
-        <h3
-          className="text-xl font-semibold mb-3"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("profile")}
-        </h3>
-        <div className="border-t border-gray-200 pt-3">
-          <p className="text-gray-700">{profile || placeholderData.profile}</p>
-        </div>
+        {data.profile && (
+          <>
+            <h3
+              className="text-xl font-semibold mb-3"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("profile")}
+            </h3>
+            <div className="border-t border-gray-200 pt-3">
+              <p className="text-gray-700">{data.profile}</p>
+            </div>
+          </>
+        )}
       </div>
-    );
+    ) : null;
   };
 
   const renderExperience = () => {
     if (!sectionOrder.includes("experience")) return null;
-    return (
+    return data.experience?.length > 0 ? (
       <div className="mb-8">
-        <h3
-          className="text-xl font-semibold mb-3"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("experience")}
-        </h3>
-        <div className="border-t border-gray-200 pt-3 space-y-6">
-          {(experience?.length ? experience : placeholderData.experience).map(
-            (exp, index) => (
-              <div key={index}>
-                <div className="flex justify-between mb-1">
-                  <div>
-                    <h4 className="font-semibold text-gray-800">
-                      {exp.position}
-                    </h4>
-                    <p className="text-gray-600">
-                      {exp.company}, {exp.location}
-                    </p>
+        {data.experience?.length > 0 && (
+          <>
+            <h3
+              className="text-xl font-semibold mb-3"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("experience")}
+            </h3>
+            <div className="border-t border-gray-200 pt-3 space-y-6">
+              {data.experience.map((exp, index) => (
+                <div key={index}>
+                  <div className="flex justify-between mb-1">
+                    <div>
+                      <h4 className="font-semibold text-gray-800">
+                        {exp.position}
+                      </h4>
+                      <p className="text-gray-600">
+                        {exp.company}, {exp.location}
+                      </p>
+                    </div>
+                    <div className="text-right" style={{ color: accentColor }}>
+                      {exp.startDate} - {exp.current ? "Present" : exp.endDate}
+                    </div>
                   </div>
-                  <div className="text-right" style={{ color: accentColor }}>
-                    {exp.startDate} - {exp.current ? "Present" : exp.endDate}
-                  </div>
+                  {exp.description && (
+                    <ul className="mt-2 list-disc pl-5 space-y-1">
+                      {exp.description.split("\n").map((item, i) => (
+                        <li key={i} className="text-gray-700">
+                          {item.startsWith("•")
+                            ? item.substring(1).trim()
+                            : item}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                {exp.description && (
-                  <ul className="mt-2 list-disc pl-5 space-y-1">
-                    {exp.description.split("\n").map((item, i) => (
-                      <li key={i} className="text-gray-700">
-                        {item.startsWith("•") ? item.substring(1).trim() : item}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )
-          )}
-        </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
-    );
+    ) : null;
   };
 
   const renderEducation = () => {
     if (!sectionOrder.includes("education")) return null;
-    return (
+    return data.education?.length > 0 ? (
       <div className="mb-8">
-        <h3
-          className="text-xl font-semibold mb-3"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("education")}
-        </h3>
-        <div className="border-t border-gray-200 pt-3 space-y-6">
-          {(education?.length ? education : placeholderData.education).map(
-            (edu, index) => (
-              <div key={index}>
-                <div className="flex justify-between mb-1">
-                  <div>
-                    <h4 className="font-semibold text-gray-800">
-                      {edu.degree}
-                    </h4>
-                    <p className="text-gray-600">{edu.school}</p>
-                  </div>
-                  <div className="text-right" style={{ color: accentColor }}>
-                    {edu.startDate} - {edu.current ? "Present" : edu.endDate}
+        {data.education?.length > 0 && (
+          <>
+            <h3
+              className="text-xl font-semibold mb-3"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("education")}
+            </h3>
+            <div className="border-t border-gray-200 pt-3 space-y-6">
+              {data.education.map((edu, index) => (
+                <div key={index}>
+                  <div className="flex justify-between mb-1">
+                    <div>
+                      <h4 className="font-semibold text-gray-800">
+                        {edu.degree}
+                      </h4>
+                      <p className="text-gray-600">{edu.school}</p>
+                    </div>
+                    <div className="text-right" style={{ color: accentColor }}>
+                      {edu.startDate} - {edu.current ? "Present" : edu.endDate}
+                    </div>
                   </div>
                 </div>
-                {edu.description && (
-                  <p className="mt-2 text-gray-700">{edu.description}</p>
-                )}
-              </div>
-            )
-          )}
-        </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
-    );
+    ) : null;
   };
 
   const renderSkills = () => {
     if (!sectionOrder.includes("skills")) return null;
-    return (
+    return data.skills?.length > 0 ? (
       <div className="mb-8">
-        <h3
-          className="text-xl font-semibold mb-3"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("skills")}
-        </h3>
-        <div className="border-t border-gray-200 pt-3">
-          <div className="space-y-2">
-            {(skills?.length ? skills : placeholderData.skills).map(
-              (skill, index) => (
-                <div key={index}>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-gray-700">{skill.name}</span>
-                    <span className="text-gray-500">{skill.level * 20}%</span>
+        {data.skills?.length > 0 && (
+          <>
+            <h3
+              className="text-xl font-semibold mb-3"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("skills")}
+            </h3>
+            <div className="border-t border-gray-200 pt-3">
+              <div className="space-y-2">
+                {data.skills.map((skill, index) => (
+                  <div key={index}>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-gray-700">{skill.name}</span>
+                      <span className="text-gray-500">{skill.level * 20}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 h-1.5">
+                      <div
+                        className="h-1.5"
+                        style={{
+                          width: `${skill.level * 20}%`,
+                          backgroundColor: accentColor,
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full bg-gray-200 h-1.5">
-                    <div
-                      className="h-1.5"
-                      style={{
-                        width: `${skill.level * 20}%`,
-                        backgroundColor: accentColor,
-                      }}
-                    />
-                  </div>
-                </div>
-              )
-            )}
-          </div>
-        </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
-    );
+    ) : null;
   };
 
   const renderLanguages = () => {
     if (!sectionOrder.includes("languages")) return null;
-    return (
+    return data.languages?.length > 0 ? (
       <div className="mb-8">
-        <h3
-          className="text-xl font-semibold mb-3"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("languages")}
-        </h3>
-        <div className="border-t border-gray-200 pt-3">
-          <div className="space-y-2">
-            {(languages?.length ? languages : placeholderData.languages).map(
-              (lang, index) => (
-                <div key={index} className="flex justify-between">
-                  <span className="text-gray-700">{lang.name}</span>
-                  <span className="text-gray-500">{lang.level}</span>
-                </div>
-              )
-            )}
-          </div>
-        </div>
+        {data.languages?.length > 0 && (
+          <>
+            <h3
+              className="text-xl font-semibold mb-3"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("languages")}
+            </h3>
+            <div className="border-t border-gray-200 pt-3">
+              <div className="space-y-2">
+                {data.languages.map((lang, index) => (
+                  <div key={index} className="flex justify-between">
+                    <span className="text-gray-700">{lang.name}</span>
+                    <span className="text-gray-500">{lang.level}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
-    );
+    ) : null;
   };
 
   const renderInterests = () => {
     if (!sectionOrder.includes("interests")) return null;
-    return (
+    return data.interests?.length > 0 ? (
       <div className="mb-8">
-        <h3
-          className="text-xl font-semibold mb-3"
-          style={{ color: accentColor }}
-        >
-          {getSectionTitle("interests")}
-        </h3>
-        <div className="border-t border-gray-200 pt-3">
-          <div className="flex flex-wrap gap-2">
-            {(interests?.length ? interests : placeholderData.interests).map(
-              (interest, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 text-sm rounded-full text-gray-700"
-                  style={{ backgroundColor: `${accentColor}15` }}
-                >
-                  {interest.name}
-                </span>
-              )
-            )}
-          </div>
-        </div>
+        {data.interests?.length > 0 && (
+          <>
+            <h3
+              className="text-xl font-semibold mb-3"
+              style={{ color: accentColor }}
+            >
+              {getSectionTitle("interests")}
+            </h3>
+            <div className="border-t border-gray-200 pt-3">
+              <div className="flex flex-wrap gap-2">
+                {data.interests.map((interest, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 text-sm rounded-full text-gray-700"
+                    style={{ backgroundColor: `${accentColor}15` }}
+                  >
+                    {interest.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
-    );
+    ) : null;
   };
 
   // Render custom section
@@ -461,31 +441,20 @@ export default function CVPreviewMinimal({
 
         {/* Main name header */}
         <div className="px-12 py-8 print:px-12 print:py-8">
-          <h1
-            className="text-3xl font-bold"
-            style={{
-              color: accentColor,
-              marginBottom: 0,
-            }}
-          >
-            {getPlaceholderOrValue(
-              "personalInfo",
-              "firstName",
-              personalInfo?.firstName
-            )}{" "}
-            {getPlaceholderOrValue(
-              "personalInfo",
-              "lastName",
-              personalInfo?.lastName
-            )}
-          </h1>
-          <p className="text-gray-600 mt-2">
-            {getPlaceholderOrValue(
-              "personalInfo",
-              "title",
-              personalInfo?.title
-            )}
-          </p>
+          {(personalInfo?.firstName || personalInfo?.lastName) && (
+            <h1
+              className="text-3xl font-bold"
+              style={{
+                color: accentColor,
+                marginBottom: 0,
+              }}
+            >
+              {personalInfo?.firstName || ''} {personalInfo?.lastName || ''}
+            </h1>
+          )}
+          {personalInfo?.title && (
+            <p className="text-gray-600 mt-2">{personalInfo?.title}</p>
+          )}
         </div>
 
         {/* Main content */}
@@ -496,18 +465,8 @@ export default function CVPreviewMinimal({
               <div className="mb-6 print:mb-6">
                 <div className="relative w-full pb-[100%]">
                   <Image
-                    src={
-                      personalInfo.photo || placeholderData.personalInfo.photo
-                    }
-                    alt={`${getPlaceholderOrValue(
-                      "personalInfo",
-                      "firstName",
-                      personalInfo?.firstName
-                    )} ${getPlaceholderOrValue(
-                      "personalInfo",
-                      "lastName",
-                      personalInfo?.lastName
-                    )}`}
+                    src={personalInfo.photo}
+                    alt={`${personalInfo?.firstName || ''} ${personalInfo?.lastName || ''}`}
                     fill
                     className="object-cover rounded-md"
                     sizes="(max-width: 240px) 100vw, 240px"
@@ -557,31 +516,20 @@ export default function CVPreviewMinimal({
 
           {/* Main name header */}
           <div className="px-12 py-8 print:px-12 print:py-8">
-            <h1
-              className="text-3xl font-bold"
-              style={{
-                color: accentColor,
-                marginBottom: 0,
-              }}
-            >
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "firstName",
-                personalInfo?.firstName
-              )}{" "}
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "lastName",
-                personalInfo?.lastName
-              )}
-            </h1>
-            <p className="text-gray-600 mt-2">
-              {getPlaceholderOrValue(
-                "personalInfo",
-                "title",
-                personalInfo?.title
-              )}
-            </p>
+            {(personalInfo?.firstName || personalInfo?.lastName) && (
+              <h1
+                className="text-3xl font-bold"
+                style={{
+                  color: accentColor,
+                  marginBottom: 0,
+                }}
+              >
+                {personalInfo?.firstName || ''} {personalInfo?.lastName || ''}
+              </h1>
+            )}
+            {personalInfo?.title && (
+              <p className="text-gray-600 mt-2">{personalInfo?.title}</p>
+            )}
           </div>
 
           {/* Main content */}
@@ -592,18 +540,8 @@ export default function CVPreviewMinimal({
                 <div className="mb-6 print:mb-6">
                   <div className="relative w-full pb-[100%]">
                     <Image
-                      src={
-                        personalInfo.photo || placeholderData.personalInfo.photo
-                      }
-                      alt={`${getPlaceholderOrValue(
-                        "personalInfo",
-                        "firstName",
-                        personalInfo?.firstName
-                      )} ${getPlaceholderOrValue(
-                        "personalInfo",
-                        "lastName",
-                        personalInfo?.lastName
-                      )}`}
+                      src={personalInfo.photo}
+                      alt={`${personalInfo?.firstName || ''} ${personalInfo?.lastName || ''}`}
                       fill
                       className="object-cover rounded-md"
                       sizes="(max-width: 240px) 100vw, 240px"

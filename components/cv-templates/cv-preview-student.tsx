@@ -188,70 +188,40 @@ export default function CVPreviewStudent({
   };
 
   const renderHeader = () => {
-    const firstName = getPlaceholderOrValue(
-      "personalInfo",
-      "firstName",
-      personalInfo?.firstName
-    );
-    const lastName = getPlaceholderOrValue(
-      "personalInfo",
-      "lastName",
-      personalInfo?.lastName
-    );
-    const title = getPlaceholderOrValue(
-      "personalInfo",
-      "title",
-      personalInfo?.title
-    );
+    const firstName = personalInfo?.firstName || "";
+    const lastName = personalInfo?.lastName || "";
+    const title = personalInfo?.title || "";
 
     return (
       <div className="header mb-8">
         <h1 className="text-5xl font-bold tracking-[0.2em] text-center mb-4">
           {firstName.toUpperCase()} {lastName.toUpperCase()}
         </h1>
-        <div className="relative py-4">
-          <div
-            style={{ backgroundColor: accentColor }}
-            className="absolute top-0 left-0 right-0 h-[1px] "
-          ></div>
-          <h2 className="text-2xl text-center uppercase tracking-widest">
-            {title}
-          </h2>
-          <div
-            style={{ backgroundColor: accentColor }}
-            className="absolute bottom-0 left-0 right-0 h-[1px] "
-          ></div>
-        </div>
+        {title && (
+          <div className="relative py-4">
+            <div
+              style={{ backgroundColor: accentColor }}
+              className="absolute top-0 left-0 right-0 h-[1px] "
+            ></div>
+            <h2 className="text-2xl text-center uppercase tracking-widest">
+              {title}
+            </h2>
+            <div
+              style={{ backgroundColor: accentColor }}
+              className="absolute bottom-0 left-0 right-0 h-[1px] "
+            ></div>
+          </div>
+        )}
       </div>
     );
   };
 
   const renderPersonalInfo = () => {
-    const email = getPlaceholderOrValue(
-      "personalInfo",
-      "email",
-      personalInfo?.email
-    );
-    const phone = getPlaceholderOrValue(
-      "personalInfo",
-      "phone",
-      personalInfo?.phone
-    );
-    const address = getPlaceholderOrValue(
-      "personalInfo",
-      "address",
-      personalInfo?.address
-    );
-    const postalCode = getPlaceholderOrValue(
-      "personalInfo",
-      "postalCode",
-      personalInfo?.postalCode
-    );
-    const city = getPlaceholderOrValue(
-      "personalInfo",
-      "city",
-      personalInfo?.city
-    );
+    const email = personalInfo?.email || "";
+    const phone = personalInfo?.phone || "";
+    const address = personalInfo?.address || "";
+    const postalCode = personalInfo?.postalCode || "";
+    const city = personalInfo?.city || "";
 
     return (
       <div className="mb-8">
@@ -259,29 +229,39 @@ export default function CVPreviewStudent({
           {getSectionTitle("personal-info") || "Contact"}
         </h3>
         <div className="space-y-3 text-base">
-          <div className="flex items-center gap-3">
-            <span className="inline-block">
-              <Phone size={18} />
-            </span>
-            <span>{phone}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="inline-block">
-              <Mail size={18} />
-            </span>
-            <span>{email}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="inline-block">
-              <HomeIcon size={18} />
-            </span>
-            <div>
-              <p>{address},</p>
-              <p>
-                {city}, {postalCode}
-              </p>
+          {phone && (
+            <div className="flex items-center gap-3">
+              <span className="inline-block">
+                <Phone size={18} />
+              </span>
+              <span>{phone}</span>
             </div>
-          </div>
+          )}
+          {email && (
+            <div className="flex items-center gap-3">
+              <span className="inline-block">
+                <Mail size={18} />
+              </span>
+              <span>{email}</span>
+            </div>
+          )}
+          {(address || city || postalCode) && (
+            <div className="flex items-center gap-3">
+              <span className="inline-block">
+                <HomeIcon size={18} />
+              </span>
+              <div>
+                {address && <p>{address},</p>}
+                {(city || postalCode) && (
+                  <p>
+                    {city && city}
+                    {city && postalCode && ", "}
+                    {postalCode && postalCode}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -290,142 +270,153 @@ export default function CVPreviewStudent({
   const renderProfile = () => {
     return data.profile ? (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">
-          {getSectionTitle("profile")}
-        </h3>
-        <p className="text-base">
-          {getPlaceholderOrValue("profile", "profile", data.profile)}
-        </p>
+        {data.profile && (
+          <>
+            <h3 className="text-xl font-bold mb-4 uppercase">
+              {getSectionTitle("profile")}
+            </h3>
+            <p className="text-base">{data.profile}</p>
+          </>
+        )}
       </div>
     ) : null;
   };
 
   const renderEducation = () => {
-    return (
+    return data.education?.length > 0 ? (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">
-          {getSectionTitle("education")}
-        </h3>
-        <div className="space-y-2">
-          {(data.education?.length
-            ? data.education
-            : placeholderData.education
-          ).map((edu: Education, index: number) => (
-            <div key={index} className="text-base">
-              <p className="font-bold uppercase">
-                {edu.school}
-                {edu.location ? `, ${edu.location}` : ""}
-              </p>
-              <p>
-                {edu.startDate} - {edu.current ? "Present" : edu.endDate}
-              </p>
+        {data.education?.length > 0 && (
+          <>
+            <h3 className="text-xl font-bold mb-4 uppercase">
+              {getSectionTitle("education")}
+            </h3>
+            <div className="space-y-2">
+              {data.education.map((edu: Education, index: number) => (
+                <div key={index} className="text-base">
+                  <p className="font-bold uppercase">
+                    {edu.school}
+                    {edu.location ? `, ${edu.location}` : ""}
+                  </p>
+                  <p>
+                    {edu.startDate} - {edu.current ? "Present" : edu.endDate}
+                  </p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div
-          style={{ backgroundColor: accentColor }}
-          className="mt-6 h-[1px] "
-        ></div>
+            <div
+              style={{ backgroundColor: accentColor }}
+              className="mt-6 h-[1px] "
+            ></div>
+          </>
+        )}
       </div>
-    );
+    ) : null;
   };
 
   const renderExperience = () => {
-    return (
+    return data.experience?.length > 0 ? (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">
-          {getSectionTitle("experience")}
-        </h3>
-        <div className="space-y-6">
-          {(data.experience?.length
-            ? data.experience
-            : placeholderData.experience
-          ).map((exp: Experience, index: number) => (
-            <div key={index} className="text-base">
-              <p className="font-bold uppercase">{exp.position}</p>
-              <p>
-                {exp.startDate} - {exp.current ? "Present" : exp.endDate}
-              </p>
-              {exp.description && (
-                <div className="mt-2">
-                  {exp.description.split("\n").map((item, i) => (
-                    <p key={i} className="flex items-start mb-1">
-                      <span className="mr-2">•</span>
-                      <span>{item.replace(/^• /, "")}</span>
-                    </p>
-                  ))}
+        {data.experience?.length > 0 && (
+          <>
+            <h3 className="text-xl font-bold mb-4 uppercase">
+              {getSectionTitle("experience")}
+            </h3>
+            <div className="space-y-6">
+              {data.experience.map((exp: Experience, index: number) => (
+                <div key={index} className="text-base">
+                  <p className="font-bold uppercase">{exp.position}</p>
+                  <p>
+                    {exp.startDate} - {exp.current ? "Present" : exp.endDate}
+                  </p>
+                  {exp.description && (
+                    <div className="mt-2">
+                      {exp.description.split("\n").map((item, i) => (
+                        <p key={i} className="flex items-start mb-1">
+                          <span className="mr-2">•</span>
+                          <span>{item.replace(/^• /, "")}</span>
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
             </div>
-          ))}
-        </div>
-        <div
-          style={{ backgroundColor: accentColor }}
-          className="mt-6 h-[1px] "
-        ></div>
+            <div
+              style={{ backgroundColor: accentColor }}
+              className="mt-6 h-[1px] "
+            ></div>
+          </>
+        )}
       </div>
-    );
+    ) : null;
   };
 
   const renderSkills = () => {
-    return (
+    return data.skills?.length > 0 ? (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">
-          {getSectionTitle("skills")}
-        </h3>
-        <div className="space-y-2">
-          {(data.skills?.length ? data.skills : placeholderData.skills).map(
-            (skill: Skill, index: number) => (
-              <div key={index} className="text-base">
-                <div className="flex justify-between mb-1">
-                  <span>{skill.name}</span>
+        {data.skills?.length > 0 && (
+          <>
+            <h3 className="text-xl font-bold mb-4 uppercase">
+              {getSectionTitle("skills")}
+            </h3>
+            <div className="space-y-2">
+              {data.skills.map((skill: Skill, index: number) => (
+                <div key={index} className="text-base">
+                  <div className="flex justify-between mb-1">
+                    <span>{skill.name}</span>
+                  </div>
                 </div>
-              </div>
-            )
-          )}
-        </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
-    );
+    ) : null;
   };
 
   const renderLanguages = () => {
-    return data.languages?.length || placeholderData.languages ? (
+    return data.languages?.length > 0 ? (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">
-          {getSectionTitle("languages")}
-        </h3>
-        <div className="space-y-2">
-          {(data.languages?.length
-            ? data.languages
-            : placeholderData.languages
-          ).map((lang: Language, index: number) => (
-            <div key={index} className="flex justify-between text-base">
-              <span>{lang.name}</span>
-              <span>{lang.level}</span>
+        {data.languages?.length > 0 && (
+          <>
+            <h3 className="text-xl font-bold mb-4 uppercase">
+              {getSectionTitle("languages")}
+            </h3>
+            <div className="space-y-2">
+              {data.languages.map((lang: Language, index: number) => (
+                <div
+                  key={index}
+                  className="flex flex-col justify-between text-base"
+                >
+                  <span>{lang.name}</span>
+                  <span>{lang.level}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     ) : null;
   };
 
   const renderInterests = () => {
-    return data.interests?.length || placeholderData.interests ? (
+    return data.interests?.length > 0 ? (
       <div className="mb-8">
-        <h3 className="text-xl font-bold mb-4 uppercase">
-          {getSectionTitle("interests")}
-        </h3>
-        <div className="space-y-1">
-          {(data.interests?.length
-            ? data.interests
-            : placeholderData.interests
-          ).map((interest: Interest, index: number) => (
-            <p key={index} className="flex items-start text-base">
-              <span className="mr-2">•</span>
-              <span>{interest.name}</span>
-            </p>
-          ))}
-        </div>
+        {data.interests?.length > 0 && (
+          <>
+            <h3 className="text-xl font-bold mb-4 uppercase">
+              {getSectionTitle("interests")}
+            </h3>
+            <div className="space-y-1">
+              {data.interests.map((interest: Interest, index: number) => (
+                <p key={index} className="flex items-start text-base">
+                  <span className="mr-2">•</span>
+                  <span>{interest.name}</span>
+                </p>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     ) : null;
   };
