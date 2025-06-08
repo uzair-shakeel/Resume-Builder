@@ -149,6 +149,35 @@ const getMobileScale = (windowWidth: number) => {
   }
 };
 
+// CSS for tooltips
+const tooltipStyles = `
+  .tooltip-container {
+    position: relative;
+  }
+  
+  .tooltip {
+    visibility: hidden;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  .tooltip-container:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+  }
+`;
+
 export default function CoverLetterBuilder() {
   const { t, language } = useLanguage();
   const previewRef = useRef<HTMLDivElement>(null);
@@ -604,8 +633,9 @@ export default function CoverLetterBuilder() {
     currentUrl.searchParams.set("template", selectedTemplateValue);
     window.history.replaceState({}, "", currentUrl.toString());
 
-    // Save the template change to the database immediately
+    // Only save if we have an existing cover letter ID
     if (coverId) {
+      // Save the template change to the database immediately
       saveCoverLetter()
         .then(() => {
           // Verify URL consistency
@@ -638,6 +668,9 @@ export default function CoverLetterBuilder() {
           safeResetTemplateLoadingState(); // Reset on error
         });
     } else {
+      // For new cover letters, just mark as unsaved
+      setSaveStatus("unsaved");
+
       setTimeout(() => {
         isChangingTemplate.current = false;
         setIsTemplateLoading(false);
@@ -682,8 +715,9 @@ export default function CoverLetterBuilder() {
     currentUrl.searchParams.set("template", selectedTemplateValue);
     window.history.replaceState({}, "", currentUrl.toString());
 
-    // Save the template change to the database immediately
+    // Only save if we have an existing cover letter ID
     if (coverId) {
+      // Save the template change to the database immediately
       saveCoverLetter()
         .then(() => {
           // Verify URL consistency
@@ -716,6 +750,9 @@ export default function CoverLetterBuilder() {
           safeResetTemplateLoadingState(); // Reset on error
         });
     } else {
+      // For new cover letters, just mark as unsaved
+      setSaveStatus("unsaved");
+
       setTimeout(() => {
         isChangingTemplate.current = false;
         setIsTemplateLoading(false);
@@ -758,8 +795,9 @@ export default function CoverLetterBuilder() {
     currentUrl.searchParams.set("template", selectedTemplateValue);
     window.history.replaceState({}, "", currentUrl.toString());
 
-    // Save the template change to the database immediately
+    // Only save if we have an existing cover letter ID
     if (coverId) {
+      // Save the template change to the database immediately
       saveCoverLetter()
         .then(() => {
           // Verify URL consistency
@@ -792,6 +830,9 @@ export default function CoverLetterBuilder() {
           safeResetTemplateLoadingState(); // Reset on error
         });
     } else {
+      // For new cover letters, just mark as unsaved
+      setSaveStatus("unsaved");
+
       setTimeout(() => {
         isChangingTemplate.current = false;
         setIsTemplateLoading(false);
@@ -1000,19 +1041,6 @@ export default function CoverLetterBuilder() {
     }
   };
 
-  const debouncedSave = (immediate = false) => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    if (immediate) {
-      saveCoverLetter();
-    } else {
-      // Set status to unsaved instead of saving directly
-      setSaveStatus("unsaved");
-    }
-  };
-
   // Batch update for multiple fields to reduce save frequency
   const batchUpdateCoverLetterData = (updates: Record<string, any>) => {
     setCoverLetterData((prev) => {
@@ -1103,13 +1131,8 @@ export default function CoverLetterBuilder() {
       return newState;
     });
 
-    // Set a timeout to save after user stops typing
-    throttledInputRef.current.timeout = setTimeout(() => {
-      // Only save if the value is still the same
-      if (throttledInputRef.current.value === value) {
-        updateCoverLetterData(section, field, value);
-      }
-    }, 1000);
+    // Mark as unsaved but don't schedule auto-save
+    setSaveStatus("unsaved");
   };
 
   const updateCoverLetterData = (
@@ -1149,16 +1172,8 @@ export default function CoverLetterBuilder() {
       return newState;
     });
 
-    // Only save immediately for completed personal info changes
-    // For all other changes, use the longer debounce
-    const shouldSaveImmediately =
-      section === "personalInfo" &&
-      field === "firstName" &&
-      typeof value === "string" &&
-      value.length > 0 &&
-      !!coverLetterData.personalInfo?.lastName;
-
-    debouncedSave(shouldSaveImmediately);
+    // Mark as unsaved without auto-saving
+    setSaveStatus("unsaved");
   };
 
   useEffect(() => {
@@ -2220,52 +2235,78 @@ export default function CoverLetterBuilder() {
   };
 
   // Function to create a new Cover Letter
-  const createNewCoverLetter = async () => {
-    try {
-      setSaveStatus("saving");
+  const createNewCoverLetter = () => {
+    // Clear any existing cover letter ID from session storage
+    sessionStorage.removeItem("current-cover-letter-id");
 
-      // Clear any existing cover letter ID from session storage
-      sessionStorage.removeItem("current-cover-letter-id");
+    // Initialize with default values but don't save to database
+    setCoverLetterData({
+      personalInfo: {
+        firstName: "",
+        lastName: "",
+        title: "",
+        email: "",
+        phone: "",
+        address: "",
+        postalCode: "",
+        city: "",
+        photo: "",
+      },
+      recipient: {
+        description: "",
+        name: "",
+        company: "",
+        address: "",
+        postalCode: "",
+        city: "",
+      },
+      dateAndSubject: {
+        date: new Date().toLocaleDateString("fr-FR"),
+        location: "",
+        subject: "",
+      },
+      introduction: "",
+      currentSituation: "",
+      motivation: "",
+      conclusion: "",
+    });
 
-      const response = await fetch("/api/cover-letter/save", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: "Untitled Cover Letter",
-          data: coverLetterData,
-          template,
-          sectionOrder,
-          accentColor,
-          fontFamily,
-          customSectionNames,
-          sectionPages,
-          customSections,
-          lastEdited: new Date().toISOString(),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setSaveStatus("saved");
-        // Store the new cover letter ID in session storage
-        sessionStorage.setItem("current-cover-letter-id", data.coverLetter._id);
-        // Update the URL with the new cover letter ID
-        window.history.replaceState(
-          {},
-          "",
-          `/builder/cover-letter?id=${data.coverLetter._id}`
-        );
-      } else {
-        setSaveStatus("error");
-        console.error("Error creating new Cover Letter:", data.error);
+    // Set default template and other settings
+    const urlTemplate = searchParams.get("template") as string;
+    if (urlTemplate && templateOptions.some((t) => t.value === urlTemplate)) {
+      setTemplate(urlTemplate as any);
+      const templateIndex = templateOptions.findIndex(
+        (t) => t.value === urlTemplate
+      );
+      if (templateIndex !== -1) {
+        setActiveTemplateIndex(templateIndex);
       }
-    } catch (error) {
-      console.error("Error creating new Cover Letter:", error);
-      setSaveStatus("error");
+    } else {
+      setTemplate("modern");
+      setActiveTemplateIndex(0);
     }
+
+    // Reset other state
+    setSectionOrder([
+      "personal-info",
+      "destinataire",
+      "date-et-objet",
+      "introduction",
+      "situation-actuelle",
+      "motivation",
+      "conclusion",
+    ]);
+    setAccentColor("#3b82f6");
+    setFontFamily("'DejaVu Sans', sans-serif");
+    setCustomSectionNames({});
+    setSectionPages({});
+    setCustomSections({});
+
+    // Set initial save status
+    setSaveStatus("unsaved");
+
+    // Update document title
+    document.title = "New Cover Letter | Resume Builder";
   };
 
   // Add this handler
@@ -2308,39 +2349,37 @@ export default function CoverLetterBuilder() {
 
   // Add the handleBackToDashboard function after other handler functions
   const handleBackToDashboard = () => {
-    // Set saving status immediately
-    setSaveStatus("saving");
+    // If there are unsaved changes, ask the user if they want to save
 
-    // Save the cover letter before navigating
-    saveCoverLetter()
-      .then(() => {
-        // Clear session storage if navigating away completely
-        sessionStorage.removeItem("current-cover-letter-id");
-        // Use window.location.href for a hard navigation
-        window.location.href = "/dashboard";
-      })
-      .catch((error) => {
-        console.error("Error saving before navigation:", error);
-        // Navigate anyway even if save fails
-        sessionStorage.removeItem("current-cover-letter-id");
-        window.location.href = "/dashboard";
-      });
+    // No unsaved changes, just navigate away
+    sessionStorage.removeItem("current-cover-letter-id");
+    window.location.href = "/dashboard";
   };
 
   // Add manual save function
   const handleManualSave = () => {
     setSaveStatus("saving");
+
+    // Clear any pending auto-save
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
     saveCoverLetter()
       .then(() => {
         console.log("Manual save completed");
       })
       .catch((error) => {
         console.error("Manual save failed:", error);
+        setSaveStatus("error");
       });
   };
 
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
+      {/* Add tooltip styles */}
+      <style dangerouslySetInnerHTML={{ __html: tooltipStyles }} />
+
       {/* Loading Overlay */}
       {isDownloading && <DownloadingOverlay />}
 
@@ -2357,40 +2396,61 @@ export default function CoverLetterBuilder() {
               <h1 className="text-xl font-bold">
                 {t("site.builder.header.cover_letter")}
               </h1>
-              <div className="text-gray-500">
-                {saveStatus === "saved" && (
-                  <div
-                    className="cursor-pointer hover:text-blue-500"
-                    onClick={handleManualSave}
-                    aria-label={t("site.builder.header.save")}
-                  >
-                    <Cloud className="w-5 h-5" />
-                  </div>
-                )}
-                {saveStatus === "unsaved" && (
-                  <div
-                    className="cursor-pointer hover:text-blue-500"
-                    onClick={handleManualSave}
-                    aria-label={t("site.builder.header.save_changes")}
-                  >
-                    <Cloud className="w-5 h-5 text-yellow-500" />
-                  </div>
-                )}
-                {saveStatus === "saving" && (
-                  <div aria-label={t("site.builder.header.saving")}>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleManualSave}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md font-semibold transition-colors focus:outline-none
+                      ${
+                        saveStatus === "saved"
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : ""
+                      }
+                      ${
+                        saveStatus === "unsaved"
+                          ? "bg-orange-500 text-white hover:bg-orange-600"
+                          : ""
+                      }
+                      ${
+                        saveStatus === "saving"
+                          ? "bg-gray-400 text-white cursor-wait"
+                          : ""
+                      }
+                      ${
+                        saveStatus === "error"
+                          ? "bg-red-500 text-white hover:bg-red-600"
+                          : ""
+                      }
+                    `}
+                  disabled={saveStatus === "saving"}
+                  title={
+                    saveStatus === "saved"
+                      ? t("site.builder.header.save")
+                      : saveStatus === "unsaved"
+                      ? t("site.builder.header.save_changes")
+                      : saveStatus === "saving"
+                      ? t("site.builder.header.saving")
+                      : t("site.builder.header.retry_save")
+                  }
+                >
+                  {saveStatus === "saving" ? (
                     <RefreshCw className="w-5 h-5 animate-spin" />
-                  </div>
-                )}
-                {saveStatus === "error" && (
-                  <div
-                    className="cursor-pointer hover:text-red-600"
-                    onClick={handleManualSave}
-                    aria-label={t("site.builder.header.retry_save")}
-                  >
-                    <CloudOff className="w-5 h-5 text-red-500" />
-                  </div>
-                )}
+                  ) : saveStatus === "error" ? (
+                    <CloudOff className="w-5 h-5" />
+                  ) : (
+                    <Cloud className="w-5 h-5" />
+                  )}
+                  <span className="sm:block hidden">
+                    {saveStatus === "saved"
+                      ? t("site.builder.header.save")
+                      : saveStatus === "unsaved"
+                      ? t("site.builder.header.save_changes")
+                      : saveStatus === "saving"
+                      ? t("site.builder.header.saving")
+                      : t("site.builder.header.retry_save")}
+                  </span>
+                </button>
               </div>
+
               <a
                 href="/builder"
                 className="text-blue-600 hover:text-blue-800 hidden md:flex items-center gap-1 text-sm"
