@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import type { CoverLetterData } from "@/types";
 import Image from "next/image";
+import { placeholderData, getPlaceholderOrValue } from "@/lib/utils";
 
 interface CoverLetterPreviewClassicProps {
   data: CoverLetterData;
@@ -12,9 +13,6 @@ interface CoverLetterPreviewClassicProps {
   customSections?: Record<string, string>;
 }
 
-// Create a global variable to store the last valid data outside of component lifecycle
-let globalClassicData: CoverLetterData | null = null;
-
 export default function CoverLetterPreviewClassic({
   data,
   sectionOrder,
@@ -24,97 +22,6 @@ export default function CoverLetterPreviewClassic({
   customSectionNames = {},
   customSections = {},
 }: CoverLetterPreviewClassicProps) {
-  // State to track if this is the initial render
-  const [isInitialRender, setIsInitialRender] = useState(true);
-  
-  // Keep a reference to the last valid data to prevent data loss during template transitions
-  const lastValidDataRef = useRef<CoverLetterData>(data);
-  
-  // Function to check if data is valid (has at least some content)
-  const isValidData = (
-    checkData: CoverLetterData | null | undefined
-  ): boolean => {
-    if (!checkData) return false;
-    
-    // Check if any section has content
-    return !!(
-      (checkData.personalInfo &&
-        Object.values(checkData.personalInfo).some((val) => val)) ||
-      (checkData.recipient &&
-        Object.values(checkData.recipient).some((val) => val)) ||
-      (checkData.dateAndSubject &&
-        Object.values(checkData.dateAndSubject).some((val) => val)) ||
-      checkData.introduction ||
-      checkData.currentSituation ||
-      checkData.motivation ||
-      checkData.conclusion
-    );
-  };
-  
-  // On mount, try to load data from localStorage if available
-  useEffect(() => {
-    try {
-      const storedData = localStorage.getItem("cover-letter-data");
-      if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        if (isValidData(parsedData)) {
-          console.log("Classic template: Loaded data from localStorage");
-          lastValidDataRef.current = parsedData;
-          globalClassicData = parsedData;
-        }
-      }
-    } catch (error) {
-      console.error("Error loading data from localStorage:", error);
-    }
-    
-    setIsInitialRender(false);
-  }, []);
-  
-  // Update the ref and localStorage when data changes and is valid
-  useEffect(() => {
-    if (isValidData(data)) {
-      console.log("Classic template: Valid data updated");
-      lastValidDataRef.current = data;
-      globalClassicData = data;
-      
-      // Store in localStorage for persistence across page refreshes
-      try {
-        localStorage.setItem("cover-letter-data", JSON.stringify(data));
-      } catch (error) {
-        console.error("Error saving data to localStorage:", error);
-      }
-    } else {
-      console.log("Classic template: Received invalid data, using cached data");
-    }
-  }, [data]);
-  
-  // Determine which data to use - with multiple fallbacks
-  const determineDataToUse = (): CoverLetterData => {
-    // First try the props data
-    if (isValidData(data)) {
-      return data;
-    }
-    
-    // Then try the ref data
-    if (isValidData(lastValidDataRef.current)) {
-      console.log("Classic template: Using ref data");
-      return lastValidDataRef.current;
-    }
-    
-    // Then try the global data
-    if (isValidData(globalClassicData) && globalClassicData !== null) {
-      console.log("Classic template: Using global data");
-      return globalClassicData;
-    }
-    
-    // Finally, return empty data or the original data as last resort
-    console.log("Classic template: No valid data found, using empty or original data");
-    return data || ({} as CoverLetterData);
-  };
-  
-  // Use determined data
-  const safeData = determineDataToUse();
-
   const {
     personalInfo,
     recipient,
@@ -123,7 +30,7 @@ export default function CoverLetterPreviewClassic({
     currentSituation,
     motivation,
     conclusion,
-  } = safeData || {};
+  } = data;
 
   // Filter sections for page 1 and page 2
   const page1Sections = sectionOrder.filter(
@@ -162,16 +69,11 @@ export default function CoverLetterPreviewClassic({
       }
 
       if (section.startsWith("custom-")) {
-        // Only render if custom section has content
-        if (!customSections?.[section]) {
-          return null;
-        }
-
         return (
           <div key={section} className="mb-6 keep-together">
             <div
               dangerouslySetInnerHTML={{
-                __html: customSections[section],
+                __html: customSections[section] || "",
               }}
               className="text-sm section-content"
             />
@@ -181,115 +83,87 @@ export default function CoverLetterPreviewClassic({
 
       switch (section) {
         case "destinataire":
-          // Only render if recipient has data
-          if (!recipient || Object.values(recipient).every((val) => !val)) {
-            return null;
-          }
-
           return (
-            <div key={section} className="mt-6">
+            <div className="mt-6">
               <div className="space-y-4">
                 <div className="text-gray-700">
-                  {recipient?.company && (
-                    <p className="font-medium">{recipient.company}</p>
-                  )}
-                  {recipient?.name && <p>{recipient.name}</p>}
-                  {recipient?.address && <p>{recipient.address}</p>}
-                  {(recipient?.postalCode || recipient?.city) && (
-                    <p>
-                      {recipient?.postalCode} {recipient?.city}
-                    </p>
-                  )}
+                  <p className="font-medium">
+                    {recipient?.company || "Entreprise XYZ"}
+                  </p>
+                  <p>{recipient?.name || "Responsable Recrutement"}</p>
+                  <p>{recipient?.address || "456 Avenue Business"}</p>
+                  <p>
+                    {recipient?.postalCode || "75001"}{" "}
+                    {recipient?.city || "Paris"}
+                  </p>
                 </div>
               </div>
             </div>
           );
         case "date-et-objet":
-          // Only render if dateAndSubject has data
-          if (
-            !dateAndSubject ||
-            Object.values(dateAndSubject).every((val) => !val)
-          ) {
-            return null;
-          }
-
           return (
             <div key={section} className="mt-8 mb-8">
-              {dateAndSubject?.location || dateAndSubject?.date ? (
-                <div className="text-right mb-4">
-                  <p>
-                    {dateAndSubject?.location && `${dateAndSubject.location}, `}
-                    {dateAndSubject?.date
-                      ? `le ${dateAndSubject.date}`
-                      : `le ${new Date().toLocaleDateString("fr-FR")}`}
-                  </p>
-                </div>
-              ) : null}
-
-              {dateAndSubject?.subject && (
-                <p className="font-medium">Objet : {dateAndSubject.subject}</p>
-              )}
+              <div className="text-right mb-4">
+                <p>
+                  {dateAndSubject?.location || "Paris"}, le{" "}
+                  {dateAndSubject?.date ||
+                    new Date().toLocaleDateString("fr-FR")}
+                </p>
+              </div>
+              <p className="font-medium">
+                Objet :{" "}
+                {dateAndSubject?.subject ||
+                  "Candidature pour le poste de [Poste]"}
+              </p>
             </div>
           );
         case "introduction":
-          // Only render if introduction has content
-          if (!introduction) {
-            return null;
-          }
-
           return (
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: introduction,
+                  __html:
+                    introduction ||
+                    "Je me permets de vous écrire concernant le poste de [Poste] que vous proposez. Ayant découvert votre annonce sur [Site], je souhaite vous faire part de ma candidature.",
                 }}
                 className="text-sm section-content"
               />
             </div>
           );
         case "situation-actuelle":
-          // Only render if currentSituation has content
-          if (!currentSituation) {
-            return null;
-          }
-
           return (
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: currentSituation,
+                  __html:
+                    currentSituation ||
+                    "Actuellement [Poste actuel] chez [Entreprise] à [Ville], je suis en charge de [Responsabilités]. Cette expérience m'a permis de développer de solides compétences en [Compétences clés].",
                 }}
                 className="text-sm section-content"
               />
             </div>
           );
         case "motivation":
-          // Only render if motivation has content
-          if (!motivation) {
-            return null;
-          }
-
           return (
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: motivation,
+                  __html:
+                    motivation ||
+                    "Votre entreprise m'intéresse particulièrement pour [Aspect spécifique]. Mes compétences en [Compétences clés] et mon expertise en [Domaine d'expertise] seraient des atouts pour contribuer aux [Projets/Objectifs de l'entreprise].",
                 }}
                 className="text-sm section-content"
               />
             </div>
           );
         case "conclusion":
-          // Only render if conclusion has content
-          if (!conclusion) {
-            return null;
-          }
-
           return (
             <div key={section} className="mb-6 keep-together">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: conclusion,
+                  __html:
+                    conclusion ||
+                    "Je me tiens à votre disposition pour échanger plus en détail sur ma candidature lors d'un entretien. Dans l'attente de votre réponse, je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.",
                 }}
                 className="text-sm section-content"
               />
@@ -304,62 +178,48 @@ export default function CoverLetterPreviewClassic({
   const renderPage = (sections: string[]) => (
     <div className="cv-page">
       <div className="cv-page-content p-8">
-        {/* Header with name - only show if name exists */}
-        {(personalInfo?.firstName ||
-          personalInfo?.lastName ||
-          personalInfo?.title) && (
-          <div className="mb-8">
-            {(personalInfo?.firstName || personalInfo?.lastName) && (
-              <h1 className="text-2xl font-bold" style={{ color: accentColor }}>
-                {personalInfo?.firstName} {personalInfo?.lastName}
-              </h1>
-            )}
-            {personalInfo?.title && (
-              <p className="text-gray-600">{personalInfo.title}</p>
-            )}
-          </div>
-        )}
+        {/* Header with name */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold" style={{ color: accentColor }}>
+            {personalInfo?.firstName || "John"}{" "}
+            {personalInfo?.lastName || "Doe"}
+          </h1>
+          <p className="text-gray-600">
+            {personalInfo?.title || "Professional Title"}
+          </p>
+        </div>
 
         {/* Two-column layout */}
         <div className="flex gap-8">
-          {/* Left column - Contact info - only show if contact info exists */}
+          {/* Left column - Contact info */}
           <div className="w-1/3">
-            {(personalInfo?.email ||
-              personalInfo?.phone ||
-              personalInfo?.address ||
-              personalInfo?.postalCode ||
-              personalInfo?.city) && (
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                  Contact
-                </h2>
-                <div className="space-y-2 section-content">
-                  {personalInfo?.email && (
-                    <div>
-                      <p className="text-sm font-medium">Email:</p>
-                      <p className="text-sm">{personalInfo.email}</p>
-                    </div>
-                  )}
-                  {personalInfo?.phone && (
-                    <div>
-                      <p className="text-sm font-medium">Téléphone:</p>
-                      <p className="text-sm">{personalInfo.phone}</p>
-                    </div>
-                  )}
-                  {(personalInfo?.address ||
-                    personalInfo?.postalCode ||
-                    personalInfo?.city) && (
-                    <div>
-                      <p className="text-sm font-medium">Adresse:</p>
-                      <p className="text-sm">
-                        {personalInfo?.address && `${personalInfo.address}, `}
-                        {personalInfo?.postalCode} {personalInfo?.city}
-                      </p>
-                    </div>
-                  )}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+                Contact
+              </h2>
+              <div className="space-y-2 section-content">
+                <div>
+                  <p className="text-sm font-medium">Email:</p>
+                  <p className="text-sm">
+                    {personalInfo?.email || "email@example.com"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Téléphone:</p>
+                  <p className="text-sm">
+                    {personalInfo?.phone || "+33 6 12 34 56 78"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Adresse:</p>
+                  <p className="text-sm">
+                    {personalInfo?.address || "123 Rue Example"},{" "}
+                    {personalInfo?.postalCode || "75000"}{" "}
+                    {personalInfo?.city || "Paris"}
+                  </p>
                 </div>
               </div>
-            )}
+            </div>
           </div>
 
           {/* Right column - Letter content */}
@@ -368,18 +228,6 @@ export default function CoverLetterPreviewClassic({
       </div>
     </div>
   );
-
-  // Log when template is rendering with data
-  useEffect(() => {
-    if (!isInitialRender) {
-      console.log("Classic template rendering", {
-        hasPersonalInfo: !!personalInfo,
-        hasIntroduction: !!introduction,
-        hasMotivation: !!motivation,
-        dataSource: isValidData(data) ? "props" : "cached",
-      });
-    }
-  }, [personalInfo, introduction, motivation, data, isInitialRender]);
 
   return (
     <div className="cv-container">

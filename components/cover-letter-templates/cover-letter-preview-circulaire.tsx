@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import type { CoverLetterData } from "@/types";
 import Image from "next/image";
 import { Mail, Phone, Home, User } from "lucide-react";
+import { getPlaceholder } from "@/lib/placeholder-data";
 
 interface CoverLetterPreviewCirculaireProps {
   data: CoverLetterData;
@@ -14,9 +15,6 @@ interface CoverLetterPreviewCirculaireProps {
   language?: string;
 }
 
-// Create a global variable to store the last valid data outside of component lifecycle
-let globalCirculaireData: CoverLetterData | null = null;
-
 export default function CoverLetterPreviewCirculaire({
   data,
   sectionOrder,
@@ -27,101 +25,6 @@ export default function CoverLetterPreviewCirculaire({
   customSections = {},
   language = "fr",
 }: CoverLetterPreviewCirculaireProps) {
-  // State to track if this is the initial render
-  const [isInitialRender, setIsInitialRender] = useState(true);
-
-  // Keep a reference to the last valid data to prevent data loss during template transitions
-  const lastValidDataRef = useRef<CoverLetterData>(data);
-
-  // Function to check if data is valid (has at least some content)
-  const isValidData = (
-    checkData: CoverLetterData | null | undefined
-  ): boolean => {
-    if (!checkData) return false;
-
-    // Check if any section has content
-    return !!(
-      (checkData.personalInfo &&
-        Object.values(checkData.personalInfo).some((val) => val)) ||
-      (checkData.recipient &&
-        Object.values(checkData.recipient).some((val) => val)) ||
-      (checkData.dateAndSubject &&
-        Object.values(checkData.dateAndSubject).some((val) => val)) ||
-      checkData.introduction ||
-      checkData.currentSituation ||
-      checkData.motivation ||
-      checkData.conclusion
-    );
-  };
-
-  // On mount, try to load data from localStorage if available
-  useEffect(() => {
-    try {
-      const storedData = localStorage.getItem("cover-letter-data");
-      if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        if (isValidData(parsedData)) {
-          console.log("Circulaire template: Loaded data from localStorage");
-          lastValidDataRef.current = parsedData;
-          globalCirculaireData = parsedData;
-        }
-      }
-    } catch (error) {
-      console.error("Error loading data from localStorage:", error);
-    }
-
-    setIsInitialRender(false);
-  }, []);
-
-  // Update the ref and localStorage when data changes and is valid
-  useEffect(() => {
-    if (isValidData(data)) {
-      console.log("Circulaire template: Valid data updated");
-      lastValidDataRef.current = data;
-      globalCirculaireData = data;
-
-      // Store in localStorage for persistence across page refreshes
-      try {
-        localStorage.setItem("cover-letter-data", JSON.stringify(data));
-      } catch (error) {
-        console.error("Error saving data to localStorage:", error);
-      }
-    } else {
-      console.log(
-        "Circulaire template: Received invalid data, using cached data"
-      );
-    }
-  }, [data]);
-
-  // Determine which data to use - with multiple fallbacks
-  const determineDataToUse = (): CoverLetterData => {
-    // First try the props data
-    if (isValidData(data)) {
-      return data;
-    }
-
-    // Then try the ref data
-    if (isValidData(lastValidDataRef.current)) {
-      console.log("Circulaire template: Using ref data");
-      return lastValidDataRef.current;
-    }
-
-    // Then try the global data
-    if (isValidData(globalCirculaireData) && globalCirculaireData !== null) {
-      console.log("Circulaire template: Using global data");
-      return globalCirculaireData;
-    }
-
-    // Finally, return empty data or the original data as last resort
-    console.log(
-      "Circulaire template: No valid data found, using empty or original data"
-    );
-    return data || ({} as CoverLetterData);
-  };
-
-  // Use determined data
-  const safeData = determineDataToUse();
-
   const {
     personalInfo,
     recipient,
@@ -130,7 +33,7 @@ export default function CoverLetterPreviewCirculaire({
     currentSituation,
     motivation,
     conclusion,
-  } = safeData || {};
+  } = data;
 
   // Filter sections for page 1 and page 2
   const page1Sections = sectionOrder.filter(
@@ -163,11 +66,6 @@ export default function CoverLetterPreviewCirculaire({
 
   // Render personal info section for sidebar
   const renderPersonalInfo = () => {
-    // Only render if personalInfo exists and has at least one field filled
-    if (!personalInfo || Object.values(personalInfo).every((val) => !val)) {
-      return null;
-    }
-
     return (
       <div className="mt-6">
         <h2
@@ -179,44 +77,72 @@ export default function CoverLetterPreviewCirculaire({
             : "Personal Information"}
         </h2>
         <div className="space-y-4">
-          {(personalInfo?.firstName || personalInfo?.lastName) && (
-            <div className="flex items-center gap-3">
-              <User style={{ color: accentColor }} className="h-5 w-5" />
-              <span className="text-gray-700">
-                {personalInfo?.firstName} {personalInfo?.lastName}
-              </span>
-            </div>
-          )}
-
-          {personalInfo?.email && (
-            <div className="flex items-center gap-3">
-              <Mail style={{ color: accentColor }} className="h-5 w-5" />
-              <span className="text-gray-700">{personalInfo.email}</span>
-            </div>
-          )}
-
-          {personalInfo?.phone && (
-            <div className="flex items-center gap-3">
-              <Phone style={{ color: accentColor }} className="h-5 w-5" />
-              <span className="text-gray-700">{personalInfo.phone}</span>
-            </div>
-          )}
-
-          {(personalInfo?.address ||
-            personalInfo?.postalCode ||
-            personalInfo?.city) && (
-            <div className="flex items-start gap-3">
-              <Home style={{ color: accentColor }} className="h-5 w-5 mt-0.5" />
-              <div className="text-gray-700">
-                {personalInfo?.address && <div>{personalInfo.address}</div>}
-                {(personalInfo?.postalCode || personalInfo?.city) && (
-                  <div>
-                    {personalInfo?.postalCode} {personalInfo?.city}
-                  </div>
+          <div className="flex items-center gap-3">
+            <User style={{ color: accentColor }} className="h-5 w-5" />
+            <span className="text-gray-700">
+              {getPlaceholder(
+                "personalInfo",
+                "firstName",
+                personalInfo?.firstName,
+                language
+              )}{" "}
+              {getPlaceholder(
+                "personalInfo",
+                "lastName",
+                personalInfo?.lastName,
+                language
+              )}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Mail style={{ color: accentColor }} className="h-5 w-5" />
+            <span className="text-gray-700">
+              {getPlaceholder(
+                "personalInfo",
+                "email",
+                personalInfo?.email,
+                language
+              )}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Phone style={{ color: accentColor }} className="h-5 w-5" />
+            <span className="text-gray-700">
+              {getPlaceholder(
+                "personalInfo",
+                "phone",
+                personalInfo?.phone,
+                language
+              )}
+            </span>
+          </div>
+          <div className="flex items-start gap-3">
+            <Home style={{ color: accentColor }} className="h-5 w-5 mt-0.5" />
+            <div className="text-gray-700">
+              <div>
+                {getPlaceholder(
+                  "personalInfo",
+                  "address",
+                  personalInfo?.address,
+                  language
+                )}
+              </div>
+              <div>
+                {getPlaceholder(
+                  "personalInfo",
+                  "postalCode",
+                  personalInfo?.postalCode,
+                  language
+                )}{" "}
+                {getPlaceholder(
+                  "personalInfo",
+                  "city",
+                  personalInfo?.city,
+                  language
                 )}
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     );
@@ -224,25 +150,38 @@ export default function CoverLetterPreviewCirculaire({
 
   // Render recipient info section for sidebar
   const renderRecipientInfo = () => {
-    // Only render if recipient exists and has at least one field filled
-    if (!recipient || Object.values(recipient).every((val) => !val)) {
-      return null;
-    }
-
     return (
       <div className="mt-6">
         <div className="space-y-4">
           <div className="text-gray-700">
-            {recipient?.company && (
-              <p className="font-medium">{recipient.company}</p>
-            )}
-            {recipient?.name && <p>{recipient.name}</p>}
-            {recipient?.address && <p>{recipient.address}</p>}
-            {(recipient?.postalCode || recipient?.city) && (
-              <p>
-                {recipient?.postalCode} {recipient?.city}
-              </p>
-            )}
+            <p className="font-medium">
+              {getPlaceholder(
+                "recipient",
+                "company",
+                recipient?.company,
+                language
+              )}
+            </p>
+            <p>
+              {getPlaceholder("recipient", "name", recipient?.name, language)}
+            </p>
+            <p>
+              {getPlaceholder(
+                "recipient",
+                "address",
+                recipient?.address,
+                language
+              )}
+            </p>
+            <p>
+              {getPlaceholder(
+                "recipient",
+                "postalCode",
+                recipient?.postalCode,
+                language
+              )}{" "}
+              {getPlaceholder("recipient", "city", recipient?.city, language)}
+            </p>
           </div>
         </div>
       </div>
@@ -251,28 +190,31 @@ export default function CoverLetterPreviewCirculaire({
 
   // Render date and subject section for sidebar
   const renderDateAndSubject = () => {
-    // Only render if dateAndSubject exists and has at least one field filled
-    if (!dateAndSubject || Object.values(dateAndSubject).every((val) => !val)) {
-      return null;
-    }
-
     return (
       <div className="mt-6">
         <div className="space-y-4">
           <div className="text-gray-700">
-            {(dateAndSubject?.location || dateAndSubject?.date) && (
-              <p>
-                {dateAndSubject?.location && `${dateAndSubject.location}, `}
-                {dateAndSubject?.date
-                  ? `le ${dateAndSubject.date}`
-                  : `le ${new Date().toLocaleDateString(
-                      language === "fr" ? "fr-FR" : "en-US"
-                    )}`}
-              </p>
-            )}
-            {dateAndSubject?.subject && (
-              <p className="font-medium mt-2">{dateAndSubject.subject}</p>
-            )}
+            <p>
+              {getPlaceholder(
+                "dateAndSubject",
+                "location",
+                dateAndSubject?.location,
+                language
+              )}
+              , le{" "}
+              {dateAndSubject?.date ||
+                new Date().toLocaleDateString(
+                  language === "fr" ? "fr-FR" : "en-US"
+                )}
+            </p>
+            <p className="font-medium mt-2">
+              {getPlaceholder(
+                "dateAndSubject",
+                "subject",
+                dateAndSubject?.subject,
+                language
+              )}
+            </p>
           </div>
         </div>
       </div>
@@ -287,11 +229,6 @@ export default function CoverLetterPreviewCirculaire({
       }
 
       if (section.startsWith("custom-")) {
-        // Only render custom section if it has content
-        if (!customSections?.[section]) {
-          return null;
-        }
-
         return (
           <div key={section} className="mb-8">
             <h3
@@ -302,7 +239,7 @@ export default function CoverLetterPreviewCirculaire({
             </h3>
             <div
               dangerouslySetInnerHTML={{
-                __html: customSections[section],
+                __html: customSections?.[section] || "",
               }}
               className="text-gray-700"
             />
@@ -316,56 +253,64 @@ export default function CoverLetterPreviewCirculaire({
         case "date-et-objet":
           return renderDateAndSubject();
         case "introduction":
-          // Only render if introduction has content
-          if (!introduction) return null;
-
           return (
             <div key={section} className="mb-8">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: introduction,
+                  __html: getPlaceholder(
+                    "sections",
+                    "introduction",
+                    introduction,
+                    language
+                  ),
                 }}
                 className="text-gray-700"
               />
             </div>
           );
         case "situation-actuelle":
-          // Only render if currentSituation has content
-          if (!currentSituation) return null;
-
           return (
             <div key={section} className="mb-8">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: currentSituation,
+                  __html: getPlaceholder(
+                    "sections",
+                    "currentSituation",
+                    currentSituation,
+                    language
+                  ),
                 }}
                 className="text-gray-700"
               />
             </div>
           );
         case "motivation":
-          // Only render if motivation has content
-          if (!motivation) return null;
-
           return (
             <div key={section} className="mb-8">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: motivation,
+                  __html: getPlaceholder(
+                    "sections",
+                    "motivation",
+                    motivation,
+                    language
+                  ),
                 }}
                 className="text-gray-700"
               />
             </div>
           );
         case "conclusion":
-          // Only render if conclusion has content
-          if (!conclusion) return null;
-
           return (
             <div key={section} className="mb-8">
               <div
                 dangerouslySetInnerHTML={{
-                  __html: conclusion,
+                  __html: getPlaceholder(
+                    "sections",
+                    "conclusion",
+                    conclusion,
+                    language
+                  ),
                 }}
                 className="text-gray-700"
               />
@@ -396,10 +341,11 @@ export default function CoverLetterPreviewCirculaire({
             ></div>
           </div>
 
-          {/* Name at the top - only show if name exists */}
+          {/* Name at the top */}
           <div className="relative z-10 pt-12 px-8 text-center">
             <h1 className="text-2xl font-bold text-white">
-              {personalInfo?.firstName || ""} {personalInfo?.lastName || ""}
+              {personalInfo?.firstName || "Prénom"}{" "}
+              {personalInfo?.lastName || "Nom"}
             </h1>
           </div>
 
@@ -408,8 +354,8 @@ export default function CoverLetterPreviewCirculaire({
             <div className="w-36 h-36 rounded-full overflow-hidden border-4 border-white">
               <Image
                 src={personalInfo?.photo || "/placeholder-profile.jpg"}
-                alt={`${personalInfo?.firstName || ""} ${
-                  personalInfo?.lastName || ""
+                alt={`${personalInfo?.firstName || "Prénom"} ${
+                  personalInfo?.lastName || "Nom"
                 }`}
                 width={144}
                 height={144}
@@ -445,18 +391,6 @@ export default function CoverLetterPreviewCirculaire({
       </div>
     </div>
   );
-
-  // Log when template is rendering with data
-  useEffect(() => {
-    if (!isInitialRender) {
-      console.log("Circulaire template rendering", {
-        hasPersonalInfo: !!personalInfo,
-        hasIntroduction: !!introduction,
-        hasMotivation: !!motivation,
-        dataSource: isValidData(data) ? "props" : "cached",
-      });
-    }
-  }, [personalInfo, introduction, motivation, data, isInitialRender]);
 
   return (
     <div className="cv-container">
