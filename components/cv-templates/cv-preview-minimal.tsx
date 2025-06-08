@@ -131,7 +131,7 @@ export default function CVPreviewMinimal({
             <div>
               <h4 className="font-medium">Name</h4>
               <p>
-                {personalInfo?.firstName || ''} {personalInfo?.lastName || ''}
+                {personalInfo?.firstName || ""} {personalInfo?.lastName || ""}
               </p>
             </div>
           )}
@@ -150,13 +150,15 @@ export default function CVPreviewMinimal({
             </div>
           )}
 
-          {(personalInfo?.address || personalInfo?.postalCode || personalInfo?.city) && (
+          {(personalInfo?.address ||
+            personalInfo?.postalCode ||
+            personalInfo?.city) && (
             <div>
               <h4 className="font-medium">Address</h4>
               {personalInfo?.address && <p>{personalInfo?.address}</p>}
               {(personalInfo?.postalCode || personalInfo?.city) && (
                 <p>
-                  {personalInfo?.postalCode || ''} {personalInfo?.city || ''}
+                  {personalInfo?.postalCode || ""} {personalInfo?.city || ""}
                 </p>
               )}
             </div>
@@ -449,7 +451,7 @@ export default function CVPreviewMinimal({
                 marginBottom: 0,
               }}
             >
-              {personalInfo?.firstName || ''} {personalInfo?.lastName || ''}
+              {personalInfo?.firstName || ""} {personalInfo?.lastName || ""}
             </h1>
           )}
           {personalInfo?.title && (
@@ -466,7 +468,9 @@ export default function CVPreviewMinimal({
                 <div className="relative w-full pb-[100%]">
                   <Image
                     src={personalInfo.photo}
-                    alt={`${personalInfo?.firstName || ''} ${personalInfo?.lastName || ''}`}
+                    alt={`${personalInfo?.firstName || ""} ${
+                      personalInfo?.lastName || ""
+                    }`}
                     fill
                     className="object-cover rounded-md"
                     sizes="(max-width: 240px) 100vw, 240px"
@@ -524,7 +528,7 @@ export default function CVPreviewMinimal({
                   marginBottom: 0,
                 }}
               >
-                {personalInfo?.firstName || ''} {personalInfo?.lastName || ''}
+                {personalInfo?.firstName || ""} {personalInfo?.lastName || ""}
               </h1>
             )}
             {personalInfo?.title && (
@@ -541,7 +545,9 @@ export default function CVPreviewMinimal({
                   <div className="relative w-full pb-[100%]">
                     <Image
                       src={personalInfo.photo}
-                      alt={`${personalInfo?.firstName || ''} ${personalInfo?.lastName || ''}`}
+                      alt={`${personalInfo?.firstName || ""} ${
+                        personalInfo?.lastName || ""
+                      }`}
                       fill
                       className="object-cover rounded-md"
                       sizes="(max-width: 240px) 100vw, 240px"

@@ -1,7 +1,6 @@
 import React from "react";
 import type { CVData } from "@/types";
 import Image from "next/image";
-import { placeholderData, getPlaceholderOrValue } from "@/lib/utils";
 
 // Define the types locally to avoid import issues
 interface Education {
@@ -113,114 +112,96 @@ export default function CVPreviewClassic({
     minLinesBeforeBreak: 3,
   };
 
+  // Header with name and title
+  const renderHeader = () => (
+    <div className="text-center mb-8">
+      {personalInfo &&
+        (personalInfo["firstName"] || personalInfo["lastName"]) && (
+          <h1 className="text-2xl font-bold mb-2">
+            {personalInfo["firstName"] || ""} {personalInfo["lastName"] || ""}
+          </h1>
+        )}
+      {personalInfo && personalInfo["title"] && (
+        <p className="text-gray-600">{personalInfo["title"]}</p>
+      )}
+    </div>
+  );
+
+  // Photo
+  const renderPhoto = () => (
+    <div className="mb-6 flex justify-center">
+      {personalInfo && personalInfo["photo"] && (
+        <div
+          className="w-32 h-32 overflow-hidden rounded-full border-2"
+          style={{ borderColor: accentColor }}
+        >
+          <Image
+            src={personalInfo["photo"]}
+            alt={`${personalInfo["firstName"] || ""} ${
+              personalInfo["lastName"] || ""
+            }`}
+            width={128}
+            height={128}
+            className="object-cover w-full h-full"
+          />
+        </div>
+      )}
+    </div>
+  );
+
+  // Personal information
+  const renderPersonalInfo = () => (
+    <div className="mb-6">
+      <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
+        Contact
+      </h2>
+      <div className="space-y-2 section-content">
+        {personalInfo && personalInfo["email"] && (
+          <div>
+            <p className="text-sm font-medium">Email:</p>
+            <p className="text-sm">{personalInfo["email"]}</p>
+          </div>
+        )}
+        {personalInfo && personalInfo["phone"] && (
+          <div>
+            <p className="text-sm font-medium">Téléphone:</p>
+            <p className="text-sm">{personalInfo["phone"]}</p>
+          </div>
+        )}
+        {personalInfo &&
+          (personalInfo["address"] ||
+            personalInfo["postalCode"] ||
+            personalInfo["city"]) && (
+            <div>
+              <p className="text-sm font-medium">Adresse:</p>
+              <p className="text-sm">
+                {personalInfo["address"] || ""}
+                {personalInfo["address"] &&
+                  (personalInfo["postalCode"] || personalInfo["city"]) &&
+                  ", "}
+                {personalInfo["postalCode"] || ""} {personalInfo["city"] || ""}
+              </p>
+            </div>
+          )}
+      </div>
+    </div>
+  );
+
   const renderPage = (sections: string[]) => (
     <div className="cv-page">
       <div className="cv-page-content">
-        {/* Header with name and title */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold mb-2">
-            {getPlaceholderOrValue(
-              "personalInfo",
-              "firstName",
-              personalInfo?.firstName
-            )}{" "}
-            {getPlaceholderOrValue(
-              "personalInfo",
-              "lastName",
-              personalInfo?.lastName
-            )}
-          </h1>
-          <p className="text-gray-600">
-            {getPlaceholderOrValue(
-              "personalInfo",
-              "title",
-              personalInfo?.title
-            )}
-          </p>
-        </div>
+        {renderHeader()}
 
         {/* Two-column layout */}
         <div className="flex">
           {/* Left column */}
           <div className="w-1/3 pr-6">
-            {/* Photo */}
-            <div className="mb-6 flex justify-center">
-              <div
-                className="w-32 h-32 overflow-hidden rounded-full border-2"
-                style={{ borderColor: accentColor }}
-              >
-                <Image
-                  src={
-                    personalInfo?.photo || placeholderData.personalInfo.photo
-                  }
-                  alt={`${getPlaceholderOrValue(
-                    "personalInfo",
-                    "firstName",
-                    personalInfo?.firstName
-                  )} ${getPlaceholderOrValue(
-                    "personalInfo",
-                    "lastName",
-                    personalInfo?.lastName
-                  )}`}
-                  width={128}
-                  height={128}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-            </div>
+            {renderPhoto()}
 
-            {/* Personal information */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-                Contact
-              </h2>
-              <div className="space-y-2 section-content">
-                <div>
-                  <p className="text-sm font-medium">Email:</p>
-                  <p className="text-sm">
-                    {getPlaceholderOrValue(
-                      "personalInfo",
-                      "email",
-                      personalInfo?.email
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Téléphone:</p>
-                  <p className="text-sm">
-                    {getPlaceholderOrValue(
-                      "personalInfo",
-                      "phone",
-                      personalInfo?.phone
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Adresse:</p>
-                  <p className="text-sm">
-                    {getPlaceholderOrValue(
-                      "personalInfo",
-                      "address",
-                      personalInfo?.address
-                    )}
-                    ,{" "}
-                    {getPlaceholderOrValue(
-                      "personalInfo",
-                      "postalCode",
-                      personalInfo?.postalCode
-                    )}{" "}
-                    {getPlaceholderOrValue(
-                      "personalInfo",
-                      "city",
-                      personalInfo?.city
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
+            {renderPersonalInfo()}
 
             {/* Skills */}
-            {sections.includes("skills") && (
+            {sections.includes("skills") && skills?.length > 0 && (
               <div
                 className={`mb-6 ${
                   breakSettings.keepHeadingsWithContent ? "keep-together" : ""
@@ -230,29 +211,27 @@ export default function CVPreviewClassic({
                   {getSectionTitle("skills")}
                 </h2>
                 <div className="space-y-2 section-content">
-                  {(skills?.length ? skills : placeholderData.skills).map(
-                    (skill, index) => (
-                      <div key={index}>
-                        <p className="text-sm font-medium">{skill.name}</p>
-                        <div className="w-full bg-gray-200 h-2 rounded-full">
-                          <div
-                            className="h-2 rounded-full cv-accent-bg"
-                            style={{
-                              width: `${
-                                (parseInt(String(skill.level)) / 5) * 100
-                              }%`,
-                            }}
-                          ></div>
-                        </div>
+                  {skills.map((skill, index) => (
+                    <div key={index}>
+                      <p className="text-sm font-medium">{skill.name}</p>
+                      <div className="w-full bg-gray-200 h-2 rounded-full">
+                        <div
+                          className="h-2 rounded-full cv-accent-bg"
+                          style={{
+                            width: `${
+                              (parseInt(String(skill.level)) / 5) * 100
+                            }%`,
+                          }}
+                        ></div>
                       </div>
-                    )
-                  )}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
 
             {/* Languages */}
-            {sections.includes("languages") && (
+            {sections.includes("languages") && languages?.length > 0 && (
               <div
                 className={`mb-6 ${
                   breakSettings.keepHeadingsWithContent ? "keep-together" : ""
@@ -262,10 +241,7 @@ export default function CVPreviewClassic({
                   {getSectionTitle("languages")}
                 </h2>
                 <div className="space-y-2 section-content">
-                  {(languages?.length
-                    ? languages
-                    : placeholderData.languages
-                  ).map((language, index) => (
+                  {languages.map((language, index) => (
                     <div key={index}>
                       <p className="text-sm font-medium">{language.name}</p>
                       <p className="text-sm cv-accent-color">
@@ -278,7 +254,7 @@ export default function CVPreviewClassic({
             )}
 
             {/* Interests */}
-            {sections.includes("interests") && (
+            {sections.includes("interests") && interests?.length > 0 && (
               <div
                 className={`mb-6 ${
                   breakSettings.keepHeadingsWithContent ? "keep-together" : ""
@@ -288,10 +264,7 @@ export default function CVPreviewClassic({
                   {getSectionTitle("interests")}
                 </h2>
                 <ul className="list-disc list-inside text-sm space-y-1 section-content">
-                  {(interests?.length
-                    ? interests
-                    : placeholderData.interests
-                  ).map((interest, index) => (
+                  {interests.map((interest, index) => (
                     <div key={index} className="flex items-center gap-2">
                       <div className="w-1.5 h-1.5 bg-gray-700 rounded-full" />
                       <span className="text-sm text-gray-900">
@@ -309,7 +282,7 @@ export default function CVPreviewClassic({
             {sections.map((section) => {
               switch (section) {
                 case "profile":
-                  return (
+                  return profile ? (
                     <div
                       key={section}
                       className={`mb-6 ${
@@ -321,22 +294,17 @@ export default function CVPreviewClassic({
                       <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
                         {getSectionTitle("profile")}
                       </h2>
-                      <p className="text-sm section-content">
-                        {profile || placeholderData.profile}
-                      </p>
+                      <p className="text-sm section-content">{profile}</p>
                     </div>
-                  );
+                  ) : null;
                 case "experience":
-                  return (
+                  return experience?.length > 0 ? (
                     <div key={section} className="mb-6">
                       <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
                         {getSectionTitle("experience")}
                       </h2>
                       <div className="space-y-4 section-content">
-                        {(experience?.length
-                          ? experience
-                          : placeholderData.experience
-                        ).map((exp, index) => (
+                        {experience.map((exp, index) => (
                           <div
                             key={index}
                             className={`${
@@ -366,18 +334,15 @@ export default function CVPreviewClassic({
                         ))}
                       </div>
                     </div>
-                  );
+                  ) : null;
                 case "education":
-                  return (
+                  return education?.length > 0 ? (
                     <div key={section} className="mb-6">
                       <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
                         {getSectionTitle("education")}
                       </h2>
                       <div className="space-y-4 section-content">
-                        {(education?.length
-                          ? education
-                          : placeholderData.education
-                        ).map((edu, index) => (
+                        {education.map((edu, index) => (
                           <div
                             key={index}
                             className={`${
@@ -403,7 +368,7 @@ export default function CVPreviewClassic({
                         ))}
                       </div>
                     </div>
-                  );
+                  ) : null;
                 default:
                   // Handle custom sections
                   if (
