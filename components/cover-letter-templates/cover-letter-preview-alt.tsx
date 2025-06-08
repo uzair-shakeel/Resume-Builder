@@ -14,6 +14,8 @@ interface CoverLetterPreviewAltProps {
   sectionPages: Record<string, number>;
   customSectionNames: Record<string, string>;
   customSections?: Record<string, string>;
+  previewMode?: boolean;
+  showFirstPageOnly?: boolean;
 }
 
 export default function CoverLetterPreviewAlt({
@@ -24,6 +26,8 @@ export default function CoverLetterPreviewAlt({
   sectionPages,
   customSectionNames,
   customSections = {},
+  previewMode = false,
+  showFirstPageOnly = false,
 }: CoverLetterPreviewAltProps) {
   const {
     personalInfo,
@@ -204,7 +208,7 @@ export default function CoverLetterPreviewAlt({
       </div>
 
       {/* Page 2 if needed */}
-      {hasPage2 && (
+      {hasPage2 && !showFirstPageOnly && (
         <div className="cv-page w-[210mm] h-[297mm] relative bg-white shadow-lg mx-auto overflow-hidden page-break-before">
           {/* Left Sidebar */}
           <div

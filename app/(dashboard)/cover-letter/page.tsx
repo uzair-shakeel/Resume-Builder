@@ -81,11 +81,10 @@ const CoverLetterPreviewWrapper = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div
-      className="w-full h-full"
-      style={{ minWidth: "21cm", minHeight: "29.7cm" }}
-    >
-      <div className="w-full h-full">{children}</div>
+    <div className="w-full h-full dashboard-preview">
+      <div className="w-full h-full flex items-center justify-center">
+        {children}
+      </div>
     </div>
   );
 };
@@ -145,22 +144,19 @@ export default function CoverLetterDashboard() {
 
   useEffect(() => {
     const getScale = (width: number): number => {
+      // Scale for the card previews (smaller)
       if (width >= 1500) {
-        return (0.8 + width) / 5400;
+        return 0.33;
       } else if (width >= 1280) {
-        return (0.6 + width) / 4800;
+        return 0.3;
       } else if (width >= 1024) {
-        return (0.6 + width) / 4000;
-      } else if (width >= 840) {
-        return (0.9 + width) / 2300;
+        return 0.27;
       } else if (width >= 768) {
-        return (0.9 + width) / 2000;
-      } else if (width >= 500) {
-        return (1 + width) / 1000;
-      } else if (width >= 350) {
-        return (1 + width) / 1150;
+        return 0.25;
+      } else if (width >= 640) {
+        return 0.23;
       } else {
-        return (1 + width) / 1250;
+        return 0.21;
       }
     };
 
@@ -298,6 +294,8 @@ export default function CoverLetterDashboard() {
       sectionPages: coverLetter.sectionPages || {},
       customSectionNames: coverLetter.customSectionNames || {},
       customSections: coverLetter.customSections || {},
+      previewMode: true,
+      showFirstPageOnly: true,
     };
 
     const preview = (() => {
@@ -368,6 +366,38 @@ export default function CoverLetterDashboard() {
               {t("site.dashboard.coverLetters.create_letter")}
             </button>
           </div>
+
+          {/* Global styles for document preview */}
+          <style jsx global>{`
+            .cv-page:not(:first-child),
+            .cv-page + .cv-page {
+              display: none !important;
+            }
+            .dashboard-preview {
+              width: 100%;
+              height: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .dashboard-preview > div {
+              width: 100%;
+              height: 100%;
+            }
+            /* Hide any elements after the first .cv-page */
+            .cv-page ~ * {
+              display: none !important;
+            }
+            /* Ensure proper sizing */
+            .cv-page {
+              max-height: 297mm !important;
+              overflow: hidden !important;
+            }
+            /* Force hide second page */
+            .page-break-before {
+              display: none !important;
+            }
+          `}</style>
 
           {/* Cover Letter grid content */}
           {loading ? (

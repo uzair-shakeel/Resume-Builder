@@ -60,11 +60,10 @@ interface CV {
 // Add this component before the Dashboard component
 const CVPreviewWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div
-      className="w-full h-full"
-      style={{ minWidth: "21cm", minHeight: "29.7cm" }}
-    >
-      <div className="w-full h-full">{children}</div>
+    <div className="w-full h-full dashboard-preview">
+      <div className="w-full h-full flex items-center justify-center">
+        {children}
+      </div>
     </div>
   );
 };
@@ -118,22 +117,19 @@ export default function CVDashboard() {
 
   useEffect(() => {
     const getScale = (width: number): number => {
+      // Scale for the card previews (smaller)
       if (width >= 1500) {
-        return (0.8 + width) / 5400;
+        return 0.33;
       } else if (width >= 1280) {
-        return (0.6 + width) / 4800;
+        return 0.3;
       } else if (width >= 1024) {
-        return (0.6 + width) / 4000;
-      } else if (width >= 840) {
-        return (0.9 + width) / 2300;
+        return 0.27;
       } else if (width >= 768) {
-        return (0.9 + width) / 2000;
-      } else if (width >= 500) {
-        return (1 + width) / 1000;
-      } else if (width >= 350) {
-        return (1 + width) / 1150;
+        return 0.25;
+      } else if (width >= 640) {
+        return 0.23;
       } else {
-        return (1 + width) / 1250;
+        return 0.21;
       }
     };
 
@@ -285,6 +281,8 @@ export default function CVDashboard() {
       fontFamily: cv.fontFamily || "'DejaVu Sans', sans-serif",
       sectionPages: cv.sectionPages || {},
       customSectionNames: cv.customSectionNames || {},
+      previewMode: true,
+      showFirstPageOnly: true,
     };
 
     const preview = (() => {
@@ -343,7 +341,7 @@ export default function CVDashboard() {
       {/* Main content */}
       <main className="flex-1 pt-20 lg:pt-5 pb-24">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
+          <div className="mb-8">
             <h1 className="text-2xl font-bold">
               {t("site.dashboard.resumes.title")}
             </h1>
@@ -355,6 +353,34 @@ export default function CVDashboard() {
               {t("site.dashboard.resumes.create_resume")}
             </button>
           </div>
+
+          {/* Global styles for document preview */}
+          <style jsx global>{`
+            .cv-page:not(:first-child),
+            .cv-page + .cv-page {
+              display: none !important;
+            }
+            .dashboard-preview {
+              width: 100%;
+              height: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .dashboard-preview > div {
+              width: 100%;
+              height: 100%;
+            }
+            /* Hide any elements after the first .cv-page */
+            .cv-page ~ * {
+              display: none !important;
+            }
+            /* Ensure proper sizing */
+            .cv-page {
+              max-height: 297mm;
+              overflow: hidden;
+            }
+          `}</style>
 
           {/* CV grid content */}
           {loading ? (

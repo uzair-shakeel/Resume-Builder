@@ -16,6 +16,8 @@ interface CVPreviewAltProps {
   fontFamily?: string;
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
+  previewMode?: boolean;
+  showFirstPageOnly?: boolean;
 }
 
 export default function CVPreviewAlt({
@@ -26,6 +28,8 @@ export default function CVPreviewAlt({
   fontFamily = "'DejaVu Sans', sans-serif",
   sectionPages = {},
   customSectionNames = {},
+  previewMode = false,
+  showFirstPageOnly = false,
 }: CVPreviewAltProps) {
   const {
     personalInfo = {},
@@ -385,7 +389,7 @@ export default function CVPreviewAlt({
       </div>
 
       {/* Page 2 (if needed) */}
-      {hasPage2 && (
+      {hasPage2 && !showFirstPageOnly && (
         <div className="cv-page">
           <div className="cv-page-content flex">
             {/* Sidebar */}
