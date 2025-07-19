@@ -206,7 +206,7 @@ export default function Experience({ data, updateData }: ExperienceProps) {
                   >
                     <option value="">Year</option>
                     {Array.from(
-                      { length: 30 },
+                      { length: 126 },
                       (_, i) => new Date().getFullYear() - i
                     ).map((year) => (
                       <option key={year} value={year.toString()}>
@@ -278,7 +278,7 @@ export default function Experience({ data, updateData }: ExperienceProps) {
                       >
                         <option value="">Year</option>
                         {Array.from(
-                          { length: 30 },
+                          { length: 126 },
                           (_, i) => new Date().getFullYear() - i
                         ).map((year) => (
                           <option key={year} value={year.toString()}>
