@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
       startDate,
       endDate,
       amount: actualAmount,
-      currency: "USD", // Change as needed
+      currency: "XOF", // Change as needed
       status: "active",
       paymentReference: reference,
       duration: planDuration,

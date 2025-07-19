@@ -26,7 +26,7 @@ const PaymentSchema = new mongoose.Schema<IPayment>({
   currency: {
     type: String,
     required: [true, "Currency is required"],
-    default: "USD",
+    default: "XOF",
   },
   status: {
     type: String,
@@ -59,4 +59,5 @@ const PaymentSchema = new mongoose.Schema<IPayment>({
 // Create a compound index to ensure we don't duplicate transaction IDs
 PaymentSchema.index({ transactionId: 1 }, { unique: true, sparse: true });
 
-export default mongoose.models.Payment || mongoose.model<IPayment>("Payment", PaymentSchema); 
+export default mongoose.models.Payment ||
+  mongoose.model<IPayment>("Payment", PaymentSchema);
