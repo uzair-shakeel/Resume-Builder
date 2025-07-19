@@ -1319,6 +1319,7 @@ export default function Builder() {
   // Function to handle section renaming
   const handleRenameSection = (section: string) => {
     setSectionToRename(section);
+    // Use the translation system to get the correct section name based on the current language
     setNewSectionName(customSectionNames[section] || getSectionTitle(section));
     setIsRenamingSection(true);
     setActiveSectionMenu(null);
@@ -1552,10 +1553,37 @@ export default function Builder() {
     // Add the section to the section order
     setSectionOrder((prev) => [...prev, sectionId]);
 
-    // Set the custom name for the section
+    // Get the translated section name based on the current language
+    let translatedSectionName = "";
+
+    // Map the English section name to the translation key
+    const sectionNameToKey: Record<string, string> = {
+      Certifications: "certifications",
+      Projects: "projects",
+      Publications: "publications",
+      Awards: "awards",
+      References: "references",
+      "Volunteer Work": "volunteer_work",
+      "Custom Section": "custom_section",
+    };
+
+    // Get the translation key for this section name
+    const translationKey = sectionNameToKey[sectionName];
+
+    if (translationKey) {
+      // Use the translation system to get the localized name
+      translatedSectionName = t(
+        `site.builder.custom_sections.options.${translationKey}`
+      );
+    } else {
+      // Fallback to the provided name if no translation is found
+      translatedSectionName = sectionName;
+    }
+
+    // Set the custom name for the section using the translated name
     setCustomSectionNames((prev) => ({
       ...prev,
-      [sectionId]: sectionName,
+      [sectionId]: translatedSectionName,
     }));
 
     // Initialize the section data

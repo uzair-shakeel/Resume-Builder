@@ -203,7 +203,7 @@
       "custom_sections": {
         "description": "Noms de sections personnalisés qui peuvent être ajoutés",
         "options": {
-          "certifications": "Certifications",
+          "certifications": "Attestations",
           "projects": "Projets",
           "publications": "Publications",
           "awards": "Prix",
