@@ -1141,9 +1141,26 @@ export default function CoverLetterBuilder() {
     setSaveStatus("unsaved");
   };
 
+  // State to track menu position
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+
   const toggleSectionMenu = (section: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setActiveSectionMenu(activeSectionMenu === section ? null : section);
+    
+    if (activeSectionMenu === section) {
+      setActiveSectionMenu(null);
+    } else {
+      // Calculate position before showing the menu
+      const buttonRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const left = buttonRect.right - 192; // 12rem = 192px
+      const top = buttonRect.bottom + 10;
+      
+      // Set the position first
+      setMenuPosition({ top, left });
+      
+      // Then show the menu
+      setActiveSectionMenu(section);
+    }
   };
 
   const getSectionTitle = (section: string): string => {
@@ -2474,7 +2491,11 @@ export default function CoverLetterBuilder() {
                         </button>
 
                         {activeSectionMenu === section && (
-                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                          <div className="fixed z-[100] bg-white rounded-md shadow-lg border border-gray-200 section-menu-container" style={{
+                            top: `${menuPosition.top}px`,
+                            left: `${menuPosition.left}px`,
+                            width: "12rem"
+                          }}>
                             <div className="py-1">
                               <button
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
