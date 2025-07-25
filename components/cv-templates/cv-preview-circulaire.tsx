@@ -302,7 +302,7 @@ export default function CVPreviewCirculaire({
                       </p>
                     </div>
                     <div className="text-gray-600 font-medium">
-                      de {edu.startDate} à{" "}
+                      {edu.startDate}
                       {edu.current ? "ce jour" : edu.endDate}
                     </div>
                   </div>
@@ -340,7 +340,7 @@ export default function CVPreviewCirculaire({
                       </p>
                     </div>
                     <div className="text-gray-600 font-medium">
-                      de {exp.startDate} à{" "}
+                      {exp.startDate} 
                       {exp.current ? "ce jour" : exp.endDate}
                     </div>
                   </div>

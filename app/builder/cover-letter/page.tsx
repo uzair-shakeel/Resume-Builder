@@ -91,12 +91,6 @@ const templateOptions = [
     defaultColor: "#2c3e50",
   },
   {
-    name: "Professional",
-    value: "professional",
-    image: "/assets/professional.png",
-    defaultColor: "#3498db",
-  },
-  {
     name: "Sherlock",
     value: "sherlock",
     image: "/assets/resume3.png",
@@ -109,12 +103,6 @@ const templateOptions = [
     defaultColor: "#9b59b6",
   },
   {
-    name: "Circulaire",
-    value: "circulaire",
-    image: "/assets/circulaire.jpg",
-    defaultColor: "#2BCBBA",
-  },
-  {
     name: "Minimal",
     value: "minimal",
     image: "/assets/minimal-resume.jpg",
@@ -125,12 +113,6 @@ const templateOptions = [
     value: "teal",
     image: "/assets/teal.jpg",
     defaultColor: "#2BCBBA",
-  },
-  {
-    name: "Student",
-    value: "student",
-    image: "/assets/student-resume.jpg",
-    defaultColor: "#4dabf7",
   },
 ];
 
