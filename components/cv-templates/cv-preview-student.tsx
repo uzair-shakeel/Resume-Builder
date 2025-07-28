@@ -576,7 +576,7 @@ export default function CVPreviewStudent({
                 </svg>
               </div>
               <div className="absolute top-[220px] left-0 w-full h-full cv-sidebar"></div>
-              <div className="relative z-10 mt-[100px]">
+              <div className="relative z-10 mt-[150px]">
                 {sections
                   .filter(
                     (section) =>

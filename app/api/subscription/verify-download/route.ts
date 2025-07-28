@@ -91,13 +91,11 @@ export async function POST(request: NextRequest) {
 
     // Build a query that:
     // 1. Matches the user by ID or email
-    // 2. Matches the correct subscription type
-    // 3. Is active and not expired
+    // 2. Is active and not expired
+    // Note: Any active subscription allows access to both CV and cover letter downloads
     const query = {
       // User identification (user ID or email)
       $or: [{ userId: user._id }, { email: userEmail }],
-      // Subscription must be one of these types
-      type: { $in: [downloadType, "all"] },
       // Must be active and not expired
       status: "active",
       endDate: { $gt: currentDate },
@@ -112,12 +110,12 @@ export async function POST(request: NextRequest) {
 
     if (!hasActiveSubscription) {
       console.log(
-        `Download verification failed: No active subscription found for ${downloadType}`
+        `Download verification failed: No active subscription found for user ${userEmail}`
       );
       return NextResponse.json({
         success: false,
         hasActiveSubscription: false,
-        message: "No active subscription found for this content type",
+        message: "No active subscription found",
       });
     }
 

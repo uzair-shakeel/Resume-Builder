@@ -894,33 +894,7 @@ export default function Builder() {
     }
   };
 
-  // Debounced auto-save with immediate save for important changes
-  const debouncedSave = (immediate = false) => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    // Skip saving during template changes
-    if (isChangingTemplate.current) {
-      console.log("Skipping save operation during template change");
-      return;
-    }
-
-    if (immediate) {
-      saveCV();
-    } else {
-      setSaveStatus("unsaved");
-
-      // Set up debounced save
-      saveTimeoutRef.current = setTimeout(() => {
-        if (!isChangingTemplate.current) {
-          saveCV();
-        } else {
-          console.log("Skipping delayed save due to active template change");
-        }
-      }, 2000); // 2 second debounce
-    }
-  };
+  // No auto-save functionality - manual save only
 
   // Add a new manual save function
   const handleManualSave = () => {
@@ -955,18 +929,12 @@ export default function Builder() {
     }
   };
 
-  // Update CV data with auto-save
+  // Update CV data - manual save only, no auto-save
   const updateCVData = (
     section: string,
     data: any,
     options?: { skipUnsavedFlag?: boolean }
   ) => {
-    // Skip updates during template changes to prevent data loss
-    if (isChangingTemplate.current) {
-      console.log(`Skipping update to ${section} during template change`);
-      return;
-    }
-
     setCVData((prev) => {
       const newData = {
         ...prev,
@@ -975,8 +943,8 @@ export default function Builder() {
       return newData;
     });
 
-    // Only set unsaved if not skipping
-    if (!options?.skipUnsavedFlag && saveStatus === "saved") {
+    // Always set to unsaved when data changes (unless explicitly skipped)
+    if (!options?.skipUnsavedFlag) {
       setSaveStatus("unsaved");
     }
   };
@@ -990,92 +958,10 @@ export default function Builder() {
     };
   }, []);
 
-  // Add a ref to track if we're changing templates
-  const isChangingTemplate = useRef(false);
-
-  // Add a template loading state
+  // Template loading state for UI feedback
   const [isTemplateLoading, setIsTemplateLoading] = useState(false);
 
-  // Add a timeout reference to reset loading state if stuck
-  const templateLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Function to safely reset template loading state
-  const safeResetTemplateLoadingState = () => {
-    console.log("Safety timeout: forcing reset of template loading state");
-    isChangingTemplate.current = false;
-    setIsTemplateLoading(false);
-    if (templateLoadingTimeoutRef.current) {
-      clearTimeout(templateLoadingTimeoutRef.current);
-      templateLoadingTimeoutRef.current = null;
-    }
-  };
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (templateLoadingTimeoutRef.current) {
-        clearTimeout(templateLoadingTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Also modify the useEffect that handles URL template changes
-  // Add a template validation function
-  const verifyTemplateConsistency = useCallback(() => {
-    if (isTemplateLoading) return; // Skip during template changes
-
-    const urlTemplate = searchParams.get("template") as string;
-    if (urlTemplate && urlTemplate !== template) {
-      console.warn(
-        `Template inconsistency detected: URL=${urlTemplate}, State=${template}`
-      );
-
-      // Check if the URL template is valid
-      const isValidTemplate = templateOptions.some(
-        (t) => t.value === urlTemplate
-      );
-      if (isValidTemplate) {
-        console.log("Syncing application state with URL template");
-        // Update application state to match URL
-        setTemplate(urlTemplate as any);
-        const index = templateOptions.findIndex((t) => t.value === urlTemplate);
-        if (index !== -1) {
-          setActiveTemplateIndex(index);
-        }
-      } else {
-        console.log("Syncing URL with application state template");
-        // Update URL to match application state
-        const currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.set("template", template);
-        window.history.replaceState({}, "", currentUrl.toString());
-      }
-    }
-  }, [searchParams, template, templateOptions, isTemplateLoading]);
-
-  // Add event listener to reset loading state if user navigates away during loading
-  useEffect(() => {
-    if (isTemplateLoading) {
-      const handleBeforeUnload = () => {
-        // Reset loading state if user navigates away during template change
-        safeResetTemplateLoadingState();
-      };
-
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
-    }
-  }, [isTemplateLoading, safeResetTemplateLoadingState]);
-
-  // Store template loading start time
-  useEffect(() => {
-    if (isTemplateLoading) {
-      localStorage.setItem(
-        "template-loading-start-time",
-        Date.now().toString()
-      );
-    }
-  }, [isTemplateLoading]);
 
   // Save color preference for each template
   useEffect(() => {
@@ -1365,27 +1251,29 @@ export default function Builder() {
     setSaveStatus("unsaved");
   };
 
- // State to track menu position
- const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  // State to track menu position
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
- const toggleSectionMenu = (section: string, e: React.MouseEvent) => {
-   e.stopPropagation();
-   
-   if (activeSectionMenu === section) {
-     setActiveSectionMenu(null);
-   } else {
-     // Calculate position before showing the menu
-     const buttonRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-     const left = buttonRect.right - 192; // 12rem = 192px
-     const top = buttonRect.bottom + 10;
-     
-     // Set the position first
-     setMenuPosition({ top, left });
-     
-     // Then show the menu
-     setActiveSectionMenu(section);
-   }
- };
+  const toggleSectionMenu = (section: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (activeSectionMenu === section) {
+      setActiveSectionMenu(null);
+    } else {
+      // Calculate position before showing the menu
+      const buttonRect = (
+        e.currentTarget as HTMLElement
+      ).getBoundingClientRect();
+      const left = buttonRect.right - 192; // 12rem = 192px
+      const top = buttonRect.bottom + 10;
+
+      // Set the position first
+      setMenuPosition({ top, left });
+
+      // Then show the menu
+      setActiveSectionMenu(section);
+    }
+  };
 
   // Function to get section title with custom names
   const getSectionTitle = (section: string): string => {
@@ -1423,19 +1311,6 @@ export default function Builder() {
     }
   };
 
-  // Call verification at regular intervals
-  useEffect(() => {
-    // Verify template consistency on initial load
-    verifyTemplateConsistency();
-
-    // Set up periodic verification
-    const intervalId = setInterval(() => {
-      verifyTemplateConsistency();
-    }, 2000); // Check every 2 seconds
-
-    return () => clearInterval(intervalId);
-  }, [verifyTemplateConsistency]);
-
   const renderTemplate = () => {
     // Create props object for page break settings
     const pageBreakSettingsProps = {
@@ -1455,20 +1330,8 @@ export default function Builder() {
       customSectionNames,
     };
 
-    // Log current template being rendered and trigger verification
+    // Log current template being rendered
     console.log(`Rendering template: ${template}`);
-    verifyTemplateConsistency();
-
-    // Verify URL consistency during rendering
-    const urlTemplate = new URL(window.location.href).searchParams.get(
-      "template"
-    );
-    if (urlTemplate && urlTemplate !== template) {
-      console.warn(
-        `Template mismatch during render! URL: ${urlTemplate}, State: ${template}`
-      );
-      // We'll let the useEffect handle this inconsistency
-    }
 
     switch (template) {
       case "modern":
@@ -1822,258 +1685,61 @@ export default function Builder() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Update the template selection functions to show loading state
+  // Simplified template change functions that preserve data
   const prevTemplate = () => {
-    if (isTemplateLoading) return; // Prevent multiple template changes while loading
-
-    setIsTemplateLoading(true);
-    isChangingTemplate.current = true;
-
-    // Set a safety timeout to prevent getting stuck in loading state
-    if (templateLoadingTimeoutRef.current) {
-      clearTimeout(templateLoadingTimeoutRef.current);
-    }
-    templateLoadingTimeoutRef.current = setTimeout(() => {
-      console.warn("Template change timeout reached, forcing reset");
-      safeResetTemplateLoadingState();
-    }, 8000); // 8 seconds timeout
+    if (isTemplateLoading) return;
 
     const currentIndex = activeTemplateIndex;
     const newIndex =
       currentIndex === 0 ? templateOptions.length - 1 : currentIndex - 1;
     const selectedTemplateValue = templateOptions[newIndex].value as any;
 
-    console.log(`Starting template change to: ${selectedTemplateValue}`);
-
-    // Batch state updates to avoid race conditions
-    setActiveTemplateIndex(newIndex);
-    setTemplate(selectedTemplateValue);
-
-    // Update the URL with the selected template
+    // Update URL and state simultaneously
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set("template", selectedTemplateValue);
     window.history.replaceState({}, "", currentUrl.toString());
 
-    // Save the template change to the database immediately
-    if (cvId) {
-      saveCV()
-        .then((result) => {
-          // Verify URL consistency
-          const urlTemplate = new URL(window.location.href).searchParams.get(
-            "template"
-          );
-          if (urlTemplate !== selectedTemplateValue) {
-            console.error(
-              `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
-            );
-            // Force URL update
-            const fixUrl = new URL(window.location.href);
-            fixUrl.searchParams.set("template", selectedTemplateValue);
-            window.history.replaceState({}, "", fixUrl.toString());
-          }
-
-          setTimeout(() => {
-            isChangingTemplate.current = false;
-            setIsTemplateLoading(false);
-            // Clear the safety timeout
-            if (templateLoadingTimeoutRef.current) {
-              clearTimeout(templateLoadingTimeoutRef.current);
-              templateLoadingTimeoutRef.current = null;
-            }
-            console.log(`Template change completed: ${selectedTemplateValue}`);
-          }, 500); // Give extra time for rendering
-        })
-        .catch((error) => {
-          console.error("Error saving template change:", error);
-          safeResetTemplateLoadingState(); // Reset on error
-        });
-    } else {
-      setTimeout(() => {
-        isChangingTemplate.current = false;
-        setIsTemplateLoading(false);
-        // Clear the safety timeout
-        if (templateLoadingTimeoutRef.current) {
-          clearTimeout(templateLoadingTimeoutRef.current);
-          templateLoadingTimeoutRef.current = null;
-        }
-        console.log(`Template change completed: ${selectedTemplateValue}`);
-      }, 500); // Give extra time for rendering
-    }
+    setActiveTemplateIndex(newIndex);
+    setTemplate(selectedTemplateValue);
+    setSaveStatus("unsaved");
   };
 
   const nextTemplate = () => {
-    if (isTemplateLoading) return; // Prevent multiple template changes while loading
-
-    setIsTemplateLoading(true);
-    isChangingTemplate.current = true;
-
-    // Set a safety timeout to prevent getting stuck in loading state
-    if (templateLoadingTimeoutRef.current) {
-      clearTimeout(templateLoadingTimeoutRef.current);
-    }
-    templateLoadingTimeoutRef.current = setTimeout(() => {
-      console.warn("Template change timeout reached, forcing reset");
-      safeResetTemplateLoadingState();
-    }, 8000); // 8 seconds timeout
+    if (isTemplateLoading) return;
 
     const currentIndex = activeTemplateIndex;
     const newIndex =
       currentIndex === templateOptions.length - 1 ? 0 : currentIndex + 1;
     const selectedTemplateValue = templateOptions[newIndex].value as any;
 
-    console.log(`Starting template change to: ${selectedTemplateValue}`);
-
-    // Batch state updates to avoid race conditions
-    setActiveTemplateIndex(newIndex);
-    setTemplate(selectedTemplateValue);
-
-    // Update the URL with the selected template
+    // Update URL and state simultaneously
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set("template", selectedTemplateValue);
     window.history.replaceState({}, "", currentUrl.toString());
 
-    // Save the template change to the database immediately
-    if (cvId) {
-      saveCV()
-        .then((result) => {
-          // Verify URL consistency
-          const urlTemplate = new URL(window.location.href).searchParams.get(
-            "template"
-          );
-          if (urlTemplate !== selectedTemplateValue) {
-            console.error(
-              `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
-            );
-            // Force URL update
-            const fixUrl = new URL(window.location.href);
-            fixUrl.searchParams.set("template", selectedTemplateValue);
-            window.history.replaceState({}, "", fixUrl.toString());
-          }
-
-          setTimeout(() => {
-            isChangingTemplate.current = false;
-            setIsTemplateLoading(false);
-            // Clear the safety timeout
-            if (templateLoadingTimeoutRef.current) {
-              clearTimeout(templateLoadingTimeoutRef.current);
-              templateLoadingTimeoutRef.current = null;
-            }
-            console.log(`Template change completed: ${selectedTemplateValue}`);
-          }, 500); // Give extra time for rendering
-        })
-        .catch((error) => {
-          console.error("Error saving template change:", error);
-          safeResetTemplateLoadingState(); // Reset on error
-        });
-    } else {
-      setTimeout(() => {
-        isChangingTemplate.current = false;
-        setIsTemplateLoading(false);
-        // Clear the safety timeout
-        if (templateLoadingTimeoutRef.current) {
-          clearTimeout(templateLoadingTimeoutRef.current);
-          templateLoadingTimeoutRef.current = null;
-        }
-        console.log(`Template change completed: ${selectedTemplateValue}`);
-      }, 500); // Give extra time for rendering
-    }
+    setActiveTemplateIndex(newIndex);
+    setTemplate(selectedTemplateValue);
+    setSaveStatus("unsaved");
   };
 
   const selectTemplate = (index: number) => {
-    if (isTemplateLoading) return; // Prevent multiple template changes while loading
-
-    setIsTemplateLoading(true);
-    isChangingTemplate.current = true;
-
-    // Store current CV data to ensure it's preserved during template change
-    const currentData = { ...cvData };
-
-    // Set a safety timeout to prevent getting stuck in loading state
-    if (templateLoadingTimeoutRef.current) {
-      clearTimeout(templateLoadingTimeoutRef.current);
-    }
-    templateLoadingTimeoutRef.current = setTimeout(() => {
-      console.warn("Template change timeout reached, forcing reset");
-      safeResetTemplateLoadingState();
-    }, 8000); // 8 seconds timeout
+    if (isTemplateLoading) return;
 
     const selectedTemplateValue = templateOptions[index].value as any;
 
-    console.log(`Starting template change to: ${selectedTemplateValue}`);
-
-    // First update the template value
-    setTemplate(selectedTemplateValue);
-
-    // Then update other UI states
-    setActiveTemplateIndex(index);
-    setShowTemplateCarousel(false);
-
-    // Update the URL with the selected template
+    // Update URL and state simultaneously
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set("template", selectedTemplateValue);
     window.history.replaceState({}, "", currentUrl.toString());
 
-    // Ensure data is preserved by explicitly setting it again
-    setTimeout(() => {
-      setCVData(currentData);
-
-      // Save the template change to the database immediately
-      if (cvId) {
-        saveCV()
-          .then((result) => {
-            // Verify URL consistency
-            const urlTemplate = new URL(window.location.href).searchParams.get(
-              "template"
-            );
-            if (urlTemplate !== selectedTemplateValue) {
-              console.error(
-                `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
-              );
-              // Force URL update
-              const fixUrl = new URL(window.location.href);
-              fixUrl.searchParams.set("template", selectedTemplateValue);
-              window.history.replaceState({}, "", fixUrl.toString());
-            }
-
-            setTimeout(() => {
-              isChangingTemplate.current = false;
-              setIsTemplateLoading(false);
-              // Clear the safety timeout
-              if (templateLoadingTimeoutRef.current) {
-                clearTimeout(templateLoadingTimeoutRef.current);
-                templateLoadingTimeoutRef.current = null;
-              }
-              console.log(
-                `Template change completed: ${selectedTemplateValue}`
-              );
-            }, 500); // Give extra time for rendering
-          })
-          .catch((error) => {
-            console.error("Error saving template change:", error);
-            safeResetTemplateLoadingState(); // Reset on error
-          });
-      } else {
-        setTimeout(() => {
-          isChangingTemplate.current = false;
-          setIsTemplateLoading(false);
-          // Clear the safety timeout
-          if (templateLoadingTimeoutRef.current) {
-            clearTimeout(templateLoadingTimeoutRef.current);
-            templateLoadingTimeoutRef.current = null;
-          }
-          console.log(`Template change completed: ${selectedTemplateValue}`);
-        }, 500); // Give extra time for rendering
-      }
-    }, 100); // Small delay to ensure template change happens first
+    setTemplate(selectedTemplateValue);
+    setActiveTemplateIndex(index);
+    setShowTemplateCarousel(false);
+    setSaveStatus("unsaved");
   };
 
-  // Add the useEffect that handles URL template changes
+  // Simplified URL template change handler
   useEffect(() => {
-    // Skip if we're currently changing templates via carousel
-    if (isChangingTemplate.current) {
-      return;
-    }
-
     const templateParam = searchParams.get("template") as
       | "modern"
       | "classic"
@@ -2085,127 +1751,26 @@ export default function Builder() {
       | "circulaire"
       | "student";
 
-    console.log(`Template param from URL: ${templateParam}`);
-
     if (templateParam && templateParam !== template) {
-      console.log(`Setting template from URL: ${templateParam}`);
-
-      // Set loading state
-      setIsTemplateLoading(true);
-
-      // Set a safety timeout to prevent getting stuck in loading state
-      if (templateLoadingTimeoutRef.current) {
-        clearTimeout(templateLoadingTimeoutRef.current);
-      }
-      templateLoadingTimeoutRef.current = setTimeout(() => {
-        console.warn("Template change from URL timeout reached, forcing reset");
-        safeResetTemplateLoadingState();
-      }, 8000); // 8 seconds timeout
-
-      setTemplate(templateParam);
-
       const index = templateOptions.findIndex((t) => t.value === templateParam);
-      console.log(
-        `Found template index: ${index}, value: ${templateOptions[index]?.value}`
-      );
 
       if (index !== -1) {
+        setTemplate(templateParam);
         setActiveTemplateIndex(index);
+
         // Set the default color for the selected template if no custom color is set
         if (!localStorage.getItem(`cv-color-${templateParam}`)) {
           setAccentColor(templateOptions[index].defaultColor);
         }
 
-        // Only save if we have a CV ID and this isn't the initial load
-        if (cvId && !initialLoad.current) {
-          saveCV()
-            .then(() => {
-              setTimeout(() => {
-                isChangingTemplate.current = false;
-                setIsTemplateLoading(false);
-                if (templateLoadingTimeoutRef.current) {
-                  clearTimeout(templateLoadingTimeoutRef.current);
-                  templateLoadingTimeoutRef.current = null;
-                }
-              }, 500);
-            })
-            .catch((error) => {
-              console.error("Error saving template from URL param:", error);
-              safeResetTemplateLoadingState();
-            });
-        } else {
-          setTimeout(() => {
-            isChangingTemplate.current = false;
-            setIsTemplateLoading(false);
-            if (templateLoadingTimeoutRef.current) {
-              clearTimeout(templateLoadingTimeoutRef.current);
-              templateLoadingTimeoutRef.current = null;
-            }
-          }, 500);
-        }
-      } else {
-        safeResetTemplateLoadingState();
+        setSaveStatus("unsaved");
       }
     }
-  }, [
-    searchParams,
-    template,
-    templateOptions,
-    cvId,
-    safeResetTemplateLoadingState,
-  ]);
-
-  // Periodically check template consistency and reset if stuck
-  useEffect(() => {
-    // Check consistency every 5 seconds
-    const intervalId = setInterval(() => {
-      // Check if loading state has been active for too long
-      if (isTemplateLoading) {
-        console.log("Template still loading, checking duration...");
-
-        // Force reset after 10 seconds if still loading
-        if (templateLoadingTimeoutRef.current) {
-          console.warn("Template loading failsafe triggered, forcing reset");
-          safeResetTemplateLoadingState();
-        }
-      }
-
-      // Check if saving state has been active for too long
-      if (saveStatus === "saving") {
-        console.log("Still in saving state, checking duration...");
-
-        // If our save timeout is active, we're still within the acceptable time range
-        // If it's not active and we're still saving, something is wrong
-        if (!saveStatusTimeoutRef.current) {
-          console.warn(
-            "Save status stuck in 'saving', forcing reset to 'saved'"
-          );
-          setSaveStatus("saved");
-        }
-      }
-
-      // Also verify template consistency
-      verifyTemplateConsistency();
-    }, 5000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [
-    verifyTemplateConsistency,
-    isTemplateLoading,
-    safeResetTemplateLoadingState,
-    saveStatus,
-  ]);
+  }, [searchParams, template, templateOptions]);
 
   // Clean up timeouts on unmount
   useEffect(() => {
     return () => {
-      // Clear template loading timeout
-      if (templateLoadingTimeoutRef.current) {
-        clearTimeout(templateLoadingTimeoutRef.current);
-      }
-
       // Clear save status timeout
       if (saveStatusTimeoutRef.current) {
         clearTimeout(saveStatusTimeoutRef.current);
@@ -2279,12 +1844,12 @@ export default function Builder() {
                     className={`flex items-center gap-2 px-4 py-2 rounded-md font-semibold transition-colors focus:outline-none
                       ${
                         saveStatus === "saved"
-                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          ? "bg-green-600 text-white hover:bg-green-700"
                           : ""
                       }
                       ${
                         saveStatus === "unsaved"
-                          ? "bg-orange-500 text-white hover:bg-orange-600"
+                          ? "bg-orange-500 text-white hover:bg-orange-600 animate-pulse"
                           : ""
                       }
                       ${
@@ -2313,6 +1878,8 @@ export default function Builder() {
                       <RefreshCw className="w-5 h-5 animate-spin" />
                     ) : saveStatus === "error" ? (
                       <CloudOff className="w-5 h-5" />
+                    ) : saveStatus === "unsaved" ? (
+                      <Cloud className="w-5 h-5" />
                     ) : (
                       <Cloud className="w-5 h-5" />
                     )}
@@ -2320,7 +1887,7 @@ export default function Builder() {
                       {saveStatus === "saved"
                         ? t("site.builder.header.save")
                         : saveStatus === "unsaved"
-                        ? t("site.builder.header.save_changes")
+                        ? t("site.builder.header.save_changes") + " ✓"
                         : saveStatus === "saving"
                         ? t("site.builder.header.saving")
                         : t("site.builder.header.retry_save")}
@@ -2426,11 +1993,14 @@ export default function Builder() {
 
                           {/* Section Menu Popup */}
                           {activeSectionMenu === section && (
-                            <div className="fixed z-[100] bg-white rounded-md shadow-lg border border-gray-200 section-menu-container" style={{
-                              top: `${menuPosition.top}px`,
-                              left: `${menuPosition.left}px`,
-                              width: "12rem"
-                            }}>
+                            <div
+                              className="fixed z-[100] bg-white rounded-md shadow-lg border border-gray-200 section-menu-container"
+                              style={{
+                                top: `${menuPosition.top}px`,
+                                left: `${menuPosition.left}px`,
+                                width: "12rem",
+                              }}
+                            >
                               <div className="py-1">
                                 <button
                                   className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
