@@ -48,6 +48,8 @@ interface CVPreviewClassicProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  previewMode?: boolean;
+  showFirstPageOnly?: boolean;
 }
 
 export default function CVPreviewClassic({
@@ -58,6 +60,8 @@ export default function CVPreviewClassic({
   accentColor = "#3498db",
   fontFamily = "Arial, sans-serif",
   pageBreakSettings,
+  previewMode = false,
+  showFirstPageOnly = false,
 }: CVPreviewClassicProps) {
   const {
     personalInfo = {},
@@ -132,8 +136,7 @@ export default function CVPreviewClassic({
     <div className="mb-6 flex justify-center">
       {personalInfo && personalInfo["photo"] && (
         <div
-          className="w-32 h-32 overflow-hidden rounded-full border-2"
-          style={{ borderColor: accentColor }}
+          className="w-32 h-32 overflow-hidden rounded-full border-2 cv-accent-border"
         >
           <Image
             src={personalInfo["photo"]}
@@ -412,12 +415,20 @@ export default function CVPreviewClassic({
   );
 
   return (
-    <div className="cv-container">
+    <div
+      style={
+        {
+          "--accent-color": accentColor,
+          fontFamily: fontFamily,
+        } as React.CSSProperties
+      }
+      className="cv-container"
+    >
       {/* Page 1 */}
       {renderPage(page1Sections)}
 
       {/* Page 2 (if needed) */}
-      {hasPage2 && (
+      {hasPage2 && !showFirstPageOnly && (
         <div className="mt-8 print:mt-0">{renderPage(page2Sections)}</div>
       )}
 
@@ -438,13 +449,13 @@ export default function CVPreviewClassic({
           }
         }
         .cv-accent-border {
-          border-color: ${accentColor};
+          border-color: var(--accent-color) !important;
         }
         .cv-accent-bg {
-          background-color: ${accentColor};
+          background-color: var(--accent-color) !important;
         }
         .cv-accent-color {
-          color: ${accentColor};
+          color: var(--accent-color) !important;
         }
       `}</style>
     </div>

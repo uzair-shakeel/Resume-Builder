@@ -50,6 +50,8 @@ interface CVPreviewCirculaireProps {
   fontFamily?: string;
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
+  previewMode?: boolean;
+  showFirstPageOnly?: boolean;
 }
 
 export default function CVPreviewCirculaire({
@@ -61,6 +63,8 @@ export default function CVPreviewCirculaire({
   fontFamily = "inter",
   sectionPages = {},
   customSectionNames = {},
+  previewMode = false,
+  showFirstPageOnly = false,
 }: CVPreviewCirculaireProps) {
   const {
     personalInfo = {},
@@ -125,8 +129,7 @@ export default function CVPreviewCirculaire({
       return (
         <div className="mt-6">
           <h2
-            style={{ color: accentColor, borderColor: accentColor }}
-            className="text-xl font-bold mb-4 border-b pb-2"
+            className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
           >
             {getSectionTitle(section)}
           </h2>
@@ -213,15 +216,14 @@ export default function CVPreviewCirculaire({
           city) && (
           <>
             <h2
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-xl font-bold mb-4 border-b pb-2"
+              className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
             >
               Informations personnelles
             </h2>
             <div className="space-y-4">
               {(firstName || lastName) && (
                 <div className="flex items-center gap-3">
-                  <User style={{ color: accentColor }} className="h-5 w-5  " />
+                  <User className="h-5 w-5 cv-accent-color" />
                   <span className="text-gray-700">
                     {firstName} {lastName}
                   </span>
@@ -229,21 +231,20 @@ export default function CVPreviewCirculaire({
               )}
               {email && (
                 <div className="flex items-center gap-3">
-                  <Mail style={{ color: accentColor }} className="h-5 w-5  " />
+                  <Mail className="h-5 w-5 cv-accent-color" />
                   <span className="text-gray-700">{email}</span>
                 </div>
               )}
               {phone && (
                 <div className="flex items-center gap-3">
-                  <Phone style={{ color: accentColor }} className="h-5 w-5  " />
+                  <Phone className="h-5 w-5 cv-accent-color" />
                   <span className="text-gray-700">{phone}</span>
                 </div>
               )}
               {(address || postalCode || city) && (
                 <div className="flex items-start gap-3">
                   <Home
-                    style={{ color: accentColor }}
-                    className="h-5 w-5   mt-0.5"
+                    className="h-5 w-5 cv-accent-color mt-0.5"
                   />
                   <div className="text-gray-700">
                     {address && <div>{address}</div>}
@@ -268,8 +269,7 @@ export default function CVPreviewCirculaire({
         {data.profile && (
           <>
             <h3
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-2xl font-bold mb-4  border-b  pb-2"
+              className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
             >
               {getSectionTitle("profile")}
             </h3>
@@ -286,8 +286,7 @@ export default function CVPreviewCirculaire({
         {data.education?.length > 0 && (
           <>
             <h3
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-2xl font-bold mb-4  border-b  pb-2"
+              className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
             >
               {getSectionTitle("education")}
             </h3>
@@ -297,13 +296,12 @@ export default function CVPreviewCirculaire({
                   <div className="flex justify-between mb-1">
                     <div>
                       <p className="font-bold text-gray-800">{edu.degree}</p>
-                      <p style={{ color: accentColor }} className=" ">
+                      <p className="cv-accent-color">
                         {edu.school}
                       </p>
                     </div>
                     <div className="text-gray-600 font-medium">
-                      {edu.startDate}
-                      {edu.current ? "ce jour" : edu.endDate}
+                      {edu.startDate} - {edu.current ? "ce jour" : edu.endDate}
                     </div>
                   </div>
                   {edu.description && (
@@ -324,8 +322,7 @@ export default function CVPreviewCirculaire({
         {data.experience?.length > 0 && (
           <>
             <h3
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-2xl font-bold mb-4  border-b  pb-2"
+              className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
             >
               {getSectionTitle("experience")}
             </h3>
@@ -335,13 +332,12 @@ export default function CVPreviewCirculaire({
                   <div className="flex justify-between mb-1">
                     <div>
                       <p className="font-bold text-gray-800">{exp.position}</p>
-                      <p style={{ color: accentColor }} className=" ">
+                      <p className="cv-accent-color">
                         {exp.company}, {exp.location}
                       </p>
                     </div>
                     <div className="text-gray-600 font-medium">
-                      {exp.startDate} 
-                      {exp.current ? "ce jour" : exp.endDate}
+                      {exp.startDate} - {exp.current ? "ce jour" : exp.endDate}
                     </div>
                   </div>
                   {exp.description && (
@@ -371,8 +367,7 @@ export default function CVPreviewCirculaire({
         {data.skills?.length > 0 && (
           <>
             <h2
-              style={{ color: accentColor, borderColor: accentColor }}
-              className={`text-xl font-bold mb-4  border-b pt-6 pb-2`}
+              className="text-xl font-bold mb-4 border-b pt-6 pb-2 cv-accent-color cv-accent-border"
             >
               {getSectionTitle("skills")}
             </h2>
@@ -397,8 +392,7 @@ export default function CVPreviewCirculaire({
         {data.languages?.length > 0 && (
           <>
             <h2
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-xl font-bold mb-4  border-b  pb-2"
+              className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
             >
               {getSectionTitle("languages")}
             </h2>
@@ -422,8 +416,7 @@ export default function CVPreviewCirculaire({
         {data.interests?.length > 0 && (
           <>
             <h2
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-xl font-bold mb-4  border-b  pb-2"
+              className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
             >
               {getSectionTitle("interests")}
             </h2>
@@ -431,8 +424,7 @@ export default function CVPreviewCirculaire({
               {data.interests.map((interest: Interest, index: number) => (
                 <div key={index} className="flex items-start">
                   <div
-                    style={{ backgroundColor: accentColor }}
-                    className="w-3 h-3  mt-1.5 mr-2 flex-shrink-0"
+                    className="w-3 h-3 mt-1.5 mr-2 flex-shrink-0 cv-accent-bg"
                   ></div>
                   <span className="text-gray-700">{interest.name}</span>
                 </div>
@@ -448,17 +440,14 @@ export default function CVPreviewCirculaire({
     <div className="cv-page bg-white shadow-lg">
       <div className="flex h-full">
         {/* Left sidebar */}
-        <div className="w-1/3 relative bg-[#e6eaeb]  min-h-[297mm]">
+        <div className="w-1/3 relative bg-[#e6eaeb] min-h-[297mm]">
           {/* Top teal curved section */}
           <div
-            style={{ backgroundColor: accentColor }}
-            className="absolute top-0 left-0 w-full h-[160px] "
+            className="absolute top-0 left-0 w-full h-[160px] cv-accent-bg"
           >
             <div
-              className="absolute bottom-[-77px] left-0 w-full h-24"
+              className="absolute bottom-[-77px] left-0 w-full h-24 cv-accent-bg"
               style={{
-                background: accentColor,
-
                 clipPath: "ellipse(55% 60% at 52% 0%)",
               }}
             ></div>
@@ -509,11 +498,10 @@ export default function CVPreviewCirculaire({
 
           {/* Bottom teal curved section */}
           <div
-            style={{ backgroundColor: accentColor }}
-            className="absolute bottom-10 left-0 w-full h-[125px] "
+            className="absolute bottom-0 left-0 w-full h-[125px] cv-accent-bg"
           >
             <div
-              className="absolute  top-0 left-0 w-full h-20"
+              className="absolute top-0 left-0 w-full h-20"
               style={{
                 background: "#e6eaeb",
                 clipPath: "ellipse(60% 60% at 52% 0%)",
@@ -545,14 +533,34 @@ export default function CVPreviewCirculaire({
   );
 
   return (
-    <div className="cv-container">
+    <div
+      style={
+        {
+          "--accent-color": accentColor,
+          fontFamily: fontFamily,
+        } as React.CSSProperties
+      }
+      className="cv-container"
+    >
       {/* Page 1 */}
       {renderPage(page1Sections)}
 
       {/* Page 2 (if needed) */}
-      {hasPage2 && (
-        <div className="mt-8 print:mt-0">{renderPage(page2Sections)}</div>
+      {hasPage2 && !showFirstPageOnly && (
+        <div className="mt-8 print:mt-0 min-h-[297mm]">{renderPage(page2Sections)}</div>
       )}
+
+      <style jsx>{`
+        .cv-accent-bg {
+          background-color: var(--accent-color) !important;
+        }
+        .cv-accent-color {
+          color: var(--accent-color) !important;
+        }
+        .cv-accent-border {
+          border-color: var(--accent-color) !important;
+        }
+      `}</style>
     </div>
   );
 }

@@ -51,6 +51,8 @@ interface CVPreviewStudentProps {
   template?: string;
   accentColor?: string;
   fontFamily?: string;
+  previewMode?: boolean;
+  showFirstPageOnly?: boolean;
 }
 
 export default function CVPreviewStudent({
@@ -63,6 +65,8 @@ export default function CVPreviewStudent({
   template = "modern",
   accentColor = "#a5d8ff",
   fontFamily = "inter",
+  previewMode = false,
+  showFirstPageOnly = false,
 }: CVPreviewStudentProps) {
   const {
     personalInfo,
@@ -200,15 +204,13 @@ export default function CVPreviewStudent({
         {title && (
           <div className="relative py-4">
             <div
-              style={{ backgroundColor: accentColor }}
-              className="absolute top-0 left-0 right-0 h-[1px] "
+              className="absolute top-0 left-0 right-0 h-[1px] cv-accent-bg"
             ></div>
             <h2 className="text-2xl text-center uppercase tracking-widest">
               {title}
             </h2>
             <div
-              style={{ backgroundColor: accentColor }}
-              className="absolute bottom-0 left-0 right-0 h-[1px] "
+              className="absolute bottom-0 left-0 right-0 h-[1px] cv-accent-bg"
             ></div>
           </div>
         )}
@@ -304,8 +306,7 @@ export default function CVPreviewStudent({
               ))}
             </div>
             <div
-              style={{ backgroundColor: accentColor }}
-              className="mt-6 h-[1px] "
+              className="mt-6 h-[1px] cv-accent-bg"
             ></div>
           </>
         )}
@@ -342,8 +343,7 @@ export default function CVPreviewStudent({
               ))}
             </div>
             <div
-              style={{ backgroundColor: accentColor }}
-              className="mt-6 h-[1px] "
+              className="mt-6 h-[1px] cv-accent-bg"
             ></div>
           </>
         )}
@@ -624,12 +624,20 @@ export default function CVPreviewStudent({
   );
 
   return (
-    <div className="py-[40px]">
+    <div
+      style={
+        {
+          "--accent-color": accentColor,
+          fontFamily: fontFamily,
+        } as React.CSSProperties
+      }
+      className="py-[40px]"
+    >
       {/* Page 1 */}
       {renderPage(page1Sections, true)}
 
       {/* Page 2 (if needed) */}
-      {hasPage2 && (
+      {hasPage2 && !showFirstPageOnly && (
         <div className="mt-8 print:mt-0">
           {renderPage(page2Sections, false)}
         </div>
@@ -649,10 +657,15 @@ export default function CVPreviewStudent({
           }
         }
         .cv-sidebar {
-          background-color: ${accentColor}20;
+          background-color: var(--accent-color);
+          opacity: 0.2;
         }
         .shape-fill {
-          fill: ${accentColor}20;
+          fill: var(--accent-color);
+          opacity: 0.2;
+        }
+        .cv-accent-bg {
+          background-color: var(--accent-color) !important;
         }
       `}</style>
     </div>

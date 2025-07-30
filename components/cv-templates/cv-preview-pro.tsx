@@ -8,15 +8,21 @@ interface CVPreviewProps {
   sectionOrder: string[];
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
-  accentColor: string;
+  accentColor?: string;
+  fontFamily?: string;
+  previewMode?: boolean;
+  showFirstPageOnly?: boolean;
 }
 
 export default function CVPreviewPro({
   data,
   sectionOrder,
-  accentColor,
+  accentColor = "#3498db",
+  fontFamily = "'DejaVu Sans', sans-serif",
   sectionPages = {},
   customSectionNames = {},
+  previewMode = false,
+  showFirstPageOnly = false,
 }: CVPreviewProps) {
   const {
     personalInfo,
@@ -66,8 +72,7 @@ export default function CVPreviewPro({
 
   const renderHeader = () => (
     <div
-      style={{ backgroundColor: accentColor }}
-      className=" text-white p-6 flex items-center gap-6"
+      className="cv-accent-bg text-white p-6 flex items-center gap-6"
     >
       <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white">
         <Image
@@ -141,10 +146,9 @@ export default function CVPreviewPro({
               <div className="text-sm mb-1">{skill.name}</div>
               <div className="h-2 bg-gray-700 rounded-full">
                 <div
-                  className="h-full rounded-full"
+                  className="h-full rounded-full cv-accent-bg"
                   style={{
                     width: `${(skill.level / 5) * 100}%`,
-                    backgroundColor: accentColor,
                   }}
                 />
               </div>
@@ -189,8 +193,7 @@ export default function CVPreviewPro({
           {interestItems.map((interest, index) => (
             <div key={index} className="flex items-center gap-2">
               <div
-                style={{ backgroundColor: accentColor }}
-                className="w-1.5 h-1.5  rounded-full"
+                className="w-1.5 h-1.5 cv-accent-bg rounded-full"
               />
               <span className="text-sm">{interest.name}</span>
             </div>
@@ -206,8 +209,7 @@ export default function CVPreviewPro({
     return (
       <section className="mb-8">
         <h2
-          style={{ color: accentColor }}
-          className="text-xl font-medium mb-4 uppercase tracking-wider"
+          className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color"
         >
           {getSectionTitle("profile")}
         </h2>
@@ -223,8 +225,7 @@ export default function CVPreviewPro({
     return (
       <section className="mb-8">
         <h2
-          style={{ color: accentColor }}
-          className="text-xl  font-medium mb-4 uppercase tracking-wider"
+          className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color"
         >
           {getSectionTitle("education")}
         </h2>
@@ -235,7 +236,7 @@ export default function CVPreviewPro({
                 <p className="font-medium text-gray-800">{edu.school}</p>
                 <p className="text-gray-600">{edu.degree}</p>
               </div>
-              <p style={{ color: accentColor }} className="text-sm font-medium">
+              <p className="text-sm font-medium cv-accent-color">
                 {edu.startDate} - {edu.current ? "Present" : edu.endDate}
               </p>
             </div>
@@ -252,8 +253,7 @@ export default function CVPreviewPro({
     return (
       <section className="mb-8">
         <h2
-          style={{ color: accentColor }}
-          className="text-xl  font-medium mb-4 uppercase tracking-wider"
+          className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color"
         >
           {getSectionTitle("experience")}
         </h2>
@@ -264,7 +264,7 @@ export default function CVPreviewPro({
                 <p className="font-medium text-gray-800">{exp.position}</p>
                 <p className="text-gray-600">{exp.company}</p>
               </div>
-              <p style={{ color: accentColor }} className="text-sm font-medium">
+              <p className="text-sm font-medium cv-accent-color">
                 {exp.startDate} - {exp.current ? "Present" : exp.endDate}
               </p>
             </div>
@@ -361,7 +361,15 @@ export default function CVPreviewPro({
   );
 
   return (
-    <div className="cv-container">
+    <div
+      style={
+        {
+          "--accent-color": accentColor,
+          fontFamily: fontFamily,
+        } as React.CSSProperties
+      }
+      className="cv-container"
+    >
       <style jsx global>{`
         @media print {
           @page {
@@ -372,11 +380,17 @@ export default function CVPreviewPro({
             -webkit-print-color-adjust: exact;
           }
         }
+        .cv-accent-bg {
+          background-color: var(--accent-color) !important;
+        }
+        .cv-accent-color {
+          color: var(--accent-color) !important;
+        }
       `}</style>
 
       {renderPage(page1Sections)}
 
-      {hasPage2 && (
+      {hasPage2 && !showFirstPageOnly && (
         <div className="mt-8 print:mt-0">{renderPage(page2Sections)}</div>
       )}
     </div>

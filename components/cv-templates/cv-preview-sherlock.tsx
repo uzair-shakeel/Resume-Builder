@@ -28,6 +28,8 @@ interface CVPreviewSherlockProps {
   fontFamily?: string;
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
+  previewMode?: boolean;
+  showFirstPageOnly?: boolean;
 }
 
 export default function CVPreviewSherlock({
@@ -38,6 +40,8 @@ export default function CVPreviewSherlock({
   fontFamily = "'DejaVu Sans', sans-serif",
   sectionPages = {},
   customSectionNames = {},
+  previewMode = false,
+  showFirstPageOnly = false,
 }: CVPreviewSherlockProps) {
   const {
     personalInfo,
@@ -118,8 +122,7 @@ export default function CVPreviewSherlock({
                 <div className="relative">
                   {/* Continuous vertical line that spans the entire timeline */}
                   <div
-                    style={{ backgroundColor: accentColor }}
-                    className="absolute left-[calc(33.333%+5.2px)] top-2 bottom-10 w-0.5 "
+                    className="absolute left-[calc(33.333%+5.2px)] top-2 bottom-10 w-0.5 cv-accent-bg"
                   ></div>
 
                   {data.experience.map((exp, index) => (
@@ -143,8 +146,7 @@ export default function CVPreviewSherlock({
                           <div className="flex relative pl-6 items-start">
                             {/* Timeline dot */}
                             <div
-                              style={{ backgroundColor: accentColor }}
-                              className="absolute left-0 top-1.5 w-3 h-3 rounded-full  z-10"
+                              className="absolute left-0 top-1.5 w-3 h-3 rounded-full cv-accent-bg z-10"
                             ></div>
 
                             <p className="font-semibold text-sm">
@@ -198,17 +200,15 @@ export default function CVPreviewSherlock({
                       <div className="col-span-2 relative pl-6">
                         {/* Timeline dot */}
                         <div
-                          style={{ backgroundColor: accentColor }}
-                          className="absolute left-0 top-1.5 w-3 h-3 rounded-full "
+                          className="absolute left-0 top-1.5 w-3 h-3 rounded-full cv-accent-bg"
                         ></div>
 
                         {/* Vertical line connecting dots (except for last item) */}
                         {index < data.education.length - 1 && (
                           <div
-                            className="absolute left-[5.2px] top-3 w-0.5 "
+                            className="absolute left-[5.2px] top-3 w-0.5 cv-accent-bg"
                             style={{
                               height: "calc(100% + 1.5rem)",
-                              backgroundColor: accentColor,
                             }}
                           ></div>
                         )}
@@ -238,10 +238,9 @@ export default function CVPreviewSherlock({
                       </p>
                       <div className="w-full bg-gray-200 h-2 rounded-sm">
                         <div
-                          className="h-full  rounded-sm"
+                          className="h-full rounded-sm cv-accent-bg"
                           style={{
                             width: `${(skill.level / 5) * 100}%`,
-                            backgroundColor: accentColor,
                           }}
                         ></div>
                       </div>
@@ -268,7 +267,7 @@ export default function CVPreviewSherlock({
                       </p>
                       <div className="w-full bg-gray-200 h-2 rounded-sm">
                         <div
-                          className=" h-2 rounded-sm"
+                          className="h-2 rounded-sm cv-accent-bg"
                           style={{
                             width:
                               language.level === "Natif" ||
@@ -288,7 +287,6 @@ export default function CVPreviewSherlock({
                                 : language.level === "Elementary"
                                 ? "20%"
                                 : "50%", // Default value if level doesn't match any known value
-                            backgroundColor: accentColor,
                           }}
                         ></div>
                       </div>
@@ -360,9 +358,12 @@ export default function CVPreviewSherlock({
 
   return (
     <div
-      style={{
-        fontFamily: fontFamily,
-      }}
+      style={
+        {
+          "--accent-color": accentColor,
+          fontFamily: fontFamily,
+        } as React.CSSProperties
+      }
       className="cv-container"
     >
       {/* Page 1 */}
@@ -497,8 +498,7 @@ export default function CVPreviewSherlock({
                       {personalInfo?.postalCode || ""}
                     </p>
                     <div
-                      style={{ backgroundColor: accentColor }}
-                      className="w-6 h-6 rounded-full y63hnhgb  flex items-center justify-center mr-2"
+                      className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2"
                     >
                       <span className="text-white text-xs">📍</span>
                     </div>
@@ -510,8 +510,7 @@ export default function CVPreviewSherlock({
                       {personalInfo?.phone}
                     </p>
                     <div
-                      style={{ backgroundColor: accentColor }}
-                      className="w-6 h-6 rounded-full flex items-center justify-center mr-2"
+                      className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2"
                     >
                       <span className="text-white text-xs">📞</span>
                     </div>
@@ -523,8 +522,7 @@ export default function CVPreviewSherlock({
                       {personalInfo?.email}
                     </p>
                     <div
-                      style={{ backgroundColor: accentColor }}
-                      className="w-6 h-6 rounded-full  flex items-center justify-center mr-2"
+                      className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2"
                     >
                       <span className="text-white text-xs">✉️</span>
                     </div>
@@ -542,7 +540,7 @@ export default function CVPreviewSherlock({
       </div>
 
       {/* Page 2 */}
-      {hasPage2 && (
+      {hasPage2 && !showFirstPageOnly && (
         <div className="cv-page">
           <div className="cv-page-content flex">
             {/* Left sidebar */}
@@ -750,6 +748,28 @@ export default function CVPreviewSherlock({
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        .cv-page {
+          width: 210mm;
+          min-height: 297mm;
+          position: relative;
+          margin: 0 auto;
+          background: white;
+        }
+        .cv-page + .cv-page {
+          margin-top: 2rem;
+        }
+        @media print {
+          .cv-page + .cv-page {
+            margin-top: 0;
+            page-break-before: always;
+          }
+        }
+        .cv-accent-bg {
+          background-color: var(--accent-color) !important;
+        }
+      `}</style>
     </div>
   );
 }
