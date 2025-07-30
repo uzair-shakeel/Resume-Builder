@@ -1685,7 +1685,39 @@ export default function Builder() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Simplified template change functions that preserve data
+  // Add function to reload saved data from database
+  const reloadSavedData = async () => {
+    try {
+      const currentCvId = searchParams.get("id") || sessionStorage.getItem("current-cv-id");
+      if (currentCvId) {
+        const response = await fetch(`/api/cv/load?cvId=${currentCvId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          // Fix for interests using interest property instead of name property
+          if (data.cv.data.interests && data.cv.data.interests.length > 0) {
+            data.cv.data.interests = data.cv.data.interests.map((item: any) => {
+              if (item.interest !== undefined && item.name === undefined) {
+                return { name: item.interest };
+              }
+              return item;
+            });
+          }
+          
+          // Reload the saved CV data
+          setCVData(data.cv.data);
+          setSaveStatus("saved");
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error("Error reloading saved data:", error);
+      return false;
+    }
+  };
+
+  // Template change functions that handle unsaved data properly
   const prevTemplate = () => {
     if (isTemplateLoading) return;
 
@@ -1694,14 +1726,27 @@ export default function Builder() {
       currentIndex === 0 ? templateOptions.length - 1 : currentIndex - 1;
     const selectedTemplateValue = templateOptions[newIndex].value as any;
 
-    // Update URL and state simultaneously
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("template", selectedTemplateValue);
-    window.history.replaceState({}, "", currentUrl.toString());
+    // If there are unsaved changes, reload saved data to prevent data inconsistency
+    if (saveStatus === "unsaved") {
+      reloadSavedData().then(() => {
+        // Update URL and state after reloading data
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("template", selectedTemplateValue);
+        window.history.replaceState({}, "", currentUrl.toString());
 
-    setActiveTemplateIndex(newIndex);
-    setTemplate(selectedTemplateValue);
-    setSaveStatus("unsaved");
+        setActiveTemplateIndex(newIndex);
+        setTemplate(selectedTemplateValue);
+        setSaveStatus("saved"); // Keep as saved since we reloaded saved data
+      });
+    } else {
+      // No unsaved changes, just change template
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("template", selectedTemplateValue);
+      window.history.replaceState({}, "", currentUrl.toString());
+
+      setActiveTemplateIndex(newIndex);
+      setTemplate(selectedTemplateValue);
+    }
   };
 
   const nextTemplate = () => {
@@ -1712,14 +1757,27 @@ export default function Builder() {
       currentIndex === templateOptions.length - 1 ? 0 : currentIndex + 1;
     const selectedTemplateValue = templateOptions[newIndex].value as any;
 
-    // Update URL and state simultaneously
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("template", selectedTemplateValue);
-    window.history.replaceState({}, "", currentUrl.toString());
+    // If there are unsaved changes, reload saved data to prevent data inconsistency
+    if (saveStatus === "unsaved") {
+      reloadSavedData().then(() => {
+        // Update URL and state after reloading data
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("template", selectedTemplateValue);
+        window.history.replaceState({}, "", currentUrl.toString());
 
-    setActiveTemplateIndex(newIndex);
-    setTemplate(selectedTemplateValue);
-    setSaveStatus("unsaved");
+        setActiveTemplateIndex(newIndex);
+        setTemplate(selectedTemplateValue);
+        setSaveStatus("saved"); // Keep as saved since we reloaded saved data
+      });
+    } else {
+      // No unsaved changes, just change template
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("template", selectedTemplateValue);
+      window.history.replaceState({}, "", currentUrl.toString());
+
+      setActiveTemplateIndex(newIndex);
+      setTemplate(selectedTemplateValue);
+    }
   };
 
   const selectTemplate = (index: number) => {
@@ -1727,15 +1785,29 @@ export default function Builder() {
 
     const selectedTemplateValue = templateOptions[index].value as any;
 
-    // Update URL and state simultaneously
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("template", selectedTemplateValue);
-    window.history.replaceState({}, "", currentUrl.toString());
+    // If there are unsaved changes, reload saved data to prevent data inconsistency
+    if (saveStatus === "unsaved") {
+      reloadSavedData().then(() => {
+        // Update URL and state after reloading data
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("template", selectedTemplateValue);
+        window.history.replaceState({}, "", currentUrl.toString());
 
-    setTemplate(selectedTemplateValue);
-    setActiveTemplateIndex(index);
-    setShowTemplateCarousel(false);
-    setSaveStatus("unsaved");
+        setTemplate(selectedTemplateValue);
+        setActiveTemplateIndex(index);
+        setShowTemplateCarousel(false);
+        setSaveStatus("saved"); // Keep as saved since we reloaded saved data
+      });
+    } else {
+      // No unsaved changes, just change template
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("template", selectedTemplateValue);
+      window.history.replaceState({}, "", currentUrl.toString());
+
+      setTemplate(selectedTemplateValue);
+      setActiveTemplateIndex(index);
+      setShowTemplateCarousel(false);
+    }
   };
 
   // Simplified URL template change handler
