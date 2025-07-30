@@ -173,7 +173,7 @@ export default function CoverLetterPreviewTeal({
   const renderDateAndSubject = () => {
     return (
       <div className="pb-8">
-        <div className="space-y-2 space-y-8 text-gray-700">
+        <div className="space-y-8 text-gray-700">
           <p>{formatDateForDisplay(dateAndSubject?.date)}</p>
           <p>
             <span
