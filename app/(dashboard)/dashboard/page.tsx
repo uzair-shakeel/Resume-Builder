@@ -624,10 +624,10 @@ export default function Dashboard() {
                         href={`/builder?id=${cv._id}`}
                         className="absolute inset-0 flex items-center justify-center"
                       >
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="w-full flex items-center justify-center">
+                        <div className="w-full h-full relative">
+                          <div className="absolute inset-0 flex items-center justify-center">
                             <div
-                              className="transform preview-container"
+                              className="w-[21cm] transform origin-center"
                               style={{ transform: `scale(${scale})` }}
                             >
                               {renderCVPreview(cv)}
