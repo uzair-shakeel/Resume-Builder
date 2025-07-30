@@ -33,6 +33,19 @@ export default function CoverLetterPreviewTeal({
     conclusion,
   } = data;
 
+  // Helper function to format date for display
+  const formatDateForDisplay = (dateValue: string) => {
+    if (!dateValue) return new Date().toLocaleDateString("fr-FR");
+
+    // If it's in ISO format, convert to French
+    if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return new Date(dateValue).toLocaleDateString("fr-FR");
+    }
+
+    // If it's already in French format, return as is
+    return dateValue;
+  };
+
   // Filter sections for page 1 and page 2
   const page1Sections = sectionOrder.filter(
     (section) => !sectionPages[section] || sectionPages[section] === 1
@@ -160,9 +173,9 @@ export default function CoverLetterPreviewTeal({
   const renderDateAndSubject = () => {
     return (
       <div className="pb-8">
-        <div className="space-y-2 text-gray-700">
+        <div className="space-y-2 space-y-8 text-gray-700">
+          <p>{formatDateForDisplay(dateAndSubject?.date)}</p>
           <p>
-            <strong>Objet:</strong>{" "}
             <span
               dangerouslySetInnerHTML={{
                 __html: dateAndSubject?.subject || "",

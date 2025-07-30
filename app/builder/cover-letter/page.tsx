@@ -1408,7 +1408,7 @@ export default function CoverLetterBuilder() {
           <input
             type="date"
             className="w-full p-2 border rounded-md"
-            value={coverLetterData.dateAndSubject.date}
+            value={getDisplayDate(coverLetterData.dateAndSubject.date)}
             onChange={handleDateChange}
           />
         </div>
@@ -2092,10 +2092,39 @@ export default function CoverLetterBuilder() {
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = e.target.value
-      ? new Date(e.target.value).toLocaleDateString("fr-FR")
-      : "";
-    handleThrottledInput("dateAndSubject", "date", date);
+    const isoDate = e.target.value; // Keep the ISO format (YYYY-MM-DD)
+    handleThrottledInput("dateAndSubject", "date", isoDate);
+  };
+
+  // Helper function to convert stored date to display format
+  const getDisplayDate = (dateValue: string) => {
+    if (!dateValue) return "";
+    
+    // If the date is already in ISO format, return it as is for the input
+    if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return dateValue;
+    }
+    
+    // If it's in French format (DD/MM/YYYY), convert to ISO
+    if (dateValue.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+      const [day, month, year] = dateValue.split('/');
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    
+    return "";
+  };
+
+  // Helper function to convert ISO date to French format for templates
+  const getFormattedDate = (dateValue: string) => {
+    if (!dateValue) return new Date().toLocaleDateString("fr-FR");
+    
+    // If it's in ISO format, convert to French
+    if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return new Date(dateValue).toLocaleDateString("fr-FR");
+    }
+    
+    // If it's already in French format, return as is
+    return dateValue;
   };
 
   const handleAddNewSection = () => {

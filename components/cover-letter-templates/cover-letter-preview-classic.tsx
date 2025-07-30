@@ -31,6 +31,19 @@ export default function CoverLetterPreviewClassic({
     conclusion,
   } = data;
 
+  // Helper function to format date for display
+  const formatDateForDisplay = (dateValue: string) => {
+    if (!dateValue) return new Date().toLocaleDateString("fr-FR");
+
+    // If it's in ISO format, convert to French
+    if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return new Date(dateValue).toLocaleDateString("fr-FR");
+    }
+
+    // If it's already in French format, return as is
+    return dateValue;
+  };
+
   // Filter sections for page 1 and page 2
   const page1Sections = sectionOrder.filter(
     (section) => !sectionPages[section] || sectionPages[section] === 1
@@ -102,8 +115,7 @@ export default function CoverLetterPreviewClassic({
               <div className="text-right mb-4">
                 <p>
                   {dateAndSubject?.location || ""}, le{" "}
-                  {dateAndSubject?.date ||
-                    new Date().toLocaleDateString("fr-FR")}
+                  {formatDateForDisplay(dateAndSubject?.date)}
                 </p>
               </div>
               <div
