@@ -37,10 +37,10 @@ export default function PersonalInfo({
   const [showCropModal, setShowCropModal] = useState(false);
   const [crop, setCrop] = useState<Crop>({
     unit: "%",
-    width: 100,
-    height: 100,
-    x: 0,
-    y: 0,
+    width: 80,
+    height: 80,
+    x: 10,
+    y: 10,
   });
   const [tempImage, setTempImage] = useState<string>("");
   const [zoom, setZoom] = useState(1);
@@ -138,6 +138,14 @@ export default function PersonalInfo({
           // Reset zoom and rotation when loading new image
           setZoom(1);
           setRotation(0);
+          // Reset crop to better defaults
+          setCrop({
+            unit: "%",
+            width: 80,
+            height: 80,
+            x: 10,
+            y: 10,
+          });
         } catch (err) {
           setError("Error processing image. Please try another image.");
         }
@@ -148,36 +156,54 @@ export default function PersonalInfo({
   const handleCropComplete = (crop: Crop) => {
     if (imageRef.current && crop.width && crop.height) {
       const canvas = document.createElement("canvas");
-      const scaleX = imageRef.current.naturalWidth / imageRef.current.width;
-      const scaleY = imageRef.current.naturalHeight / imageRef.current.height;
+      const img = imageRef.current;
 
-      canvas.width = crop.width;
-      canvas.height = crop.height;
+      // Calculate the actual crop dimensions considering zoom
+      const scaleX = img.naturalWidth / img.width;
+      const scaleY = img.naturalHeight / img.height;
+
+      // Convert percentage crop to pixel values
+      const cropX = (crop.x / 100) * img.width * scaleX;
+      const cropY = (crop.y / 100) * img.height * scaleY;
+      const cropWidth = (crop.width / 100) * img.width * scaleX;
+      const cropHeight = (crop.height / 100) * img.height * scaleY;
+
+      // Set canvas size to desired output size (square for profile photos)
+      const outputSize = 300; // Fixed output size for consistency
+      canvas.width = outputSize;
+      canvas.height = outputSize;
 
       const ctx = canvas.getContext("2d");
 
       if (ctx) {
         // Fill with white background first
         ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, outputSize, outputSize);
 
-        // Apply transformations
-        ctx.translate(canvas.width / 2, canvas.height / 2);
+        // Save the context state
+        ctx.save();
+
+        // Apply rotation and zoom transformations
+        ctx.translate(outputSize / 2, outputSize / 2);
         ctx.rotate((rotation * Math.PI) / 180);
         ctx.scale(zoom, zoom);
-        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+        ctx.translate(-outputSize / 2, -outputSize / 2);
 
+        // Draw the cropped image
         ctx.drawImage(
-          imageRef.current,
-          crop.x * scaleX,
-          crop.y * scaleY,
-          crop.width * scaleX,
-          crop.height * scaleY,
+          img,
+          cropX / zoom, // Adjust crop coordinates for zoom
+          cropY / zoom,
+          cropWidth / zoom,
+          cropHeight / zoom,
           0,
           0,
-          crop.width,
-          crop.height
+          outputSize,
+          outputSize
         );
+
+        // Restore the context state
+        ctx.restore();
 
         const base64Image = canvas.toDataURL("image/jpeg", 0.9);
         const newData = {
