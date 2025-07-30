@@ -135,7 +135,12 @@ export default function CoverLetterPreviewCirculaire({
                   language === "fr" ? "fr-FR" : "en-US"
                 )}
             </p>
-            <p className="font-medium mt-2">{dateAndSubject?.subject || ""}</p>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: dateAndSubject?.subject || "",
+              }}
+              className="font-medium mt-2"
+            />
           </div>
         </div>
       </div>

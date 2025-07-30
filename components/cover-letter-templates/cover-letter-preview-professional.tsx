@@ -154,12 +154,16 @@ export default function CoverLetterPreviewProfessional({
               </div>
               <p className="font-medium">
                 {language === "fr" ? "Objet : " : "Subject: "}
-                {getPlaceholder(
-                  "dateAndSubject",
-                  "subject",
-                  dateAndSubject?.subject,
-                  language
-                )}
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: getPlaceholder(
+                      "dateAndSubject",
+                      "subject",
+                      dateAndSubject?.subject,
+                      language
+                    ),
+                  }}
+                />
               </p>
             </div>
           );

@@ -160,10 +160,15 @@ export default function CoverLetterPreviewTeal({
   const renderDateAndSubject = () => {
     return (
       <div className="pb-8">
-        <div>
-          <h4 className="font-semibold text-gray-800">
-            {dateAndSubject?.subject || ""}
-          </h4>
+        <div className="space-y-2 text-gray-700">
+          <p>
+            <strong>Objet:</strong>{" "}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: dateAndSubject?.subject || "",
+              }}
+            />
+          </p>
         </div>
       </div>
     );

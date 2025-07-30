@@ -160,14 +160,17 @@ export default function CoverLetterPreviewSherlock({
                         language === "fr" ? "fr-FR" : "en-US"
                       )}
                   </p>
-                  <p className="font-bold mt-2">
-                    {getPlaceholder(
-                      "dateAndSubject",
-                      "subject",
-                      dateAndSubject?.subject,
-                      language
-                    )}
-                  </p>
+                  <div
+                    className="font-bold mt-2"
+                    dangerouslySetInnerHTML={{
+                      __html: getPlaceholder(
+                        "dateAndSubject",
+                        "subject",
+                        dateAndSubject?.subject,
+                        language
+                      ),
+                    }}
+                  />
                 </div>
               </div>
             </div>

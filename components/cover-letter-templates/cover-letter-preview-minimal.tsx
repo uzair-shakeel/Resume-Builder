@@ -188,14 +188,17 @@ export default function CoverLetterPreviewMinimal({
                 language === "fr" ? "fr-FR" : "en-US"
               )}
           </p>
-          <p className="font-semibold">
-            {getPlaceholder(
-              "dateAndSubject",
-              "subject",
-              dateAndSubject?.subject,
-              language
-            )}
-          </p>
+          <div
+            className="font-semibold"
+            dangerouslySetInnerHTML={{
+              __html: getPlaceholder(
+                "dateAndSubject",
+                "subject",
+                dateAndSubject?.subject,
+                language
+              ),
+            }}
+          />
         </div>
       </div>
     );

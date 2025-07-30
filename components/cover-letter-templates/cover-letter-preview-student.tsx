@@ -153,8 +153,13 @@ export default function CoverLetterPreviewStudent({
             {getPlaceholder("dateAndSubject", "location", dateAndSubject?.location, language)}, le{" "}
             {dateAndSubject?.date || new Date().toLocaleDateString(language === "fr" ? "fr-FR" : "en-US")}
           </p>
-          <p className="font-bold">
-            {getPlaceholder("dateAndSubject", "subject", dateAndSubject?.subject, language)}
+          <p className="text-lg font-bold">
+            Objet :{" "}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: getPlaceholder("dateAndSubject", "subject", dateAndSubject?.subject, language),
+              }}
+            />
           </p>
         </div>
         <div

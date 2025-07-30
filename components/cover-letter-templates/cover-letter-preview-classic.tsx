@@ -106,7 +106,12 @@ export default function CoverLetterPreviewClassic({
                     new Date().toLocaleDateString("fr-FR")}
                 </p>
               </div>
-              <p className="font-medium">{dateAndSubject?.subject || ""}</p>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: dateAndSubject?.subject || "",
+                }}
+                className="font-medium"
+              />
             </div>
           );
         case "introduction":

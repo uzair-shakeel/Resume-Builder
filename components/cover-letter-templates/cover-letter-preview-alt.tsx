@@ -198,7 +198,11 @@ export default function CoverLetterPreviewAlt({
 
         {/* Subject */}
         <div className="mb-8">
-          <p>{dateAndSubject.subject}</p>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: dateAndSubject.subject,
+            }}
+          />
         </div>
 
         {/* Letter Content */}
