@@ -73,6 +73,20 @@ const CoverLetterPreviewCreative = dynamic(
       "@/components/cover-letter-templates/cover-letter-preview-circulaire"
     )
 );
+const CoverLetterPreviewSherlock = dynamic(
+  () =>
+    import("@/components/cover-letter-templates/cover-letter-preview-sherlock")
+);
+const CoverLetterPreviewStudent = dynamic(
+  () =>
+    import("@/components/cover-letter-templates/cover-letter-preview-student")
+);
+const CoverLetterPreviewHR = dynamic(
+  () => import("@/components/cover-letter-templates/cover-letter-preview-hr")
+);
+const CoverLetterPreviewTeal = dynamic(
+  () => import("@/components/cover-letter-templates/cover-letter-preview-teal")
+);
 
 interface CV {
   _id: string;
@@ -505,6 +519,14 @@ export default function Dashboard() {
             return <CoverLetterPreviewMinimal {...commonProps} />;
           case "circulaire":
             return <CoverLetterPreviewCreative {...commonProps} />;
+          case "sherlock":
+            return <CoverLetterPreviewSherlock {...commonProps} />;
+          case "student":
+            return <CoverLetterPreviewStudent {...commonProps} />;
+          case "hr":
+            return <CoverLetterPreviewHR {...commonProps} />;
+          case "teal":
+            return <CoverLetterPreviewTeal {...commonProps} />;
           default:
             return <CoverLetterPreviewModern {...commonProps} />;
         }
