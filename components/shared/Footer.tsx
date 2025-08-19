@@ -1,7 +1,5 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
-import { Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const socialLinks = [
@@ -107,8 +105,8 @@ export default function Footer() {
 
   return (
     <footer className="w-full bg-white flex flex-col items-center pt-6 md:pt-20 pb-8">
-      <div className="max-w-[864px] mx-auto px-[20px]">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:text-start text-center">
+      <div className="max-w-[864px] mx-auto w-full px-[20px]">
+        <div className="flex md:flex-row flex-col justify-between gap-12 md:text-start text-center">
           {/* Resources Column */}
           <div className="flex-equal-width flex-col flex pb-6 md:pb-0">
             <h3 className="text-lg font-medium pb-3 md:pb-6 text-gray-900">
@@ -164,28 +162,6 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* App Store Links */}
-          <div className="flex flex-equal-width flex-col items-center md:items-start space-y-3">
-            <Link href="https://apps.apple.com" className="block">
-              <Image
-                src="/assets/app-store-badge-fr.svg"
-                alt={t("site.home.footer.downloadAppStore")}
-                width={132.82}
-                height={42}
-                className="h-auto w-[132.82px]"
-              />
-            </Link>
-            <Link href="https://play.google.com" className="block">
-              <Image
-                src="/assets/google-play-badge-fr.png"
-                alt={t("site.home.footer.getItGooglePlay")}
-                width={141.53}
-                height={42}
-                className="h-auto w-[141.53px]"
-              />
-            </Link>
           </div>
         </div>
       </div>
