@@ -2414,10 +2414,10 @@ export default function CoverLetterBuilder() {
               <div className="relative">
                 <button
                   onClick={() => setShowDownloadOptions(!showDownloadOptions)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
                   disabled={isDownloading}
                 >
-                  <Download className="w-5 h-5" />
+                  <Download className="w-4 sm:h-4 h-[20px]" />
                   {t("site.builder.header.download")}
                 </button>
                 {showDownloadOptions && !isDownloading && (

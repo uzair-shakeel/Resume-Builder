@@ -810,11 +810,10 @@ export default function Builder() {
       }
 
       // Prepare payload with data from the current component state
-      const payload = {
+      // For existing CVs, don't include title to preserve the existing one
+      // Only set title for new CVs
+      const payload: any = {
         cvId: currentCvId,
-        title: processedCVData.personalInfo.firstName
-          ? `${processedCVData.personalInfo.firstName}'s CV`
-          : "Untitled CV",
         data: processedCVData,
         template,
         sectionOrder,
@@ -825,6 +824,13 @@ export default function Builder() {
         preview,
       };
 
+      // Only set title for new CVs (when there's no currentCvId)
+      if (!currentCvId) {
+        payload.title = processedCVData.personalInfo.firstName
+          ? `${processedCVData.personalInfo.firstName}${processedCVData.personalInfo.lastName ? ' ' + processedCVData.personalInfo.lastName : ''}'s CV`
+          : "Untitled CV";
+      }
+      
       // Send API request
       const response = await fetch("/api/cv/save", {
         method: "POST",
