@@ -1362,7 +1362,8 @@ export default function Builder() {
     }
   };
 
-  // Add effect to close section menu when clicking outside
+
+  // Add effect to close section menu and download modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       // Close section menu when clicking outside
@@ -1370,6 +1371,14 @@ export default function Builder() {
         const target = e.target as HTMLElement;
         if (!target.closest(".section-menu-container")) {
           setActiveSectionMenu(null);
+        }
+      }
+
+      // Close download modal when clicking outside
+      if (showDownloadOptions) {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".download-modal-container")) {
+          setShowDownloadOptions(false);
         }
       }
 
@@ -1391,7 +1400,7 @@ export default function Builder() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [activeSectionMenu, isRenamingSection, sectionToRename]);
+  }, [activeSectionMenu, showDownloadOptions, isRenamingSection, sectionToRename]);
 
   // Load section pages from localStorage
   useEffect(() => {
@@ -1993,10 +2002,13 @@ export default function Builder() {
                     </span>
                   </button>
                   {showDownloadOptions && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20 download-modal-container">
                       <div className="py-1">
                         <button
-                          onClick={() => handleDownload("pdf")}
+                          onClick={() => {
+                            handleDownload("pdf");
+                            setShowDownloadOptions(false);
+                          }}
                           className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
                         >
                           {t("site.builder.header.download_as_pdf")}

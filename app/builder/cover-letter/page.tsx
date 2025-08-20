@@ -2312,6 +2312,45 @@ export default function CoverLetterBuilder() {
       });
   };
 
+  // Add effect to handle click outside events for download modal and section menus
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      // Close section menu when clicking outside
+      if (activeSectionMenu) {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".section-menu-container")) {
+          setActiveSectionMenu(null);
+        }
+      }
+
+      // Close download modal when clicking outside
+      if (showDownloadOptions) {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".download-modal-container")) {
+          setShowDownloadOptions(false);
+        }
+      }
+
+      // Save section name when clicking outside the input (if renaming)
+      if (isRenamingSection && sectionToRename) {
+        const target = e.target as HTMLElement;
+        const isInputElement = target.tagName.toLowerCase() === "input";
+        const isEditingCurrentSection = target.closest(
+          `[data-section="${sectionToRename}"]`
+        );
+
+        if (!isInputElement || !isEditingCurrentSection) {
+          saveRenamedSection();
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [activeSectionMenu, showDownloadOptions, isRenamingSection, sectionToRename]);
+
   // Add a function to generate unique template keys
   const getTemplateKey = () => {
     // Generate a stable hash of the data
@@ -2421,7 +2460,7 @@ export default function CoverLetterBuilder() {
                   {t("site.builder.header.download")}
                 </button>
                 {showDownloadOptions && !isDownloading && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20 download-modal-container">
                     <div className="py-1">
                       <button
                         onClick={() => {
