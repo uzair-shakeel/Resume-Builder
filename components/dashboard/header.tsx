@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
+import PaymentStatusIndicator from "./PaymentStatusIndicator";
 
 const Header = () => {
   const { t } = useLanguage();
@@ -22,6 +23,11 @@ const Header = () => {
             height={32}
           />
         </Link>
+      </div>
+
+      {/* Payment Status Indicator */}
+      <div className="flex items-center space-x-3">
+        <PaymentStatusIndicator />
       </div>
     </header>
   );

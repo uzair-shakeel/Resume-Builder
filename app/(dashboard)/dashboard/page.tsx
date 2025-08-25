@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/contexts/LanguageContext";
+import SubscriptionStatus from "@/components/dashboard/SubscriptionStatus";
 
 // Dynamically import all CV preview components
 const CVPreviewAlt = dynamic(
@@ -548,6 +549,9 @@ export default function Dashboard() {
       {/* Main content */}
       <main className="flex-1 pt-20 lg:pt-5 pb-24">
         <div className="container mx-auto px-4">
+          {/* Subscription Status */}
+          <SubscriptionStatus />
+
           {/* CV Section */}
           <div className="mb-12">
             <div className="flex justify-between items-center mb-8">
