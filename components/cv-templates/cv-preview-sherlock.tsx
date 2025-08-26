@@ -405,7 +405,10 @@ export default function CVPreviewSherlock({
                     <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                       {getSectionTitle("profile")}
                     </h2>
-                    <p className="text-sm text-gray-300">{data.profile}</p>
+                    <div
+                      className="text-sm text-gray-300"
+                      dangerouslySetInnerHTML={{ __html: data.profile }}
+                    />
                   </>
                 )}
               </div>
@@ -577,9 +580,12 @@ export default function CVPreviewSherlock({
                   <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                     {getSectionTitle("profile")}
                   </h2>
-                  <p className="text-sm text-gray-300">
-                    {profile || placeholderData.profile}
-                  </p>
+                  <div
+                    className="text-sm text-gray-300"
+                    dangerouslySetInnerHTML={{
+                      __html: profile,
+                    }}
+                  />
                 </div>
               )}
 

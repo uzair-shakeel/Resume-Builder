@@ -201,21 +201,19 @@ export default function CVPreviewTeal({
 
   // Render profile section
   const renderProfile = () => {
-    return data.profile ? (
-      <div className="py-8">
-        {data.profile && (
-          <>
-            <h3
-              className="text-xl font-bold mb-4"
-              style={{ color: accentColor }}
-            >
-              {getSectionTitle("profile")}
-            </h3>
-            <p className="text-gray-700">{data.profile}</p>
-          </>
-        )}
+    if (!profile) return null;
+
+    return (
+      <div className="mb-8">
+        <h3 className="text-xl font-bold mb-4" style={{ color: accentColor }}>
+          {getSectionTitle("profile")}
+        </h3>
+        <div
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
       </div>
-    ) : null;
+    );
   };
 
   // Render education section

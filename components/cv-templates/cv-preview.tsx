@@ -132,7 +132,10 @@ export default function CVPreview({
         <h2 className="text-lg font-semibold mb-2 section-title">
           {getSectionTitle("profile")}
         </h2>
-        <p className="text-gray-700">{profile}</p>
+        <div
+          className="text-gray-700"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
       </div>
     ) : null;
   };

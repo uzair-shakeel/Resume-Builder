@@ -270,18 +270,19 @@ export default function CVPreviewCirculaire({
   };
 
   const renderProfile = () => {
-    return data.profile ? (
+    if (!profile) return null;
+
+    return (
       <div className="mb-8">
-        {data.profile && (
-          <>
-            <h3 className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
-              {getSectionTitle("profile")}
-            </h3>
-            <p className="text-gray-700">{data.profile}</p>
-          </>
-        )}
+        <h3 className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
+          {getSectionTitle("profile")}
+        </h3>
+        <div
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
       </div>
-    ) : null;
+    );
   };
 
   const renderEducation = () => {

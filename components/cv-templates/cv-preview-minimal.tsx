@@ -189,24 +189,22 @@ export default function CVPreviewMinimal({
   };
 
   const renderProfile = () => {
-    if (!sectionOrder.includes("profile")) return null;
-    return data.profile ? (
+    if (!profile) return null;
+
+    return (
       <div className="mb-8">
-        {data.profile && (
-          <>
-            <h3
-              className="text-xl font-semibold mb-3"
-              style={{ color: accentColor }}
-            >
-              {getSectionTitle("profile")}
-            </h3>
-            <div className="border-t border-gray-200 pt-3">
-              <p className="text-gray-700">{data.profile}</p>
-            </div>
-          </>
-        )}
+        <h3
+          className="text-xl font-semibold mb-3"
+          style={{ color: accentColor }}
+        >
+          {getSectionTitle("profile")}
+        </h3>
+        <div
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
       </div>
-    ) : null;
+    );
   };
 
   const renderExperience = () => {

@@ -1,6 +1,7 @@
 import React from "react";
 import type { CVData } from "@/types";
 import Image from "next/image";
+import { placeholderData } from "@/lib/utils";
 
 // Define the types locally to avoid import issues
 interface Education {
@@ -208,6 +209,22 @@ export default function CVPreviewClassic({
     </div>
   );
 
+  const renderProfile = () => {
+    if (!profile) return null;
+
+    return (
+      <div className="mb-8">
+        <h2 className="text-lg font-medium mb-4 uppercase tracking-wider">
+          {getSectionTitle("profile")}
+        </h2>
+        <div
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
+      </div>
+    );
+  };
+
   const renderPage = (sections: string[]) => (
     <div className="cv-page">
       <div className="cv-page-content">
@@ -315,7 +332,10 @@ export default function CVPreviewClassic({
                       <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
                         {getSectionTitle("profile")}
                       </h2>
-                      <p className="text-sm section-content">{profile}</p>
+                      <div
+                        className="text-sm section-content"
+                        dangerouslySetInnerHTML={{ __html: profile }}
+                      />
                     </div>
                   ) : null;
                 case "experience":

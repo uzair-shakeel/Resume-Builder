@@ -126,18 +126,21 @@ export default function CVPreviewAlt({
     }
   };
 
-  const renderProfile = () => (
-    <section className="mb-8">
-      {profile && (
-        <>
-          <h2 className="text-xl text-gray-800 font-medium mb-3">
-            {getSectionTitle("profile")}
-          </h2>
-          <p className="text-gray-600 leading-relaxed">{profile}</p>
-        </>
-      )}
-    </section>
-  );
+  const renderProfile = () => {
+    if (!profile) return null;
+
+    return (
+      <section className="mb-8">
+        <h2 className="text-xl text-gray-800 font-medium mb-3">
+          {getSectionTitle("profile")}
+        </h2>
+        <div
+          className="text-gray-600 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
+      </section>
+    );
+  };
 
   const renderEducation = () => (
     <section className="mb-8">

@@ -161,25 +161,22 @@ export default function CVPreviewHR({
   };
 
   const renderProfile = () => {
-    return data.profile ? (
-      <div
-        className={`mb-6 ${
-          breakSettings.keepHeadingsWithContent ? "keep-together" : ""
-        }`}
-      >
-        {data.profile && (
-          <>
-            <h2
-              className="text-xl font-semibold mb-3 pb-2 border-b-2"
-              style={{ borderColor: accentColor }}
-            >
-              {getSectionTitle("profile")}
-            </h2>
-            <p className="text-sm">{data.profile}</p>
-          </>
-        )}
+    if (!profile) return null;
+
+    return (
+      <div className="mb-8">
+        <h2
+          className="text-xl font-semibold mb-3 pb-2 border-b-2"
+          style={{ borderColor: accentColor }}
+        >
+          {getSectionTitle("profile")}
+        </h2>
+        <div
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
       </div>
-    ) : null;
+    );
   };
 
   const renderEducation = () => {

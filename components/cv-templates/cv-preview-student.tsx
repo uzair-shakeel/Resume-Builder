@@ -286,18 +286,19 @@ export default function CVPreviewStudent({
   };
 
   const renderProfile = () => {
-    return data.profile ? (
+    if (!profile) return null;
+
+    return (
       <div className="mb-8">
-        {data.profile && (
-          <>
-            <h3 className="text-xl font-bold mb-4 uppercase">
-              {getSectionTitle("profile")}
-            </h3>
-            <p className="text-base">{data.profile}</p>
-          </>
-        )}
+        <h3 className="text-xl font-bold mb-4 uppercase">
+          {getSectionTitle("profile")}
+        </h3>
+        <div
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
       </div>
-    ) : null;
+    );
   };
 
   const renderEducation = () => {

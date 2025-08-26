@@ -214,15 +214,18 @@ export default function CVPreviewPro({
   };
 
   const renderProfile = () => {
-    const profileText = profile || placeholderData.profile;
-    if (!profileText) return null;
+    if (!profile) return null;
+
     return (
-      <section className="mb-8">
+      <div className="mb-8">
         <h2 className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color">
           {getSectionTitle("profile")}
         </h2>
-        <p className="text-gray-600 leading-relaxed">{profileText}</p>
-      </section>
+        <div
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
+      </div>
     );
   };
 
