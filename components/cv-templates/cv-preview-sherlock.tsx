@@ -164,18 +164,14 @@ export default function CVPreviewSherlock({
                               {exp.position}
                             </p>
                           </div>
-                          <div className="pl-6 mt-1">
-                            <p
-                              className="text-xs text-gray-700"
+                          {exp.description && (
+                            <div
+                              className="text-sm text-gray-300 mt-2"
                               dangerouslySetInnerHTML={{
-                                __html: exp.description
-                                  ? exp.description
-                                      .replace(/\n/g, "<br/>")
-                                      .replace(/\./g, ".<br/>")
-                                  : "",
+                                __html: exp.description,
                               }}
                             />
-                          </div>
+                          )}
                         </div>
                       </div>
                     </div>

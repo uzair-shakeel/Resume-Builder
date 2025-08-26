@@ -2,17 +2,9 @@
 
 import { useState } from "react";
 import type { ExperienceItem } from "@/types";
-import {
-  Trash2,
-  Bold,
-  Italic,
-  Underline,
-  Link,
-  List,
-  ListOrdered,
-  AlignLeft,
-} from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import RichTextEditor from "@/components/shared/rich-text-editor";
 
 interface ExperienceProps {
   data: ExperienceItem[];
@@ -296,47 +288,13 @@ export default function Experience({ data, updateData }: ExperienceProps) {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t("site.builder.forms.experience.fields.description")}
               </label>
-              <div className="border border-gray-300 rounded-md overflow-hidden">
-                <textarea
-                  value={item.description}
-                  onChange={(e) =>
-                    handleChange(index, "description", e.target.value)
-                  }
-                  rows={4}
-                  className="w-full p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t(
-                    "site.builder.forms.experience.fields.description_placeholder"
-                  )}
-                />
-                <div className="flex border-t p-2 bg-gray-50">
-                  <div className="flex space-x-1">
-                    <button className="p-1 rounded hover:bg-gray-200">
-                      <Bold className="w-5 h-5 text-gray-700" />
-                    </button>
-                    <button className="p-1 rounded hover:bg-gray-200">
-                      <Italic className="w-5 h-5 text-gray-700" />
-                    </button>
-                    <button className="p-1 rounded hover:bg-gray-200">
-                      <Underline className="w-5 h-5 text-gray-700" />
-                    </button>
-                    <button className="p-1 rounded hover:bg-gray-200">
-                      <Link className="w-5 h-5 text-gray-700" />
-                    </button>
-                  </div>
-                  <div className="border-l mx-2" />
-                  <div className="flex space-x-1">
-                    <button className="p-1 rounded hover:bg-gray-200">
-                      <List className="w-5 h-5 text-gray-700" />
-                    </button>
-                    <button className="p-1 rounded hover:bg-gray-200">
-                      <ListOrdered className="w-5 h-5 text-gray-700" />
-                    </button>
-                    <button className="p-1 rounded hover:bg-gray-200">
-                      <AlignLeft className="w-5 h-5 text-gray-700" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <RichTextEditor
+                value={item.description}
+                onChange={(value) => handleChange(index, "description", value)}
+                placeholder={t(
+                  "site.builder.forms.experience.fields.description_placeholder"
+                )}
+              />
             </div>
 
             <div className="flex justify-end space-x-2">

@@ -345,14 +345,10 @@ export default function CVPreviewStudent({
                     {exp.startDate} - {exp.current ? "Present" : exp.endDate}
                   </p>
                   {exp.description && (
-                    <div className="mt-2">
-                      {exp.description.split("\n").map((item, i) => (
-                        <p key={i} className="flex items-start mb-1">
-                          <span className="mr-2">•</span>
-                          <span>{item.replace(/^• /, "")}</span>
-                        </p>
-                      ))}
-                    </div>
+                    <div
+                      className="mt-2"
+                      dangerouslySetInnerHTML={{ __html: exp.description }}
+                    />
                   )}
                 </div>
               ))}

@@ -191,9 +191,10 @@ export default function CVPreviewAlt({
                 </p>
               </div>
               {exp.description && (
-                <p className="text-gray-600 mt-2 text-sm whitespace-pre-line">
-                  {exp.description}
-                </p>
+                <div
+                  className="text-gray-600 mt-1 text-sm"
+                  dangerouslySetInnerHTML={{ __html: exp.description }}
+                />
               )}
             </div>
           ))}

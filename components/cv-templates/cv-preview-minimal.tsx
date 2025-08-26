@@ -236,15 +236,10 @@ export default function CVPreviewMinimal({
                     </div>
                   </div>
                   {exp.description && (
-                    <ul className="mt-2 list-disc pl-5 space-y-1">
-                      {exp.description.split("\n").map((item, i) => (
-                        <div key={i} className="text-gray-700">
-                          {item.startsWith("•")
-                            ? item.substring(1).trim()
-                            : item}
-                        </div>
-                      ))}
-                    </ul>
+                    <div
+                      className="mt-2 text-gray-700"
+                      dangerouslySetInnerHTML={{ __html: exp.description }}
+                    />
                   )}
                 </div>
               ))}

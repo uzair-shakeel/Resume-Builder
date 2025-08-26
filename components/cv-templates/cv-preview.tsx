@@ -192,7 +192,10 @@ export default function CVPreview({
                 </div>
               </div>
               {exp.description && (
-                <p className="text-gray-600 mt-1 text-sm">{exp.description}</p>
+                <div
+                  className="text-gray-600 mt-1 text-sm"
+                  dangerouslySetInnerHTML={{ __html: exp.description }}
+                />
               )}
             </div>
           ))}

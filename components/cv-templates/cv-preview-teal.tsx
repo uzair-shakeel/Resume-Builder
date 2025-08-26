@@ -279,16 +279,10 @@ export default function CVPreviewTeal({
                     </div>
                   </div>
                   {exp.description && (
-                    <div className="mt-2 text-gray-700">
-                      <div className="whitespace-pre-line">
-                        {exp.description.split("\n").map((item, i) => (
-                          <div key={i} className="flex items-start">
-                            <span className="mr-2">•</span>
-                            <span>{item.replace("• ", "")}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <div
+                      className="mt-2 text-gray-700"
+                      dangerouslySetInnerHTML={{ __html: exp.description }}
+                    />
                   )}
                 </div>
               ))}

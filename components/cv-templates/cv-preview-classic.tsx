@@ -367,9 +367,12 @@ export default function CVPreviewClassic({
                               {exp.company}, {exp.location}
                             </p>
                             {exp.description && (
-                              <p className="text-sm mt-1 whitespace-pre-line">
-                                {exp.description}
-                              </p>
+                              <div
+                                className="text-sm text-gray-700 mt-2"
+                                dangerouslySetInnerHTML={{
+                                  __html: exp.description,
+                                }}
+                              />
                             )}
                           </div>
                         ))}
