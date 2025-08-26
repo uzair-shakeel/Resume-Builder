@@ -75,7 +75,7 @@ export default function CVPreviewGenerator({
             onPreviewGenerated(preview);
           } catch (error) {
             console.error("Error generating preview:", error);
-          }
+          }c
         }
       }
     };

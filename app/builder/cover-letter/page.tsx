@@ -302,6 +302,31 @@ export default function CoverLetterBuilder() {
 
   // Add this state at the top with other state declarations
   const [verificationStatus, setVerificationStatus] = useState("");
+  const [showFilenameInput, setShowFilenameInput] = useState(false);
+  const [customFilename, setCustomFilename] = useState("");
+
+  // Generate default filename based on user's name
+  const getDefaultFilename = () => {
+    const firstName = coverLetterData.personalInfo.firstName.trim();
+    const lastName = coverLetterData.personalInfo.lastName.trim();
+    if (firstName && lastName) {
+      return `${firstName}_${lastName}_cover_letter.pdf`;
+    } else if (firstName || lastName) {
+      return `${firstName || lastName}_cover_letter.pdf`;
+    }
+    return "cover_letter.pdf";
+  };
+
+  // Set default filename when modal opens
+  useEffect(() => {
+    if (showFilenameInput) {
+      setCustomFilename(getDefaultFilename());
+    }
+  }, [
+    showFilenameInput,
+    coverLetterData.personalInfo.firstName,
+    coverLetterData.personalInfo.lastName,
+  ]);
 
   // Safe reset function to prevent getting stuck in loading state
   const safeResetTemplateLoadingState = useCallback(() => {
@@ -1171,7 +1196,7 @@ export default function CoverLetterBuilder() {
   };
 
   // Update the generatePDF function to remove the duplicate state declaration
-  const generatePDF = async () => {
+  const generatePDF = async (filename?: string) => {
     if (!previewRef.current) return;
 
     try {
@@ -1245,7 +1270,7 @@ export default function CoverLetterBuilder() {
       pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
 
       setVerificationStatus("Finalizing download...");
-      pdf.save("cover-letter.pdf");
+      pdf.save(filename || "cover-letter.pdf");
 
       // Update client-side subscription info after successful download
       // This ensures our UI state stays in sync with the server
@@ -1282,7 +1307,7 @@ export default function CoverLetterBuilder() {
 
   const handlePaymentSuccess = async () => {
     // After successful payment, generate the PDF
-    await generatePDF();
+    await generatePDF("cover_letter.pdf");
   };
 
   const renderPersonalInfoInputs = () => (
@@ -2380,6 +2405,50 @@ export default function CoverLetterBuilder() {
       {/* Loading Overlay */}
       {isDownloading && <DownloadingOverlay />}
 
+      {/* Filename Input Modal */}
+      {showFilenameInput && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-800 mb-4">
+              Enter PDF Filename
+            </h3>
+            <input
+              type="text"
+              value={customFilename}
+              onChange={(e) => setCustomFilename(e.target.value)}
+              placeholder={getDefaultFilename()}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+              autoFocus
+            />
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={() => {
+                  setShowFilenameInput(false);
+                  setCustomFilename("");
+                }}
+                className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const filename =
+                    customFilename.trim() || getDefaultFilename();
+                  if (!filename.endsWith(".pdf")) {
+                    setCustomFilename(filename + ".pdf");
+                  }
+                  setShowFilenameInput(false);
+                  generatePDF(filename);
+                }}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex h-screen bg-gray-100">
         <div className="lg:w-1/2 w-full flex flex-col border-r border-gray-200 bg-white">
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
@@ -2471,7 +2540,7 @@ export default function CoverLetterBuilder() {
                     <div className="py-1">
                       <button
                         onClick={() => {
-                          generatePDF();
+                          setShowFilenameInput(true);
                           setShowDownloadOptions(false);
                         }}
                         className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"

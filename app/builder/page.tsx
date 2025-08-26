@@ -450,6 +450,31 @@ export default function Builder() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadStatus, setDownloadStatus] = useState("");
   const [verificationStatus, setVerificationStatus] = useState("");
+  const [showFilenameInput, setShowFilenameInput] = useState(false);
+  const [customFilename, setCustomFilename] = useState("");
+
+  // Generate default filename based on user's name
+  const getDefaultFilename = () => {
+    const firstName = cvData.personalInfo.firstName.trim();
+    const lastName = cvData.personalInfo.lastName.trim();
+    if (firstName && lastName) {
+      return `${firstName}_${lastName}_resume.pdf`;
+    } else if (firstName || lastName) {
+      return `${firstName || lastName}_resume.pdf`;
+    }
+    return "resume.pdf";
+  };
+
+  // Set default filename when modal opens
+  useEffect(() => {
+    if (showFilenameInput) {
+      setCustomFilename(getDefaultFilename());
+    }
+  }, [
+    showFilenameInput,
+    cvData.personalInfo.firstName,
+    cvData.personalInfo.lastName,
+  ]);
 
   // Add state for section page assignment
   const [sectionPages, setSectionPages] = useState<Record<string, number>>({});
@@ -1014,7 +1039,7 @@ export default function Builder() {
     setZoomLevel(100);
   };
 
-  const handleDownload = async (format: "pdf") => {
+  const handleDownload = async (format: "pdf", filename?: string) => {
     if (!previewRef.current) return;
 
     try {
@@ -1150,7 +1175,7 @@ export default function Builder() {
         setDownloadStatus("Finalizing your download...");
 
         // Save the PDF
-        pdf.save(`resume.pdf`);
+        pdf.save(filename || "resume.pdf");
 
         // Update client-side subscription info after successful download
         await checkSubscriptionStatus(true);
@@ -1166,7 +1191,7 @@ export default function Builder() {
   // Update the handlePaymentSuccess function to match the new payment system
   const handlePaymentSuccess = async () => {
     // After successful payment, generate the PDF
-    await handleDownload("pdf");
+    await handleDownload("pdf", "resume.pdf");
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
@@ -1906,6 +1931,48 @@ export default function Builder() {
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       {isDownloading && <DownloadingOverlay />}
+      {showFilenameInput && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-800 mb-4">
+              Enter PDF Filename
+            </h3>
+            <input
+              type="text"
+              value={customFilename}
+              onChange={(e) => setCustomFilename(e.target.value)}
+              placeholder={getDefaultFilename()}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+              autoFocus
+            />
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={() => {
+                  setShowFilenameInput(false);
+                  setCustomFilename("");
+                }}
+                className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const filename =
+                    customFilename.trim() || getDefaultFilename();
+                  if (!filename.endsWith(".pdf")) {
+                    setCustomFilename(filename + ".pdf");
+                  }
+                  setShowFilenameInput(false);
+                  handleDownload("pdf", filename);
+                }}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
         <div className="flex flex-1 overflow-hidden">
           {/* Left Panel - Form */}
@@ -2003,7 +2070,7 @@ export default function Builder() {
                       <div className="py-1">
                         <button
                           onClick={() => {
-                            handleDownload("pdf");
+                            setShowFilenameInput(true);
                             setShowDownloadOptions(false);
                           }}
                           className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
