@@ -1260,7 +1260,7 @@ export default function CoverLetterBuilder() {
 
   // Fix the TypeScript type for the DownloadingOverlay component
   const DownloadingOverlay = () => (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-80 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md">
         <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mb-6" />
         <p className="text-xl font-medium text-gray-800">

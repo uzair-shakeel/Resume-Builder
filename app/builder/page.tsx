@@ -449,6 +449,7 @@ export default function Builder() {
   // Add state for download progress
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadStatus, setDownloadStatus] = useState("");
+  const [verificationStatus, setVerificationStatus] = useState("");
 
   // Add state for section page assignment
   const [sectionPages, setSectionPages] = useState<Record<string, number>>({});
@@ -1020,7 +1021,7 @@ export default function Builder() {
       setIsDownloading(true);
 
       // Show initial status message
-      setDownloadStatus("Verifying subscription status...");
+      setVerificationStatus("Verifying subscription status...");
 
       // Direct server-side verification instead of relying on client state
       // This is more secure and reliable
@@ -1062,6 +1063,7 @@ export default function Builder() {
       }
 
       // If we get here, the user is verified and can download
+      setVerificationStatus("Subscription verified. Preparing document...");
       setDownloadStatus("Preparing document...");
 
       const element = previewRef.current;
@@ -1123,7 +1125,6 @@ export default function Builder() {
             allowTaint: true,
             foreignObjectRendering: true,
             logging: false,
-            backgroundColor: "#ffffff",
             imageTimeout: 15000,
             onclone: (clonedDoc) => {
               // Ensure all fonts are loaded
@@ -1882,7 +1883,7 @@ export default function Builder() {
 
   // Then add a DownloadingOverlay component before the return statement
   const DownloadingOverlay = () => (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-80 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md">
         <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mb-6" />
         <p className="text-xl font-medium text-gray-800">
@@ -1892,7 +1893,8 @@ export default function Builder() {
           <div className="bg-blue-600 h-2.5 rounded-full animate-pulse w-full"></div>
         </div>
         <p className="text-sm text-gray-600 mb-4 text-center">
-          {downloadStatus || t("site.builder.pdf_generation.may_take_moments")}
+          {verificationStatus ||
+            t("site.builder.pdf_generation.may_take_moments")}
         </p>
         <p className="text-xs text-gray-500 text-center">
           Please don't refresh the page or close the window during this process.
@@ -1905,21 +1907,6 @@ export default function Builder() {
     <div className="min-h-screen overflow-hidden bg-gray-50">
       {isDownloading && <DownloadingOverlay />}
       <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
-        {/* Loading Overlay */}
-        {isDownloading && (
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
-              <RefreshCw className="w-10 h-10 text-blue-600 animate-spin mb-4" />
-              <p className="text-lg font-medium text-gray-800">
-                {t("site.builder.pdf_generation.generating_pdf")}
-              </p>
-              <p className="text-sm text-gray-600 mt-2">
-                {t("site.builder.pdf_generation.may_take_moments")}
-              </p>
-            </div>
-          </div>
-        )}
-
         <div className="flex flex-1 overflow-hidden">
           {/* Left Panel - Form */}
           <div className="w-full lg:w-1/2 flex flex-col border-r border-gray-200 bg-white">
