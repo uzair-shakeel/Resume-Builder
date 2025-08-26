@@ -166,7 +166,7 @@ export default function CVPreviewSherlock({
                           </div>
                           {exp.description && (
                             <div
-                              className="text-sm text-gray-300 mt-2"
+                              className="text-sm text-gray-600 mt-2 m-5"
                               dangerouslySetInnerHTML={{
                                 __html: exp.description,
                               }}
