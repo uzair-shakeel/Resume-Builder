@@ -107,7 +107,9 @@ export default function CVPreviewStudent({
     // Otherwise use the default name based on language
     switch (section) {
       case "personal-info":
-        return language === "fr" ? "Contact" : "Contact";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       case "profile":
         return language === "fr" ? "Profil" : "Profile";
       case "education":
@@ -137,7 +139,9 @@ export default function CVPreviewStudent({
       case "socials":
         return language === "fr" ? "Liens sociaux" : "Social Links";
       case "contact":
-        return language === "fr" ? "Contact" : "Contact";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       default:
         if (section.startsWith("custom-")) {
           return language === "fr"

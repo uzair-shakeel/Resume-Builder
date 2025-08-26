@@ -118,7 +118,9 @@ export default function CVPreviewClassic({
       case "socials":
         return language === "fr" ? "Réseaux sociaux" : "Social Networks";
       case "contact":
-        return language === "fr" ? "Contact" : "Contact";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       default:
         return section;
     }

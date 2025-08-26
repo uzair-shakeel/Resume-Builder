@@ -123,18 +123,6 @@ export default function Sidebar({ user }: SidebarProps) {
               <Mail size={20} />
               <span>{t("site.dashboard.sidebar.cover_letters")}</span>
             </Link>
-
-            <Link
-              href="/dashboard/subscription"
-              className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                isActive("/dashboard/subscription")
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-400 hover:bg-gray-800 hover:text-white"
-              }`}
-            >
-              <CreditCard size={20} />
-              <span>Subscription</span>
-            </Link>
           </nav>
         </div>
 

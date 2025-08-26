@@ -106,7 +106,9 @@ export default function CVPreviewSherlock({
       case "socials":
         return language === "fr" ? "Réseaux sociaux" : "Social Networks";
       case "contact":
-        return language === "fr" ? "Contact" : "Contact";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       default:
         if (section.startsWith("custom-")) {
           return language === "fr" ? "Section personnalisée" : "Custom Section";
@@ -463,7 +465,7 @@ export default function CVPreviewSherlock({
             )}
 
             {/* Hobbies/Interests */}
-            {data.interests?.length > 0 &&
+            {/* {data.interests?.length > 0 &&
               sectionOrder.includes("interests") && (
                 <div>
                   <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
@@ -477,7 +479,7 @@ export default function CVPreviewSherlock({
                     ))}
                   </ul>
                 </div>
-              )}
+              )} */}
           </div>
 
           {/* Main content */}

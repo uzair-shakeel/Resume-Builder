@@ -71,9 +71,7 @@ export default function CoverLetterPreviewCirculaire({
           style={{ color: accentColor, borderColor: accentColor }}
           className="text-xl font-bold mb-4 border-b pb-2"
         >
-          {language === "fr"
-            ? "Informations personnelles"
-            : "Personal Information"}
+          {language === "fr" ? "Contact" : "Contact"}
         </h2>
         <div className="space-y-4">
           <div className="flex items-center gap-3">

@@ -129,7 +129,9 @@ export default function CVPreviewTeal({
       case "socials":
         return language === "fr" ? "Réseaux sociaux" : "Social Networks";
       case "contact":
-        return language === "fr" ? "Contact" : "Contact";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       default:
         if (section.startsWith("custom-")) {
           return language === "fr" ? "Section personnalisée" : "Custom Section";

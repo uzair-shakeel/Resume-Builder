@@ -120,7 +120,9 @@ export default function CVPreviewHR({
       case "socials":
         return language === "fr" ? "RÉSEAUX SOCIAUX" : "SOCIAL NETWORKS";
       case "contact":
-        return language === "fr" ? "CONTACT" : "CONTACT";
+        return language === "fr"
+          ? "INFORMATIONS PERSONNELLES"
+          : "PERSONAL INFORMATION";
       default:
         if (section.startsWith("custom-")) {
           return language === "fr" ? "SECTION PERSONNALISÉE" : "CUSTOM SECTION";
