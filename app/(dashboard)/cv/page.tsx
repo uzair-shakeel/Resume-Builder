@@ -243,6 +243,8 @@ export default function CVDashboard() {
   };
 
   const renderCVPreview = (cv: CV) => {
+    const { language } = useLanguage();
+
     // Default data structure
     const defaultData = {
       personalInfo: {
@@ -257,7 +259,7 @@ export default function CVDashboard() {
         photo: "/placeholder-user.jpg",
       },
       profile: "",
-      education: [],
+      education: "",
       experience: [],
       skills: [],
       languages: [],
@@ -283,6 +285,7 @@ export default function CVDashboard() {
       customSectionNames: cv.customSectionNames || {},
       previewMode: true,
       showFirstPageOnly: true,
+      language,
     };
 
     const preview = (() => {

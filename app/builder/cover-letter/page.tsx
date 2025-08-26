@@ -1128,18 +1128,20 @@ export default function CoverLetterBuilder() {
 
   const toggleSectionMenu = (section: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     if (activeSectionMenu === section) {
       setActiveSectionMenu(null);
     } else {
       // Calculate position before showing the menu
-      const buttonRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const buttonRect = (
+        e.currentTarget as HTMLElement
+      ).getBoundingClientRect();
       const left = buttonRect.right - 192; // 12rem = 192px
       const top = buttonRect.bottom + 10;
-      
+
       // Set the position first
       setMenuPosition({ top, left });
-      
+
       // Then show the menu
       setActiveSectionMenu(section);
     }
@@ -2099,30 +2101,30 @@ export default function CoverLetterBuilder() {
   // Helper function to convert stored date to display format
   const getDisplayDate = (dateValue: string) => {
     if (!dateValue) return "";
-    
+
     // If the date is already in ISO format, return it as is for the input
     if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
       return dateValue;
     }
-    
+
     // If it's in French format (DD/MM/YYYY), convert to ISO
     if (dateValue.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
-      const [day, month, year] = dateValue.split('/');
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      const [day, month, year] = dateValue.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     }
-    
+
     return "";
   };
 
   // Helper function to convert ISO date to French format for templates
   const getFormattedDate = (dateValue: string) => {
     if (!dateValue) return new Date().toLocaleDateString("fr-FR");
-    
+
     // If it's in ISO format, convert to French
     if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
       return new Date(dateValue).toLocaleDateString("fr-FR");
     }
-    
+
     // If it's already in French format, return as is
     return dateValue;
   };
@@ -2349,7 +2351,12 @@ export default function CoverLetterBuilder() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [activeSectionMenu, showDownloadOptions, isRenamingSection, sectionToRename]);
+  }, [
+    activeSectionMenu,
+    showDownloadOptions,
+    isRenamingSection,
+    sectionToRename,
+  ]);
 
   // Add a function to generate unique template keys
   const getTemplateKey = () => {
@@ -2541,11 +2548,14 @@ export default function CoverLetterBuilder() {
                         </button>
 
                         {activeSectionMenu === section && (
-                          <div className="fixed z-[100] bg-white rounded-md shadow-lg border border-gray-200 section-menu-container" style={{
-                            top: `${menuPosition.top}px`,
-                            left: `${menuPosition.left}px`,
-                            width: "12rem"
-                          }}>
+                          <div
+                            className="fixed z-[100] bg-white rounded-md shadow-lg border border-gray-200 section-menu-container"
+                            style={{
+                              top: `${menuPosition.top}px`,
+                              left: `${menuPosition.left}px`,
+                              width: "12rem",
+                            }}
+                          >
                             <div className="py-1">
                               <button
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
@@ -2668,6 +2678,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "sherlock" && (
@@ -2680,6 +2691,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "minimal" && (
@@ -2692,6 +2704,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "classic" && (
@@ -2704,6 +2717,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "professional" && (
@@ -2716,6 +2730,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "circulaire" && (
@@ -2728,6 +2743,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "student" && (
@@ -2740,6 +2756,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "hr" && (
@@ -2752,6 +2769,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "teal" && (
@@ -2764,6 +2782,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
             </div>
@@ -3033,6 +3052,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "sherlock" && (
@@ -3045,6 +3065,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "minimal" && (
@@ -3057,6 +3078,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "classic" && (
@@ -3069,6 +3091,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "professional" && (
@@ -3081,6 +3104,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "circulaire" && (
@@ -3093,6 +3117,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "student" && (
@@ -3105,6 +3130,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "hr" && (
@@ -3117,6 +3143,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "teal" && (
@@ -3129,6 +3156,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
               </div>

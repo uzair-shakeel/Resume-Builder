@@ -51,13 +51,13 @@ export default function CoverLetterPreviewProfessional({
 
     switch (section) {
       case "introduction":
-        return "Introduction";
+        return language === "fr" ? "Introduction" : "Introduction";
       case "situation-actuelle":
-        return "Situation Actuelle";
+        return language === "fr" ? "Situation Actuelle" : "Current Situation";
       case "motivation":
-        return "Motivation";
+        return language === "fr" ? "Motivation" : "Motivation";
       case "conclusion":
-        return "Conclusion";
+        return language === "fr" ? "Conclusion" : "Conclusion";
       default:
         return section;
     }

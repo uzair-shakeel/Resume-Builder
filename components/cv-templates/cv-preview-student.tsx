@@ -48,6 +48,7 @@ interface CVPreviewStudentProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  language?: string;
   template?: string;
   accentColor?: string;
   fontFamily?: string;
@@ -67,6 +68,7 @@ export default function CVPreviewStudent({
   fontFamily = "inter",
   previewMode = false,
   showFirstPageOnly = false,
+  language = "fr",
 }: CVPreviewStudentProps) {
   const {
     personalInfo,
@@ -102,39 +104,45 @@ export default function CVPreviewStudent({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "personal-info":
-        return "Contact";
+        return language === "fr" ? "Contact" : "Contact";
       case "profile":
-        return "Summary";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Education";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Experience";
+        return language === "fr" ? "Expérience" : "Experience";
       case "skills":
-        return "Skills";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Languages";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Interests";
+        return language === "fr" ? "Centres d'intérêt" : "Interests";
       case "achievements":
-        return "Achievements";
+        return language === "fr" ? "Réalisations" : "Achievements";
       case "technical-skills":
-        return "Technical Skills";
+        return language === "fr"
+          ? "Compétences techniques"
+          : "Technical Skills";
       case "activities":
-        return "Activities";
+        return language === "fr" ? "Activités" : "Activities";
       case "key-skills":
-        return "Key Skills";
+        return language === "fr" ? "Compétences clés" : "Key Skills";
       case "volunteer-work":
-        return "Volunteer Work";
+        return language === "fr" ? "Travail bénévole" : "Volunteer Work";
       case "references":
-        return "References";
+        return language === "fr" ? "Références" : "References";
       case "socials":
-        return "Social Links";
+        return language === "fr" ? "Liens sociaux" : "Social Links";
+      case "contact":
+        return language === "fr" ? "Contact" : "Contact";
       default:
         if (section.startsWith("custom-")) {
-          return section.replace("custom-", "Custom Section ");
+          return language === "fr"
+            ? "Section personnalisée "
+            : "Custom Section ";
         }
         return (
           section.charAt(0).toUpperCase() + section.slice(1).replace(/-/g, " ")

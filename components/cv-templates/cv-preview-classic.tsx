@@ -50,6 +50,7 @@ interface CVPreviewClassicProps {
   };
   previewMode?: boolean;
   showFirstPageOnly?: boolean;
+  language?: string;
 }
 
 export default function CVPreviewClassic({
@@ -62,6 +63,7 @@ export default function CVPreviewClassic({
   pageBreakSettings,
   previewMode = false,
   showFirstPageOnly = false,
+  language = "fr",
 }: CVPreviewClassicProps) {
   const {
     personalInfo = {},
@@ -90,22 +92,34 @@ export default function CVPreviewClassic({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "profile":
-        return "Profil";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Formation";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Expérience professionnelle";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Professional Experience";
       case "skills":
-        return "Compétences";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Langues";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Centres d'intérêt";
+        return language === "fr" ? "Centres d'intérêt" : "Interests";
+      case "personal-info":
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr" ? "Contact" : "Contact";
       default:
-        return "";
+        return section;
     }
   };
 
@@ -135,9 +149,7 @@ export default function CVPreviewClassic({
   const renderPhoto = () => (
     <div className="mb-6 flex justify-center">
       {personalInfo && personalInfo["photo"] && (
-        <div
-          className="w-32 h-32 overflow-hidden rounded-full border-2 cv-accent-border"
-        >
+        <div className="w-32 h-32 overflow-hidden rounded-full border-2 cv-accent-border">
           <Image
             src={personalInfo["photo"]}
             alt={`${personalInfo["firstName"] || ""} ${
@@ -156,18 +168,22 @@ export default function CVPreviewClassic({
   const renderPersonalInfo = () => (
     <div className="mb-6">
       <h2 className="text-lg font-semibold border-b-2 cv-accent-border pb-2 mb-3 section-heading">
-        Contact
+        {getSectionTitle("contact")}
       </h2>
       <div className="space-y-2 section-content">
         {personalInfo && personalInfo["email"] && (
           <div>
-            <p className="text-sm font-medium">Email:</p>
+            <p className="text-sm font-medium">
+              {language === "fr" ? "E-mail:" : "Email:"}
+            </p>
             <p className="text-sm">{personalInfo["email"]}</p>
           </div>
         )}
         {personalInfo && personalInfo["phone"] && (
           <div>
-            <p className="text-sm font-medium">Téléphone:</p>
+            <p className="text-sm font-medium">
+              {language === "fr" ? "Téléphone:" : "Phone:"}
+            </p>
             <p className="text-sm">{personalInfo["phone"]}</p>
           </div>
         )}
@@ -176,7 +192,9 @@ export default function CVPreviewClassic({
             personalInfo["postalCode"] ||
             personalInfo["city"]) && (
             <div>
-              <p className="text-sm font-medium">Adresse:</p>
+              <p className="text-sm font-medium">
+                {language === "fr" ? "Adresse:" : "Address:"}
+              </p>
               <p className="text-sm">
                 {personalInfo["address"] || ""}
                 {personalInfo["address"] &&

@@ -46,6 +46,7 @@ interface CVPreviewHRProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  language?: string;
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
 }
@@ -58,6 +59,7 @@ export default function CVPreviewHR({
   pageBreakSettings,
   sectionPages = {},
   customSectionNames = {},
+  language = "fr",
 }: CVPreviewHRProps) {
   const {
     personalInfo,
@@ -93,27 +95,37 @@ export default function CVPreviewHR({
       return customSectionNames[section].toUpperCase();
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "personal-info":
-        return "INFORMATIONS PERSONNELLES";
+        return language === "fr"
+          ? "INFORMATIONS PERSONNELLES"
+          : "PERSONAL INFORMATION";
       case "profile":
-        return "PROFIL";
+        return language === "fr" ? "PROFIL" : "PROFILE";
       case "education":
-        return "FORMATION";
+        return language === "fr" ? "ÉDUCATION" : "EDUCATION";
       case "experience":
-        return "EXPÉRIENCE PROFESSIONNELLE";
+        return language === "fr"
+          ? "EXPÉRIENCE PROFESSIONNELLE"
+          : "PROFESSIONAL EXPERIENCE";
       case "skills":
-        return "COMPÉTENCES";
+        return language === "fr" ? "COMPÉTENCES" : "SKILLS";
       case "languages":
-        return "LANGUES";
+        return language === "fr" ? "LANGUES" : "LANGUAGES";
       case "interests":
-        return "CENTRES D'INTÉRÊT";
+        return language === "fr" ? "CENTRES D'INTÉRÊT" : "INTERESTS";
+      case "references":
+        return language === "fr" ? "RÉFÉRENCES" : "REFERENCES";
+      case "socials":
+        return language === "fr" ? "RÉSEAUX SOCIAUX" : "SOCIAL NETWORKS";
+      case "contact":
+        return language === "fr" ? "CONTACT" : "CONTACT";
       default:
         if (section.startsWith("custom-")) {
-          return "SECTION PERSONNALISÉE";
+          return language === "fr" ? "SECTION PERSONNALISÉE" : "CUSTOM SECTION";
         }
-        return "";
+        return section.toUpperCase();
     }
   };
 

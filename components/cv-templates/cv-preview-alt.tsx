@@ -12,6 +12,7 @@ interface CVPreviewAltProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  language?: string;
   accentColor?: string;
   fontFamily?: string;
   sectionPages?: Record<string, number>;
@@ -30,6 +31,7 @@ export default function CVPreviewAlt({
   customSectionNames = {},
   previewMode = false,
   showFirstPageOnly = false,
+  language = "fr",
 }: CVPreviewAltProps) {
   const {
     personalInfo = {},
@@ -65,24 +67,37 @@ export default function CVPreviewAlt({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "personal-info":
-        return "Personal Information";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       case "profile":
-        return "Profile";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Education";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Professional Experience";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Professional Experience";
       case "skills":
-        return "Skills";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Languages";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Interests";
+        return language === "fr" ? "Centres d'intérêt" : "Interests";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr" ? "Contact" : "Contact";
       default:
-        return "";
+        if (section.startsWith("custom-")) {
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
+        }
+        return section;
     }
   };
 

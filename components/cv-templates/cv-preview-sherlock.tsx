@@ -24,6 +24,7 @@ interface CVPreviewSherlockProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  language?: string;
   accentColor?: string;
   fontFamily?: string;
   sectionPages?: Record<string, number>;
@@ -42,6 +43,7 @@ export default function CVPreviewSherlock({
   customSectionNames = {},
   previewMode = false,
   showFirstPageOnly = false,
+  language = "fr",
 }: CVPreviewSherlockProps) {
   const {
     personalInfo,
@@ -79,24 +81,37 @@ export default function CVPreviewSherlock({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "personal-info":
-        return "Personal Information";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       case "profile":
-        return "Profile";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Education";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Work Experience";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Work Experience";
       case "skills":
-        return "Skills";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Languages";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Hobbies";
+        return language === "fr" ? "Centres d'intérêt" : "Hobbies";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr" ? "Contact" : "Contact";
       default:
-        return "";
+        if (section.startsWith("custom-")) {
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
+        }
+        return section;
     }
   };
 
@@ -121,9 +136,7 @@ export default function CVPreviewSherlock({
                 </h2>
                 <div className="relative">
                   {/* Continuous vertical line that spans the entire timeline */}
-                  <div
-                    className="absolute left-[calc(33.333%+5.2px)] top-2 bottom-10 w-0.5 cv-accent-bg"
-                  ></div>
+                  <div className="absolute left-[calc(33.333%+5.2px)] top-2 bottom-10 w-0.5 cv-accent-bg"></div>
 
                   {data.experience.map((exp, index) => (
                     <div key={index} className="mb-8 relative">
@@ -145,9 +158,7 @@ export default function CVPreviewSherlock({
                         <div className="w-2/3">
                           <div className="flex relative pl-6 items-start">
                             {/* Timeline dot */}
-                            <div
-                              className="absolute left-0 top-1.5 w-3 h-3 rounded-full cv-accent-bg z-10"
-                            ></div>
+                            <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full cv-accent-bg z-10"></div>
 
                             <p className="font-semibold text-sm">
                               {exp.position}
@@ -199,9 +210,7 @@ export default function CVPreviewSherlock({
                       {/* Right column - Degree and description */}
                       <div className="col-span-2 relative pl-6">
                         {/* Timeline dot */}
-                        <div
-                          className="absolute left-0 top-1.5 w-3 h-3 rounded-full cv-accent-bg"
-                        ></div>
+                        <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full cv-accent-bg"></div>
 
                         {/* Vertical line connecting dots (except for last item) */}
                         {index < data.education.length - 1 && (
@@ -497,9 +506,7 @@ export default function CVPreviewSherlock({
                       {personalInfo?.address || ""}, {personalInfo?.city || ""},{" "}
                       {personalInfo?.postalCode || ""}
                     </p>
-                    <div
-                      className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2"
-                    >
+                    <div className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2">
                       <span className="text-white text-xs">📍</span>
                     </div>
                   </div>
@@ -509,9 +516,7 @@ export default function CVPreviewSherlock({
                     <p className="text-sm text-gray-700">
                       {personalInfo?.phone}
                     </p>
-                    <div
-                      className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2"
-                    >
+                    <div className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2">
                       <span className="text-white text-xs">📞</span>
                     </div>
                   </div>
@@ -521,9 +526,7 @@ export default function CVPreviewSherlock({
                     <p className="text-sm text-gray-700">
                       {personalInfo?.email}
                     </p>
-                    <div
-                      className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2"
-                    >
+                    <div className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2">
                       <span className="text-white text-xs">✉️</span>
                     </div>
                   </div>

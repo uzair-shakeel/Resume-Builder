@@ -51,13 +51,13 @@ export default function CoverLetterPreviewStudent({
 
     switch (section) {
       case "introduction":
-        return "Introduction";
+        return language === "fr" ? "Introduction" : "Introduction";
       case "situation-actuelle":
-        return "Situation Actuelle";
+        return language === "fr" ? "Situation Actuelle" : "Current Situation";
       case "motivation":
-        return "Motivation";
+        return language === "fr" ? "Motivation" : "Motivation";
       case "conclusion":
-        return "Conclusion";
+        return language === "fr" ? "Conclusion" : "Conclusion";
       default:
         return section;
     }
@@ -68,8 +68,18 @@ export default function CoverLetterPreviewStudent({
     return (
       <div className="header mb-8">
         <h1 className="text-5xl font-bold tracking-[0.2em] text-center mb-4">
-          {getPlaceholder("personalInfo", "firstName", personalInfo?.firstName, language)?.toUpperCase()}{" "}
-          {getPlaceholder("personalInfo", "lastName", personalInfo?.lastName, language)?.toUpperCase()}
+          {getPlaceholder(
+            "personalInfo",
+            "firstName",
+            personalInfo?.firstName,
+            language
+          )?.toUpperCase()}{" "}
+          {getPlaceholder(
+            "personalInfo",
+            "lastName",
+            personalInfo?.lastName,
+            language
+          )?.toUpperCase()}
         </h1>
         <div className="relative py-4">
           <div
@@ -77,7 +87,12 @@ export default function CoverLetterPreviewStudent({
             className="absolute top-0 left-0 right-0 h-[1px]"
           ></div>
           <h2 className="text-2xl text-center uppercase tracking-widest">
-            {getPlaceholder("personalInfo", "title", personalInfo?.title, language)}
+            {getPlaceholder(
+              "personalInfo",
+              "title",
+              personalInfo?.title,
+              language
+            )}
           </h2>
           <div
             style={{ backgroundColor: accentColor }}
@@ -100,23 +115,56 @@ export default function CoverLetterPreviewStudent({
             <span className="inline-block">
               <Phone size={18} />
             </span>
-            <span>{getPlaceholder("personalInfo", "phone", personalInfo?.phone, language)}</span>
+            <span>
+              {getPlaceholder(
+                "personalInfo",
+                "phone",
+                personalInfo?.phone,
+                language
+              )}
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <span className="inline-block">
               <Mail size={18} />
             </span>
-            <span>{getPlaceholder("personalInfo", "email", personalInfo?.email, language)}</span>
+            <span>
+              {getPlaceholder(
+                "personalInfo",
+                "email",
+                personalInfo?.email,
+                language
+              )}
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <span className="inline-block">
               <HomeIcon size={18} />
             </span>
             <div>
-              <p>{getPlaceholder("personalInfo", "address", personalInfo?.address, language)},</p>
               <p>
-                {getPlaceholder("personalInfo", "city", personalInfo?.city, language)},{" "}
-                {getPlaceholder("personalInfo", "postalCode", personalInfo?.postalCode, language)}
+                {getPlaceholder(
+                  "personalInfo",
+                  "address",
+                  personalInfo?.address,
+                  language
+                )}
+                ,
+              </p>
+              <p>
+                {getPlaceholder(
+                  "personalInfo",
+                  "city",
+                  personalInfo?.city,
+                  language
+                )}
+                ,{" "}
+                {getPlaceholder(
+                  "personalInfo",
+                  "postalCode",
+                  personalInfo?.postalCode,
+                  language
+                )}
               </p>
             </div>
           </div>
@@ -131,13 +179,32 @@ export default function CoverLetterPreviewStudent({
       <div className="mb-8">
         <div className="space-y-2 text-base">
           <p className="uppercase">
-            {getPlaceholder("recipient", "company", recipient?.company, language)}
+            {getPlaceholder(
+              "recipient",
+              "company",
+              recipient?.company,
+              language
+            )}
           </p>
-          <p>{getPlaceholder("recipient", "name", recipient?.name, language)}</p>
-          <p>{getPlaceholder("recipient", "address", recipient?.address, language)}</p>
+          <p>
+            {getPlaceholder("recipient", "name", recipient?.name, language)}
+          </p>
+          <p>
+            {getPlaceholder(
+              "recipient",
+              "address",
+              recipient?.address,
+              language
+            )}
+          </p>
           <p>
             {getPlaceholder("recipient", "city", recipient?.city, language)},{" "}
-            {getPlaceholder("recipient", "postalCode", recipient?.postalCode, language)}
+            {getPlaceholder(
+              "recipient",
+              "postalCode",
+              recipient?.postalCode,
+              language
+            )}
           </p>
         </div>
       </div>
@@ -150,14 +217,28 @@ export default function CoverLetterPreviewStudent({
       <div className="mb-8">
         <div className="space-y-2 text-base">
           <p>
-            {getPlaceholder("dateAndSubject", "location", dateAndSubject?.location, language)}, le{" "}
-            {dateAndSubject?.date || new Date().toLocaleDateString(language === "fr" ? "fr-FR" : "en-US")}
+            {getPlaceholder(
+              "dateAndSubject",
+              "location",
+              dateAndSubject?.location,
+              language
+            )}
+            , le{" "}
+            {dateAndSubject?.date ||
+              new Date().toLocaleDateString(
+                language === "fr" ? "fr-FR" : "en-US"
+              )}
           </p>
           <p className="text-lg font-bold">
             Objet :{" "}
             <span
               dangerouslySetInnerHTML={{
-                __html: getPlaceholder("dateAndSubject", "subject", dateAndSubject?.subject, language),
+                __html: getPlaceholder(
+                  "dateAndSubject",
+                  "subject",
+                  dateAndSubject?.subject,
+                  language
+                ),
               }}
             />
           </p>
@@ -206,8 +287,13 @@ export default function CoverLetterPreviewStudent({
           return (
             <div key={section} className="mb-8">
               <div
-                dangerouslySetInnerHTML={{ 
-                  __html: getPlaceholder("sections", "introduction", introduction, language)
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "introduction",
+                    introduction,
+                    language
+                  ),
                 }}
                 className="text-base"
               />
@@ -217,8 +303,13 @@ export default function CoverLetterPreviewStudent({
           return (
             <div key={section} className="mb-8">
               <div
-                dangerouslySetInnerHTML={{ 
-                  __html: getPlaceholder("sections", "currentSituation", currentSituation, language)
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "currentSituation",
+                    currentSituation,
+                    language
+                  ),
                 }}
                 className="text-base"
               />
@@ -228,8 +319,13 @@ export default function CoverLetterPreviewStudent({
           return (
             <div key={section} className="mb-8">
               <div
-                dangerouslySetInnerHTML={{ 
-                  __html: getPlaceholder("sections", "motivation", motivation, language)
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "motivation",
+                    motivation,
+                    language
+                  ),
                 }}
                 className="text-base"
               />
@@ -239,8 +335,13 @@ export default function CoverLetterPreviewStudent({
           return (
             <div key={section} className="mb-8">
               <div
-                dangerouslySetInnerHTML={{ 
-                  __html: getPlaceholder("sections", "conclusion", conclusion, language)
+                dangerouslySetInnerHTML={{
+                  __html: getPlaceholder(
+                    "sections",
+                    "conclusion",
+                    conclusion,
+                    language
+                  ),
                 }}
                 className="text-base"
               />

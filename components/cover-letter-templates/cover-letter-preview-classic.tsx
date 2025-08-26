@@ -10,6 +10,7 @@ interface CoverLetterPreviewClassicProps {
   sectionPages: Record<string, number>;
   customSectionNames: Record<string, string>;
   customSections?: Record<string, string>;
+  language?: string;
 }
 
 export default function CoverLetterPreviewClassic({
@@ -20,6 +21,7 @@ export default function CoverLetterPreviewClassic({
   sectionPages = {},
   customSectionNames = {},
   customSections = {},
+  language = "fr",
 }: CoverLetterPreviewClassicProps) {
   const {
     personalInfo,
@@ -61,13 +63,13 @@ export default function CoverLetterPreviewClassic({
 
     switch (section) {
       case "introduction":
-        return "Introduction";
+        return language === "fr" ? "Introduction" : "Introduction";
       case "situation-actuelle":
-        return "Situation Actuelle";
+        return language === "fr" ? "Situation Actuelle" : "Current Situation";
       case "motivation":
-        return "Motivation";
+        return language === "fr" ? "Motivation" : "Motivation";
       case "conclusion":
-        return "Conclusion";
+        return language === "fr" ? "Conclusion" : "Conclusion";
       default:
         return section;
     }

@@ -16,6 +16,7 @@ interface CoverLetterPreviewAltProps {
   customSections?: Record<string, string>;
   previewMode?: boolean;
   showFirstPageOnly?: boolean;
+  language?: string;
 }
 
 export default function CoverLetterPreviewAlt({
@@ -28,6 +29,7 @@ export default function CoverLetterPreviewAlt({
   customSections = {},
   previewMode = false,
   showFirstPageOnly = false,
+  language = "fr",
 }: CoverLetterPreviewAltProps) {
   const {
     personalInfo,
@@ -69,13 +71,13 @@ export default function CoverLetterPreviewAlt({
 
     switch (section) {
       case "introduction":
-        return "Introduction";
+        return language === "fr" ? "Introduction" : "Introduction";
       case "situation-actuelle":
-        return "Situation Actuelle";
+        return language === "fr" ? "Situation Actuelle" : "Current Situation";
       case "motivation":
-        return "Motivation";
+        return language === "fr" ? "Motivation" : "Motivation";
       case "conclusion":
-        return "Conclusion";
+        return language === "fr" ? "Conclusion" : "Conclusion";
       default:
         return section;
     }

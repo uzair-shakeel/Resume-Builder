@@ -65,22 +65,24 @@ export default function CoverLetterPreviewTeal({
     // Otherwise use the default name
     switch (section) {
       case "personal-info":
-        return "Personal Information";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       case "destinataire":
-        return "Recipient";
+        return language === "fr" ? "Destinataire" : "Recipient";
       case "date-et-objet":
-        return "Date and Subject";
+        return language === "fr" ? "Date et objet" : "Date and Subject";
       case "introduction":
-        return "Introduction";
+        return language === "fr" ? "Introduction" : "Introduction";
       case "situation-actuelle":
-        return "Current Situation";
+        return language === "fr" ? "Situation actuelle" : "Current Situation";
       case "motivation":
-        return "Motivation";
+        return language === "fr" ? "Motivation" : "Motivation";
       case "conclusion":
-        return "Conclusion";
+        return language === "fr" ? "Conclusion" : "Conclusion";
       default:
         if (section.startsWith("custom-")) {
-          return "Custom Section";
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
         }
         return section;
     }

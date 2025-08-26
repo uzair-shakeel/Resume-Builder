@@ -415,6 +415,8 @@ export default function Dashboard() {
   };
 
   const renderCVPreview = (cv: CV) => {
+    const { language } = useLanguage();
+    
     // Default data structure
     const defaultData = {
       personalInfo: {
@@ -455,6 +457,7 @@ export default function Dashboard() {
       customSectionNames: cv.customSectionNames || {},
       previewMode: true,
       showFirstPageOnly: true,
+      language,
     };
 
     const preview = (() => {
@@ -486,6 +489,7 @@ export default function Dashboard() {
   };
 
   const renderCoverLetterPreview = (coverLetter: CoverLetter) => {
+    const { language } = useLanguage();
     // Fallback to template-based preview
     const commonProps = {
       data: coverLetter.data || {
@@ -505,6 +509,7 @@ export default function Dashboard() {
       customSections: coverLetter.customSections || {},
       previewMode: true,
       showFirstPageOnly: true,
+      language,
     };
 
     try {

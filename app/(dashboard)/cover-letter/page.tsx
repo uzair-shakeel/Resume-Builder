@@ -277,6 +277,7 @@ export default function CoverLetterDashboard() {
   };
 
   const renderCoverLetterPreview = (coverLetter: CoverLetter) => {
+    const { language } = useLanguage();
     // Fallback to template-based preview
     const commonProps = {
       data: coverLetter.data || {
@@ -296,6 +297,7 @@ export default function CoverLetterDashboard() {
       customSections: coverLetter.customSections || {},
       previewMode: true,
       showFirstPageOnly: true,
+      language,
     };
 
     const preview = (() => {

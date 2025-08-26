@@ -12,6 +12,8 @@ interface CVPreviewProps {
   fontFamily?: string;
   previewMode?: boolean;
   showFirstPageOnly?: boolean;
+
+  language?: string;
 }
 
 export default function CVPreviewPro({
@@ -23,6 +25,7 @@ export default function CVPreviewPro({
   customSectionNames = {},
   previewMode = false,
   showFirstPageOnly = false,
+  language = "fr",
 }: CVPreviewProps) {
   const {
     personalInfo,
@@ -51,29 +54,38 @@ export default function CVPreviewPro({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "profile":
-        return "Profil";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Formation";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Expérience professionnelle";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Professional Experience";
       case "skills":
-        return "Compétences";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Langues";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Centres d'intérêt";
+        return language === "fr" ? "Centres d'intérêt" : "Interests";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr" ? "Contact" : "Contact";
       default:
-        return "";
+        if (section.startsWith("custom-")) {
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
+        }
+        return section;
     }
   };
 
   const renderHeader = () => (
-    <div
-      className="cv-accent-bg text-white p-6 flex items-center gap-6"
-    >
+    <div className="cv-accent-bg text-white p-6 flex items-center gap-6">
       <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white">
         <Image
           src={personalInfo?.photo || placeholderData.personalInfo.photo}
@@ -192,9 +204,7 @@ export default function CVPreviewPro({
         <div className="space-y-2">
           {interestItems.map((interest, index) => (
             <div key={index} className="flex items-center gap-2">
-              <div
-                className="w-1.5 h-1.5 cv-accent-bg rounded-full"
-              />
+              <div className="w-1.5 h-1.5 cv-accent-bg rounded-full" />
               <span className="text-sm">{interest.name}</span>
             </div>
           ))}
@@ -208,9 +218,7 @@ export default function CVPreviewPro({
     if (!profileText) return null;
     return (
       <section className="mb-8">
-        <h2
-          className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color"
-        >
+        <h2 className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color">
           {getSectionTitle("profile")}
         </h2>
         <p className="text-gray-600 leading-relaxed">{profileText}</p>
@@ -224,9 +232,7 @@ export default function CVPreviewPro({
       : placeholderData.education;
     return (
       <section className="mb-8">
-        <h2
-          className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color"
-        >
+        <h2 className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color">
           {getSectionTitle("education")}
         </h2>
         {educationItems.map((edu, index) => (
@@ -252,9 +258,7 @@ export default function CVPreviewPro({
       : placeholderData.experience;
     return (
       <section className="mb-8">
-        <h2
-          className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color"
-        >
+        <h2 className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color">
           {getSectionTitle("experience")}
         </h2>
         {experienceItems.map((exp, index) => (

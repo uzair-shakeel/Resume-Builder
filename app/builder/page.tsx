@@ -827,10 +827,14 @@ export default function Builder() {
       // Only set title for new CVs (when there's no currentCvId)
       if (!currentCvId) {
         payload.title = processedCVData.personalInfo.firstName
-          ? `${processedCVData.personalInfo.firstName}${processedCVData.personalInfo.lastName ? ' ' + processedCVData.personalInfo.lastName : ''}'s CV`
+          ? `${processedCVData.personalInfo.firstName}${
+              processedCVData.personalInfo.lastName
+                ? " " + processedCVData.personalInfo.lastName
+                : ""
+            }'s CV`
           : "Untitled CV";
       }
-      
+
       // Send API request
       const response = await fetch("/api/cv/save", {
         method: "POST",
@@ -966,8 +970,6 @@ export default function Builder() {
 
   // Template loading state for UI feedback
   const [isTemplateLoading, setIsTemplateLoading] = useState(false);
-
-
 
   // Save color preference for each template
   useEffect(() => {
@@ -1318,6 +1320,8 @@ export default function Builder() {
   };
 
   const renderTemplate = () => {
+    const { language } = useLanguage();
+
     // Create props object for page break settings
     const pageBreakSettingsProps = {
       keepHeadingsWithContent: pageBreakSettings.keepHeadingsWithContent,
@@ -1334,6 +1338,7 @@ export default function Builder() {
       fontFamily,
       sectionPages,
       customSectionNames,
+      language,
     };
 
     // Log current template being rendered
@@ -1361,7 +1366,6 @@ export default function Builder() {
         return <CVPreview {...(commonProps as any)} />;
     }
   };
-
 
   // Add effect to close section menu and download modal when clicking outside
   useEffect(() => {
@@ -1400,7 +1404,12 @@ export default function Builder() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [activeSectionMenu, showDownloadOptions, isRenamingSection, sectionToRename]);
+  }, [
+    activeSectionMenu,
+    showDownloadOptions,
+    isRenamingSection,
+    sectionToRename,
+  ]);
 
   // Load section pages from localStorage
   useEffect(() => {
@@ -1703,11 +1712,12 @@ export default function Builder() {
   // Add function to reload saved data from database
   const reloadSavedData = async () => {
     try {
-      const currentCvId = searchParams.get("id") || sessionStorage.getItem("current-cv-id");
+      const currentCvId =
+        searchParams.get("id") || sessionStorage.getItem("current-cv-id");
       if (currentCvId) {
         const response = await fetch(`/api/cv/load?cvId=${currentCvId}`);
         const data = await response.json();
-        
+
         if (data.success) {
           // Fix for interests using interest property instead of name property
           if (data.cv.data.interests && data.cv.data.interests.length > 0) {
@@ -1718,7 +1728,7 @@ export default function Builder() {
               return item;
             });
           }
-          
+
           // Reload the saved CV data
           setCVData(data.cv.data);
           setSaveStatus("saved");

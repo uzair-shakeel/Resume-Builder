@@ -45,6 +45,7 @@ interface CVPreviewCirculaireProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  language?: string;
   template?: string;
   accentColor?: string;
   fontFamily?: string;
@@ -65,6 +66,7 @@ export default function CVPreviewCirculaire({
   customSectionNames = {},
   previewMode = false,
   showFirstPageOnly = false,
+  language = "fr",
 }: CVPreviewCirculaireProps) {
   const {
     personalInfo = {},
@@ -100,27 +102,37 @@ export default function CVPreviewCirculaire({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "profile":
-        return "Profil";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Formation";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Expérience professionnelle";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Professional Experience";
       case "skills":
-        return "Compétences";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Langues";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Centres d'intérêt";
+        return language === "fr" ? "Centres d'intérêt" : "Interests";
       case "personal-info":
-        return "Informations personnelles";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr" ? "Contact" : "Contact";
       default:
         if (section.startsWith("custom-")) {
-          return "Section personnalisée";
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
         }
-        return "";
+        return section;
     }
   };
 
@@ -128,9 +140,7 @@ export default function CVPreviewCirculaire({
     if (section.startsWith("custom-") && data[section]) {
       return (
         <div className="mt-6">
-          <h2
-            className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
-          >
+          <h2 className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
             {getSectionTitle(section)}
           </h2>
           <div className="space-y-4">
@@ -215,9 +225,7 @@ export default function CVPreviewCirculaire({
           postalCode ||
           city) && (
           <>
-            <h2
-              className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
-            >
+            <h2 className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               Informations personnelles
             </h2>
             <div className="space-y-4">
@@ -243,9 +251,7 @@ export default function CVPreviewCirculaire({
               )}
               {(address || postalCode || city) && (
                 <div className="flex items-start gap-3">
-                  <Home
-                    className="h-5 w-5 cv-accent-color mt-0.5"
-                  />
+                  <Home className="h-5 w-5 cv-accent-color mt-0.5" />
                   <div className="text-gray-700">
                     {address && <div>{address}</div>}
                     {(postalCode || city) && (
@@ -268,9 +274,7 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.profile && (
           <>
-            <h3
-              className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
-            >
+            <h3 className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("profile")}
             </h3>
             <p className="text-gray-700">{data.profile}</p>
@@ -285,9 +289,7 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.education?.length > 0 && (
           <>
-            <h3
-              className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
-            >
+            <h3 className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("education")}
             </h3>
             <div className="space-y-6">
@@ -296,9 +298,7 @@ export default function CVPreviewCirculaire({
                   <div className="flex justify-between mb-1">
                     <div>
                       <p className="font-bold text-gray-800">{edu.degree}</p>
-                      <p className="cv-accent-color">
-                        {edu.school}
-                      </p>
+                      <p className="cv-accent-color">{edu.school}</p>
                     </div>
                     <div className="text-gray-600 font-medium">
                       {edu.startDate} - {edu.current ? "ce jour" : edu.endDate}
@@ -321,9 +321,7 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.experience?.length > 0 && (
           <>
-            <h3
-              className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
-            >
+            <h3 className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("experience")}
             </h3>
             <div className="space-y-6">
@@ -366,9 +364,7 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.skills?.length > 0 && (
           <>
-            <h2
-              className="text-xl font-bold mb-4 border-b pt-6 pb-2 cv-accent-color cv-accent-border"
-            >
+            <h2 className="text-xl font-bold mb-4 border-b pt-6 pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("skills")}
             </h2>
             <div className="space-y-3">
@@ -391,9 +387,7 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.languages?.length > 0 && (
           <>
-            <h2
-              className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
-            >
+            <h2 className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("languages")}
             </h2>
             <div className="space-y-2">
@@ -415,17 +409,13 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.interests?.length > 0 && (
           <>
-            <h2
-              className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border"
-            >
+            <h2 className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("interests")}
             </h2>
             <div className="space-y-2">
               {data.interests.map((interest: Interest, index: number) => (
                 <div key={index} className="flex items-start">
-                  <div
-                    className="w-3 h-3 mt-1.5 mr-2 flex-shrink-0 cv-accent-bg"
-                  ></div>
+                  <div className="w-3 h-3 mt-1.5 mr-2 flex-shrink-0 cv-accent-bg"></div>
                   <span className="text-gray-700">{interest.name}</span>
                 </div>
               ))}
@@ -442,9 +432,7 @@ export default function CVPreviewCirculaire({
         {/* Left sidebar */}
         <div className="w-1/3 relative bg-[#e6eaeb] min-h-[297mm]">
           {/* Top teal curved section */}
-          <div
-            className="absolute top-0 left-0 w-full h-[160px] cv-accent-bg"
-          >
+          <div className="absolute top-0 left-0 w-full h-[160px] cv-accent-bg">
             <div
               className="absolute bottom-[-77px] left-0 w-full h-24 cv-accent-bg"
               style={{
@@ -497,9 +485,7 @@ export default function CVPreviewCirculaire({
           </div>
 
           {/* Bottom teal curved section */}
-          <div
-            className="absolute bottom-0 left-0 w-full h-[125px] cv-accent-bg"
-          >
+          <div className="absolute bottom-0 left-0 w-full h-[125px] cv-accent-bg">
             <div
               className="absolute top-0 left-0 w-full h-20"
               style={{
@@ -547,7 +533,9 @@ export default function CVPreviewCirculaire({
 
       {/* Page 2 (if needed) */}
       {hasPage2 && !showFirstPageOnly && (
-        <div className="mt-8 print:mt-0 min-h-[297mm]">{renderPage(page2Sections)}</div>
+        <div className="mt-8 print:mt-0 min-h-[297mm]">
+          {renderPage(page2Sections)}
+        </div>
       )}
 
       <style jsx>{`

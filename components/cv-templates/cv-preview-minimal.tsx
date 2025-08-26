@@ -44,6 +44,7 @@ interface CVPreviewMinimalProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  language?: string;
   template?: string;
   accentColor?: string;
   fontFamily?: string;
@@ -60,6 +61,7 @@ export default function CVPreviewMinimal({
   fontFamily = "inter",
   sectionPages = {},
   customSectionNames = {},
+  language = "fr",
 }: CVPreviewMinimalProps) {
   const {
     personalInfo,
@@ -95,27 +97,37 @@ export default function CVPreviewMinimal({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "personal-info":
-        return "Personal details";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       case "profile":
-        return "Profile";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Education";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Employment";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Professional Experience";
       case "skills":
-        return "Skills";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Languages";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Interests";
+        return language === "fr" ? "Centres d'intérêt" : "Interests";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr" ? "Contact" : "Contact";
       default:
         if (section.startsWith("custom-")) {
-          return "Custom Section";
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
         }
-        return "";
+        return section;
     }
   };
 
@@ -129,7 +141,9 @@ export default function CVPreviewMinimal({
         <div className="space-y-4">
           {(personalInfo?.firstName || personalInfo?.lastName) && (
             <div>
-              <h4 className="font-medium">Name</h4>
+              <h4 className="font-medium">
+                {language === "fr" ? "Nom" : "Name"}
+              </h4>
               <p>
                 {personalInfo?.firstName || ""} {personalInfo?.lastName || ""}
               </p>
@@ -138,14 +152,18 @@ export default function CVPreviewMinimal({
 
           {personalInfo?.email && (
             <div>
-              <h4 className="font-medium">Email address</h4>
+              <h4 className="font-medium">
+                {language === "fr" ? "E-mail" : "Email"}
+              </h4>
               <p>{personalInfo?.email}</p>
             </div>
           )}
 
           {personalInfo?.phone && (
             <div>
-              <h4 className="font-medium">Phone number</h4>
+              <h4 className="font-medium">
+                {language === "fr" ? "Téléphone" : "Phone"}
+              </h4>
               <p>{personalInfo?.phone}</p>
             </div>
           )}
@@ -154,7 +172,9 @@ export default function CVPreviewMinimal({
             personalInfo?.postalCode ||
             personalInfo?.city) && (
             <div>
-              <h4 className="font-medium">Address</h4>
+              <h4 className="font-medium">
+                {language === "fr" ? "Adresse" : "Address"}
+              </h4>
               {personalInfo?.address && <p>{personalInfo?.address}</p>}
               {(personalInfo?.postalCode || personalInfo?.city) && (
                 <p>
