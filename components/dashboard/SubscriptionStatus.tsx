@@ -169,12 +169,6 @@ export default function SubscriptionStatus() {
           >
             View Plans
           </a>
-          <a
-            href="/test-payment"
-            className="px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
-          >
-            Subscribe Now
-          </a>
         </div>
       </div>
     );

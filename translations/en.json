@@ -885,7 +885,7 @@
         "year": "year"
       },
       "auto_renewal": "(auto renewal)",
-      "try_for_days": "Try 14 days for",
+      "try_for_days": "Try Now",
       "features": {
         "unlimited_cv": "Create unlimited resumes",
         "cover_letters": "Generate cover letters",

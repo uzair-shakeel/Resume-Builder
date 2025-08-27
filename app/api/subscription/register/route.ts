@@ -96,12 +96,22 @@ export async function POST(request: NextRequest) {
 
     if (duration) {
       planDuration = duration;
+      console.log(`Using provided duration: ${planDuration} days`);
     } else if (plan === "monthly") {
       planDuration = 30;
+      console.log(
+        `No duration provided, using default for monthly: ${planDuration} days`
+      );
     } else if (plan === "quarterly") {
       planDuration = 90;
+      console.log(
+        `No duration provided, using default for quarterly: ${planDuration} days`
+      );
     } else if (plan === "yearly") {
       planDuration = 365;
+      console.log(
+        `No duration provided, using default for yearly: ${planDuration} days`
+      );
     }
 
     endDate.setDate(startDate.getDate() + planDuration);
