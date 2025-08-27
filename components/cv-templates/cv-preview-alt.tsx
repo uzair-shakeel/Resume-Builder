@@ -385,6 +385,91 @@ export default function CVPreviewAlt({
     </div>
   );
 
+  // Page 2 sidebar - only shows personal information
+  const renderPage2Sidebar = () => (
+    <div className="cv-sidebar w-1/3 bg-purple-50 p-6 min-h-[297mm]">
+      {/* Photo */}
+      <div className="mb-6 flex justify-center">
+        {personalInfo && "photo" in personalInfo && personalInfo.photo && (
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md">
+            <Image
+              src={personalInfo.photo as string}
+              alt={`${
+                "firstName" in personalInfo
+                  ? (personalInfo.firstName as string) || ""
+                  : ""
+              } ${
+                "lastName" in personalInfo
+                  ? (personalInfo.lastName as string) || ""
+                  : ""
+              }`}
+              width={128}
+              height={128}
+              className="object-cover w-full h-full"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Contact Info Only */}
+      <div className="mb-6">
+        {personalInfo &&
+          (("email" in personalInfo && personalInfo.email) ||
+            ("phone" in personalInfo && personalInfo.phone) ||
+            ("address" in personalInfo && personalInfo.address) ||
+            ("postalCode" in personalInfo && personalInfo.postalCode) ||
+            ("city" in personalInfo && personalInfo.city)) && (
+            <>
+              <h2 className="text-lg font-medium text-gray-900 mb-3">
+                {getSectionTitle("personal-info")}
+              </h2>
+              <div className="space-y-2">
+                {personalInfo &&
+                  "email" in personalInfo &&
+                  personalInfo.email && (
+                    <div className="flex items-start">
+                      <Mail className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-900">
+                        {personalInfo.email as string}
+                      </span>
+                    </div>
+                  )}
+                {personalInfo &&
+                  "phone" in personalInfo &&
+                  personalInfo.phone && (
+                    <div className="flex items-start">
+                      <Phone className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-900">
+                        {personalInfo.phone as string}
+                      </span>
+                    </div>
+                  )}
+                {personalInfo &&
+                  (("address" in personalInfo && personalInfo.address) ||
+                    ("postalCode" in personalInfo && personalInfo.postalCode) ||
+                    ("city" in personalInfo && personalInfo.city)) && (
+                    <div className="flex items-start">
+                      <MapPin className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-900">
+                        {"address" in personalInfo
+                          ? (personalInfo.address as string) || ""
+                          : ""}
+                        {"postalCode" in personalInfo &&
+                          personalInfo.postalCode &&
+                          `, ${personalInfo.postalCode as string}`}
+                        {"city" in personalInfo &&
+                          personalInfo.city &&
+                          `, ${personalInfo.city as string}`}
+                      </span>
+                    </div>
+                  )}
+              </div>
+            </>
+          )}
+      </div>
+    </div>
+  );
+
   return (
     <div
       style={
@@ -412,7 +497,7 @@ export default function CVPreviewAlt({
         <div className="cv-page">
           <div className="cv-page-content flex min-h-[297mm]">
             {/* Sidebar */}
-            {renderSidebar()}
+            {renderPage2Sidebar()}
 
             {/* Main Content */}
             <div className="cv-main-content flex-1 p-8 min-h-[297mm]">
