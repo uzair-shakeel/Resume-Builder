@@ -465,9 +465,9 @@ export default function CVPreviewSherlock({
             )}
 
             {/* Hobbies/Interests */}
-            {/* {data.interests?.length > 0 &&
+            {data.interests?.length > 0 &&
               sectionOrder.includes("interests") && (
-                <div>
+                <div className="mb-6">
                   <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                     {getSectionTitle("interests")}
                   </h2>
@@ -479,7 +479,114 @@ export default function CVPreviewSherlock({
                     ))}
                   </ul>
                 </div>
-              )} */}
+              )}
+
+            {/* Skills */}
+            {data.skills?.length > 0 && sectionOrder.includes("skills") && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                  {getSectionTitle("skills")}
+                </h2>
+                <div className="space-y-3">
+                  {data.skills.map((skill, index) => (
+                    <div key={index}>
+                      <p className="text-xs uppercase mb-1 text-gray-300">
+                        {skill.name}
+                      </p>
+                      <div className="w-full bg-gray-600 h-2 rounded-sm">
+                        <div
+                          className="h-full rounded-sm cv-accent-bg"
+                          style={{
+                            width: `${(skill.level / 5) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Languages */}
+            {data.languages?.length > 0 &&
+              sectionOrder.includes("languages") && (
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                    {getSectionTitle("languages")}
+                  </h2>
+                  <div className="space-y-3">
+                    {data.languages.map((language, index) => (
+                      <div key={index}>
+                        <p className="text-xs uppercase mb-1 text-gray-300">
+                          {language.name}
+                        </p>
+                        <div className="w-full bg-gray-600 h-2 rounded-sm">
+                          <div
+                            className="h-2 rounded-sm cv-accent-bg"
+                            style={{
+                              width:
+                                language.level === "Natif" ||
+                                language.level === "Native/Bilingual" ||
+                                language.level === "Native" ||
+                                language.level === "Bilingual"
+                                  ? "100%"
+                                  : language.level === "Courant" ||
+                                    language.level === "Full Professional"
+                                  ? "80%"
+                                  : language.level === "Avancé" ||
+                                    language.level === "Professional Working"
+                                  ? "60%"
+                                  : language.level === "Intermédiaire" ||
+                                    language.level === "Limited Working"
+                                  ? "40%"
+                                  : language.level === "Elementary"
+                                  ? "20%"
+                                  : "50%",
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            {/* Custom sections */}
+            {sectionOrder
+              .filter((section) => section.startsWith("custom-"))
+              .map((section) => {
+                if (
+                  data[section] &&
+                  (data[section] as CustomSectionItem[]).length > 0
+                ) {
+                  return (
+                    <div key={section} className="mb-6">
+                      <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                        {getSectionTitle(section)}
+                      </h2>
+                      <div className="space-y-3">
+                        {(data[section] as CustomSectionItem[]).map(
+                          (item, index) => (
+                            <div key={index}>
+                              {item.title && (
+                                <p className="font-semibold text-sm text-gray-300">
+                                  {item.title}
+                                </p>
+                              )}
+                              {item.description && (
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {item.description}
+                                </p>
+                              )}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })}
           </div>
 
           {/* Main content */}
@@ -572,8 +679,8 @@ export default function CVPreviewSherlock({
                 </div>
               </div>
 
-              {/* About me - only show if profile is in section order */}
-              {sectionOrder.includes("profile") && (
+              {/* Only show sidebar sections that are actually assigned to page 2 */}
+              {page2Sections.includes("profile") && data.profile && (
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                     {getSectionTitle("profile")}
@@ -587,31 +694,15 @@ export default function CVPreviewSherlock({
                 </div>
               )}
 
-              {/* Socials for page 2 - always show heading */}
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
-                  {getSectionTitle("socials")}
-                </h2>
-                <div className="text-sm">
-                  {socials && socials.length > 0
-                    ? socials.map((social: Social, index: number) => (
-                        <div key={index} className="mb-2">
-                          <p className="mb-1">{social.platform}:</p>
-                          <a
-                            href={
-                              social.url.startsWith("http")
-                                ? social.url
-                                : `https://${social.url}`
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-gray-300 mb-2 text-xs break-words underline hover:text-gray-100"
-                          >
-                            {social.url}
-                          </a>
-                        </div>
-                      ))
-                    : placeholderData.socials.map((social, index) => (
+              {/* Socials - only show if assigned to page 2 */}
+              {page2Sections.includes("socials") &&
+                data.socials?.length > 0 && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                      {getSectionTitle("socials")}
+                    </h2>
+                    <div className="text-sm">
+                      {socials.map((social: Social, index: number) => (
                         <div key={index} className="mb-2">
                           <p className="mb-1">{social.platform}:</p>
                           <a
@@ -628,33 +719,18 @@ export default function CVPreviewSherlock({
                           </a>
                         </div>
                       ))}
-                </div>
-              </div>
+                    </div>
+                  </div>
+                )}
 
-              {/* References for page 2 - always show heading */}
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
-                  {getSectionTitle("references")}
-                </h2>
-                {references && references.length > 0
-                  ? references.map((reference: Reference, index: number) => (
-                      <div key={index} className="text-sm mb-4">
-                        <p className="font-semibold mb-1">
-                          {reference.name.toUpperCase()}
-                        </p>
-                        <p className="text-gray-300 mb-1">
-                          {reference.company}
-                        </p>
-                        <p className="text-gray-300 mb-1">{reference.phone}</p>
-                        <a
-                          href={`mailto:${reference.email}`}
-                          className="text-gray-300 text-xs break-words underline hover:text-gray-100"
-                        >
-                          {reference.email}
-                        </a>
-                      </div>
-                    ))
-                  : placeholderData.references.map((reference, index) => (
+              {/* References - only show if assigned to page 2 */}
+              {page2Sections.includes("references") &&
+                data.references?.length > 0 && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                      {getSectionTitle("references")}
+                    </h2>
+                    {references.map((reference: Reference, index: number) => (
                       <div key={index} className="text-sm mb-4">
                         <p className="font-semibold mb-1">
                           {reference.name.toUpperCase()}
@@ -671,21 +747,18 @@ export default function CVPreviewSherlock({
                         </a>
                       </div>
                     ))}
-              </div>
+                  </div>
+                )}
 
-              {/* Interests for page 2 */}
-              {interests &&
-                interests.length > 0 &&
-                sectionOrder.includes("interests") && (
+              {/* Interests - only show if assigned to page 2 */}
+              {page2Sections.includes("interests") &&
+                data.interests?.length > 0 && (
                   <div>
                     <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                       {getSectionTitle("interests")}
                     </h2>
                     <ul className="text-sm text-gray-300">
-                      {(interests?.length
-                        ? interests
-                        : placeholderData.interests
-                      ).map((interest, index) => (
+                      {interests.map((interest, index) => (
                         <div key={index} className="mb-1">
                           {interest.name}
                         </div>
@@ -693,6 +766,113 @@ export default function CVPreviewSherlock({
                     </ul>
                   </div>
                 )}
+
+              {/* Skills - only show if assigned to page 2 */}
+              {page2Sections.includes("skills") && data.skills?.length > 0 && (
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                    {getSectionTitle("skills")}
+                  </h2>
+                  <div className="space-y-3">
+                    {data.skills.map((skill, index) => (
+                      <div key={index}>
+                        <p className="text-xs uppercase mb-1 text-gray-300">
+                          {skill.name}
+                        </p>
+                        <div className="w-full bg-gray-600 h-2 rounded-sm">
+                          <div
+                            className="h-full rounded-sm cv-accent-bg"
+                            style={{
+                              width: `${(skill.level / 5) * 100}%`,
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Languages - only show if assigned to page 2 */}
+              {page2Sections.includes("languages") &&
+                data.languages?.length > 0 && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                      {getSectionTitle("languages")}
+                    </h2>
+                    <div className="space-y-3">
+                      {data.languages.map((language, index) => (
+                        <div key={index}>
+                          <p className="text-xs uppercase mb-1 text-gray-300">
+                            {language.name}
+                          </p>
+                          <div className="w-full bg-gray-600 h-2 rounded-sm">
+                            <div
+                              className="h-2 rounded-sm cv-accent-bg"
+                              style={{
+                                width:
+                                  language.level === "Natif" ||
+                                  language.level === "Native/Bilingual" ||
+                                  language.level === "Native" ||
+                                  language.level === "Bilingual"
+                                    ? "100%"
+                                    : language.level === "Courant" ||
+                                      language.level === "Full Professional"
+                                    ? "80%"
+                                    : language.level === "Avancé" ||
+                                      language.level === "Professional Working"
+                                    ? "60%"
+                                    : language.level === "Intermédiaire" ||
+                                      language.level === "Limited Working"
+                                    ? "40%"
+                                    : language.level === "Elementary"
+                                    ? "20%"
+                                    : "50%",
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              {/* Custom sections - only show if assigned to page 2 */}
+              {page2Sections
+                .filter((section) => section.startsWith("custom-"))
+                .map((section) => {
+                  if (
+                    data[section] &&
+                    (data[section] as CustomSectionItem[]).length > 0
+                  ) {
+                    return (
+                      <div key={section} className="mb-6">
+                        <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                          {getSectionTitle(section)}
+                        </h2>
+                        <div className="space-y-3">
+                          {(data[section] as CustomSectionItem[]).map(
+                            (item, index) => (
+                              <div key={index}>
+                                {item.title && (
+                                  <p className="font-semibold text-sm text-gray-300">
+                                    {item.title}
+                                  </p>
+                                )}
+                                {item.description && (
+                                  <p className="text-xs text-gray-400 mt-1">
+                                    {item.description}
+                                  </p>
+                                )}
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
             </div>
 
             {/* Main content */}
