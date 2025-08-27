@@ -93,7 +93,50 @@ export default function CVPreviewCirculaire({
     (section) => sectionPages[section] === 2
   );
 
-  const hasPage2 = page2Sections.length > 0;
+  // Ensure personal-info section appears on all pages in the sidebar
+  const ensureSidebarSectionsOnAllPages = (
+    sections: string[],
+    isFirstPage: boolean = true
+  ) => {
+    if (isFirstPage) {
+      // On first page, show all sidebar sections
+      const sidebarSections = [
+        "personal-info",
+        "skills",
+        "languages",
+        "interests",
+      ];
+      const missingSidebarSections = sidebarSections.filter(
+        (section) =>
+          !sections.includes(section) && sectionOrder.includes(section)
+      );
+
+      if (missingSidebarSections.length > 0) {
+        return [...missingSidebarSections, ...sections];
+      }
+      return sections;
+    } else {
+      // On additional pages, only show personal-info section
+      if (
+        !sections.includes("personal-info") &&
+        sectionOrder.includes("personal-info")
+      ) {
+        return ["personal-info", ...sections];
+      }
+      return sections;
+    }
+  };
+
+  const finalPage1Sections = ensureSidebarSectionsOnAllPages(
+    page1Sections,
+    true
+  );
+  const finalPage2Sections = ensureSidebarSectionsOnAllPages(
+    page2Sections,
+    false
+  );
+
+  const hasPage2 = finalPage2Sections.length > 0;
 
   // Helper function to get section title with custom names
   const getSectionTitle = (section: string): string => {
@@ -526,12 +569,12 @@ export default function CVPreviewCirculaire({
       className="cv-container"
     >
       {/* Page 1 */}
-      {renderPage(page1Sections)}
+      {renderPage(finalPage1Sections)}
 
       {/* Page 2 (if needed) */}
       {hasPage2 && !showFirstPageOnly && (
         <div className="mt-8 print:mt-0 min-h-[297mm]">
-          {renderPage(page2Sections)}
+          {renderPage(finalPage2Sections)}
         </div>
       )}
 
