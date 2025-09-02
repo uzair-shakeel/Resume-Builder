@@ -81,13 +81,13 @@ const templateOptions = [
   {
     name: "Modern",
     value: "modern",
-    image: "/assets/modern-cv.svg",
+    image: "/assets/cover-letter/modern-cover-letter.svg",
     defaultColor: "#953b2c",
   },
   {
     name: "Classic",
     value: "classic",
-    image: "/assets/classic.jpg",
+    image: "/assets/cover-letter/classic-cover-letter.svg",
     defaultColor: "#2c3e50",
   },
   {
@@ -105,13 +105,13 @@ const templateOptions = [
   {
     name: "Minimal",
     value: "minimal",
-    image: "/assets/minimal-resume.jpg",
-    defaultColor: "#fd79a8",
+    image: "/assets/cover-letter/minimal-cover-letter.svg",
+    defaultColor: "#2f71a0",
   },
   {
     name: "Teal",
     value: "teal",
-    image: "/assets/teal.jpg",
+    image: "/assets/cover-letter/teal-cover-letter.svg",
     defaultColor: "#2BCBBA",
   },
 ];
