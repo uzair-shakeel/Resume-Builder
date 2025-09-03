@@ -88,7 +88,7 @@ const templateOptions = [
     name: "Classic",
     value: "classic",
     image: "/assets/cover-letter/classic-cover-letter.svg",
-    defaultColor: "#2c3e50",
+    defaultColor: "#CCCCCC",
   },
   {
     name: "Sherlock",
