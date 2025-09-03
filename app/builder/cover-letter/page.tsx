@@ -93,13 +93,13 @@ const templateOptions = [
   {
     name: "Sherlock",
     value: "sherlock",
-    image: "/assets/resume3.png",
+    image: "/assets/cover-letter/sherlock-cover-letter.png",
     defaultColor: "#34495e",
   },
   {
     name: "HR",
     value: "hr",
-    image: "/assets/hr.jpg",
+    image: "/assets/cover-letter/hr-cover-letter.png",
     defaultColor: "#9b59b6",
   },
   {
