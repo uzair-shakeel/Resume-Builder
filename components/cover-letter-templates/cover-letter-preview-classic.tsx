@@ -10,6 +10,7 @@ interface CoverLetterPreviewClassicProps {
   sectionPages: Record<string, number>;
   customSectionNames: Record<string, string>;
   customSections?: Record<string, string>;
+  language?: string;
 }
 
 export default function CoverLetterPreviewClassic({
@@ -20,6 +21,7 @@ export default function CoverLetterPreviewClassic({
   sectionPages = {},
   customSectionNames = {},
   customSections = {},
+  language = "fr",
 }: CoverLetterPreviewClassicProps) {
   const {
     personalInfo,
@@ -30,6 +32,19 @@ export default function CoverLetterPreviewClassic({
     motivation,
     conclusion,
   } = data;
+
+  // Helper function to format date for display
+  const formatDateForDisplay = (dateValue: string) => {
+    if (!dateValue) return new Date().toLocaleDateString("fr-FR");
+
+    // If it's in ISO format, convert to French
+    if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return new Date(dateValue).toLocaleDateString("fr-FR");
+    }
+
+    // If it's already in French format, return as is
+    return dateValue;
+  };
 
   // Filter sections for page 1 and page 2
   const page1Sections = sectionOrder.filter(
@@ -48,13 +63,13 @@ export default function CoverLetterPreviewClassic({
 
     switch (section) {
       case "introduction":
-        return "Introduction";
+        return language === "fr" ? "Introduction" : "Introduction";
       case "situation-actuelle":
-        return "Situation Actuelle";
+        return language === "fr" ? "Situation Actuelle" : "Current Situation";
       case "motivation":
-        return "Motivation";
+        return language === "fr" ? "Motivation" : "Motivation";
       case "conclusion":
-        return "Conclusion";
+        return language === "fr" ? "Conclusion" : "Conclusion";
       default:
         return section;
     }
@@ -102,11 +117,15 @@ export default function CoverLetterPreviewClassic({
               <div className="text-right mb-4">
                 <p>
                   {dateAndSubject?.location || ""}, le{" "}
-                  {dateAndSubject?.date ||
-                    new Date().toLocaleDateString("fr-FR")}
+                  {formatDateForDisplay(dateAndSubject?.date)}
                 </p>
               </div>
-              <p className="font-medium">{dateAndSubject?.subject || ""}</p>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: dateAndSubject?.subject || "",
+                }}
+                className="font-medium"
+              />
             </div>
           );
         case "introduction":

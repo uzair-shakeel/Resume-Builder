@@ -8,15 +8,24 @@ interface CVPreviewProps {
   sectionOrder: string[];
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
-  accentColor: string;
+  accentColor?: string;
+  fontFamily?: string;
+  previewMode?: boolean;
+  showFirstPageOnly?: boolean;
+
+  language?: string;
 }
 
 export default function CVPreviewPro({
   data,
   sectionOrder,
-  accentColor,
+  accentColor = "#3498db",
+  fontFamily = "'DejaVu Sans', sans-serif",
   sectionPages = {},
   customSectionNames = {},
+  previewMode = false,
+  showFirstPageOnly = false,
+  language = "fr",
 }: CVPreviewProps) {
   const {
     personalInfo,
@@ -45,30 +54,40 @@ export default function CVPreviewPro({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "profile":
-        return "Profil";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Formation";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Expérience professionnelle";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Professional Experience";
       case "skills":
-        return "Compétences";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Langues";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Centres d'intérêt";
+        return language === "fr" ? "Centres d'intérêt" : "Interests";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       default:
-        return "";
+        if (section.startsWith("custom-")) {
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
+        }
+        return section;
     }
   };
 
   const renderHeader = () => (
-    <div
-      style={{ backgroundColor: accentColor }}
-      className=" text-white p-6 flex items-center gap-6"
-    >
+    <div className="cv-accent-bg text-white p-6 flex items-center gap-6">
       <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white">
         <Image
           src={personalInfo?.photo || placeholderData.personalInfo.photo}
@@ -141,10 +160,9 @@ export default function CVPreviewPro({
               <div className="text-sm mb-1">{skill.name}</div>
               <div className="h-2 bg-gray-700 rounded-full">
                 <div
-                  className="h-full rounded-full"
+                  className="h-full rounded-full cv-accent-bg"
                   style={{
                     width: `${(skill.level / 5) * 100}%`,
-                    backgroundColor: accentColor,
                   }}
                 />
               </div>
@@ -188,10 +206,7 @@ export default function CVPreviewPro({
         <div className="space-y-2">
           {interestItems.map((interest, index) => (
             <div key={index} className="flex items-center gap-2">
-              <div
-                style={{ backgroundColor: accentColor }}
-                className="w-1.5 h-1.5  rounded-full"
-              />
+              <div className="w-1.5 h-1.5 cv-accent-bg rounded-full" />
               <span className="text-sm">{interest.name}</span>
             </div>
           ))}
@@ -201,18 +216,18 @@ export default function CVPreviewPro({
   };
 
   const renderProfile = () => {
-    const profileText = profile || placeholderData.profile;
-    if (!profileText) return null;
+    if (!profile) return null;
+
     return (
-      <section className="mb-8">
-        <h2
-          style={{ color: accentColor }}
-          className="text-xl font-medium mb-4 uppercase tracking-wider"
-        >
+      <div className="mb-8">
+        <h2 className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color">
           {getSectionTitle("profile")}
         </h2>
-        <p className="text-gray-600 leading-relaxed">{profileText}</p>
-      </section>
+        <div
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
+      </div>
     );
   };
 
@@ -222,10 +237,7 @@ export default function CVPreviewPro({
       : placeholderData.education;
     return (
       <section className="mb-8">
-        <h2
-          style={{ color: accentColor }}
-          className="text-xl  font-medium mb-4 uppercase tracking-wider"
-        >
+        <h2 className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color">
           {getSectionTitle("education")}
         </h2>
         {educationItems.map((edu, index) => (
@@ -235,7 +247,7 @@ export default function CVPreviewPro({
                 <p className="font-medium text-gray-800">{edu.school}</p>
                 <p className="text-gray-600">{edu.degree}</p>
               </div>
-              <p style={{ color: accentColor }} className="text-sm font-medium">
+              <p className="text-sm font-medium cv-accent-color">
                 {edu.startDate} - {edu.current ? "Present" : edu.endDate}
               </p>
             </div>
@@ -251,10 +263,7 @@ export default function CVPreviewPro({
       : placeholderData.experience;
     return (
       <section className="mb-8">
-        <h2
-          style={{ color: accentColor }}
-          className="text-xl  font-medium mb-4 uppercase tracking-wider"
-        >
+        <h2 className="text-xl font-medium mb-4 uppercase tracking-wider cv-accent-color">
           {getSectionTitle("experience")}
         </h2>
         {experienceItems.map((exp, index) => (
@@ -264,14 +273,15 @@ export default function CVPreviewPro({
                 <p className="font-medium text-gray-800">{exp.position}</p>
                 <p className="text-gray-600">{exp.company}</p>
               </div>
-              <p style={{ color: accentColor }} className="text-sm font-medium">
+              <p className="text-sm font-medium cv-accent-color">
                 {exp.startDate} - {exp.current ? "Present" : exp.endDate}
               </p>
             </div>
             {exp.description && (
-              <p className="mt-2 text-gray-600 leading-relaxed">
-                {exp.description}
-              </p>
+              <div
+                className="mt-2 text-gray-600 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: exp.description }}
+              />
             )}
           </div>
         ))}
@@ -361,7 +371,15 @@ export default function CVPreviewPro({
   );
 
   return (
-    <div className="cv-container">
+    <div
+      style={
+        {
+          "--accent-color": accentColor,
+          fontFamily: fontFamily,
+        } as React.CSSProperties
+      }
+      className="cv-container"
+    >
       <style jsx global>{`
         @media print {
           @page {
@@ -372,11 +390,17 @@ export default function CVPreviewPro({
             -webkit-print-color-adjust: exact;
           }
         }
+        .cv-accent-bg {
+          background-color: var(--accent-color) !important;
+        }
+        .cv-accent-color {
+          color: var(--accent-color) !important;
+        }
       `}</style>
 
       {renderPage(page1Sections)}
 
-      {hasPage2 && (
+      {hasPage2 && !showFirstPageOnly && (
         <div className="mt-8 print:mt-0">{renderPage(page2Sections)}</div>
       )}
     </div>

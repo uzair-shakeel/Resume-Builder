@@ -320,6 +320,31 @@ export default function CoverLetterBuilder() {
 
   // Add this state at the top with other state declarations
   const [verificationStatus, setVerificationStatus] = useState("");
+  const [showFilenameInput, setShowFilenameInput] = useState(false);
+  const [customFilename, setCustomFilename] = useState("");
+
+  // Generate default filename based on user's name
+  const getDefaultFilename = () => {
+    const firstName = coverLetterData.personalInfo.firstName.trim();
+    const lastName = coverLetterData.personalInfo.lastName.trim();
+    if (firstName && lastName) {
+      return `${firstName}_${lastName}_cover_letter.pdf`;
+    } else if (firstName || lastName) {
+      return `${firstName || lastName}_cover_letter.pdf`;
+    }
+    return "cover_letter.pdf";
+  };
+
+  // Set default filename when modal opens
+  useEffect(() => {
+    if (showFilenameInput) {
+      setCustomFilename(getDefaultFilename());
+    }
+  }, [
+    showFilenameInput,
+    coverLetterData.personalInfo.firstName,
+    coverLetterData.personalInfo.lastName,
+  ]);
 
   // Safe reset function to prevent getting stuck in loading state
   const safeResetTemplateLoadingState = useCallback(() => {
@@ -1141,9 +1166,28 @@ export default function CoverLetterBuilder() {
     setSaveStatus("unsaved");
   };
 
+  // State to track menu position
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+
   const toggleSectionMenu = (section: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setActiveSectionMenu(activeSectionMenu === section ? null : section);
+
+    if (activeSectionMenu === section) {
+      setActiveSectionMenu(null);
+    } else {
+      // Calculate position before showing the menu
+      const buttonRect = (
+        e.currentTarget as HTMLElement
+      ).getBoundingClientRect();
+      const left = buttonRect.right - 192; // 12rem = 192px
+      const top = buttonRect.bottom + 10;
+
+      // Set the position first
+      setMenuPosition({ top, left });
+
+      // Then show the menu
+      setActiveSectionMenu(section);
+    }
   };
 
   const getSectionTitle = (section: string): string => {
@@ -1170,7 +1214,7 @@ export default function CoverLetterBuilder() {
   };
 
   // Update the generatePDF function to remove the duplicate state declaration
-  const generatePDF = async () => {
+  const generatePDF = async (filename?: string) => {
     if (!previewRef.current) return;
 
     try {
@@ -1244,7 +1288,7 @@ export default function CoverLetterBuilder() {
       pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
 
       setVerificationStatus("Finalizing download...");
-      pdf.save("cover-letter.pdf");
+      pdf.save(filename || "cover-letter.pdf");
 
       // Update client-side subscription info after successful download
       // This ensures our UI state stays in sync with the server
@@ -1259,7 +1303,7 @@ export default function CoverLetterBuilder() {
 
   // Fix the TypeScript type for the DownloadingOverlay component
   const DownloadingOverlay = () => (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-80 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md">
         <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mb-6" />
         <p className="text-xl font-medium text-gray-800">
@@ -1281,7 +1325,7 @@ export default function CoverLetterBuilder() {
 
   const handlePaymentSuccess = async () => {
     // After successful payment, generate the PDF
-    await generatePDF();
+    await generatePDF("cover_letter.pdf");
   };
 
   const renderPersonalInfoInputs = () => (
@@ -1409,7 +1453,7 @@ export default function CoverLetterBuilder() {
           <input
             type="date"
             className="w-full p-2 border rounded-md"
-            value={coverLetterData.dateAndSubject.date}
+            value={getDisplayDate(coverLetterData.dateAndSubject.date)}
             onChange={handleDateChange}
           />
         </div>
@@ -2093,10 +2137,39 @@ export default function CoverLetterBuilder() {
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = e.target.value
-      ? new Date(e.target.value).toLocaleDateString("fr-FR")
-      : "";
-    handleThrottledInput("dateAndSubject", "date", date);
+    const isoDate = e.target.value; // Keep the ISO format (YYYY-MM-DD)
+    handleThrottledInput("dateAndSubject", "date", isoDate);
+  };
+
+  // Helper function to convert stored date to display format
+  const getDisplayDate = (dateValue: string) => {
+    if (!dateValue) return "";
+
+    // If the date is already in ISO format, return it as is for the input
+    if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return dateValue;
+    }
+
+    // If it's in French format (DD/MM/YYYY), convert to ISO
+    if (dateValue.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+      const [day, month, year] = dateValue.split("/");
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+
+    return "";
+  };
+
+  // Helper function to convert ISO date to French format for templates
+  const getFormattedDate = (dateValue: string) => {
+    if (!dateValue) return new Date().toLocaleDateString("fr-FR");
+
+    // If it's in ISO format, convert to French
+    if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return new Date(dateValue).toLocaleDateString("fr-FR");
+    }
+
+    // If it's already in French format, return as is
+    return dateValue;
   };
 
   const handleAddNewSection = () => {
@@ -2284,6 +2357,50 @@ export default function CoverLetterBuilder() {
       });
   };
 
+  // Add effect to handle click outside events for download modal and section menus
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      // Close section menu when clicking outside
+      if (activeSectionMenu) {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".section-menu-container")) {
+          setActiveSectionMenu(null);
+        }
+      }
+
+      // Close download modal when clicking outside
+      if (showDownloadOptions) {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".download-modal-container")) {
+          setShowDownloadOptions(false);
+        }
+      }
+
+      // Save section name when clicking outside the input (if renaming)
+      if (isRenamingSection && sectionToRename) {
+        const target = e.target as HTMLElement;
+        const isInputElement = target.tagName.toLowerCase() === "input";
+        const isEditingCurrentSection = target.closest(
+          `[data-section="${sectionToRename}"]`
+        );
+
+        if (!isInputElement || !isEditingCurrentSection) {
+          saveRenamedSection();
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [
+    activeSectionMenu,
+    showDownloadOptions,
+    isRenamingSection,
+    sectionToRename,
+  ]);
+
   // Add a function to generate unique template keys
   const getTemplateKey = () => {
     // Generate a stable hash of the data
@@ -2305,6 +2422,50 @@ export default function CoverLetterBuilder() {
 
       {/* Loading Overlay */}
       {isDownloading && <DownloadingOverlay />}
+
+      {/* Filename Input Modal */}
+      {showFilenameInput && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-800 mb-4">
+              Enter PDF Filename
+            </h3>
+            <input
+              type="text"
+              value={customFilename}
+              onChange={(e) => setCustomFilename(e.target.value)}
+              placeholder={getDefaultFilename()}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+              autoFocus
+            />
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={() => {
+                  setShowFilenameInput(false);
+                  setCustomFilename("");
+                }}
+                className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const filename =
+                    customFilename.trim() || getDefaultFilename();
+                  if (!filename.endsWith(".pdf")) {
+                    setCustomFilename(filename + ".pdf");
+                  }
+                  setShowFilenameInput(false);
+                  generatePDF(filename);
+                }}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex h-screen bg-gray-100">
         <div className="lg:w-1/2 w-full flex flex-col border-r border-gray-200 bg-white">
@@ -2386,18 +2547,18 @@ export default function CoverLetterBuilder() {
               <div className="relative">
                 <button
                   onClick={() => setShowDownloadOptions(!showDownloadOptions)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
                   disabled={isDownloading}
                 >
-                  <Download className="w-5 h-5" />
+                  <Download className="w-4 sm:h-4 h-[20px]" />
                   {t("site.builder.header.download")}
                 </button>
                 {showDownloadOptions && !isDownloading && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20 download-modal-container">
                     <div className="py-1">
                       <button
                         onClick={() => {
-                          generatePDF();
+                          setShowFilenameInput(true);
                           setShowDownloadOptions(false);
                         }}
                         className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
@@ -2474,7 +2635,14 @@ export default function CoverLetterBuilder() {
                         </button>
 
                         {activeSectionMenu === section && (
-                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                          <div
+                            className="fixed z-[100] bg-white rounded-md shadow-lg border border-gray-200 section-menu-container"
+                            style={{
+                              top: `${menuPosition.top}px`,
+                              left: `${menuPosition.left}px`,
+                              width: "12rem",
+                            }}
+                          >
                             <div className="py-1">
                               <button
                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
@@ -2597,6 +2765,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "sherlock" && (
@@ -2609,6 +2778,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "minimal" && (
@@ -2621,6 +2791,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "classic" && (
@@ -2633,6 +2804,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "professional" && (
@@ -2645,6 +2817,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "circulaire" && (
@@ -2657,6 +2830,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "student" && (
@@ -2669,6 +2843,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "hr" && (
@@ -2681,6 +2856,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
               {template === "teal" && (
@@ -2693,6 +2869,7 @@ export default function CoverLetterBuilder() {
                   sectionPages={sectionPages}
                   customSectionNames={customSectionNames}
                   customSections={customSections}
+                  language={language}
                 />
               )}
             </div>
@@ -2962,6 +3139,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "sherlock" && (
@@ -2974,6 +3152,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "minimal" && (
@@ -2986,6 +3165,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "classic" && (
@@ -2998,6 +3178,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "professional" && (
@@ -3010,6 +3191,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "circulaire" && (
@@ -3022,6 +3204,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "student" && (
@@ -3034,6 +3217,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "hr" && (
@@ -3046,6 +3230,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
                 {template === "teal" && (
@@ -3058,6 +3243,7 @@ export default function CoverLetterBuilder() {
                     sectionPages={sectionPages}
                     customSectionNames={customSectionNames}
                     customSections={customSections}
+                    language={language}
                   />
                 )}
               </div>

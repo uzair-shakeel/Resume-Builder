@@ -3,7 +3,15 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-import { Home, FileText, Mail, LogOut, User, Plus } from "lucide-react";
+import {
+  Home,
+  FileText,
+  Mail,
+  LogOut,
+  User,
+  Plus,
+  CreditCard,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,

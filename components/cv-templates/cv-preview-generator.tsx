@@ -68,7 +68,6 @@ export default function CVPreviewGenerator({
               scale: 2, // Higher quality
               useCORS: true,
               logging: false,
-              backgroundColor: "#ffffff",
               width: 794, // A4 width in pixels at 96 DPI
               height: 1123, // A4 height in pixels at 96 DPI
             });
@@ -76,7 +75,7 @@ export default function CVPreviewGenerator({
             onPreviewGenerated(preview);
           } catch (error) {
             console.error("Error generating preview:", error);
-          }
+          }c
         }
       }
     };
@@ -137,12 +136,12 @@ export default function CVPreviewGenerator({
   return (
     <div
       ref={previewRef}
-      className="fixed left-0 top-0 -z-10 w-[21cm] scale-50 origin-top-left"
+      className="absolute left-0 top-0 w-[21cm] scale-50 origin-top-left"
       style={
         {
           fontFamily: cv.fontFamily || "'DejaVu Sans', sans-serif",
           "--accent-color": cv.accentColor || "#3b82f6",
-          backgroundColor: "#ffffff",
+          backgroundColor: "transparent",
         } as React.CSSProperties
       }
     >

@@ -51,13 +51,13 @@ export default function CoverLetterPreviewCirculaire({
 
     switch (section) {
       case "introduction":
-        return "Introduction";
+        return language === "fr" ? "Introduction" : "Introduction";
       case "situation-actuelle":
-        return "Situation Actuelle";
+        return language === "fr" ? "Situation Actuelle" : "Current Situation";
       case "motivation":
-        return "Motivation";
+        return language === "fr" ? "Motivation" : "Motivation";
       case "conclusion":
-        return "Conclusion";
+        return language === "fr" ? "Conclusion" : "Conclusion";
       default:
         return section;
     }
@@ -71,9 +71,7 @@ export default function CoverLetterPreviewCirculaire({
           style={{ color: accentColor, borderColor: accentColor }}
           className="text-xl font-bold mb-4 border-b pb-2"
         >
-          {language === "fr"
-            ? "Informations personnelles"
-            : "Personal Information"}
+          {language === "fr" ? "Contact" : "Contact"}
         </h2>
         <div className="space-y-4">
           <div className="flex items-center gap-3">
@@ -135,7 +133,12 @@ export default function CoverLetterPreviewCirculaire({
                   language === "fr" ? "fr-FR" : "en-US"
                 )}
             </p>
-            <p className="font-medium mt-2">{dateAndSubject?.subject || ""}</p>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: dateAndSubject?.subject || "",
+              }}
+              className="font-medium mt-2"
+            />
           </div>
         </div>
       </div>

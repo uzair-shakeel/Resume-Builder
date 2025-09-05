@@ -212,6 +212,25 @@
           "custom_section": "Custom Section"
         }
       },
+      "cv_sections": {
+        "description": "CV Section Titles",
+        "personal_info": "Personal Information",
+        "profile": "Profile",
+        "education": "Education",
+        "experience": "Professional Experience",
+        "skills": "Skills",
+        "languages": "Languages",
+        "interests": "Interests",
+        "references": "References",
+        "socials": "Social Networks",
+        "contact": "Contact",
+        "field_labels": {
+          "name": "Name",
+          "email": "Email",
+          "phone": "Phone",
+          "address": "Address"
+        }
+      },
       "forms": {
         "custom_section_editor": {
           "description": "UI elements for custom section editor",
@@ -866,7 +885,7 @@
         "year": "year"
       },
       "auto_renewal": "(auto renewal)",
-      "try_for_days": "Try 14 days for",
+      "try_for_days": "Try Now",
       "features": {
         "unlimited_cv": "Create unlimited resumes",
         "cover_letters": "Generate cover letters",

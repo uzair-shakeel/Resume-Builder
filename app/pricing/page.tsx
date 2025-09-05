@@ -140,15 +140,7 @@ export default function Pricing() {
                       href="#"
                     >
                       <div className="   ">
-                        {t("site.pricing.try_for_days", { days: 14 })}{" "}
-                        <span id="pricing-trial-fee">
-                          {
-                            pricingOptions[
-                              selectedPeriod as keyof typeof pricingOptions
-                            ].trial
-                          }
-                          &nbsp;XOF
-                        </span>
+                        {t("site.pricing.try_for_days")}{" "}
                       </div>
                     </Link>
                   </div>

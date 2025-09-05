@@ -24,10 +24,13 @@ interface CVPreviewSherlockProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  language?: string;
   accentColor?: string;
   fontFamily?: string;
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
+  previewMode?: boolean;
+  showFirstPageOnly?: boolean;
 }
 
 export default function CVPreviewSherlock({
@@ -38,6 +41,9 @@ export default function CVPreviewSherlock({
   fontFamily = "'DejaVu Sans', sans-serif",
   sectionPages = {},
   customSectionNames = {},
+  previewMode = false,
+  showFirstPageOnly = false,
+  language = "fr",
 }: CVPreviewSherlockProps) {
   const {
     personalInfo,
@@ -75,24 +81,39 @@ export default function CVPreviewSherlock({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "personal-info":
-        return "Personal Information";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       case "profile":
-        return "Profile";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Education";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Work Experience";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Work Experience";
       case "skills":
-        return "Skills";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Languages";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Hobbies";
+        return language === "fr" ? "Centres d'intérêt" : "Hobbies";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       default:
-        return "";
+        if (section.startsWith("custom-")) {
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
+        }
+        return section;
     }
   };
 
@@ -117,10 +138,7 @@ export default function CVPreviewSherlock({
                 </h2>
                 <div className="relative">
                   {/* Continuous vertical line that spans the entire timeline */}
-                  <div
-                    style={{ backgroundColor: accentColor }}
-                    className="absolute left-[calc(33.333%+5.2px)] top-2 bottom-10 w-0.5 "
-                  ></div>
+                  <div className="absolute left-[calc(33.333%+5.2px)] top-2 bottom-10 w-0.5 cv-accent-bg"></div>
 
                   {data.experience.map((exp, index) => (
                     <div key={index} className="mb-8 relative">
@@ -142,27 +160,20 @@ export default function CVPreviewSherlock({
                         <div className="w-2/3">
                           <div className="flex relative pl-6 items-start">
                             {/* Timeline dot */}
-                            <div
-                              style={{ backgroundColor: accentColor }}
-                              className="absolute left-0 top-1.5 w-3 h-3 rounded-full  z-10"
-                            ></div>
+                            <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full cv-accent-bg z-10"></div>
 
                             <p className="font-semibold text-sm">
                               {exp.position}
                             </p>
                           </div>
-                          <div className="pl-6 mt-1">
-                            <p
-                              className="text-xs text-gray-700"
+                          {exp.description && (
+                            <div
+                              className="text-sm text-gray-600 mt-2 m-5"
                               dangerouslySetInnerHTML={{
-                                __html: exp.description
-                                  ? exp.description
-                                      .replace(/\n/g, "<br/>")
-                                      .replace(/\./g, ".<br/>")
-                                  : "",
+                                __html: exp.description,
                               }}
                             />
-                          </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -197,18 +208,14 @@ export default function CVPreviewSherlock({
                       {/* Right column - Degree and description */}
                       <div className="col-span-2 relative pl-6">
                         {/* Timeline dot */}
-                        <div
-                          style={{ backgroundColor: accentColor }}
-                          className="absolute left-0 top-1.5 w-3 h-3 rounded-full "
-                        ></div>
+                        <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full cv-accent-bg"></div>
 
                         {/* Vertical line connecting dots (except for last item) */}
                         {index < data.education.length - 1 && (
                           <div
-                            className="absolute left-[5.2px] top-3 w-0.5 "
+                            className="absolute left-[5.2px] top-3 w-0.5 cv-accent-bg"
                             style={{
                               height: "calc(100% + 1.5rem)",
-                              backgroundColor: accentColor,
                             }}
                           ></div>
                         )}
@@ -238,10 +245,9 @@ export default function CVPreviewSherlock({
                       </p>
                       <div className="w-full bg-gray-200 h-2 rounded-sm">
                         <div
-                          className="h-full  rounded-sm"
+                          className="h-full rounded-sm cv-accent-bg"
                           style={{
                             width: `${(skill.level / 5) * 100}%`,
-                            backgroundColor: accentColor,
                           }}
                         ></div>
                       </div>
@@ -268,7 +274,7 @@ export default function CVPreviewSherlock({
                       </p>
                       <div className="w-full bg-gray-200 h-2 rounded-sm">
                         <div
-                          className=" h-2 rounded-sm"
+                          className="h-2 rounded-sm cv-accent-bg"
                           style={{
                             width:
                               language.level === "Natif" ||
@@ -288,7 +294,6 @@ export default function CVPreviewSherlock({
                                 : language.level === "Elementary"
                                 ? "20%"
                                 : "50%", // Default value if level doesn't match any known value
-                            backgroundColor: accentColor,
                           }}
                         ></div>
                       </div>
@@ -360,9 +365,12 @@ export default function CVPreviewSherlock({
 
   return (
     <div
-      style={{
-        fontFamily: fontFamily,
-      }}
+      style={
+        {
+          "--accent-color": accentColor,
+          fontFamily: fontFamily,
+        } as React.CSSProperties
+      }
       className="cv-container"
     >
       {/* Page 1 */}
@@ -395,7 +403,10 @@ export default function CVPreviewSherlock({
                     <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                       {getSectionTitle("profile")}
                     </h2>
-                    <p className="text-sm text-gray-300">{data.profile}</p>
+                    <div
+                      className="text-sm text-gray-300"
+                      dangerouslySetInnerHTML={{ __html: data.profile }}
+                    />
                   </>
                 )}
               </div>
@@ -456,7 +467,7 @@ export default function CVPreviewSherlock({
             {/* Hobbies/Interests */}
             {data.interests?.length > 0 &&
               sectionOrder.includes("interests") && (
-                <div>
+                <div className="mb-6">
                   <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                     {getSectionTitle("interests")}
                   </h2>
@@ -469,6 +480,113 @@ export default function CVPreviewSherlock({
                   </ul>
                 </div>
               )}
+
+            {/* Skills */}
+            {data.skills?.length > 0 && sectionOrder.includes("skills") && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                  {getSectionTitle("skills")}
+                </h2>
+                <div className="space-y-3">
+                  {data.skills.map((skill, index) => (
+                    <div key={index}>
+                      <p className="text-xs uppercase mb-1 text-gray-300">
+                        {skill.name}
+                      </p>
+                      <div className="w-full bg-gray-600 h-2 rounded-sm">
+                        <div
+                          className="h-full rounded-sm cv-accent-bg"
+                          style={{
+                            width: `${(skill.level / 5) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Languages */}
+            {data.languages?.length > 0 &&
+              sectionOrder.includes("languages") && (
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                    {getSectionTitle("languages")}
+                  </h2>
+                  <div className="space-y-3">
+                    {data.languages.map((language, index) => (
+                      <div key={index}>
+                        <p className="text-xs uppercase mb-1 text-gray-300">
+                          {language.name}
+                        </p>
+                        <div className="w-full bg-gray-600 h-2 rounded-sm">
+                          <div
+                            className="h-2 rounded-sm cv-accent-bg"
+                            style={{
+                              width:
+                                language.level === "Natif" ||
+                                language.level === "Native/Bilingual" ||
+                                language.level === "Native" ||
+                                language.level === "Bilingual"
+                                  ? "100%"
+                                  : language.level === "Courant" ||
+                                    language.level === "Full Professional"
+                                  ? "80%"
+                                  : language.level === "Avancé" ||
+                                    language.level === "Professional Working"
+                                  ? "60%"
+                                  : language.level === "Intermédiaire" ||
+                                    language.level === "Limited Working"
+                                  ? "40%"
+                                  : language.level === "Elementary"
+                                  ? "20%"
+                                  : "50%",
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            {/* Custom sections */}
+            {sectionOrder
+              .filter((section) => section.startsWith("custom-"))
+              .map((section) => {
+                if (
+                  data[section] &&
+                  (data[section] as CustomSectionItem[]).length > 0
+                ) {
+                  return (
+                    <div key={section} className="mb-6">
+                      <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                        {getSectionTitle(section)}
+                      </h2>
+                      <div className="space-y-3">
+                        {(data[section] as CustomSectionItem[]).map(
+                          (item, index) => (
+                            <div key={index}>
+                              {item.title && (
+                                <p className="font-semibold text-sm text-gray-300">
+                                  {item.title}
+                                </p>
+                              )}
+                              {item.description && (
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {item.description}
+                                </p>
+                              )}
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })}
           </div>
 
           {/* Main content */}
@@ -496,10 +614,7 @@ export default function CVPreviewSherlock({
                       {personalInfo?.address || ""}, {personalInfo?.city || ""},{" "}
                       {personalInfo?.postalCode || ""}
                     </p>
-                    <div
-                      style={{ backgroundColor: accentColor }}
-                      className="w-6 h-6 rounded-full y63hnhgb  flex items-center justify-center mr-2"
-                    >
+                    <div className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2">
                       <span className="text-white text-xs">📍</span>
                     </div>
                   </div>
@@ -509,10 +624,7 @@ export default function CVPreviewSherlock({
                     <p className="text-sm text-gray-700">
                       {personalInfo?.phone}
                     </p>
-                    <div
-                      style={{ backgroundColor: accentColor }}
-                      className="w-6 h-6 rounded-full flex items-center justify-center mr-2"
-                    >
+                    <div className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2">
                       <span className="text-white text-xs">📞</span>
                     </div>
                   </div>
@@ -522,10 +634,7 @@ export default function CVPreviewSherlock({
                     <p className="text-sm text-gray-700">
                       {personalInfo?.email}
                     </p>
-                    <div
-                      style={{ backgroundColor: accentColor }}
-                      className="w-6 h-6 rounded-full  flex items-center justify-center mr-2"
-                    >
+                    <div className="w-6 h-6 rounded-full cv-accent-bg flex items-center justify-center mr-2">
                       <span className="text-white text-xs">✉️</span>
                     </div>
                   </div>
@@ -542,7 +651,7 @@ export default function CVPreviewSherlock({
       </div>
 
       {/* Page 2 */}
-      {hasPage2 && (
+      {hasPage2 && !showFirstPageOnly && (
         <div className="cv-page">
           <div className="cv-page-content flex">
             {/* Left sidebar */}
@@ -570,43 +679,30 @@ export default function CVPreviewSherlock({
                 </div>
               </div>
 
-              {/* About me - only show if profile is in section order */}
-              {sectionOrder.includes("profile") && (
+              {/* Only show sidebar sections that are actually assigned to page 2 */}
+              {page2Sections.includes("profile") && data.profile && (
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                     {getSectionTitle("profile")}
                   </h2>
-                  <p className="text-sm text-gray-300">
-                    {profile || placeholderData.profile}
-                  </p>
+                  <div
+                    className="text-sm text-gray-300"
+                    dangerouslySetInnerHTML={{
+                      __html: profile,
+                    }}
+                  />
                 </div>
               )}
 
-              {/* Socials for page 2 - always show heading */}
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
-                  {getSectionTitle("socials")}
-                </h2>
-                <div className="text-sm">
-                  {socials && socials.length > 0
-                    ? socials.map((social: Social, index: number) => (
-                        <div key={index} className="mb-2">
-                          <p className="mb-1">{social.platform}:</p>
-                          <a
-                            href={
-                              social.url.startsWith("http")
-                                ? social.url
-                                : `https://${social.url}`
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-gray-300 mb-2 text-xs break-words underline hover:text-gray-100"
-                          >
-                            {social.url}
-                          </a>
-                        </div>
-                      ))
-                    : placeholderData.socials.map((social, index) => (
+              {/* Socials - only show if assigned to page 2 */}
+              {page2Sections.includes("socials") &&
+                data.socials?.length > 0 && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                      {getSectionTitle("socials")}
+                    </h2>
+                    <div className="text-sm">
+                      {socials.map((social: Social, index: number) => (
                         <div key={index} className="mb-2">
                           <p className="mb-1">{social.platform}:</p>
                           <a
@@ -623,33 +719,18 @@ export default function CVPreviewSherlock({
                           </a>
                         </div>
                       ))}
-                </div>
-              </div>
+                    </div>
+                  </div>
+                )}
 
-              {/* References for page 2 - always show heading */}
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
-                  {getSectionTitle("references")}
-                </h2>
-                {references && references.length > 0
-                  ? references.map((reference: Reference, index: number) => (
-                      <div key={index} className="text-sm mb-4">
-                        <p className="font-semibold mb-1">
-                          {reference.name.toUpperCase()}
-                        </p>
-                        <p className="text-gray-300 mb-1">
-                          {reference.company}
-                        </p>
-                        <p className="text-gray-300 mb-1">{reference.phone}</p>
-                        <a
-                          href={`mailto:${reference.email}`}
-                          className="text-gray-300 text-xs break-words underline hover:text-gray-100"
-                        >
-                          {reference.email}
-                        </a>
-                      </div>
-                    ))
-                  : placeholderData.references.map((reference, index) => (
+              {/* References - only show if assigned to page 2 */}
+              {page2Sections.includes("references") &&
+                data.references?.length > 0 && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                      {getSectionTitle("references")}
+                    </h2>
+                    {references.map((reference: Reference, index: number) => (
                       <div key={index} className="text-sm mb-4">
                         <p className="font-semibold mb-1">
                           {reference.name.toUpperCase()}
@@ -666,21 +747,18 @@ export default function CVPreviewSherlock({
                         </a>
                       </div>
                     ))}
-              </div>
+                  </div>
+                )}
 
-              {/* Interests for page 2 */}
-              {interests &&
-                interests.length > 0 &&
-                sectionOrder.includes("interests") && (
+              {/* Interests - only show if assigned to page 2 */}
+              {page2Sections.includes("interests") &&
+                data.interests?.length > 0 && (
                   <div>
                     <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
                       {getSectionTitle("interests")}
                     </h2>
                     <ul className="text-sm text-gray-300">
-                      {(interests?.length
-                        ? interests
-                        : placeholderData.interests
-                      ).map((interest, index) => (
+                      {interests.map((interest, index) => (
                         <div key={index} className="mb-1">
                           {interest.name}
                         </div>
@@ -688,6 +766,113 @@ export default function CVPreviewSherlock({
                     </ul>
                   </div>
                 )}
+
+              {/* Skills - only show if assigned to page 2 */}
+              {page2Sections.includes("skills") && data.skills?.length > 0 && (
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                    {getSectionTitle("skills")}
+                  </h2>
+                  <div className="space-y-3">
+                    {data.skills.map((skill, index) => (
+                      <div key={index}>
+                        <p className="text-xs uppercase mb-1 text-gray-300">
+                          {skill.name}
+                        </p>
+                        <div className="w-full bg-gray-600 h-2 rounded-sm">
+                          <div
+                            className="h-full rounded-sm cv-accent-bg"
+                            style={{
+                              width: `${(skill.level / 5) * 100}%`,
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Languages - only show if assigned to page 2 */}
+              {page2Sections.includes("languages") &&
+                data.languages?.length > 0 && (
+                  <div className="mb-6">
+                    <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                      {getSectionTitle("languages")}
+                    </h2>
+                    <div className="space-y-3">
+                      {data.languages.map((language, index) => (
+                        <div key={index}>
+                          <p className="text-xs uppercase mb-1 text-gray-300">
+                            {language.name}
+                          </p>
+                          <div className="w-full bg-gray-600 h-2 rounded-sm">
+                            <div
+                              className="h-2 rounded-sm cv-accent-bg"
+                              style={{
+                                width:
+                                  language.level === "Natif" ||
+                                  language.level === "Native/Bilingual" ||
+                                  language.level === "Native" ||
+                                  language.level === "Bilingual"
+                                    ? "100%"
+                                    : language.level === "Courant" ||
+                                      language.level === "Full Professional"
+                                    ? "80%"
+                                    : language.level === "Avancé" ||
+                                      language.level === "Professional Working"
+                                    ? "60%"
+                                    : language.level === "Intermédiaire" ||
+                                      language.level === "Limited Working"
+                                    ? "40%"
+                                    : language.level === "Elementary"
+                                    ? "20%"
+                                    : "50%",
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              {/* Custom sections - only show if assigned to page 2 */}
+              {page2Sections
+                .filter((section) => section.startsWith("custom-"))
+                .map((section) => {
+                  if (
+                    data[section] &&
+                    (data[section] as CustomSectionItem[]).length > 0
+                  ) {
+                    return (
+                      <div key={section} className="mb-6">
+                        <h2 className="text-lg font-semibold uppercase mb-2 border-b border-gray-500 pb-1">
+                          {getSectionTitle(section)}
+                        </h2>
+                        <div className="space-y-3">
+                          {(data[section] as CustomSectionItem[]).map(
+                            (item, index) => (
+                              <div key={index}>
+                                {item.title && (
+                                  <p className="font-semibold text-sm text-gray-300">
+                                    {item.title}
+                                  </p>
+                                )}
+                                {item.description && (
+                                  <p className="text-xs text-gray-400 mt-1">
+                                    {item.description}
+                                  </p>
+                                )}
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
             </div>
 
             {/* Main content */}
@@ -750,6 +935,28 @@ export default function CVPreviewSherlock({
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        .cv-page {
+          width: 210mm;
+          min-height: 297mm;
+          position: relative;
+          margin: 0 auto;
+          background: white;
+        }
+        .cv-page + .cv-page {
+          margin-top: 2rem;
+        }
+        @media print {
+          .cv-page + .cv-page {
+            margin-top: 0;
+            page-break-before: always;
+          }
+        }
+        .cv-accent-bg {
+          background-color: var(--accent-color) !important;
+        }
+      `}</style>
     </div>
   );
 }

@@ -12,6 +12,7 @@ interface CVPreviewAltProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  language?: string;
   accentColor?: string;
   fontFamily?: string;
   sectionPages?: Record<string, number>;
@@ -30,6 +31,7 @@ export default function CVPreviewAlt({
   customSectionNames = {},
   previewMode = false,
   showFirstPageOnly = false,
+  language = "fr",
 }: CVPreviewAltProps) {
   const {
     personalInfo = {},
@@ -65,24 +67,37 @@ export default function CVPreviewAlt({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "personal-info":
-        return "Personal Information";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       case "profile":
-        return "Profile";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Education";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Professional Experience";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Professional Experience";
       case "skills":
-        return "Skills";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Languages";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Interests";
+        return language === "fr" ? "Centres d'intérêt" : "Interests";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr" ? "Contact" : "Contact";
       default:
-        return "";
+        if (section.startsWith("custom-")) {
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
+        }
+        return section;
     }
   };
 
@@ -111,18 +126,21 @@ export default function CVPreviewAlt({
     }
   };
 
-  const renderProfile = () => (
-    <section className="mb-8">
-      {profile && (
-        <>
-          <h2 className="text-xl text-gray-800 font-medium mb-3">
-            {getSectionTitle("profile")}
-          </h2>
-          <p className="text-gray-600 leading-relaxed">{profile}</p>
-        </>
-      )}
-    </section>
-  );
+  const renderProfile = () => {
+    if (!profile) return null;
+
+    return (
+      <section className="mb-8">
+        <h2 className="text-xl text-gray-800 font-medium mb-3">
+          {getSectionTitle("profile")}
+        </h2>
+        <div
+          className="text-gray-600 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
+      </section>
+    );
+  };
 
   const renderEducation = () => (
     <section className="mb-8">
@@ -173,9 +191,10 @@ export default function CVPreviewAlt({
                 </p>
               </div>
               {exp.description && (
-                <p className="text-gray-600 mt-2 text-sm whitespace-pre-line">
-                  {exp.description}
-                </p>
+                <div
+                  className="text-gray-600 mt-1 text-sm"
+                  dangerouslySetInnerHTML={{ __html: exp.description }}
+                />
               )}
             </div>
           ))}
@@ -216,7 +235,7 @@ export default function CVPreviewAlt({
   };
 
   const renderSidebar = () => (
-    <div className="cv-sidebar w-1/3 bg-purple-50 p-6">
+    <div className="cv-sidebar w-1/3 bg-purple-50 p-6 min-h-[297mm]">
       {/* Photo */}
       <div className="mb-6 flex justify-center">
         {personalInfo && "photo" in personalInfo && personalInfo.photo && (
@@ -366,6 +385,91 @@ export default function CVPreviewAlt({
     </div>
   );
 
+  // Page 2 sidebar - only shows personal information
+  const renderPage2Sidebar = () => (
+    <div className="cv-sidebar w-1/3 bg-purple-50 p-6 min-h-[297mm]">
+      {/* Photo */}
+      <div className="mb-6 flex justify-center">
+        {personalInfo && "photo" in personalInfo && personalInfo.photo && (
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md">
+            <Image
+              src={personalInfo.photo as string}
+              alt={`${
+                "firstName" in personalInfo
+                  ? (personalInfo.firstName as string) || ""
+                  : ""
+              } ${
+                "lastName" in personalInfo
+                  ? (personalInfo.lastName as string) || ""
+                  : ""
+              }`}
+              width={128}
+              height={128}
+              className="object-cover w-full h-full"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Contact Info Only */}
+      <div className="mb-6">
+        {personalInfo &&
+          (("email" in personalInfo && personalInfo.email) ||
+            ("phone" in personalInfo && personalInfo.phone) ||
+            ("address" in personalInfo && personalInfo.address) ||
+            ("postalCode" in personalInfo && personalInfo.postalCode) ||
+            ("city" in personalInfo && personalInfo.city)) && (
+            <>
+              <h2 className="text-lg font-medium text-gray-900 mb-3">
+                {getSectionTitle("personal-info")}
+              </h2>
+              <div className="space-y-2">
+                {personalInfo &&
+                  "email" in personalInfo &&
+                  personalInfo.email && (
+                    <div className="flex items-start">
+                      <Mail className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-900">
+                        {personalInfo.email as string}
+                      </span>
+                    </div>
+                  )}
+                {personalInfo &&
+                  "phone" in personalInfo &&
+                  personalInfo.phone && (
+                    <div className="flex items-start">
+                      <Phone className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-900">
+                        {personalInfo.phone as string}
+                      </span>
+                    </div>
+                  )}
+                {personalInfo &&
+                  (("address" in personalInfo && personalInfo.address) ||
+                    ("postalCode" in personalInfo && personalInfo.postalCode) ||
+                    ("city" in personalInfo && personalInfo.city)) && (
+                    <div className="flex items-start">
+                      <MapPin className="w-4 h-4 text-gray-700 mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-900">
+                        {"address" in personalInfo
+                          ? (personalInfo.address as string) || ""
+                          : ""}
+                        {"postalCode" in personalInfo &&
+                          personalInfo.postalCode &&
+                          `, ${personalInfo.postalCode as string}`}
+                        {"city" in personalInfo &&
+                          personalInfo.city &&
+                          `, ${personalInfo.city as string}`}
+                      </span>
+                    </div>
+                  )}
+              </div>
+            </>
+          )}
+      </div>
+    </div>
+  );
+
   return (
     <div
       style={
@@ -377,12 +481,12 @@ export default function CVPreviewAlt({
     >
       {/* Page 1 */}
       <div className="cv-page">
-        <div className="flex">
+        <div className="flex min-h-[297mm]">
           {/* Sidebar */}
           {renderSidebar()}
 
           {/* Main Content */}
-          <div className="cv-main-content flex-1 p-8">
+          <div className="cv-main-content flex-1 p-8 min-h-[297mm]">
             {page1Sections.map((section) => renderSection(section))}
           </div>
         </div>
@@ -391,12 +495,12 @@ export default function CVPreviewAlt({
       {/* Page 2 (if needed) */}
       {hasPage2 && !showFirstPageOnly && (
         <div className="cv-page">
-          <div className="cv-page-content flex">
+          <div className="cv-page-content flex min-h-[297mm]">
             {/* Sidebar */}
-            {renderSidebar()}
+            {renderPage2Sidebar()}
 
             {/* Main Content */}
-            <div className="cv-main-content flex-1 p-8">
+            <div className="cv-main-content flex-1 p-8 min-h-[297mm]">
               {page2Sections.map((section) => renderSection(section))}
             </div>
           </div>

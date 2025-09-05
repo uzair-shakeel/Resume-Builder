@@ -46,6 +46,7 @@ interface CVPreviewHRProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  language?: string;
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
 }
@@ -58,6 +59,7 @@ export default function CVPreviewHR({
   pageBreakSettings,
   sectionPages = {},
   customSectionNames = {},
+  language = "fr",
 }: CVPreviewHRProps) {
   const {
     personalInfo,
@@ -93,27 +95,39 @@ export default function CVPreviewHR({
       return customSectionNames[section].toUpperCase();
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "personal-info":
-        return "INFORMATIONS PERSONNELLES";
+        return language === "fr"
+          ? "INFORMATIONS PERSONNELLES"
+          : "PERSONAL INFORMATION";
       case "profile":
-        return "PROFIL";
+        return language === "fr" ? "PROFIL" : "PROFILE";
       case "education":
-        return "FORMATION";
+        return language === "fr" ? "ÉDUCATION" : "EDUCATION";
       case "experience":
-        return "EXPÉRIENCE PROFESSIONNELLE";
+        return language === "fr"
+          ? "EXPÉRIENCE PROFESSIONNELLE"
+          : "PROFESSIONAL EXPERIENCE";
       case "skills":
-        return "COMPÉTENCES";
+        return language === "fr" ? "COMPÉTENCES" : "SKILLS";
       case "languages":
-        return "LANGUES";
+        return language === "fr" ? "LANGUES" : "LANGUAGES";
       case "interests":
-        return "CENTRES D'INTÉRÊT";
+        return language === "fr" ? "CENTRES D'INTÉRÊT" : "INTERESTS";
+      case "references":
+        return language === "fr" ? "RÉFÉRENCES" : "REFERENCES";
+      case "socials":
+        return language === "fr" ? "RÉSEAUX SOCIAUX" : "SOCIAL NETWORKS";
+      case "contact":
+        return language === "fr"
+          ? "INFORMATIONS PERSONNELLES"
+          : "PERSONAL INFORMATION";
       default:
         if (section.startsWith("custom-")) {
-          return "SECTION PERSONNALISÉE";
+          return language === "fr" ? "SECTION PERSONNALISÉE" : "CUSTOM SECTION";
         }
-        return "";
+        return section.toUpperCase();
     }
   };
 
@@ -149,25 +163,22 @@ export default function CVPreviewHR({
   };
 
   const renderProfile = () => {
-    return data.profile ? (
-      <div
-        className={`mb-6 ${
-          breakSettings.keepHeadingsWithContent ? "keep-together" : ""
-        }`}
-      >
-        {data.profile && (
-          <>
-            <h2
-              className="text-xl font-semibold mb-3 pb-2 border-b-2"
-              style={{ borderColor: accentColor }}
-            >
-              {getSectionTitle("profile")}
-            </h2>
-            <p className="text-sm">{data.profile}</p>
-          </>
-        )}
+    if (!profile) return null;
+
+    return (
+      <div className="mb-8">
+        <h2
+          className="text-xl font-semibold mb-3 pb-2 border-b-2"
+          style={{ borderColor: accentColor }}
+        >
+          {getSectionTitle("profile")}
+        </h2>
+        <div
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
       </div>
-    ) : null;
+    );
   };
 
   const renderEducation = () => {
@@ -241,9 +252,10 @@ export default function CVPreviewHR({
                     {exp.company}, {exp.location}
                   </p>
                   {exp.description && (
-                    <p className="text-sm text-gray-600 whitespace-pre-line">
-                      {exp.description}
-                    </p>
+                    <div
+                      className="text-sm text-gray-600 mt-2"
+                      dangerouslySetInnerHTML={{ __html: exp.description }}
+                    />
                   )}
                 </div>
               ))}

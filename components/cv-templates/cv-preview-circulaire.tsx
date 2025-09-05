@@ -45,11 +45,14 @@ interface CVPreviewCirculaireProps {
     avoidOrphanedHeadings: boolean;
     minLinesBeforeBreak: number;
   };
+  language?: string;
   template?: string;
   accentColor?: string;
   fontFamily?: string;
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
+  previewMode?: boolean;
+  showFirstPageOnly?: boolean;
 }
 
 export default function CVPreviewCirculaire({
@@ -61,6 +64,9 @@ export default function CVPreviewCirculaire({
   fontFamily = "inter",
   sectionPages = {},
   customSectionNames = {},
+  previewMode = false,
+  showFirstPageOnly = false,
+  language = "fr",
 }: CVPreviewCirculaireProps) {
   const {
     personalInfo = {},
@@ -87,7 +93,50 @@ export default function CVPreviewCirculaire({
     (section) => sectionPages[section] === 2
   );
 
-  const hasPage2 = page2Sections.length > 0;
+  // Ensure personal-info section appears on all pages in the sidebar
+  const ensureSidebarSectionsOnAllPages = (
+    sections: string[],
+    isFirstPage: boolean = true
+  ) => {
+    if (isFirstPage) {
+      // On first page, show all sidebar sections
+      const sidebarSections = [
+        "personal-info",
+        "skills",
+        "languages",
+        "interests",
+      ];
+      const missingSidebarSections = sidebarSections.filter(
+        (section) =>
+          !sections.includes(section) && sectionOrder.includes(section)
+      );
+
+      if (missingSidebarSections.length > 0) {
+        return [...missingSidebarSections, ...sections];
+      }
+      return sections;
+    } else {
+      // On additional pages, only show personal-info section
+      if (
+        !sections.includes("personal-info") &&
+        sectionOrder.includes("personal-info")
+      ) {
+        return ["personal-info", ...sections];
+      }
+      return sections;
+    }
+  };
+
+  const finalPage1Sections = ensureSidebarSectionsOnAllPages(
+    page1Sections,
+    true
+  );
+  const finalPage2Sections = ensureSidebarSectionsOnAllPages(
+    page2Sections,
+    false
+  );
+
+  const hasPage2 = finalPage2Sections.length > 0;
 
   // Helper function to get section title with custom names
   const getSectionTitle = (section: string): string => {
@@ -96,27 +145,39 @@ export default function CVPreviewCirculaire({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "profile":
-        return "Profil";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Formation";
+        return language === "fr" ? "Éducation" : "Education";
       case "experience":
-        return "Expérience professionnelle";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Professional Experience";
       case "skills":
-        return "Compétences";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Langues";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Centres d'intérêt";
+        return language === "fr" ? "Centres d'intérêt" : "Interests";
       case "personal-info":
-        return "Informations personnelles";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       default:
         if (section.startsWith("custom-")) {
-          return "Section personnalisée";
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
         }
-        return "";
+        return section;
     }
   };
 
@@ -124,10 +185,7 @@ export default function CVPreviewCirculaire({
     if (section.startsWith("custom-") && data[section]) {
       return (
         <div className="mt-6">
-          <h2
-            style={{ color: accentColor, borderColor: accentColor }}
-            className="text-xl font-bold mb-4 border-b pb-2"
-          >
+          <h2 className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
             {getSectionTitle(section)}
           </h2>
           <div className="space-y-4">
@@ -212,16 +270,13 @@ export default function CVPreviewCirculaire({
           postalCode ||
           city) && (
           <>
-            <h2
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-xl font-bold mb-4 border-b pb-2"
-            >
+            <h2 className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               Informations personnelles
             </h2>
             <div className="space-y-4">
               {(firstName || lastName) && (
                 <div className="flex items-center gap-3">
-                  <User style={{ color: accentColor }} className="h-5 w-5  " />
+                  <User className="h-5 w-5 cv-accent-color" />
                   <span className="text-gray-700">
                     {firstName} {lastName}
                   </span>
@@ -229,22 +284,19 @@ export default function CVPreviewCirculaire({
               )}
               {email && (
                 <div className="flex items-center gap-3">
-                  <Mail style={{ color: accentColor }} className="h-5 w-5  " />
+                  <Mail className="h-5 w-5 cv-accent-color" />
                   <span className="text-gray-700">{email}</span>
                 </div>
               )}
               {phone && (
                 <div className="flex items-center gap-3">
-                  <Phone style={{ color: accentColor }} className="h-5 w-5  " />
+                  <Phone className="h-5 w-5 cv-accent-color" />
                   <span className="text-gray-700">{phone}</span>
                 </div>
               )}
               {(address || postalCode || city) && (
                 <div className="flex items-start gap-3">
-                  <Home
-                    style={{ color: accentColor }}
-                    className="h-5 w-5   mt-0.5"
-                  />
+                  <Home className="h-5 w-5 cv-accent-color mt-0.5" />
                   <div className="text-gray-700">
                     {address && <div>{address}</div>}
                     {(postalCode || city) && (
@@ -263,21 +315,19 @@ export default function CVPreviewCirculaire({
   };
 
   const renderProfile = () => {
-    return data.profile ? (
+    if (!profile) return null;
+
+    return (
       <div className="mb-8">
-        {data.profile && (
-          <>
-            <h3
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-2xl font-bold mb-4  border-b  pb-2"
-            >
-              {getSectionTitle("profile")}
-            </h3>
-            <p className="text-gray-700">{data.profile}</p>
-          </>
-        )}
+        <h3 className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
+          {getSectionTitle("profile")}
+        </h3>
+        <div
+          className="text-gray-700 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
       </div>
-    ) : null;
+    );
   };
 
   const renderEducation = () => {
@@ -285,10 +335,7 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.education?.length > 0 && (
           <>
-            <h3
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-2xl font-bold mb-4  border-b  pb-2"
-            >
+            <h3 className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("education")}
             </h3>
             <div className="space-y-6">
@@ -297,13 +344,10 @@ export default function CVPreviewCirculaire({
                   <div className="flex justify-between mb-1">
                     <div>
                       <p className="font-bold text-gray-800">{edu.degree}</p>
-                      <p style={{ color: accentColor }} className=" ">
-                        {edu.school}
-                      </p>
+                      <p className="cv-accent-color">{edu.school}</p>
                     </div>
                     <div className="text-gray-600 font-medium">
-                      de {edu.startDate} à{" "}
-                      {edu.current ? "ce jour" : edu.endDate}
+                      {edu.startDate} - {edu.current ? "ce jour" : edu.endDate}
                     </div>
                   </div>
                   {edu.description && (
@@ -323,10 +367,7 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.experience?.length > 0 && (
           <>
-            <h3
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-2xl font-bold mb-4  border-b  pb-2"
-            >
+            <h3 className="text-2xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("experience")}
             </h3>
             <div className="space-y-6">
@@ -335,26 +376,19 @@ export default function CVPreviewCirculaire({
                   <div className="flex justify-between mb-1">
                     <div>
                       <p className="font-bold text-gray-800">{exp.position}</p>
-                      <p style={{ color: accentColor }} className=" ">
+                      <p className="cv-accent-color">
                         {exp.company}, {exp.location}
                       </p>
                     </div>
                     <div className="text-gray-600 font-medium">
-                      de {exp.startDate} à{" "}
-                      {exp.current ? "ce jour" : exp.endDate}
+                      {exp.startDate} - {exp.current ? "ce jour" : exp.endDate}
                     </div>
                   </div>
                   {exp.description && (
-                    <div className="mt-3 text-gray-700">
-                      <div className="whitespace-pre-line">
-                        {exp.description.split("\n").map((item, i) => (
-                          <div key={i} className="flex items-start">
-                            <span className="mr-2 text-black">•</span>
-                            <span>{item.replace("• ", "")}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <div
+                      className="mt-3 text-gray-700"
+                      dangerouslySetInnerHTML={{ __html: exp.description }}
+                    />
                   )}
                 </div>
               ))}
@@ -370,10 +404,7 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.skills?.length > 0 && (
           <>
-            <h2
-              style={{ color: accentColor, borderColor: accentColor }}
-              className={`text-xl font-bold mb-4  border-b pt-6 pb-2`}
-            >
+            <h2 className="text-xl font-bold mb-4 border-b pt-6 pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("skills")}
             </h2>
             <div className="space-y-3">
@@ -396,10 +427,7 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.languages?.length > 0 && (
           <>
-            <h2
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-xl font-bold mb-4  border-b  pb-2"
-            >
+            <h2 className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("languages")}
             </h2>
             <div className="space-y-2">
@@ -421,19 +449,13 @@ export default function CVPreviewCirculaire({
       <div className="mb-8">
         {data.interests?.length > 0 && (
           <>
-            <h2
-              style={{ color: accentColor, borderColor: accentColor }}
-              className="text-xl font-bold mb-4  border-b  pb-2"
-            >
+            <h2 className="text-xl font-bold mb-4 border-b pb-2 cv-accent-color cv-accent-border">
               {getSectionTitle("interests")}
             </h2>
             <div className="space-y-2">
               {data.interests.map((interest: Interest, index: number) => (
                 <div key={index} className="flex items-start">
-                  <div
-                    style={{ backgroundColor: accentColor }}
-                    className="w-3 h-3  mt-1.5 mr-2 flex-shrink-0"
-                  ></div>
+                  <div className="w-3 h-3 mt-1.5 mr-2 flex-shrink-0 cv-accent-bg"></div>
                   <span className="text-gray-700">{interest.name}</span>
                 </div>
               ))}
@@ -448,17 +470,12 @@ export default function CVPreviewCirculaire({
     <div className="cv-page bg-white shadow-lg">
       <div className="flex h-full">
         {/* Left sidebar */}
-        <div className="w-1/3 relative bg-[#e6eaeb]  min-h-[297mm]">
+        <div className="w-1/3 relative bg-[#e6eaeb] min-h-[297mm]">
           {/* Top teal curved section */}
-          <div
-            style={{ backgroundColor: accentColor }}
-            className="absolute top-0 left-0 w-full h-[160px] "
-          >
+          <div className="absolute top-0 left-0 w-full h-[160px] cv-accent-bg">
             <div
-              className="absolute bottom-[-77px] left-0 w-full h-24"
+              className="absolute bottom-[-77px] left-0 w-full h-24 cv-accent-bg"
               style={{
-                background: accentColor,
-
                 clipPath: "ellipse(55% 60% at 52% 0%)",
               }}
             ></div>
@@ -508,12 +525,9 @@ export default function CVPreviewCirculaire({
           </div>
 
           {/* Bottom teal curved section */}
-          <div
-            style={{ backgroundColor: accentColor }}
-            className="absolute bottom-10 left-0 w-full h-[125px] "
-          >
+          <div className="absolute bottom-0 left-0 w-full h-[125px] cv-accent-bg">
             <div
-              className="absolute  top-0 left-0 w-full h-20"
+              className="absolute top-0 left-0 w-full h-20"
               style={{
                 background: "#e6eaeb",
                 clipPath: "ellipse(60% 60% at 52% 0%)",
@@ -545,14 +559,36 @@ export default function CVPreviewCirculaire({
   );
 
   return (
-    <div className="cv-container">
+    <div
+      style={
+        {
+          "--accent-color": accentColor,
+          fontFamily: fontFamily,
+        } as React.CSSProperties
+      }
+      className="cv-container"
+    >
       {/* Page 1 */}
-      {renderPage(page1Sections)}
+      {renderPage(finalPage1Sections)}
 
       {/* Page 2 (if needed) */}
-      {hasPage2 && (
-        <div className="mt-8 print:mt-0">{renderPage(page2Sections)}</div>
+      {hasPage2 && !showFirstPageOnly && (
+        <div className="mt-8 print:mt-0 min-h-[297mm]">
+          {renderPage(finalPage2Sections)}
+        </div>
       )}
+
+      <style jsx>{`
+        .cv-accent-bg {
+          background-color: var(--accent-color) !important;
+        }
+        .cv-accent-color {
+          color: var(--accent-color) !important;
+        }
+        .cv-accent-border {
+          border-color: var(--accent-color) !important;
+        }
+      `}</style>
     </div>
   );
 }

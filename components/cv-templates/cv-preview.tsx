@@ -27,6 +27,7 @@ interface CVPreviewProps {
   fontFamily?: string;
   sectionPages?: Record<string, number>;
   customSectionNames?: Record<string, string>;
+  language?: string;
 }
 
 export default function CVPreview({
@@ -37,6 +38,7 @@ export default function CVPreview({
   fontFamily = "'DejaVu Sans', sans-serif",
   sectionPages = {},
   customSectionNames = {},
+  language = "fr",
 }: CVPreviewProps) {
   const {
     personalInfo,
@@ -130,7 +132,10 @@ export default function CVPreview({
         <h2 className="text-lg font-semibold mb-2 section-title">
           {getSectionTitle("profile")}
         </h2>
-        <p className="text-gray-700">{profile}</p>
+        <div
+          className="text-gray-700"
+          dangerouslySetInnerHTML={{ __html: profile }}
+        />
       </div>
     ) : null;
   };
@@ -187,7 +192,10 @@ export default function CVPreview({
                 </div>
               </div>
               {exp.description && (
-                <p className="text-gray-600 mt-1 text-sm">{exp.description}</p>
+                <div
+                  className="text-gray-600 mt-1 text-sm"
+                  dangerouslySetInnerHTML={{ __html: exp.description }}
+                />
               )}
             </div>
           ))}
@@ -294,24 +302,36 @@ export default function CVPreview({
       return customSectionNames[section];
     }
 
-    // Otherwise use the default name
+    // Otherwise use the default name based on language
     switch (section) {
       case "personal-info":
-        return "Personal Information";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       case "profile":
-        return "Profile";
+        return language === "fr" ? "Profil" : "Profile";
       case "education":
-        return "Education";
+        return language === "fr" ? "Formation" : "Education";
       case "experience":
-        return "Professional Experience";
+        return language === "fr"
+          ? "Expérience professionnelle"
+          : "Professional Experience";
       case "skills":
-        return "Skills";
+        return language === "fr" ? "Compétences" : "Skills";
       case "languages":
-        return "Languages";
+        return language === "fr" ? "Langues" : "Languages";
       case "interests":
-        return "Interests";
+        return language === "fr" ? "Centres d'intérêt" : "Interests";
+      case "references":
+        return language === "fr" ? "Références" : "References";
+      case "socials":
+        return language === "fr" ? "Réseaux sociaux" : "Social Networks";
+      case "contact":
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       default:
-        return "";
+        return section;
     }
   };
 

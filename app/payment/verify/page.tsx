@@ -51,8 +51,30 @@ function VerifyContent() {
             parseInt(searchParams?.get("amount") || "0", 10) ||
             result.data?.amount ||
             99;
-          const duration =
-            parseInt(searchParams?.get("duration") || "0", 10) || 30;
+          // Get duration from search params, or calculate based on plan if not provided
+          let duration = parseInt(searchParams?.get("duration") || "0", 10);
+
+          // If duration is not provided or invalid, calculate based on plan
+          if (!duration || duration <= 0) {
+            switch (plan) {
+              case "monthly":
+                duration = 30;
+                break;
+              case "quarterly":
+                duration = 90;
+                break;
+              case "yearly":
+                duration = 365;
+                break;
+              default:
+                duration = 30; // fallback
+            }
+            console.log(
+              `Duration not provided, calculated ${duration} days for ${plan} plan`
+            );
+          } else {
+            console.log(`Using provided duration: ${duration} days`);
+          }
 
           try {
             console.log("Registering subscription with:", {

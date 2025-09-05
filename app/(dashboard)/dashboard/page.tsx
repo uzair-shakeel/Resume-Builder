@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import dynamic from "next/dynamic";
 import { useLanguage } from "@/contexts/LanguageContext";
+import SubscriptionStatus from "@/components/dashboard/SubscriptionStatus";
 
 // Dynamically import all CV preview components
 const CVPreviewAlt = dynamic(
@@ -72,6 +73,20 @@ const CoverLetterPreviewCreative = dynamic(
     import(
       "@/components/cover-letter-templates/cover-letter-preview-circulaire"
     )
+);
+const CoverLetterPreviewSherlock = dynamic(
+  () =>
+    import("@/components/cover-letter-templates/cover-letter-preview-sherlock")
+);
+const CoverLetterPreviewStudent = dynamic(
+  () =>
+    import("@/components/cover-letter-templates/cover-letter-preview-student")
+);
+const CoverLetterPreviewHR = dynamic(
+  () => import("@/components/cover-letter-templates/cover-letter-preview-hr")
+);
+const CoverLetterPreviewTeal = dynamic(
+  () => import("@/components/cover-letter-templates/cover-letter-preview-teal")
 );
 
 interface CV {
@@ -400,6 +415,8 @@ export default function Dashboard() {
   };
 
   const renderCVPreview = (cv: CV) => {
+    const { language } = useLanguage();
+    
     // Default data structure
     const defaultData = {
       personalInfo: {
@@ -440,6 +457,7 @@ export default function Dashboard() {
       customSectionNames: cv.customSectionNames || {},
       previewMode: true,
       showFirstPageOnly: true,
+      language,
     };
 
     const preview = (() => {
@@ -471,6 +489,7 @@ export default function Dashboard() {
   };
 
   const renderCoverLetterPreview = (coverLetter: CoverLetter) => {
+    const { language } = useLanguage();
     // Fallback to template-based preview
     const commonProps = {
       data: coverLetter.data || {
@@ -490,6 +509,7 @@ export default function Dashboard() {
       customSections: coverLetter.customSections || {},
       previewMode: true,
       showFirstPageOnly: true,
+      language,
     };
 
     try {
@@ -505,6 +525,14 @@ export default function Dashboard() {
             return <CoverLetterPreviewMinimal {...commonProps} />;
           case "circulaire":
             return <CoverLetterPreviewCreative {...commonProps} />;
+          case "sherlock":
+            return <CoverLetterPreviewSherlock {...commonProps} />;
+          case "student":
+            return <CoverLetterPreviewStudent {...commonProps} />;
+          case "hr":
+            return <CoverLetterPreviewHR {...commonProps} />;
+          case "teal":
+            return <CoverLetterPreviewTeal {...commonProps} />;
           default:
             return <CoverLetterPreviewModern {...commonProps} />;
         }
@@ -526,6 +554,9 @@ export default function Dashboard() {
       {/* Main content */}
       <main className="flex-1 pt-20 lg:pt-5 pb-24">
         <div className="container mx-auto px-4">
+          {/* Subscription Status */}
+          <SubscriptionStatus />
+
           {/* CV Section */}
           <div className="mb-12">
             <div className="flex justify-between items-center mb-8">
@@ -624,10 +655,10 @@ export default function Dashboard() {
                         href={`/builder?id=${cv._id}`}
                         className="absolute inset-0 flex items-center justify-center"
                       >
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="w-full flex items-center justify-center">
+                        <div className="w-full h-full relative">
+                          <div className="absolute inset-0 flex items-center justify-center">
                             <div
-                              className="transform preview-container"
+                              className="w-[21cm] transform origin-center"
                               style={{ transform: `scale(${scale})` }}
                             >
                               {renderCVPreview(cv)}

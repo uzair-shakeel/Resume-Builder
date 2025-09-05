@@ -33,6 +33,19 @@ export default function CoverLetterPreviewTeal({
     conclusion,
   } = data;
 
+  // Helper function to format date for display
+  const formatDateForDisplay = (dateValue: string) => {
+    if (!dateValue) return new Date().toLocaleDateString("fr-FR");
+
+    // If it's in ISO format, convert to French
+    if (dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return new Date(dateValue).toLocaleDateString("fr-FR");
+    }
+
+    // If it's already in French format, return as is
+    return dateValue;
+  };
+
   // Filter sections for page 1 and page 2
   const page1Sections = sectionOrder.filter(
     (section) => !sectionPages[section] || sectionPages[section] === 1
@@ -52,22 +65,24 @@ export default function CoverLetterPreviewTeal({
     // Otherwise use the default name
     switch (section) {
       case "personal-info":
-        return "Personal Information";
+        return language === "fr"
+          ? "Informations personnelles"
+          : "Personal Information";
       case "destinataire":
-        return "Recipient";
+        return language === "fr" ? "Destinataire" : "Recipient";
       case "date-et-objet":
-        return "Date and Subject";
+        return language === "fr" ? "Date et objet" : "Date and Subject";
       case "introduction":
-        return "Introduction";
+        return language === "fr" ? "Introduction" : "Introduction";
       case "situation-actuelle":
-        return "Current Situation";
+        return language === "fr" ? "Situation actuelle" : "Current Situation";
       case "motivation":
-        return "Motivation";
+        return language === "fr" ? "Motivation" : "Motivation";
       case "conclusion":
-        return "Conclusion";
+        return language === "fr" ? "Conclusion" : "Conclusion";
       default:
         if (section.startsWith("custom-")) {
-          return "Custom Section";
+          return language === "fr" ? "Section personnalisée" : "Custom Section";
         }
         return section;
     }
@@ -160,10 +175,15 @@ export default function CoverLetterPreviewTeal({
   const renderDateAndSubject = () => {
     return (
       <div className="pb-8">
-        <div>
-          <h4 className="font-semibold text-gray-800">
-            {dateAndSubject?.subject || ""}
-          </h4>
+        <div className="space-y-8 text-gray-700">
+          <p>{formatDateForDisplay(dateAndSubject?.date)}</p>
+          <p>
+            <span
+              dangerouslySetInnerHTML={{
+                __html: dateAndSubject?.subject || "",
+              }}
+            />
+          </p>
         </div>
       </div>
     );

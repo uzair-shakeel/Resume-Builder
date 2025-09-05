@@ -59,13 +59,13 @@ export default function CoverLetterPreviewSherlock({
 
     switch (section) {
       case "introduction":
-        return "Introduction";
+        return language === "fr" ? "Introduction" : "Introduction";
       case "situation-actuelle":
-        return "Situation Actuelle";
+        return language === "fr" ? "Situation Actuelle" : "Current Situation";
       case "motivation":
-        return "Motivation";
+        return language === "fr" ? "Motivation" : "Motivation";
       case "conclusion":
-        return "Conclusion";
+        return language === "fr" ? "Conclusion" : "Conclusion";
       default:
         return section;
     }
@@ -160,14 +160,17 @@ export default function CoverLetterPreviewSherlock({
                         language === "fr" ? "fr-FR" : "en-US"
                       )}
                   </p>
-                  <p className="font-bold mt-2">
-                    {getPlaceholder(
-                      "dateAndSubject",
-                      "subject",
-                      dateAndSubject?.subject,
-                      language
-                    )}
-                  </p>
+                  <div
+                    className="font-bold mt-2"
+                    dangerouslySetInnerHTML={{
+                      __html: getPlaceholder(
+                        "dateAndSubject",
+                        "subject",
+                        dateAndSubject?.subject,
+                        language
+                      ),
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -261,76 +264,6 @@ export default function CoverLetterPreviewSherlock({
                 />
               </div>
             )}
-            <h2 className="text-xl font-bold uppercase tracking-wider mb-2 text-center">
-              {getPlaceholder(
-                "personalInfo",
-                "firstName",
-                personalInfo.firstName,
-                language
-              )}{" "}
-              {getPlaceholder(
-                "personalInfo",
-                "lastName",
-                personalInfo.lastName,
-                language
-              )}
-            </h2>
-            <p className="text-center text-sm uppercase tracking-wider mb-4 opacity-90">
-              {getPlaceholder(
-                "personalInfo",
-                "title",
-                personalInfo.title,
-                language
-              )}
-            </p>
-            <div className="border-t border-white/20 pt-4 mt-4">
-              <div className="flex items-center mb-2">
-                <Mail className="w-4 h-4 mr-2" />
-                <p className="text-sm">
-                  {getPlaceholder(
-                    "personalInfo",
-                    "email",
-                    personalInfo.email,
-                    language
-                  )}
-                </p>
-              </div>
-              <div className="flex items-center mb-2">
-                <Phone className="w-4 h-4 mr-2" />
-                <p className="text-sm">
-                  {getPlaceholder(
-                    "personalInfo",
-                    "phone",
-                    personalInfo.phone,
-                    language
-                  )}
-                </p>
-              </div>
-              <div className="flex items-center">
-                <MapPin className="w-4 h-4 mr-2" />
-                <p className="text-sm">
-                  {getPlaceholder(
-                    "personalInfo",
-                    "address",
-                    personalInfo.address,
-                    language
-                  )}
-                  ,{" "}
-                  {getPlaceholder(
-                    "personalInfo",
-                    "postalCode",
-                    personalInfo.postalCode,
-                    language
-                  )}{" "}
-                  {getPlaceholder(
-                    "personalInfo",
-                    "city",
-                    personalInfo.city,
-                    language
-                  )}
-                </p>
-              </div>
-            </div>
           </div>
         </div>
 

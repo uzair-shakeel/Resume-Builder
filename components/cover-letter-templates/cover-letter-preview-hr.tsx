@@ -52,22 +52,24 @@ export default function CoverLetterPreviewHR({
     // Otherwise use the default name
     switch (section) {
       case "personal-info":
-        return "INFORMATIONS PERSONNELLES";
+        return language === "fr"
+          ? "INFORMATIONS PERSONNELLES"
+          : "PERSONAL INFORMATION";
       case "destinataire":
-        return "DESTINATAIRE";
+        return language === "fr" ? "DESTINATAIRE" : "RECIPIENT";
       case "date-et-objet":
-        return "DATE ET OBJET";
+        return language === "fr" ? "DATE ET OBJET" : "DATE AND SUBJECT";
       case "introduction":
-        return "INTRODUCTION";
+        return language === "fr" ? "INTRODUCTION" : "INTRODUCTION";
       case "situation-actuelle":
-        return "SITUATION ACTUELLE";
+        return language === "fr" ? "SITUATION ACTUELLE" : "CURRENT SITUATION";
       case "motivation":
-        return "MOTIVATION";
+        return language === "fr" ? "MOTIVATION" : "MOTIVATION";
       case "conclusion":
-        return "CONCLUSION";
+        return language === "fr" ? "CONCLUSION" : "CONCLUSION";
       default:
         if (section.startsWith("custom-")) {
-          return "SECTION PERSONNALISÉE";
+          return language === "fr" ? "SECTION PERSONNALISÉE" : "CUSTOM SECTION";
         }
         return section.toUpperCase();
     }
@@ -209,14 +211,17 @@ export default function CoverLetterPreviewHR({
                 language === "fr" ? "fr-FR" : "en-US"
               )}
           </p>
-          <p className="font-semibold">
-            {getPlaceholder(
-              "dateAndSubject",
-              "subject",
-              dateAndSubject?.subject,
-              language
-            )}
-          </p>
+          <div
+            className="font-semibold"
+            dangerouslySetInnerHTML={{
+              __html: getPlaceholder(
+                "dateAndSubject",
+                "subject",
+                dateAndSubject?.subject,
+                language
+              ),
+            }}
+          />
         </div>
       </div>
     );

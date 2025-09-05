@@ -212,6 +212,25 @@
           "custom_section": "Section personnalisée"
         }
       },
+      "cv_sections": {
+        "description": "Titres des sections de CV",
+        "personal_info": "Informations personnelles",
+        "profile": "Profil",
+        "education": "Formation",
+        "experience": "Expérience professionnelle",
+        "skills": "Compétences",
+        "languages": "Langues",
+        "interests": "Centres d'intérêt",
+        "references": "Références",
+        "socials": "Réseaux sociaux",
+        "contact": "Contact",
+        "field_labels": {
+          "name": "Nom",
+          "email": "E-mail",
+          "phone": "Téléphone",
+          "address": "Adresse"
+        }
+      },
       "forms": {
         "custom_section_editor": {
           "description": "Éléments d'interface utilisateur pour l'éditeur de section personnalisé",
@@ -866,7 +885,7 @@
         "year": "an"
       },
       "auto_renewal": "(renouvellement automatique)",
-      "try_for_days": "Essayez 14 jours pour",
+      "try_for_days": "Essayez Maintenant",
       "features": {
         "unlimited_cv": "Créez des CV en illimité",
         "cover_letters": "Générez des lettres de motivation",

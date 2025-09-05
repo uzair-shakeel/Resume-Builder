@@ -449,6 +449,32 @@ export default function Builder() {
   // Add state for download progress
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadStatus, setDownloadStatus] = useState("");
+  const [verificationStatus, setVerificationStatus] = useState("");
+  const [showFilenameInput, setShowFilenameInput] = useState(false);
+  const [customFilename, setCustomFilename] = useState("");
+
+  // Generate default filename based on user's name
+  const getDefaultFilename = () => {
+    const firstName = cvData.personalInfo.firstName.trim();
+    const lastName = cvData.personalInfo.lastName.trim();
+    if (firstName && lastName) {
+      return `${firstName}_${lastName}_resume.pdf`;
+    } else if (firstName || lastName) {
+      return `${firstName || lastName}_resume.pdf`;
+    }
+    return "resume.pdf";
+  };
+
+  // Set default filename when modal opens
+  useEffect(() => {
+    if (showFilenameInput) {
+      setCustomFilename(getDefaultFilename());
+    }
+  }, [
+    showFilenameInput,
+    cvData.personalInfo.firstName,
+    cvData.personalInfo.lastName,
+  ]);
 
   // Add state for section page assignment
   const [sectionPages, setSectionPages] = useState<Record<string, number>>({});
@@ -810,11 +836,10 @@ export default function Builder() {
       }
 
       // Prepare payload with data from the current component state
-      const payload = {
+      // For existing CVs, don't include title to preserve the existing one
+      // Only set title for new CVs
+      const payload: any = {
         cvId: currentCvId,
-        title: processedCVData.personalInfo.firstName
-          ? `${processedCVData.personalInfo.firstName}'s CV`
-          : "Untitled CV",
         data: processedCVData,
         template,
         sectionOrder,
@@ -824,6 +849,17 @@ export default function Builder() {
         sectionPages,
         preview,
       };
+
+      // Only set title for new CVs (when there's no currentCvId)
+      if (!currentCvId) {
+        payload.title = processedCVData.personalInfo.firstName
+          ? `${processedCVData.personalInfo.firstName}${
+              processedCVData.personalInfo.lastName
+                ? " " + processedCVData.personalInfo.lastName
+                : ""
+            }'s CV`
+          : "Untitled CV";
+      }
 
       // Send API request
       const response = await fetch("/api/cv/save", {
@@ -894,33 +930,7 @@ export default function Builder() {
     }
   };
 
-  // Debounced auto-save with immediate save for important changes
-  const debouncedSave = (immediate = false) => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    // Skip saving during template changes
-    if (isChangingTemplate.current) {
-      console.log("Skipping save operation during template change");
-      return;
-    }
-
-    if (immediate) {
-      saveCV();
-    } else {
-      setSaveStatus("unsaved");
-
-      // Set up debounced save
-      saveTimeoutRef.current = setTimeout(() => {
-        if (!isChangingTemplate.current) {
-          saveCV();
-        } else {
-          console.log("Skipping delayed save due to active template change");
-        }
-      }, 2000); // 2 second debounce
-    }
-  };
+  // No auto-save functionality - manual save only
 
   // Add a new manual save function
   const handleManualSave = () => {
@@ -955,18 +965,12 @@ export default function Builder() {
     }
   };
 
-  // Update CV data with auto-save
+  // Update CV data - manual save only, no auto-save
   const updateCVData = (
     section: string,
     data: any,
     options?: { skipUnsavedFlag?: boolean }
   ) => {
-    // Skip updates during template changes to prevent data loss
-    if (isChangingTemplate.current) {
-      console.log(`Skipping update to ${section} during template change`);
-      return;
-    }
-
     setCVData((prev) => {
       const newData = {
         ...prev,
@@ -975,8 +979,8 @@ export default function Builder() {
       return newData;
     });
 
-    // Only set unsaved if not skipping
-    if (!options?.skipUnsavedFlag && saveStatus === "saved") {
+    // Always set to unsaved when data changes (unless explicitly skipped)
+    if (!options?.skipUnsavedFlag) {
       setSaveStatus("unsaved");
     }
   };
@@ -990,92 +994,8 @@ export default function Builder() {
     };
   }, []);
 
-  // Add a ref to track if we're changing templates
-  const isChangingTemplate = useRef(false);
-
-  // Add a template loading state
+  // Template loading state for UI feedback
   const [isTemplateLoading, setIsTemplateLoading] = useState(false);
-
-  // Add a timeout reference to reset loading state if stuck
-  const templateLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Function to safely reset template loading state
-  const safeResetTemplateLoadingState = () => {
-    console.log("Safety timeout: forcing reset of template loading state");
-    isChangingTemplate.current = false;
-    setIsTemplateLoading(false);
-    if (templateLoadingTimeoutRef.current) {
-      clearTimeout(templateLoadingTimeoutRef.current);
-      templateLoadingTimeoutRef.current = null;
-    }
-  };
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (templateLoadingTimeoutRef.current) {
-        clearTimeout(templateLoadingTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  // Also modify the useEffect that handles URL template changes
-  // Add a template validation function
-  const verifyTemplateConsistency = useCallback(() => {
-    if (isTemplateLoading) return; // Skip during template changes
-
-    const urlTemplate = searchParams.get("template") as string;
-    if (urlTemplate && urlTemplate !== template) {
-      console.warn(
-        `Template inconsistency detected: URL=${urlTemplate}, State=${template}`
-      );
-
-      // Check if the URL template is valid
-      const isValidTemplate = templateOptions.some(
-        (t) => t.value === urlTemplate
-      );
-      if (isValidTemplate) {
-        console.log("Syncing application state with URL template");
-        // Update application state to match URL
-        setTemplate(urlTemplate as any);
-        const index = templateOptions.findIndex((t) => t.value === urlTemplate);
-        if (index !== -1) {
-          setActiveTemplateIndex(index);
-        }
-      } else {
-        console.log("Syncing URL with application state template");
-        // Update URL to match application state
-        const currentUrl = new URL(window.location.href);
-        currentUrl.searchParams.set("template", template);
-        window.history.replaceState({}, "", currentUrl.toString());
-      }
-    }
-  }, [searchParams, template, templateOptions, isTemplateLoading]);
-
-  // Add event listener to reset loading state if user navigates away during loading
-  useEffect(() => {
-    if (isTemplateLoading) {
-      const handleBeforeUnload = () => {
-        // Reset loading state if user navigates away during template change
-        safeResetTemplateLoadingState();
-      };
-
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
-    }
-  }, [isTemplateLoading, safeResetTemplateLoadingState]);
-
-  // Store template loading start time
-  useEffect(() => {
-    if (isTemplateLoading) {
-      localStorage.setItem(
-        "template-loading-start-time",
-        Date.now().toString()
-      );
-    }
-  }, [isTemplateLoading]);
 
   // Save color preference for each template
   useEffect(() => {
@@ -1119,14 +1039,14 @@ export default function Builder() {
     setZoomLevel(100);
   };
 
-  const handleDownload = async (format: "pdf") => {
+  const handleDownload = async (format: "pdf", filename?: string) => {
     if (!previewRef.current) return;
 
     try {
       setIsDownloading(true);
 
       // Show initial status message
-      setDownloadStatus("Verifying subscription status...");
+      setVerificationStatus("Verifying subscription status...");
 
       // Direct server-side verification instead of relying on client state
       // This is more secure and reliable
@@ -1168,6 +1088,7 @@ export default function Builder() {
       }
 
       // If we get here, the user is verified and can download
+      setVerificationStatus("Subscription verified. Preparing document...");
       setDownloadStatus("Preparing document...");
 
       const element = previewRef.current;
@@ -1229,7 +1150,6 @@ export default function Builder() {
             allowTaint: true,
             foreignObjectRendering: true,
             logging: false,
-            backgroundColor: "#ffffff",
             imageTimeout: 15000,
             onclone: (clonedDoc) => {
               // Ensure all fonts are loaded
@@ -1255,7 +1175,7 @@ export default function Builder() {
         setDownloadStatus("Finalizing your download...");
 
         // Save the PDF
-        pdf.save(`resume.pdf`);
+        pdf.save(filename || "resume.pdf");
 
         // Update client-side subscription info after successful download
         await checkSubscriptionStatus(true);
@@ -1271,7 +1191,7 @@ export default function Builder() {
   // Update the handlePaymentSuccess function to match the new payment system
   const handlePaymentSuccess = async () => {
     // After successful payment, generate the PDF
-    await handleDownload("pdf");
+    await handleDownload("pdf", "resume.pdf");
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
@@ -1365,10 +1285,28 @@ export default function Builder() {
     setSaveStatus("unsaved");
   };
 
-  // Function to toggle section menu
+  // State to track menu position
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+
   const toggleSectionMenu = (section: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setActiveSectionMenu(activeSectionMenu === section ? null : section);
+
+    if (activeSectionMenu === section) {
+      setActiveSectionMenu(null);
+    } else {
+      // Calculate position before showing the menu
+      const buttonRect = (
+        e.currentTarget as HTMLElement
+      ).getBoundingClientRect();
+      const left = buttonRect.right - 192; // 12rem = 192px
+      const top = buttonRect.bottom + 10;
+
+      // Set the position first
+      setMenuPosition({ top, left });
+
+      // Then show the menu
+      setActiveSectionMenu(section);
+    }
   };
 
   // Function to get section title with custom names
@@ -1407,20 +1345,9 @@ export default function Builder() {
     }
   };
 
-  // Call verification at regular intervals
-  useEffect(() => {
-    // Verify template consistency on initial load
-    verifyTemplateConsistency();
-
-    // Set up periodic verification
-    const intervalId = setInterval(() => {
-      verifyTemplateConsistency();
-    }, 2000); // Check every 2 seconds
-
-    return () => clearInterval(intervalId);
-  }, [verifyTemplateConsistency]);
-
   const renderTemplate = () => {
+    const { language } = useLanguage();
+
     // Create props object for page break settings
     const pageBreakSettingsProps = {
       keepHeadingsWithContent: pageBreakSettings.keepHeadingsWithContent,
@@ -1437,22 +1364,11 @@ export default function Builder() {
       fontFamily,
       sectionPages,
       customSectionNames,
+      language,
     };
 
-    // Log current template being rendered and trigger verification
+    // Log current template being rendered
     console.log(`Rendering template: ${template}`);
-    verifyTemplateConsistency();
-
-    // Verify URL consistency during rendering
-    const urlTemplate = new URL(window.location.href).searchParams.get(
-      "template"
-    );
-    if (urlTemplate && urlTemplate !== template) {
-      console.warn(
-        `Template mismatch during render! URL: ${urlTemplate}, State: ${template}`
-      );
-      // We'll let the useEffect handle this inconsistency
-    }
 
     switch (template) {
       case "modern":
@@ -1477,7 +1393,7 @@ export default function Builder() {
     }
   };
 
-  // Add effect to close section menu when clicking outside
+  // Add effect to close section menu and download modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       // Close section menu when clicking outside
@@ -1485,6 +1401,14 @@ export default function Builder() {
         const target = e.target as HTMLElement;
         if (!target.closest(".section-menu-container")) {
           setActiveSectionMenu(null);
+        }
+      }
+
+      // Close download modal when clicking outside
+      if (showDownloadOptions) {
+        const target = e.target as HTMLElement;
+        if (!target.closest(".download-modal-container")) {
+          setShowDownloadOptions(false);
         }
       }
 
@@ -1506,7 +1430,12 @@ export default function Builder() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [activeSectionMenu, isRenamingSection, sectionToRename]);
+  }, [
+    activeSectionMenu,
+    showDownloadOptions,
+    isRenamingSection,
+    sectionToRename,
+  ]);
 
   // Load section pages from localStorage
   useEffect(() => {
@@ -1806,258 +1735,134 @@ export default function Builder() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Update the template selection functions to show loading state
-  const prevTemplate = () => {
-    if (isTemplateLoading) return; // Prevent multiple template changes while loading
+  // Add function to reload saved data from database
+  const reloadSavedData = async () => {
+    try {
+      const currentCvId =
+        searchParams.get("id") || sessionStorage.getItem("current-cv-id");
+      if (currentCvId) {
+        const response = await fetch(`/api/cv/load?cvId=${currentCvId}`);
+        const data = await response.json();
 
-    setIsTemplateLoading(true);
-    isChangingTemplate.current = true;
+        if (data.success) {
+          // Fix for interests using interest property instead of name property
+          if (data.cv.data.interests && data.cv.data.interests.length > 0) {
+            data.cv.data.interests = data.cv.data.interests.map((item: any) => {
+              if (item.interest !== undefined && item.name === undefined) {
+                return { name: item.interest };
+              }
+              return item;
+            });
+          }
 
-    // Set a safety timeout to prevent getting stuck in loading state
-    if (templateLoadingTimeoutRef.current) {
-      clearTimeout(templateLoadingTimeoutRef.current);
+          // Reload the saved CV data
+          setCVData(data.cv.data);
+          setSaveStatus("saved");
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error("Error reloading saved data:", error);
+      return false;
     }
-    templateLoadingTimeoutRef.current = setTimeout(() => {
-      console.warn("Template change timeout reached, forcing reset");
-      safeResetTemplateLoadingState();
-    }, 8000); // 8 seconds timeout
+  };
+
+  // Template change functions that handle unsaved data properly
+  const prevTemplate = () => {
+    if (isTemplateLoading) return;
 
     const currentIndex = activeTemplateIndex;
     const newIndex =
       currentIndex === 0 ? templateOptions.length - 1 : currentIndex - 1;
     const selectedTemplateValue = templateOptions[newIndex].value as any;
 
-    console.log(`Starting template change to: ${selectedTemplateValue}`);
+    // If there are unsaved changes, reload saved data to prevent data inconsistency
+    if (saveStatus === "unsaved") {
+      reloadSavedData().then(() => {
+        // Update URL and state after reloading data
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("template", selectedTemplateValue);
+        window.history.replaceState({}, "", currentUrl.toString());
 
-    // Batch state updates to avoid race conditions
-    setActiveTemplateIndex(newIndex);
-    setTemplate(selectedTemplateValue);
-
-    // Update the URL with the selected template
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("template", selectedTemplateValue);
-    window.history.replaceState({}, "", currentUrl.toString());
-
-    // Save the template change to the database immediately
-    if (cvId) {
-      saveCV()
-        .then((result) => {
-          // Verify URL consistency
-          const urlTemplate = new URL(window.location.href).searchParams.get(
-            "template"
-          );
-          if (urlTemplate !== selectedTemplateValue) {
-            console.error(
-              `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
-            );
-            // Force URL update
-            const fixUrl = new URL(window.location.href);
-            fixUrl.searchParams.set("template", selectedTemplateValue);
-            window.history.replaceState({}, "", fixUrl.toString());
-          }
-
-          setTimeout(() => {
-            isChangingTemplate.current = false;
-            setIsTemplateLoading(false);
-            // Clear the safety timeout
-            if (templateLoadingTimeoutRef.current) {
-              clearTimeout(templateLoadingTimeoutRef.current);
-              templateLoadingTimeoutRef.current = null;
-            }
-            console.log(`Template change completed: ${selectedTemplateValue}`);
-          }, 500); // Give extra time for rendering
-        })
-        .catch((error) => {
-          console.error("Error saving template change:", error);
-          safeResetTemplateLoadingState(); // Reset on error
-        });
+        setActiveTemplateIndex(newIndex);
+        setTemplate(selectedTemplateValue);
+        setSaveStatus("saved"); // Keep as saved since we reloaded saved data
+      });
     } else {
-      setTimeout(() => {
-        isChangingTemplate.current = false;
-        setIsTemplateLoading(false);
-        // Clear the safety timeout
-        if (templateLoadingTimeoutRef.current) {
-          clearTimeout(templateLoadingTimeoutRef.current);
-          templateLoadingTimeoutRef.current = null;
-        }
-        console.log(`Template change completed: ${selectedTemplateValue}`);
-      }, 500); // Give extra time for rendering
+      // No unsaved changes, just change template
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("template", selectedTemplateValue);
+      window.history.replaceState({}, "", currentUrl.toString());
+
+      setActiveTemplateIndex(newIndex);
+      setTemplate(selectedTemplateValue);
     }
   };
 
   const nextTemplate = () => {
-    if (isTemplateLoading) return; // Prevent multiple template changes while loading
-
-    setIsTemplateLoading(true);
-    isChangingTemplate.current = true;
-
-    // Set a safety timeout to prevent getting stuck in loading state
-    if (templateLoadingTimeoutRef.current) {
-      clearTimeout(templateLoadingTimeoutRef.current);
-    }
-    templateLoadingTimeoutRef.current = setTimeout(() => {
-      console.warn("Template change timeout reached, forcing reset");
-      safeResetTemplateLoadingState();
-    }, 8000); // 8 seconds timeout
+    if (isTemplateLoading) return;
 
     const currentIndex = activeTemplateIndex;
     const newIndex =
       currentIndex === templateOptions.length - 1 ? 0 : currentIndex + 1;
     const selectedTemplateValue = templateOptions[newIndex].value as any;
 
-    console.log(`Starting template change to: ${selectedTemplateValue}`);
+    // If there are unsaved changes, reload saved data to prevent data inconsistency
+    if (saveStatus === "unsaved") {
+      reloadSavedData().then(() => {
+        // Update URL and state after reloading data
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("template", selectedTemplateValue);
+        window.history.replaceState({}, "", currentUrl.toString());
 
-    // Batch state updates to avoid race conditions
-    setActiveTemplateIndex(newIndex);
-    setTemplate(selectedTemplateValue);
-
-    // Update the URL with the selected template
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("template", selectedTemplateValue);
-    window.history.replaceState({}, "", currentUrl.toString());
-
-    // Save the template change to the database immediately
-    if (cvId) {
-      saveCV()
-        .then((result) => {
-          // Verify URL consistency
-          const urlTemplate = new URL(window.location.href).searchParams.get(
-            "template"
-          );
-          if (urlTemplate !== selectedTemplateValue) {
-            console.error(
-              `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
-            );
-            // Force URL update
-            const fixUrl = new URL(window.location.href);
-            fixUrl.searchParams.set("template", selectedTemplateValue);
-            window.history.replaceState({}, "", fixUrl.toString());
-          }
-
-          setTimeout(() => {
-            isChangingTemplate.current = false;
-            setIsTemplateLoading(false);
-            // Clear the safety timeout
-            if (templateLoadingTimeoutRef.current) {
-              clearTimeout(templateLoadingTimeoutRef.current);
-              templateLoadingTimeoutRef.current = null;
-            }
-            console.log(`Template change completed: ${selectedTemplateValue}`);
-          }, 500); // Give extra time for rendering
-        })
-        .catch((error) => {
-          console.error("Error saving template change:", error);
-          safeResetTemplateLoadingState(); // Reset on error
-        });
+        setActiveTemplateIndex(newIndex);
+        setTemplate(selectedTemplateValue);
+        setSaveStatus("saved"); // Keep as saved since we reloaded saved data
+      });
     } else {
-      setTimeout(() => {
-        isChangingTemplate.current = false;
-        setIsTemplateLoading(false);
-        // Clear the safety timeout
-        if (templateLoadingTimeoutRef.current) {
-          clearTimeout(templateLoadingTimeoutRef.current);
-          templateLoadingTimeoutRef.current = null;
-        }
-        console.log(`Template change completed: ${selectedTemplateValue}`);
-      }, 500); // Give extra time for rendering
+      // No unsaved changes, just change template
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("template", selectedTemplateValue);
+      window.history.replaceState({}, "", currentUrl.toString());
+
+      setActiveTemplateIndex(newIndex);
+      setTemplate(selectedTemplateValue);
     }
   };
 
   const selectTemplate = (index: number) => {
-    if (isTemplateLoading) return; // Prevent multiple template changes while loading
-
-    setIsTemplateLoading(true);
-    isChangingTemplate.current = true;
-
-    // Store current CV data to ensure it's preserved during template change
-    const currentData = { ...cvData };
-
-    // Set a safety timeout to prevent getting stuck in loading state
-    if (templateLoadingTimeoutRef.current) {
-      clearTimeout(templateLoadingTimeoutRef.current);
-    }
-    templateLoadingTimeoutRef.current = setTimeout(() => {
-      console.warn("Template change timeout reached, forcing reset");
-      safeResetTemplateLoadingState();
-    }, 8000); // 8 seconds timeout
+    if (isTemplateLoading) return;
 
     const selectedTemplateValue = templateOptions[index].value as any;
 
-    console.log(`Starting template change to: ${selectedTemplateValue}`);
+    // If there are unsaved changes, reload saved data to prevent data inconsistency
+    if (saveStatus === "unsaved") {
+      reloadSavedData().then(() => {
+        // Update URL and state after reloading data
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set("template", selectedTemplateValue);
+        window.history.replaceState({}, "", currentUrl.toString());
 
-    // First update the template value
-    setTemplate(selectedTemplateValue);
+        setTemplate(selectedTemplateValue);
+        setActiveTemplateIndex(index);
+        setShowTemplateCarousel(false);
+        setSaveStatus("saved"); // Keep as saved since we reloaded saved data
+      });
+    } else {
+      // No unsaved changes, just change template
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("template", selectedTemplateValue);
+      window.history.replaceState({}, "", currentUrl.toString());
 
-    // Then update other UI states
-    setActiveTemplateIndex(index);
-    setShowTemplateCarousel(false);
-
-    // Update the URL with the selected template
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("template", selectedTemplateValue);
-    window.history.replaceState({}, "", currentUrl.toString());
-
-    // Ensure data is preserved by explicitly setting it again
-    setTimeout(() => {
-      setCVData(currentData);
-
-      // Save the template change to the database immediately
-      if (cvId) {
-        saveCV()
-          .then((result) => {
-            // Verify URL consistency
-            const urlTemplate = new URL(window.location.href).searchParams.get(
-              "template"
-            );
-            if (urlTemplate !== selectedTemplateValue) {
-              console.error(
-                `URL template mismatch! URL: ${urlTemplate}, Selected: ${selectedTemplateValue}`
-              );
-              // Force URL update
-              const fixUrl = new URL(window.location.href);
-              fixUrl.searchParams.set("template", selectedTemplateValue);
-              window.history.replaceState({}, "", fixUrl.toString());
-            }
-
-            setTimeout(() => {
-              isChangingTemplate.current = false;
-              setIsTemplateLoading(false);
-              // Clear the safety timeout
-              if (templateLoadingTimeoutRef.current) {
-                clearTimeout(templateLoadingTimeoutRef.current);
-                templateLoadingTimeoutRef.current = null;
-              }
-              console.log(
-                `Template change completed: ${selectedTemplateValue}`
-              );
-            }, 500); // Give extra time for rendering
-          })
-          .catch((error) => {
-            console.error("Error saving template change:", error);
-            safeResetTemplateLoadingState(); // Reset on error
-          });
-      } else {
-        setTimeout(() => {
-          isChangingTemplate.current = false;
-          setIsTemplateLoading(false);
-          // Clear the safety timeout
-          if (templateLoadingTimeoutRef.current) {
-            clearTimeout(templateLoadingTimeoutRef.current);
-            templateLoadingTimeoutRef.current = null;
-          }
-          console.log(`Template change completed: ${selectedTemplateValue}`);
-        }, 500); // Give extra time for rendering
-      }
-    }, 100); // Small delay to ensure template change happens first
+      setTemplate(selectedTemplateValue);
+      setActiveTemplateIndex(index);
+      setShowTemplateCarousel(false);
+    }
   };
 
-  // Add the useEffect that handles URL template changes
+  // Simplified URL template change handler
   useEffect(() => {
-    // Skip if we're currently changing templates via carousel
-    if (isChangingTemplate.current) {
-      return;
-    }
-
     const templateParam = searchParams.get("template") as
       | "modern"
       | "classic"
@@ -2069,127 +1874,26 @@ export default function Builder() {
       | "circulaire"
       | "student";
 
-    console.log(`Template param from URL: ${templateParam}`);
-
     if (templateParam && templateParam !== template) {
-      console.log(`Setting template from URL: ${templateParam}`);
-
-      // Set loading state
-      setIsTemplateLoading(true);
-
-      // Set a safety timeout to prevent getting stuck in loading state
-      if (templateLoadingTimeoutRef.current) {
-        clearTimeout(templateLoadingTimeoutRef.current);
-      }
-      templateLoadingTimeoutRef.current = setTimeout(() => {
-        console.warn("Template change from URL timeout reached, forcing reset");
-        safeResetTemplateLoadingState();
-      }, 8000); // 8 seconds timeout
-
-      setTemplate(templateParam);
-
       const index = templateOptions.findIndex((t) => t.value === templateParam);
-      console.log(
-        `Found template index: ${index}, value: ${templateOptions[index]?.value}`
-      );
 
       if (index !== -1) {
+        setTemplate(templateParam);
         setActiveTemplateIndex(index);
+
         // Set the default color for the selected template if no custom color is set
         if (!localStorage.getItem(`cv-color-${templateParam}`)) {
           setAccentColor(templateOptions[index].defaultColor);
         }
 
-        // Only save if we have a CV ID and this isn't the initial load
-        if (cvId && !initialLoad.current) {
-          saveCV()
-            .then(() => {
-              setTimeout(() => {
-                isChangingTemplate.current = false;
-                setIsTemplateLoading(false);
-                if (templateLoadingTimeoutRef.current) {
-                  clearTimeout(templateLoadingTimeoutRef.current);
-                  templateLoadingTimeoutRef.current = null;
-                }
-              }, 500);
-            })
-            .catch((error) => {
-              console.error("Error saving template from URL param:", error);
-              safeResetTemplateLoadingState();
-            });
-        } else {
-          setTimeout(() => {
-            isChangingTemplate.current = false;
-            setIsTemplateLoading(false);
-            if (templateLoadingTimeoutRef.current) {
-              clearTimeout(templateLoadingTimeoutRef.current);
-              templateLoadingTimeoutRef.current = null;
-            }
-          }, 500);
-        }
-      } else {
-        safeResetTemplateLoadingState();
+        setSaveStatus("unsaved");
       }
     }
-  }, [
-    searchParams,
-    template,
-    templateOptions,
-    cvId,
-    safeResetTemplateLoadingState,
-  ]);
-
-  // Periodically check template consistency and reset if stuck
-  useEffect(() => {
-    // Check consistency every 5 seconds
-    const intervalId = setInterval(() => {
-      // Check if loading state has been active for too long
-      if (isTemplateLoading) {
-        console.log("Template still loading, checking duration...");
-
-        // Force reset after 10 seconds if still loading
-        if (templateLoadingTimeoutRef.current) {
-          console.warn("Template loading failsafe triggered, forcing reset");
-          safeResetTemplateLoadingState();
-        }
-      }
-
-      // Check if saving state has been active for too long
-      if (saveStatus === "saving") {
-        console.log("Still in saving state, checking duration...");
-
-        // If our save timeout is active, we're still within the acceptable time range
-        // If it's not active and we're still saving, something is wrong
-        if (!saveStatusTimeoutRef.current) {
-          console.warn(
-            "Save status stuck in 'saving', forcing reset to 'saved'"
-          );
-          setSaveStatus("saved");
-        }
-      }
-
-      // Also verify template consistency
-      verifyTemplateConsistency();
-    }, 5000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [
-    verifyTemplateConsistency,
-    isTemplateLoading,
-    safeResetTemplateLoadingState,
-    saveStatus,
-  ]);
+  }, [searchParams, template, templateOptions]);
 
   // Clean up timeouts on unmount
   useEffect(() => {
     return () => {
-      // Clear template loading timeout
-      if (templateLoadingTimeoutRef.current) {
-        clearTimeout(templateLoadingTimeoutRef.current);
-      }
-
       // Clear save status timeout
       if (saveStatusTimeoutRef.current) {
         clearTimeout(saveStatusTimeoutRef.current);
@@ -2204,7 +1908,7 @@ export default function Builder() {
 
   // Then add a DownloadingOverlay component before the return statement
   const DownloadingOverlay = () => (
-    <div className="fixed inset-0 bg-gray-900 bg-opacity-80 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md">
         <RefreshCw className="w-12 h-12 text-blue-600 animate-spin mb-6" />
         <p className="text-xl font-medium text-gray-800">
@@ -2214,7 +1918,8 @@ export default function Builder() {
           <div className="bg-blue-600 h-2.5 rounded-full animate-pulse w-full"></div>
         </div>
         <p className="text-sm text-gray-600 mb-4 text-center">
-          {downloadStatus || t("site.builder.pdf_generation.may_take_moments")}
+          {verificationStatus ||
+            t("site.builder.pdf_generation.may_take_moments")}
         </p>
         <p className="text-xs text-gray-500 text-center">
           Please don't refresh the page or close the window during this process.
@@ -2226,22 +1931,49 @@ export default function Builder() {
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       {isDownloading && <DownloadingOverlay />}
-      <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
-        {/* Loading Overlay */}
-        {isDownloading && (
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-100 z-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
-              <RefreshCw className="w-10 h-10 text-blue-600 animate-spin mb-4" />
-              <p className="text-lg font-medium text-gray-800">
-                {t("site.builder.pdf_generation.generating_pdf")}
-              </p>
-              <p className="text-sm text-gray-600 mt-2">
-                {t("site.builder.pdf_generation.may_take_moments")}
-              </p>
+      {showFilenameInput && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center max-w-md w-full mx-4">
+            <h3 className="text-lg font-medium text-gray-800 mb-4">
+              Enter PDF Filename
+            </h3>
+            <input
+              type="text"
+              value={customFilename}
+              onChange={(e) => setCustomFilename(e.target.value)}
+              placeholder={getDefaultFilename()}
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+              autoFocus
+            />
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={() => {
+                  setShowFilenameInput(false);
+                  setCustomFilename("");
+                }}
+                className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const filename =
+                    customFilename.trim() || getDefaultFilename();
+                  if (!filename.endsWith(".pdf")) {
+                    setCustomFilename(filename + ".pdf");
+                  }
+                  setShowFilenameInput(false);
+                  handleDownload("pdf", filename);
+                }}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Download
+              </button>
             </div>
           </div>
-        )}
-
+        </div>
+      )}
+      <main className="flex min-h-screen h-screen overflow-hidden bg-gray-50">
         <div className="flex flex-1 overflow-hidden">
           {/* Left Panel - Form */}
           <div className="w-full lg:w-1/2 flex flex-col border-r border-gray-200 bg-white">
@@ -2263,12 +1995,12 @@ export default function Builder() {
                     className={`flex items-center gap-2 px-4 py-2 rounded-md font-semibold transition-colors focus:outline-none
                       ${
                         saveStatus === "saved"
-                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          ? "bg-green-600 text-white hover:bg-green-700"
                           : ""
                       }
                       ${
                         saveStatus === "unsaved"
-                          ? "bg-orange-500 text-white hover:bg-orange-600"
+                          ? "bg-orange-500 text-white hover:bg-orange-600 animate-pulse"
                           : ""
                       }
                       ${
@@ -2297,6 +2029,8 @@ export default function Builder() {
                       <RefreshCw className="w-5 h-5 animate-spin" />
                     ) : saveStatus === "error" ? (
                       <CloudOff className="w-5 h-5" />
+                    ) : saveStatus === "unsaved" ? (
+                      <Cloud className="w-5 h-5" />
                     ) : (
                       <Cloud className="w-5 h-5" />
                     )}
@@ -2304,7 +2038,7 @@ export default function Builder() {
                       {saveStatus === "saved"
                         ? t("site.builder.header.save")
                         : saveStatus === "unsaved"
-                        ? t("site.builder.header.save_changes")
+                        ? t("site.builder.header.save_changes") + " ✓"
                         : saveStatus === "saving"
                         ? t("site.builder.header.saving")
                         : t("site.builder.header.retry_save")}
@@ -2332,10 +2066,13 @@ export default function Builder() {
                     </span>
                   </button>
                   {showDownloadOptions && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20 download-modal-container">
                       <div className="py-1">
                         <button
-                          onClick={() => handleDownload("pdf")}
+                          onClick={() => {
+                            setShowFilenameInput(true);
+                            setShowDownloadOptions(false);
+                          }}
                           className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
                         >
                           {t("site.builder.header.download_as_pdf")}
@@ -2410,7 +2147,14 @@ export default function Builder() {
 
                           {/* Section Menu Popup */}
                           {activeSectionMenu === section && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200 section-menu-container">
+                            <div
+                              className="fixed z-[100] bg-white rounded-md shadow-lg border border-gray-200 section-menu-container"
+                              style={{
+                                top: `${menuPosition.top}px`,
+                                left: `${menuPosition.left}px`,
+                                width: "12rem",
+                              }}
+                            >
                               <div className="py-1">
                                 <button
                                   className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
