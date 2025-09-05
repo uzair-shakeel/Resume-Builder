@@ -443,13 +443,13 @@
   --tw-gradient-to: var(--cv-accent) !important;
 }
 
-ul {
+/* ul {
   list-style-type: disc !important;
 }
 li::before {
-  content: "•"; /* Ensures bullet rendering */
+  content: "•"; 
   font-size: 14px;
-}
+} */
 
 .underline {
   border-bottom: 1px solid black !important;
